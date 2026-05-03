@@ -1,0 +1,8 @@
+- band: "(해당 파일의 상위 디렉토리 폴더 이름)"
+  numbering: "(numbering, 서수로 기술)"
+  album_title: "(album_title, 앨범 제목)"
+  img_url: "('-'라고만 적을 것)"
+  tracks:
+    - track_number: "(tracks의 track_number, 트랙 번호)" 
+      name: "(tracks의 name, 트랙 제목)"
+      url: "('-'라고만 적을 것)"
