@@ -2,10 +2,32 @@ import json
 from jinja2 import Template
 
 # 1. 앨범 데이터 (실제로는 data.py에서 가져오거나 크롤링할 수 있음)
+# albums = [
+#     {"id": "1", "title": "Fire Bird", "band": "Roselia", "img": "path/to/img1.jpg", "yt": "https://youtu.be/xxx"},
+#     {"id": "2", "title": "A DECLARATION OF ×××", "band": "RAISE A SUILEN", "img": "path/to/img2.jpg", "yt": "https://youtu.be/yyy"},
+#     {"id": "3", "title": "Ave Mujica", "band": "Ave Mujica", "img": "path/to/img3.jpg", "yt": "https://youtu.be/zzz"},
+# ]
+# build.py 예시 데이터 구조
 albums = [
-    {"id": "1", "title": "Fire Bird", "band": "Roselia", "img": "path/to/img1.jpg", "yt": "https://youtu.be/xxx"},
-    {"id": "2", "title": "A DECLARATION OF ×××", "band": "RAISE A SUILEN", "img": "path/to/img2.jpg", "yt": "https://youtu.be/yyy"},
-    {"id": "3", "title": "Ave Mujica", "band": "Ave Mujica", "img": "path/to/img3.jpg", "yt": "https://youtu.be/zzz"},
+    {
+        "id": "1",
+        "band": "로젤리아",
+        "title": "Wahl",
+        "img": "assets/wahl.jpg",
+        "tracks": [
+            {"name": "Fire Bird", "url": "https://www.youtube.com/watch?v=xxx"},
+            {"name": "Neo-Aspect", "url": "https://www.youtube.com/watch?v=yyy"}
+        ]
+    },
+    {
+        "id": "2",
+        "band": "포핀파티",
+        "title": "Jumpin'",
+        "img": "assets/jumpin.jpg",
+        "tracks": [
+            {"name": "Jumpin'", "url": "https://www.youtube.com/watch?v=zzz"}
+        ]
+    }
 ]
 
 # 2. HTML 템플릿 읽기

@@ -2,59 +2,138 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bang Dream Album Tier Maker</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        .tier-row { display: flex; border: 1px solid #ccc; min-height: 100px; margin-bottom: 5px; }
-        .label { width: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .drop-zone { flex-grow: 1; display: flex; flex-wrap: wrap; background: #f9f9f9; }
-        .album-item { width: 80px; margin: 5px; cursor: pointer; }
-        .album-item img { width: 100%; border-radius: 4px; }
+        :root {
+            --bg-color: #ffffff;
+            --border-color: #ddd;
+        }
+        body { font-family: 'Pretendard', sans-serif; margin: 20px; background-color: var(--bg-color); }
+        h1 { text-align: left; font-size: 24px; margin-bottom: 20px; }
+
+        .main-container { display: flex; gap: 40px; align-items: flex-start; }
+
+        /* 좌측 티어 보드 */
+        #tier-board { width: 450px; border: 2px solid var(--border-color); }
+        .tier-row { display: flex; border-bottom: 1px solid var(--border-color); min-height: 80px; }
+        .tier-row:last-child { border-bottom: none; }
+        .label { 
+            width: 70px; display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 18px; color: #000; border-right: 1px solid var(--border-color);
+        }
+        .drop-zone { flex-grow: 1; display: flex; flex-wrap: wrap; padding: 5px; background: #fff; min-width: 300px; }
+
+        /* 우측 앨범 리스트 (스크롤) */
+        .album-list-container { 
+            flex-grow: 1; max-height: 800px; overflow-y: auto; 
+            padding-right: 20px; border-left: 1px solid #eee; padding-left: 20px;
+        }
+        .band-section { margin-bottom: 30px; }
+        .band-name { font-size: 20px; font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid #333; display: inline-block; }
+        
+        /* 앨범 아이템 스타일 */
+        .album-card { display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-start; }
+        .album-img-wrapper { width: 120px; height: 120px; flex-shrink: 0; cursor: grab; }
+        .album-img-wrapper img { width: 100%; height: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .track-list { list-style: none; padding: 0; margin: 0; font-size: 14px; }
+        .track-item { margin-bottom: 5px; color: #555; cursor: pointer; transition: color 0.2s; }
+        .track-item:hover { color: #ff4d4d; text-decoration: underline; }
+
+        /* 하단 컨트롤 */
+        .controls { margin-top: 30px; }
+        .save-btn { 
+            padding: 12px 25px; background: #000; color: #fff; border: none; 
+            border-radius: 5px; cursor: pointer; font-weight: bold; 
+        }
+        .save-btn:hover { background: #333; }
+
+        /* 드래그 중인 아이템 크기 조절 */
+        .sortable-ghost { opacity: 0.4; }
     </style>
 </head>
 <body>
+
     <h1>뱅드림 앨범 티어 메이커</h1>
 
-    <!-- 티어 구역 -->
-    <div id="tier-container">
-        <div class="tier-row"><div class="label" style="background:#ff7f7f">S</div><div class="drop-zone"></div></div>
-        <div class="tier-row"><div class="label" style="background:#ffbf7f">A</div><div class="drop-zone"></div></div>
-        <div class="tier-row"><div class="label" style="background:#ffff7f">B</div><div class="drop-zone"></div></div>
-    </div>
-
-    <hr>
-
-    <!-- 앨범 창고 (Python이 채워줌) -->
-    <div id="album-bank" class="drop-zone">
-        {% for album in albums %}
-        <div class="album-item" data-yt="{{ album.yt }}">
-            <img src="{{ album.img }}" alt="{{ album.title }}" title="{{ album.title }}">
+    <div class="main-container">
+        <!-- 좌측: 티어 판 -->
+        <div id="tier-board">
+            <div class="tier-row"><div class="label" style="background:#ff7f7f">S+</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#ff9999">S</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#ffbf7f">A+</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#ffff7f">A</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#bfff7f">B+</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#7fff7f">B</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#7fffff">C+</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#7f7fff">C</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#bf7fff">D</div><div class="drop-zone"></div></div>
+            <div class="tier-row"><div class="label" style="background:#cccccc">F</div><div class="drop-zone"></div></div>
         </div>
-        {% endfor %}
+
+        <!-- 우측: 앨범 리스트 -->
+        <div class="album-list-container">
+            {% set bands = albums | map(attribute='band') | unique | list %}
+            {% for band in bands %}
+            <div class="band-section">
+                <div class="band-name">{{ band }}</div>
+                <div class="album-pool">
+                    {% for album in albums if album.band == band %}
+                    <div class="album-card">
+                        <!-- 드래그 가능한 이미지 영역 -->
+                        <div class="album-img-wrapper">
+                            <img src="{{ album.img }}" alt="{{ album.title }}" title="드래그해서 티어표에 배치">
+                        </div>
+                        <!-- 곡 목록 (클릭 시 재생) -->
+                        <div class="album-info">
+                            <ul class="track-list">
+                                {% for track in album.tracks %}
+                                <li class="track-item" onclick="window.open('{{ track.url }}', '_blank')">
+                                    {{ "%02d" | format(loop.index) }}. {{ track.name }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
-    <button onclick="saveImage()">이미지로 저장</button>
+    <div class="controls">
+        <button class="save-btn" onclick="saveTierList()">이미지 결과 저장하기</button>
+    </div>
 
     <script>
-        // 모든 drop-zone에 드래그 앤 드롭 적용
-        document.querySelectorAll('.drop-zone').forEach(el => {
-            new Sortable(el, { group: 'shared', animation: 150 });
-        });
-
-        // 클릭 시 유튜브 이동 (또는 모달 재생)
-        document.querySelectorAll('.album-item').forEach(item => {
-            item.addEventListener('dblclick', () => {
-                window.open(item.dataset.yt, '_blank');
+        // 드래그 앤 드롭 설정
+        // 앨범 이미지 부모 요소와 티어 보드의 모든 drop-zone을 연결합니다.
+        const zones = document.querySelectorAll('.drop-zone, .album-pool');
+        zones.forEach(zone => {
+            new Sortable(zone, {
+                group: 'shared', // 같은 그룹끼리 이동 가능
+                animation: 150,
+                fallbackOnBody: true,
+                swapThreshold: 0.65
             });
         });
 
-        // 결과 캡처 함수
-        function saveImage() {
-            html2canvas(document.querySelector("#tier-container")).then(canvas => {
+        // 캡처 및 저장 기능
+        function saveTierList() {
+            const board = document.querySelector("#tier-board");
+            html2canvas(board, {
+                logging: false,
+                useCORS: true, // 외부 이미지 로딩 허용
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
-                link.download = 'my-tier-list.png';
-                link.href = canvas.toDataURL();
+                link.href = image;
+                link.download = 'bang-dream-tier-list.png';
                 link.click();
             });
         }
