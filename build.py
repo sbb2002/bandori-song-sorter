@@ -3,13 +3,13 @@ import os
 from jinja2 import Environment, FileSystemLoader
 
 def build():
-    # 0. 경로 설정
     yaml_dir = "data"
     template_dir = "templates"
     output_dir = "docs"
 
-    # 1. data/ 폴더의 모든 YAML 파일 로드
-    albums = []
+    # 1. 데이터를 밴드별로 그룹화할 딕셔너리 준비
+    albums_by_band = {}
+    
     if not os.path.exists(yaml_dir):
         print(f"Error: {yaml_dir} 폴더를 찾을 수 없습니다.")
         return
@@ -18,27 +18,33 @@ def build():
         if filename.endswith('.yaml'):
             yaml_path = os.path.join(yaml_dir, filename)
             with open(yaml_path, 'r', encoding='utf-8') as f:
-                band_albums = yaml.safe_load(f)
-                if band_albums:
-                    if isinstance(band_albums, list):
-                        albums.extend(band_albums)
-                    else:
-                        albums.append(band_albums)
+                content = yaml.safe_load(f)
+                if not content: continue
+                
+                # 리스트 형태든 단일 객체든 처리
+                album_list = content if isinstance(content, list) else [content]
+                
+                for album in album_list:
+                    # 'band' 키가 없으면 'Others'로 분류
+                    band_name = album.get('band', 'Others')
+                    if band_name not in albums_by_band:
+                        albums_by_band[band_name] = []
+                    albums_by_band[band_name].append(album)
 
-    if not albums:
+    if not albums_by_band:
         print("Error: YAML 파일에서 앨범 데이터를 찾을 수 없습니다.")
         return
 
-    # 2. Jinja2 환경 설정 (tojson 필터 지원)
+    # 2. Jinja2 환경 설정
     env = Environment(loader=FileSystemLoader(template_dir))
     try:
         template = env.get_template('index_template.html')
     except Exception as e:
-        print(f"Error: 템플릿을 로드할 수 없습니다: {e}")
+        print(f"Error: 템플릿 로드 실패: {e}")
         return
 
-    # 3. 데이터 렌더링
-    rendered_html = template.render(albums=albums)
+    # 3. 렌더링 (이제 albums 대신 albums_by_band 전달)
+    rendered_html = template.render(albums_by_band=albums_by_band)
 
     # 4. 결과 저장
     if not os.path.exists(output_dir):
@@ -48,7 +54,7 @@ def build():
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_html)
 
-    print(f"✅ Build Success: {len(albums)}개의 앨범 데이터가 {output_path}에 생성되었습니다.")
+    print(f"✅ Build Success: {len(albums_by_band)}개 밴드의 데이터가 반영되었습니다.")
 
 if __name__ == "__main__":
     build()
