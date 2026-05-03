@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Bang Dream Album Tier Maker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        .tier-row { display: flex; border: 1px solid #ccc; min-height: 100px; margin-bottom: 5px; }
+        .label { width: 80px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .drop-zone { flex-grow: 1; display: flex; flex-wrap: wrap; background: #f9f9f9; }
+        .album-item { width: 80px; margin: 5px; cursor: pointer; }
+        .album-item img { width: 100%; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>뱅드림 앨범 티어 메이커</h1>
+
+    <!-- 티어 구역 -->
+    <div id="tier-container">
+        <div class="tier-row"><div class="label" style="background:#ff7f7f">S</div><div class="drop-zone"></div></div>
+        <div class="tier-row"><div class="label" style="background:#ffbf7f">A</div><div class="drop-zone"></div></div>
+        <div class="tier-row"><div class="label" style="background:#ffff7f">B</div><div class="drop-zone"></div></div>
+    </div>
+
+    <hr>
+
+    <!-- 앨범 창고 (Python이 채워줌) -->
+    <div id="album-bank" class="drop-zone">
+        {% for album in albums %}
+        <div class="album-item" data-yt="{{ album.yt }}">
+            <img src="{{ album.img }}" alt="{{ album.title }}" title="{{ album.title }}">
+        </div>
+        {% endfor %}
+    </div>
+
+    <button onclick="saveImage()">이미지로 저장</button>
+
+    <script>
+        // 모든 drop-zone에 드래그 앤 드롭 적용
+        document.querySelectorAll('.drop-zone').forEach(el => {
+            new Sortable(el, { group: 'shared', animation: 150 });
+        });
+
+        // 클릭 시 유튜브 이동 (또는 모달 재생)
+        document.querySelectorAll('.album-item').forEach(item => {
+            item.addEventListener('dblclick', () => {
+                window.open(item.dataset.yt, '_blank');
+            });
+        });
+
+        // 결과 캡처 함수
+        function saveImage() {
+            html2canvas(document.querySelector("#tier-container")).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'my-tier-list.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
