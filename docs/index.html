@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        
         :root {
             --bg-color: #ffffff;
             --border-color: #ddd;
@@ -1968,29 +1969,34 @@
     </div>
 
     <script>
-        // 드래그 앤 드롭 설정
-        // 앨범 이미지 부모 요소와 티어 보드의 모든 drop-zone을 연결합니다.
-        const zones = document.querySelectorAll('.drop-zone, .album-pool');
-        zones.forEach(zone => {
-            new Sortable(zone, {
-                group: 'shared', // 같은 그룹끼리 이동 가능
-                animation: 150,
-                fallbackOnBody: true,
-                swapThreshold: 0.65
-            });
+        // 모든 드래그 영역을 동일한 그룹명('shared')으로 설정합니다.
+        const sortableOptions = {
+            group: 'shared', // 이 이름이 같아야 서로 주고받기가 가능합니다.
+            animation: 150,
+            fallbackOnBody: true,
+            swapThreshold: 0.65
+        };
+
+        // 1. 좌측 티어 보드의 모든 드롭존 초기화
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            new Sortable(zone, sortableOptions);
         });
 
-        // 캡처 및 저장 기능
+        // 2. 우측 각 밴드별 앨범 풀(저장소) 초기화
+        // Afterglow, Roselia 등 각 밴드 영역이 각각의 'album-pool'을 가집니다.
+        document.querySelectorAll('.album-pool').forEach(pool => {
+            new Sortable(pool, sortableOptions);
+        });
+
+        // 이미지 저장 기능 (기존 유지)
         function saveTierList() {
             const board = document.querySelector("#tier-board");
             html2canvas(board, {
-                logging: false,
-                useCORS: true, // 외부 이미지 로딩 허용
+                useCORS: true,
                 backgroundColor: "#ffffff"
             }).then(canvas => {
-                const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
-                link.href = image;
+                link.href = canvas.toDataURL("image/png");
                 link.download = 'bang-dream-tier-list.png';
                 link.click();
             });
