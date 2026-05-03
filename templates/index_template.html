@@ -111,49 +111,34 @@
     </div>
 
     <script>
-        // 1. 드래그 앤 드롭 그룹 설정
-        // 모든 티어 행의 drop-zone과 우측의 album-pool을 'shared' 그룹으로 묶습니다.
-        const groupConfig = {
-            name: 'shared',
-            pull: true,  // 다른 리스트로 끌어오기 가능
-            put: true    // 다른 리스트에서 넣기 가능
+        // 모든 드래그 영역을 동일한 그룹명('shared')으로 설정합니다.
+        const sortableOptions = {
+            group: 'shared', // 이 이름이 같아야 서로 주고받기가 가능합니다.
+            animation: 150,
+            fallbackOnBody: true,
+            swapThreshold: 0.65
         };
 
-        // 좌측 티어 보드의 드롭존 설정
+        // 1. 좌측 티어 보드의 모든 드롭존 초기화
         document.querySelectorAll('.drop-zone').forEach(zone => {
-            new Sortable(zone, {
-                group: groupConfig,
-                animation: 150,
-                fallbackOnBody: true,
-                swapThreshold: 0.65
-            });
+            new Sortable(zone, sortableOptions);
         });
 
-        // 우측 앨범 리스트(앨범 저장소) 설정
-        // 이 설정을 통해 좌측에서 우측으로 다시 드래그하여 되돌릴 수 있습니다.
+        // 2. 우측 각 밴드별 앨범 풀(저장소) 초기화
+        // Afterglow, Roselia 등 각 밴드 영역이 각각의 'album-pool'을 가집니다.
         document.querySelectorAll('.album-pool').forEach(pool => {
-            new Sortable(pool, {
-                group: groupConfig,
-                animation: 150,
-                // 앨범이 원래 밴드 섹션 안으로 돌아가도록 설정
-                onAdd: function (evt) {
-                    // 필요 시 추가적인 정렬 로직을 여기에 넣을 수 있습니다.
-                    console.log('앨범이 원래 리스트로 돌아왔습니다.');
-                }
-            });
+            new Sortable(pool, sortableOptions);
         });
 
-        // 2. 결과 캡처 및 저장 기능 (기존과 동일)
+        // 이미지 저장 기능 (기존 유지)
         function saveTierList() {
             const board = document.querySelector("#tier-board");
             html2canvas(board, {
-                logging: false,
                 useCORS: true,
                 backgroundColor: "#ffffff"
             }).then(canvas => {
-                const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
-                link.href = image;
+                link.href = canvas.toDataURL("image/png");
                 link.download = 'bang-dream-tier-list.png';
                 link.click();
             });
