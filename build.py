@@ -20,7 +20,6 @@ def build():
             with open(yaml_path, 'r', encoding='utf-8') as f:
                 band_albums = yaml.safe_load(f)
                 if band_albums:
-                    # 리스트 형태인 경우 extend, 단일 객체인 경우 append
                     if isinstance(band_albums, list):
                         albums.extend(band_albums)
                     else:
@@ -30,7 +29,7 @@ def build():
         print("Error: YAML 파일에서 앨범 데이터를 찾을 수 없습니다.")
         return
 
-    # 2. Jinja2 환경 설정 (tojson 필터 및 템플릿 로더 활성화)
+    # 2. Jinja2 환경 설정 (tojson 필터 지원)
     env = Environment(loader=FileSystemLoader(template_dir))
     try:
         template = env.get_template('index_template.html')
@@ -49,7 +48,7 @@ def build():
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_html)
 
-    print(f"✅ Build Success: {len(albums)}개의 앨범이 {output_path}에 생성되었습니다.")
+    print(f"✅ Build Success: {len(albums)}개의 앨범 데이터가 {output_path}에 생성되었습니다.")
 
 if __name__ == "__main__":
     build()
