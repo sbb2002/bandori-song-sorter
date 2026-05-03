@@ -1,15 +1,14 @@
 import yaml
 import os
-import json # 추가: 안전한 데이터 변환을 위해
 from jinja2 import Environment, FileSystemLoader
 
 def build():
-    # 0. 설정 및 경로
+    # 0. 경로 설정
     yaml_dir = "data"
     template_dir = "templates"
     output_dir = "docs"
 
-    # 1. data/ 폴더의 모든 YAML 파일 로드 (기존 로직 유지)
+    # 1. data/ 폴더의 모든 YAML 파일 로드
     albums = []
     if not os.path.exists(yaml_dir):
         print(f"Error: {yaml_dir} 폴더를 찾을 수 없습니다.")
@@ -21,23 +20,25 @@ def build():
             with open(yaml_path, 'r', encoding='utf-8') as f:
                 band_albums = yaml.safe_load(f)
                 if band_albums:
-                    albums.extend(band_albums)
+                    # 리스트 형태인 경우 extend, 단일 객체인 경우 append
+                    if isinstance(band_albums, list):
+                        albums.extend(band_albums)
+                    else:
+                        albums.append(band_albums)
 
     if not albums:
-        print("Error: 앨범 데이터를 찾을 수 없습니다.")
+        print("Error: YAML 파일에서 앨범 데이터를 찾을 수 없습니다.")
         return
 
-    # 2. Jinja2 환경 설정 (tojson 필터를 위해 Environment 사용 추천)
-    # 단순히 Template()을 쓰는 것보다 이 방식이 더 체계적이고 확장성이 좋습니다.
+    # 2. Jinja2 환경 설정 (tojson 필터 및 템플릿 로더 활성화)
     env = Environment(loader=FileSystemLoader(template_dir))
-    
     try:
         template = env.get_template('index_template.html')
     except Exception as e:
-        print(f"Error: 템플릿 파일을 읽는 중 오류 발생: {e}")
+        print(f"Error: 템플릿을 로드할 수 없습니다: {e}")
         return
 
-    # 3. 렌더링
+    # 3. 데이터 렌더링
     rendered_html = template.render(albums=albums)
 
     # 4. 결과 저장
@@ -48,7 +49,7 @@ def build():
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_html)
 
-    print(f"✅ Build Success: {len(albums)}개의 앨범이 반영되었습니다.")
+    print(f"✅ Build Success: {len(albums)}개의 앨범이 {output_path}에 생성되었습니다.")
 
 if __name__ == "__main__":
     build()
