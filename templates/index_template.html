@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        
         :root {
             --bg-color: #ffffff;
             --border-color: #ddd;
@@ -110,24 +111,44 @@
     </div>
 
     <script>
-        // 드래그 앤 드롭 설정
-        // 앨범 이미지 부모 요소와 티어 보드의 모든 drop-zone을 연결합니다.
-        const zones = document.querySelectorAll('.drop-zone, .album-pool');
-        zones.forEach(zone => {
+        // 1. 드래그 앤 드롭 그룹 설정
+        // 모든 티어 행의 drop-zone과 우측의 album-pool을 'shared' 그룹으로 묶습니다.
+        const groupConfig = {
+            name: 'shared',
+            pull: true,  // 다른 리스트로 끌어오기 가능
+            put: true    // 다른 리스트에서 넣기 가능
+        };
+
+        // 좌측 티어 보드의 드롭존 설정
+        document.querySelectorAll('.drop-zone').forEach(zone => {
             new Sortable(zone, {
-                group: 'shared', // 같은 그룹끼리 이동 가능
+                group: groupConfig,
                 animation: 150,
                 fallbackOnBody: true,
                 swapThreshold: 0.65
             });
         });
 
-        // 캡처 및 저장 기능
+        // 우측 앨범 리스트(앨범 저장소) 설정
+        // 이 설정을 통해 좌측에서 우측으로 다시 드래그하여 되돌릴 수 있습니다.
+        document.querySelectorAll('.album-pool').forEach(pool => {
+            new Sortable(pool, {
+                group: groupConfig,
+                animation: 150,
+                // 앨범이 원래 밴드 섹션 안으로 돌아가도록 설정
+                onAdd: function (evt) {
+                    // 필요 시 추가적인 정렬 로직을 여기에 넣을 수 있습니다.
+                    console.log('앨범이 원래 리스트로 돌아왔습니다.');
+                }
+            });
+        });
+
+        // 2. 결과 캡처 및 저장 기능 (기존과 동일)
         function saveTierList() {
             const board = document.querySelector("#tier-board");
             html2canvas(board, {
                 logging: false,
-                useCORS: true, // 외부 이미지 로딩 허용
+                useCORS: true,
                 backgroundColor: "#ffffff"
             }).then(canvas => {
                 const image = canvas.toDataURL("image/png");
