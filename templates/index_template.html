@@ -34,7 +34,7 @@
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
 
         .tier-item { width: 50px; height: 50px; position: relative; }
-        .tier-item img { width: 100%; height: 100%; object-fit: cover; }
+        .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .del-btn { 
             position: absolute; top: -5px; right: -5px; background: red; color: #fff; 
             width: 18px; height: 18px; border-radius: 50%; font-size: 10px; 
@@ -75,40 +75,28 @@
         .bank-item { width: 65px; height: 65px; cursor: pointer; }
         .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
 
-        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; margin-top: auto; }
+        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; margin-top: auto; cursor: pointer; }
 
         /* 데스크탑 레이아웃 (1024px 이상) */
         @media (min-width: 1024px) {
             .main-container { padding: 20px; gap: 20px; align-items: flex-start; overflow: visible; height: auto; }
             #tier-wrapper { width: 450px !important; height: auto; border-radius: 5px; }
             #tier-wrapper:not(.expanded) .drop-zone { display: flex; }
-            #toggle-btn { display: none; } /* PC에선 화살표 숨김 */
+            #toggle-btn { display: none; }
             .control-panel { transform: none !important; width: 600px; padding: 0; overflow: visible; }
             #preview-display { flex-direction: row; height: 300px; }
             #preview-img { width: 250px; max-width: 250px; }
             .bank-item { width: 85px; height: 85px; }
             .band-content { justify-content: flex-start; }
-        
-        /* 캡처 시 레이아웃 붕괴 방지 및 배경색 고정 */
-        #tier-capture-area {
-            background-color: #ffffff !important;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            position: relative;
         }
 
-        /* 캡처 중일 때만 모든 배경과 텍스트 색상을 강제 고정 */
-        .capturing #tier-capture-area,
-        .capturing .tier-row,
-        .capturing .drop-zone {
+        /* 캡처 전용 스타일 (상태 클래스) */
+        .capturing #tier-capture-area {
             background-color: #ffffff !important;
+            width: 450px !important; 
         }
-
-        /* 캡처 중 X 버튼 숨김 */
-        .capturing .del-btn {
-            display: none !important;
-        }
+        .capturing .del-btn { display: none !important; }
+        .capturing .drop-zone { display: flex !important; }
     </style>
 </head>
 <body>
@@ -149,7 +137,7 @@
             <div id="band-{{ band_name }}" class="band-content {% if loop.first %}active{% endif %}">
                 {% for album in band_albums %}
                 <div class="bank-item" data-album-json='{{ album | tojson | safe }}' onclick="handleAlbumClick(this)">
-                    <img src="{{ album.img_url }}">
+                    <img src="{{ album.img_url }}" crossorigin="anonymous" alt="{{ album.album_title }}">
                 </div>
                 {% endfor %}
             </div>
@@ -164,12 +152,7 @@
         const wrapper = document.getElementById('tier-wrapper');
         const btn = document.getElementById('toggle-btn');
         wrapper.classList.toggle('expanded');
-        
-        if (wrapper.classList.contains('expanded')) {
-            btn.innerText = '◀';
-        } else {
-            btn.innerText = '▶';
-        }
+        btn.innerText = wrapper.classList.contains('expanded') ? '◀' : '▶';
     }
 
     function showBand(bandName, btnElement) {
@@ -183,7 +166,8 @@
         const albumData = JSON.parse(element.getAttribute('data-album-json'));
         const img = document.getElementById('preview-img');
         const container = document.getElementById('track-info-container');
-        img.src = albumData.img_url; img.style.display = 'block';
+        img.src = albumData.img_url; 
+        img.style.display = 'block';
         container.innerHTML = '';
         albumData.tracks.forEach(track => {
             const row = document.createElement('div');
@@ -208,6 +192,7 @@
             onAdd: function (evt) {
                 const item = evt.item;
                 if (!item.querySelector('.del-btn')) {
+                    item.classList.add('tier-item'); // 클래스 추가
                     const btn = document.createElement('div');
                     btn.className = 'del-btn'; btn.innerText = 'X';
                     btn.onclick = (e) => { e.stopPropagation(); item.remove(); };
@@ -217,64 +202,59 @@
         });
     });
 
-    function exportTier() {
-        const target = document.querySelector("#tier-capture-area");
-        // 전체 화면 캡처를 위해 잠시 확장
-        const wrapper = document.getElementById('tier-wrapper');
-        const wasExpanded = wrapper.classList.contains('expanded');
-        wrapper.classList.add('expanded');
-
-        html2canvas(target, { scale: 2, backgroundColor: "#fff" }).then(canvas => {
-            const a = document.createElement('a');
-            a.href = canvas.toDataURL("image/png");
-            a.download = 'tier-list.png';
-            a.click();
-            if (!wasExpanded) wrapper.classList.remove('expanded');
-        });
-    }
-
-    function exportTier() {
+    // 최종 이미지 저장 로직
+    async function exportTier() {
         const wrapper = document.getElementById('tier-wrapper');
         const captureTarget = document.querySelector("#tier-capture-area");
         
-        // 1. 캡처 전 상태 설정
+        // 1. 상태 설정 (캡처 모드 진입)
         const wasExpanded = wrapper.classList.contains('expanded');
         wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
 
-        // 2. 약간의 지연 시간을 주어 브라우저가 확장된 레이아웃을 완전히 그리도록 함
-        setTimeout(() => {
-            html2canvas(captureTarget, {
-                scale: 2,               // 고해상도
-                useCORS: true,          // 외부 이미지 허용 (가장 중요)
-                allowTaint: false,      // CORS 설정이 안 된 이미지 오염 방지
-                backgroundColor: "#ffffff", // 배경색 흰색 고정
-                logging: true,          // 문제 확인을 위해 로그 활성화
+        try {
+            // 2. 모든 이미지 로드 대기 (투명화 방지 핵심)
+            const images = captureTarget.getElementsByTagName('img');
+            const imagePromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+            });
+            await Promise.all(imagePromises);
+
+            // 3. 렌더링 안정화를 위한 미세 지연
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            // 4. html2canvas 실행
+            const canvas = await html2canvas(captureTarget, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: "#ffffff",
                 width: captureTarget.offsetWidth,
                 height: captureTarget.offsetHeight,
                 onclone: (clonedDoc) => {
-                    // 복제된 문서에서도 X 버튼이 확실히 안 보이도록 처리
+                    const target = clonedDoc.querySelector("#tier-capture-area");
+                    target.style.display = "block";
                     const delBtns = clonedDoc.querySelectorAll('.del-btn');
                     delBtns.forEach(btn => btn.style.display = 'none');
                 }
-            }).then(canvas => {
-                const a = document.createElement('a');
-                a.href = canvas.toDataURL("image/png");
-                a.download = 'my-bang-dream-tier.png';
-                a.click();
-
-                // 상태 복구
-                document.body.classList.remove('capturing');
-                if (!wasExpanded) wrapper.classList.remove('expanded');
-            }).catch(err => {
-                console.error("Capture Error:", err);
-                document.body.classList.remove('capturing');
-                if (!wasExpanded) wrapper.classList.remove('expanded');
             });
-        }, 100); // 0.1초 대기 후 캡처 실행
-    }
-    }
 
+            // 5. 다운로드
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL("image/png");
+            link.download = `my-bang-dream-tier-${Date.now()}.png`;
+            link.click();
+
+        } catch (err) {
+            console.error("저장 중 오류:", err);
+            alert("이미지 생성 중 오류가 발생했습니다.");
+        } finally {
+            // 6. 상태 복구
+            document.body.classList.remove('capturing');
+            if (!wasExpanded) wrapper.classList.remove('expanded');
+        }
+    }
 </script>
 </body>
 </html>
