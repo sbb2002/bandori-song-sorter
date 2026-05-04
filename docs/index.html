@@ -88,6 +88,26 @@
             #preview-img { width: 250px; max-width: 250px; }
             .bank-item { width: 85px; height: 85px; }
             .band-content { justify-content: flex-start; }
+        
+        /* 캡처 시 레이아웃 붕괴 방지 및 배경색 고정 */
+        #tier-capture-area {
+            background-color: #ffffff !important;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: relative;
+        }
+
+        /* 캡처 중일 때만 모든 배경과 텍스트 색상을 강제 고정 */
+        .capturing #tier-capture-area,
+        .capturing .tier-row,
+        .capturing .drop-zone {
+            background-color: #ffffff !important;
+        }
+
+        /* 캡처 중 X 버튼 숨김 */
+        .capturing .del-btn {
+            display: none !important;
         }
     </style>
 </head>
@@ -451,6 +471,49 @@
             if (!wasExpanded) wrapper.classList.remove('expanded');
         });
     }
+
+    function exportTier() {
+        const wrapper = document.getElementById('tier-wrapper');
+        const captureTarget = document.querySelector("#tier-capture-area");
+        
+        // 1. 캡처 전 상태 설정
+        const wasExpanded = wrapper.classList.contains('expanded');
+        wrapper.classList.add('expanded');
+        document.body.classList.add('capturing');
+
+        // 2. 약간의 지연 시간을 주어 브라우저가 확장된 레이아웃을 완전히 그리도록 함
+        setTimeout(() => {
+            html2canvas(captureTarget, {
+                scale: 2,               // 고해상도
+                useCORS: true,          // 외부 이미지 허용 (가장 중요)
+                allowTaint: false,      // CORS 설정이 안 된 이미지 오염 방지
+                backgroundColor: "#ffffff", // 배경색 흰색 고정
+                logging: true,          // 문제 확인을 위해 로그 활성화
+                width: captureTarget.offsetWidth,
+                height: captureTarget.offsetHeight,
+                onclone: (clonedDoc) => {
+                    // 복제된 문서에서도 X 버튼이 확실히 안 보이도록 처리
+                    const delBtns = clonedDoc.querySelectorAll('.del-btn');
+                    delBtns.forEach(btn => btn.style.display = 'none');
+                }
+            }).then(canvas => {
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL("image/png");
+                a.download = 'my-bang-dream-tier.png';
+                a.click();
+
+                // 상태 복구
+                document.body.classList.remove('capturing');
+                if (!wasExpanded) wrapper.classList.remove('expanded');
+            }).catch(err => {
+                console.error("Capture Error:", err);
+                document.body.classList.remove('capturing');
+                if (!wasExpanded) wrapper.classList.remove('expanded');
+            });
+        }, 100); // 0.1초 대기 후 캡처 실행
+    }
+    }
+
 </script>
 </body>
 </html>
