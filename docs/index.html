@@ -7,49 +7,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --bg-color: #000; --text-color: #fff; --accent-pink: #ff99aa; --accent-blue: #4488ff; }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
+        :root { --bg-color: #000; --text-color: #fff; --accent-pink: #ff99aa; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
+        
         .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
         
-        /* 티어 보드 */
-        #tier-wrapper { background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
+        /* 티어 보드 영역 */
+        #tier-wrapper { background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; z-index: 100; display: flex; flex-direction: column; }
         #tier-wrapper.expanded { width: 100vw; }
         .tier-table { border: 1px solid #444; width: 100%; border-collapse: collapse; flex: 1; }
         .tier-row { border-bottom: 1px solid #444; display: flex; min-height: 10%; }
         .tier-label { width: 60px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-right: 1px solid #444; flex-shrink: 0; }
-        .drop-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #fff; min-height: 50px; }
+        .drop-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #fff; }
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
 
-        .tier-item { width: 50px; height: 50px; position: relative; cursor: grab; }
-        .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-        .del-btn { position: absolute; top: -5px; right: -5px; background: red; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer; }
+        .tier-item { width: 50px; height: 50px; position: relative; }
+        .tier-item img { width: 100%; height: 100%; object-fit: cover; }
+        .del-btn { position: absolute; top: -5px; right: -5px; background: red; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-        #toggle-btn { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: var(--accent-pink); border: none; color: white; width: 30px; height: 60px; cursor: pointer; z-index: 110; border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        #toggle-btn { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: var(--accent-pink); border: none; width: 30px; height: 60px; cursor: pointer; z-index: 110; border-radius: 0 10px 10px 0; font-weight: bold; }
         #tier-wrapper.expanded + #toggle-btn { left: calc(100vw - 30px); border-radius: 10px 0 0 10px; }
 
         .control-panel { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; background: var(--bg-color); overflow-y: auto; }
-        #tier-wrapper.expanded ~ .control-panel { transform: translateX(100%); }
+        #tier-wrapper.expanded ~ .control-panel { display: none; }
 
-        #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; display: flex; flex-direction: column; }
+        #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; }
         .band-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
         .band-btn { background: #222; color: #fff; border: 1px solid #444; padding: 5px 10px; font-size: 11px; border-radius: 15px; cursor: pointer; }
         .band-btn.active { background: var(--accent-pink); color: #000; }
-        .band-content { display: none; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .band-content { display: none; flex-wrap: wrap; gap: 8px; }
         .band-content.active { display: flex; }
         .bank-item { width: 65px; height: 65px; cursor: pointer; }
-        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; pointer-events: none; }
+        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
 
-        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; cursor: pointer; width: 100%; margin-top: 10px; }
 
         @media (min-width: 1024px) {
             .main-container { padding: 20px; gap: 20px; align-items: flex-start; height: auto; }
-            #tier-wrapper { width: 450px !important; }
+            #tier-wrapper { width: 500px !important; }
             #tier-wrapper:not(.expanded) .drop-zone { display: flex; }
             #toggle-btn { display: none; }
-            .control-panel { width: 600px; padding: 0; }
-            .bank-item { width: 85px; height: 85px; }
+            .control-panel { width: 600px; display: flex !important; }
         }
-        /* 캡처 시 UI 정리 */
         .capturing .del-btn { display: none !important; }
     </style>
 </head>
@@ -110,7 +109,7 @@
             </div>
             
         </div>
-        <button class="btn-save" onclick="exportTier()">티어리스트 저장</button>
+        <button class="btn-save" onclick="exportTier()">이미지로 저장</button>
     </div>
 
     <button id="toggle-btn" onclick="toggleTier()">▶</button>
@@ -118,7 +117,7 @@
     <div class="control-panel">
         <div id="preview-display" style="background:#111; padding:15px; border:1px solid #333; display:flex; gap:10px; min-height:150px;">
             <img id="preview-img" src="" style="width:120px; height:120px; object-fit:cover; display:none;" referrerpolicy="no-referrer">
-            <div id="track-info-container" style="flex:1; font-size:12px;">앨범을 선택하세요.</div>
+            <div id="track-info-container" style="flex:1; font-size:12px;">앨범을 클릭하면 곡 목록이 보입니다.</div>
         </div>
         <div id="album-bank-wrapper">
             <div class="band-nav">
@@ -148,23 +147,19 @@
             <div id="band-afterglow" class="band-content active">
                 
                 <div class="bank-item" data-album-json='{"album_title": "ONE OF US", "band": "afterglow", "img_url": "https://i.namu.wiki/i/YDihzSPPzPey20RHsh9EgR_RQ8EA5lYGJbb5y72KYs1rl3Lztdf0hC34hqSDHHJGOQ5awlJWeYVazGBfhJaFBV51cuk7A0q7fU4_jMwQmClcKFWmkCDiBFVVAdnMEavNS2eTzbG0Ffz8IyVzWfkSSQ.webp", "numbering": "1st", "tracks": [{"name": "ON YOUR MARK", "track_number": "01", "url": "-"}, {"name": "That Is How I Roll!", "track_number": "02", "url": "-"}, {"name": "SENSENFUKOKU", "track_number": "03", "url": "-"}, {"name": "I knew it!", "track_number": "04", "url": "-"}, {"name": "\u30c4\u30ca\u30b0\u3001\u30bd\u30e9\u30e2\u30e8\u30a6", "track_number": "05", "url": "-"}, {"name": "Hey-day\u72c2\u9a12\u66f2(\u30ab\u30d7\u30ea\u30c1\u30aa)", "track_number": "06", "url": "-"}, {"name": "Easy come, Easy go!", "track_number": "07", "url": "-"}, {"name": "Sasanqua", "track_number": "08", "url": "-"}, {"name": "RED RED RED", "track_number": "09", "url": "-"}, {"name": "ONE OF US", "track_number": "10", "url": "-"}, {"name": "Y.O.L.O!!!!!", "track_number": "11", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/YDihzSPPzPey20RHsh9EgR_RQ8EA5lYGJbb5y72KYs1rl3Lztdf0hC34hqSDHHJGOQ5awlJWeYVazGBfhJaFBV51cuk7A0q7fU4_jMwQmClcKFWmkCDiBFVVAdnMEavNS2eTzbG0Ffz8IyVzWfkSSQ.webp" referrerpolicy="no-referrer" alt="ONE OF US">
+                    <img src="https://i.namu.wiki/i/YDihzSPPzPey20RHsh9EgR_RQ8EA5lYGJbb5y72KYs1rl3Lztdf0hC34hqSDHHJGOQ5awlJWeYVazGBfhJaFBV51cuk7A0q7fU4_jMwQmClcKFWmkCDiBFVVAdnMEavNS2eTzbG0Ffz8IyVzWfkSSQ.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "STAY GLOW", "band": "afterglow", "img_url": "https://i.namu.wiki/i/ckmMJevkM7XGGcVNHtK16NC47q5iewMwCbW5bQDNLQjTQHcg_uklMVD4AB_pdDEw3vr6o7bl2JyDsRYS78kH9fYXrgw5GB1WqYgzRZtv2PE-gYI6MaAb7Gv11-3qVEewd6WatZLcZM7iTAO0BWfhMQ.webp", "numbering": "2nd", "tracks": [{"name": "Scarlet Sky", "track_number": "01", "url": "-"}, {"name": "Off we go.", "track_number": "02", "url": "-"}, {"name": "\u3044\u3064\u3082\u901a\u308a\u306eBrand new days", "track_number": "03", "url": "-"}, {"name": "SWITCH ON NOW", "track_number": "04", "url": "-"}, {"name": "\u30e9\u30f3\u30d6\u30ea\u30f3\u30b0\u30e1\u30e2\u30ea\u30fc", "track_number": "05", "url": "-"}, {"name": "COMIC PANIC!!!", "track_number": "06", "url": "-"}, {"name": "Trouble Joyful!!", "track_number": "07", "url": "-"}, {"name": "Jamboree!Journey!", "track_number": "08", "url": "-"}, {"name": "\u30ab\u30ca\u30e6\u30e1", "track_number": "09", "url": "-"}, {"name": "\u72ec\u5275\u53ce\u5dee", "track_number": "10", "url": "-"}, {"name": "\u6975\u5f69\u8272(BanG Dream!)|\u6975\u5f69\u8272", "track_number": "11", "url": "-"}, {"name": "\u30b5\u30af\u30e9\u30bc\u30f3\u30bb\u30f3", "track_number": "12", "url": "-"}, {"name": "True color", "track_number": "13", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/ckmMJevkM7XGGcVNHtK16NC47q5iewMwCbW5bQDNLQjTQHcg_uklMVD4AB_pdDEw3vr6o7bl2JyDsRYS78kH9fYXrgw5GB1WqYgzRZtv2PE-gYI6MaAb7Gv11-3qVEewd6WatZLcZM7iTAO0BWfhMQ.webp" referrerpolicy="no-referrer" alt="STAY GLOW">
+                    <img src="https://i.namu.wiki/i/ckmMJevkM7XGGcVNHtK16NC47q5iewMwCbW5bQDNLQjTQHcg_uklMVD4AB_pdDEw3vr6o7bl2JyDsRYS78kH9fYXrgw5GB1WqYgzRZtv2PE-gYI6MaAb7Gv11-3qVEewd6WatZLcZM7iTAO0BWfhMQ.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u5fd8\u308c\u3089\u3093\u306a\u3044\u65e5\u3005\u306e\u3053\u3068", "band": "afterglow", "img_url": "https://i.namu.wiki/i/YU7dEc4s5IBfE3AKbEboYj-5YGWzkKmGSxBsK2-QS0KKxXvls0RWmIoWRid3P0phr7yQcb5yDECMkY-19sD_gQvZZZiIn43ZVmA8lUa_nopdnSdByzy43He-buYIginFoVWRPEUx6-WNpbBB4exbGw.webp", "numbering": "Mini", "tracks": [{"name": "\u71e6\u3005", "track_number": "01", "url": "-"}, {"name": "That\u0027s why I\u0027m here.", "track_number": "02", "url": "-"}, {"name": "IGNITE GLOW", "track_number": "03", "url": "-"}, {"name": "\u30da\u30c8\u30ea\u30b3\u30fc\u30eb\u30fb\u30aa\u30d9\u30fc\u30b7\u30e7\u30f3", "track_number": "04", "url": "-"}, {"name": "Made My Day", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/YU7dEc4s5IBfE3AKbEboYj-5YGWzkKmGSxBsK2-QS0KKxXvls0RWmIoWRid3P0phr7yQcb5yDECMkY-19sD_gQvZZZiIn43ZVmA8lUa_nopdnSdByzy43He-buYIginFoVWRPEUx6-WNpbBB4exbGw.webp" referrerpolicy="no-referrer" alt="忘れらんない日々のこと">
+                    <img src="https://i.namu.wiki/i/YU7dEc4s5IBfE3AKbEboYj-5YGWzkKmGSxBsK2-QS0KKxXvls0RWmIoWRid3P0phr7yQcb5yDECMkY-19sD_gQvZZZiIn43ZVmA8lUa_nopdnSdByzy43He-buYIginFoVWRPEUx6-WNpbBB4exbGw.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "GLOW GOES ON", "band": "afterglow", "img_url": "https://i.namu.wiki/i/-oqifpsqOv5OBJ-UOD0eqb9KkePokA6k-tQfk6iCJM43lhJHlSe6OakKO9Fvcr4XXQLOLrL-4qAUr4CuWEvQXSLd6T9LH0Hywl5PFSaEiWR_-HqzsQqNJa15YfRi9GikMsmMUqz0bzporGaBMdPkLA.webp", "numbering": "Mini", "tracks": [{"name": "Glowing After", "track_number": "01", "url": "-"}, {"name": "A Sunset So Bright", "track_number": "02", "url": "-"}, {"name": "Start as Usual", "track_number": "03", "url": "-"}, {"name": "\u201cSay cheese!!!!!\u201d", "track_number": "04", "url": "-"}, {"name": "\u82b1\u7b11\u307f\u306e\u30c7\u30e5\u30aa", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/-oqifpsqOv5OBJ-UOD0eqb9KkePokA6k-tQfk6iCJM43lhJHlSe6OakKO9Fvcr4XXQLOLrL-4qAUr4CuWEvQXSLd6T9LH0Hywl5PFSaEiWR_-HqzsQqNJa15YfRi9GikMsmMUqz0bzporGaBMdPkLA.webp" referrerpolicy="no-referrer" alt="GLOW GOES ON">
+                    <img src="https://i.namu.wiki/i/-oqifpsqOv5OBJ-UOD0eqb9KkePokA6k-tQfk6iCJM43lhJHlSe6OakKO9Fvcr4XXQLOLrL-4qAUr4CuWEvQXSLd6T9LH0Hywl5PFSaEiWR_-HqzsQqNJa15YfRi9GikMsmMUqz0bzporGaBMdPkLA.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -172,18 +167,15 @@
             <div id="band-ave_mujica" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "Completeness", "band": "ave_mujica", "img_url": "https://i.namu.wiki/i/mktOPKfW08N_V5fzdfdoSwVleTafkonIkG0AkllpLZx4vchVfW7F8Uqn74tmvB-xRMdlCNECe1dCTqAMzoYn2k5r9AFXuyoZYpJ_ivxLYdI8ve5FFOoOt0OyGD8f4ATP5JDhLq3q1t0iAU_ugJH0aA.webp", "numbering": "1st", "tracks": [{"name": "KiLLKiSS", "track_number": "01", "url": "-"}, {"name": "Georgette Me, Georgette You", "track_number": "02", "url": "-"}, {"name": "Imprisoned XII", "track_number": "03", "url": "-"}, {"name": "Crucifix X", "track_number": "04", "url": "-"}, {"name": "\u516b\u8292\u661f\u30c0\u30f3\u30b9", "track_number": "05", "url": "-"}, {"name": "\u9854(BanG Dream!)|\u9854", "track_number": "06", "url": "-"}, {"name": "\u5929\u7403\u306eM\u00fasica", "track_number": "07", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/mktOPKfW08N_V5fzdfdoSwVleTafkonIkG0AkllpLZx4vchVfW7F8Uqn74tmvB-xRMdlCNECe1dCTqAMzoYn2k5r9AFXuyoZYpJ_ivxLYdI8ve5FFOoOt0OyGD8f4ATP5JDhLq3q1t0iAU_ugJH0aA.webp" referrerpolicy="no-referrer" alt="Completeness">
+                    <img src="https://i.namu.wiki/i/mktOPKfW08N_V5fzdfdoSwVleTafkonIkG0AkllpLZx4vchVfW7F8Uqn74tmvB-xRMdlCNECe1dCTqAMzoYn2k5r9AFXuyoZYpJ_ivxLYdI8ve5FFOoOt0OyGD8f4ATP5JDhLq3q1t0iAU_ugJH0aA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "Alea jacta est", "band": "ave_mujica", "img_url": "https://i.namu.wiki/i/yMSEPtm_UAtpNp49WKY8224RJfA41Ya5wt0d_ALtwuzpyctwMYs1iJGhRk6p4BD17pB5KmLwdoS3ivEVxC3e0hMHp9SrQhMt4Mdak4UX3AqeGxForib01SgBygHyI6tiIQQXqpfkUZBmYoS9UK_7Cg.webp", "numbering": "Mini", "tracks": [{"name": "\u9ed2\u306e\u30d0\u30fc\u30b9\u30c7\u30a4", "track_number": "01", "url": "-"}, {"name": "\u3075\u305f\u3064\u306e\u6708 ~Deep Into The Forest~", "track_number": "02", "url": "-"}, {"name": "Choir \u2018S\u2019 Choir", "track_number": "03", "url": "-"}, {"name": "\u795e\u3055\u307e\u3001\u30d0\u30ab", "track_number": "04", "url": "-"}, {"name": "Mas?uerade Rhapsody Re?uest", "track_number": "05", "url": "-"}, {"name": "Ave Mujica(\ub178\ub798)|Ave Mujica", "track_number": "06", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/yMSEPtm_UAtpNp49WKY8224RJfA41Ya5wt0d_ALtwuzpyctwMYs1iJGhRk6p4BD17pB5KmLwdoS3ivEVxC3e0hMHp9SrQhMt4Mdak4UX3AqeGxForib01SgBygHyI6tiIQQXqpfkUZBmYoS9UK_7Cg.webp" referrerpolicy="no-referrer" alt="Alea jacta est">
+                    <img src="https://i.namu.wiki/i/yMSEPtm_UAtpNp49WKY8224RJfA41Ya5wt0d_ALtwuzpyctwMYs1iJGhRk6p4BD17pB5KmLwdoS3ivEVxC3e0hMHp9SrQhMt4Mdak4UX3AqeGxForib01SgBygHyI6tiIQQXqpfkUZBmYoS9UK_7Cg.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "ELEMENTS", "band": "ave_mujica", "img_url": "https://i.namu.wiki/i/7bUUNJp1WqRebygyavk9rgFelZbpmNgh9GBvuIuoure2vJIk7vFbSMLrluP9oZl2YCwUPmIfrZxgbRQRD4uK2d_VwaL2xbS1xSlYCRgT96ZcGjC_CXta4bahxyXh3Ov4mOOYHki4CmET5T_IGDn4yw.webp", "numbering": "Mini", "tracks": [{"name": "Symbol I : \u25b3", "track_number": "01", "url": "-"}, {"name": "Symbol II : Air", "track_number": "02", "url": "-"}, {"name": "Symbol III : \u25bd", "track_number": "03", "url": "-"}, {"name": "Symbol IV : Earth", "track_number": "04", "url": "-"}, {"name": "Ether(BanG Dream!)|Ether", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/7bUUNJp1WqRebygyavk9rgFelZbpmNgh9GBvuIuoure2vJIk7vFbSMLrluP9oZl2YCwUPmIfrZxgbRQRD4uK2d_VwaL2xbS1xSlYCRgT96ZcGjC_CXta4bahxyXh3Ov4mOOYHki4CmET5T_IGDn4yw.webp" referrerpolicy="no-referrer" alt="ELEMENTS">
+                    <img src="https://i.namu.wiki/i/7bUUNJp1WqRebygyavk9rgFelZbpmNgh9GBvuIuoure2vJIk7vFbSMLrluP9oZl2YCwUPmIfrZxgbRQRD4uK2d_VwaL2xbS1xSlYCRgT96ZcGjC_CXta4bahxyXh3Ov4mOOYHki4CmET5T_IGDn4yw.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -191,23 +183,19 @@
             <div id="band-hello_happy_world" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u306b\u3053\u306b\u3053\u306d\u304f\u3068\uff01", "band": "hello_happy_world", "img_url": "https://i.namu.wiki/i/KhVBz41jSEBM4CJ_NJfB_tPC2TgWennMJwD4IqWwE79psashVnui71SRqLTm2c-G-W0TGuUTA3W3gToISGmX0YkRRpPQSUOyWba7LPmyyYQKLVaMPXLHUAcFJgKByTSy2K-HLVTr7F_r9GP67ljJ8g.webp", "numbering": "1st", "tracks": [{"name": "\u30ad\u30df\u304c\u3044\u306a\u304f\u3061\u3083\u3063\uff01", "track_number": "01", "url": "-"}, {"name": "\u30cf\u30a4\u30d5\u30a1\u30a4\u30d6\u221e\u3042\u3069\u3079\u3093\u3061\u3083\u3063", "track_number": "02", "url": "-"}, {"name": "\u30b9\u30de\u30a4\u30eb\u30d6\u30fc\u30b1\u3067 \u305f\u301c\u307e\u3084\u301c\uff01", "track_number": "03", "url": "-"}, {"name": "\u3048\u304c\u304a\uff65\u30b7\u30f3\u30b0\uff65\u3042\uff65\u30bd\u30f3\u30b0", "track_number": "04", "url": "-"}, {"name": "YAPPY! SCHOOL CARNIVAL\u2606\u5f61", "track_number": "05", "url": "-"}, {"name": "\u306b\u3053\u00d7\u306b\u3053=\u30cf\u30a4\u30d1\u30fc\u30b9\u30de\u30a4\u30eb\u30d1\u30ef\u30fc\uff01", "track_number": "06", "url": "-"}, {"name": "\u306a\u3044\u3059\u307f\u3061\u3085\u3063\uff01", "track_number": "07", "url": "-"}, {"name": "\u30b4\u30fc\u30ab\uff01\u3054\u30fc\u304b\u3044\uff01\uff1f\u30d5\u30a1\u30f3\u30c8\u30e0\u30b7\u30fc\u30d5\uff01", "track_number": "08", "url": "-"}, {"name": "\u3046\u3043\u30fc\u304d\u3083\u3093\u2606\u30d5\u30ec\u30d5\u30ec\u3063\uff01", "track_number": "09", "url": "-"}, {"name": "\u3048\u304c\u304a\u306e\u30aa\u30fc\u30b1\u30b9\u30c8\u30e9\u3063\uff01", "track_number": "10", "url": "-"}, {"name": "\u306b\u3053\u306b\u3053\u306d\u304f\u3068\uff01", "track_number": "11", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/KhVBz41jSEBM4CJ_NJfB_tPC2TgWennMJwD4IqWwE79psashVnui71SRqLTm2c-G-W0TGuUTA3W3gToISGmX0YkRRpPQSUOyWba7LPmyyYQKLVaMPXLHUAcFJgKByTSy2K-HLVTr7F_r9GP67ljJ8g.webp" referrerpolicy="no-referrer" alt="にこにこねくと！">
+                    <img src="https://i.namu.wiki/i/KhVBz41jSEBM4CJ_NJfB_tPC2TgWennMJwD4IqWwE79psashVnui71SRqLTm2c-G-W0TGuUTA3W3gToISGmX0YkRRpPQSUOyWba7LPmyyYQKLVaMPXLHUAcFJgKByTSy2K-HLVTr7F_r9GP67ljJ8g.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "SMILE ON PARADE", "band": "hello_happy_world", "img_url": "https://i.namu.wiki/i/qZ3ZncDcWE45Mp3lfuydDeoh7LLbeuncLMmTzn3DJWWpTOewX0jQuP1w7-1OnfFavXyIyI8xsuxU32uYXwJab_zUq8WJsZEf-NDXNhrEs0OCwi_-m72M7AzGgxPTXKyAITXBf-FnKX96U7EpJxPnpA.webp", "numbering": "2nd", "tracks": [{"name": "\u3075\u3041\u3044\u3076\u30b9\u30de\u30a4\u30eb\u25ef\u30aa\u30fc\u30eb\u30a4\u30f3\u3063\uff01", "track_number": "01", "url": "-"}, {"name": "\u305b\u304b\u3044\u306e\u3063\u3073\u306e\u3073\u30c8\u30ec\u30b8\u30e3\u30fc\uff01", "track_number": "02", "url": "-"}, {"name": "\u304d\u3089\u3063\u2606\u3068 \u30ad\u30df\u30d5\u30a7\u30b9\uff01", "track_number": "03", "url": "-"}, {"name": "\u3046\u3061\u3083\u30d1\uff01\u3067 \u3071\u3063\u3074\u304b\u30dd\u30fc\u3093\u3063\uff01", "track_number": "04", "url": "-"}, {"name": "\u306f\u308c\u3084\u304b \u3059\u3053\u3084\u304b \u3074\u304b\u308a\u3093\u308a\u3093\u266a", "track_number": "05", "url": "-"}, {"name": "\u3075\u308f\u3075\u308f\u2606\u3086\u3081\u3044\u308d\u30b5\u30f3\u30c9\u30a4\u30c3\u30c1", "track_number": "06", "url": "-"}, {"name": "Happy! Happier! Happiest!", "track_number": "07", "url": "-"}, {"name": "\u73fe\u308b\u3063\uff01\u5927\u602a\u76d7\u30cf\u30ed\u30cf\u30c3\u30d4\u30fc\uff01", "track_number": "08", "url": "-"}, {"name": "\u308f\u3061\u3083\u30fb\u3082\u3061\u3083\u30fb\u307a\u3063\u305f\u3093\u884c\u9032\u66f2", "track_number": "09", "url": "-"}, {"name": "\u304a\u3082\u3044\u3067\u30a4\u30eb\u30df\u30cd\u30fc\u30b7\u30e7\u30f3", "track_number": "10", "url": "-"}, {"name": "\u304a\u3082\u3044\u3084\u308a\u30cf\u30fc\u30e2\u30cb\u30fc", "track_number": "11", "url": "-"}, {"name": "\u30cf\u30d4\u30cd\u30b9\u3063\uff01\u30cf\u30d4\u30a3\u30fc\u30de\u30b8\u30ab\u30eb\u3063\u266a", "track_number": "12", "url": "-"}, {"name": "\u3048\u304c\u304a\u3001\u3042\u30fc\u3086\u30fc\u308c\u3067\u3043???", "track_number": "13", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/qZ3ZncDcWE45Mp3lfuydDeoh7LLbeuncLMmTzn3DJWWpTOewX0jQuP1w7-1OnfFavXyIyI8xsuxU32uYXwJab_zUq8WJsZEf-NDXNhrEs0OCwi_-m72M7AzGgxPTXKyAITXBf-FnKX96U7EpJxPnpA.webp" referrerpolicy="no-referrer" alt="SMILE ON PARADE">
+                    <img src="https://i.namu.wiki/i/qZ3ZncDcWE45Mp3lfuydDeoh7LLbeuncLMmTzn3DJWWpTOewX0jQuP1w7-1OnfFavXyIyI8xsuxU32uYXwJab_zUq8WJsZEf-NDXNhrEs0OCwi_-m72M7AzGgxPTXKyAITXBf-FnKX96U7EpJxPnpA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u3069\u3046\u3057\u305f\u3063\u3066\u30ab\u30fc\u30cb\u30d0\u30eb\uff01", "band": "hello_happy_world", "img_url": "https://i.namu.wiki/i/J8jo5LhAOfXjGkuHKRhSAy9ZcqeYV5RL_MDNVhHibe0Yj2Gv_baWWq_fctELlkIN5D2BvcFVXtdkADI5twUylkDWWK6FL430XaOo9pYzLx4XD_N2UIzhG15JZvhqzuYVlUcYNtVYn1WtuoO82pks8A.webp", "numbering": "Mini", "tracks": [{"name": "\u30b5\u30f3\u30d0\u30ed\u30cf\u30c3\u30d4\u301c\uff01", "track_number": "01", "url": "-"}, {"name": "\u30dc\u30af\u3089\u306e\u590f\u0027s\u2606\u30b7\u30e7\u30fc\u305f\u3044\u3080\u3063\uff01\uff01", "track_number": "02", "url": "-"}, {"name": "\u3080\u3059\u3093\u3067\u308f\u3089\u3063\u3066", "track_number": "03", "url": "-"}, {"name": "\u30ad\u30df\u3092 \u308c\u3063\u3064\u30fb\u306f\u3076\u30fb\u3075\u3041\u3093\u266a", "track_number": "04", "url": "-"}, {"name": "\u3089\u3044\u3075\u30fb\u3044\u305a\u30fb\u307f\u3085\u30fc\u3058\u304b\u308b\u3063\u266a\u266a\u266a", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/J8jo5LhAOfXjGkuHKRhSAy9ZcqeYV5RL_MDNVhHibe0Yj2Gv_baWWq_fctELlkIN5D2BvcFVXtdkADI5twUylkDWWK6FL430XaOo9pYzLx4XD_N2UIzhG15JZvhqzuYVlUcYNtVYn1WtuoO82pks8A.webp" referrerpolicy="no-referrer" alt="どうしたってカーニバル！">
+                    <img src="https://i.namu.wiki/i/J8jo5LhAOfXjGkuHKRhSAy9ZcqeYV5RL_MDNVhHibe0Yj2Gv_baWWq_fctELlkIN5D2BvcFVXtdkADI5twUylkDWWK6FL430XaOo9pYzLx4XD_N2UIzhG15JZvhqzuYVlUcYNtVYn1WtuoO82pks8A.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u3044\u3063\u3064\u3042\uff01\u3059\u307e\u3044\u308b\u308f\u30fc\u308b\u3069\uff01\uff01", "band": "hello_happy_world", "img_url": "https://i.namu.wiki/i/FUKZ7korhM9o7piFRDvvnKaSnmBqYXRnrSZN55jBixmgBNzXnpnI72JvOCnLdx2heecadc7lq3vVLlXrtTNc41aXFkAZpD4k1reCeu85zgOCOIdSldhUl_h2dMuYuTaQoScgbkbaUw9uCz3n7_63GA.webp", "numbering": "Mini", "tracks": [{"name": "\u308c\u3063\u3064\u30fb\u30b9\u30de\u30a4\u30eb\u30fb\u3059\u3068\u308a\u301c\u307f\u3093\u3050\u3063\u266a", "track_number": "01", "url": "-"}, {"name": "\u3084\u3063\u307b\u30fc\uff01\u3044\u3063\u307d\uff01\u308f\u3093\u3060\u3075\u3049\u30fc\uff01", "track_number": "02", "url": "-"}, {"name": "\u3068\u30fc\u304f\u3068\u3045\u307f\u30fc\u30fb\u3068\u30fc\u304f\u3068\u3045\u3086\u30fc", "track_number": "03", "url": "-"}, {"name": "\u30cf\u30a4\u30bf\u30c3\u30c1\uff0f\uff3c\u3073\u308a\u30fc\u3070\u30fc\u305a\u2606", "track_number": "04", "url": "-"}, {"name": "Listen to Smile!", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/FUKZ7korhM9o7piFRDvvnKaSnmBqYXRnrSZN55jBixmgBNzXnpnI72JvOCnLdx2heecadc7lq3vVLlXrtTNc41aXFkAZpD4k1reCeu85zgOCOIdSldhUl_h2dMuYuTaQoScgbkbaUw9uCz3n7_63GA.webp" referrerpolicy="no-referrer" alt="いっつあ！すまいるわーるど！！">
+                    <img src="https://i.namu.wiki/i/FUKZ7korhM9o7piFRDvvnKaSnmBqYXRnrSZN55jBixmgBNzXnpnI72JvOCnLdx2heecadc7lq3vVLlXrtTNc41aXFkAZpD4k1reCeu85zgOCOIdSldhUl_h2dMuYuTaQoScgbkbaUw9uCz3n7_63GA.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -215,18 +203,15 @@
             <div id="band-morfonica" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "QUINTET", "band": "morfonica", "img_url": "https://i.namu.wiki/i/nigXkHF2XvV-2Kefd79uZMq_0ZJH0xcxLq8431AZJjkimbPizj0KvM_ExGyw7Ge-mOhNBQ1OHFd6Gn82vC7u-s_nZTBE1NSL0nIOUD4wpMhaLD7x_Xep3ULi97WXp_i7iDRygi6o9POiSo3dKN9KJA.webp", "numbering": "1st", "tracks": [{"name": "Daylight -\u30c7\u30a4\u30e9\u30a4\u30c8-", "track_number": "01", "url": "-"}, {"name": "\u30e1\u30e9\u30f3\u30b3\u30ea\u30c3\u30af\u30e9\u30e9\u30d0\u30a4", "track_number": "02", "url": "-"}, {"name": "flame of hope", "track_number": "03", "url": "-"}, {"name": "\u30d6\u30eb\u30fc\u30e0\u30d6\u30eb\u30fc\u30e0", "track_number": "04", "url": "-"}, {"name": "\u30ab\u30e9\u30d5\u30eb\u30ea\u30d0\u30c6\u30a3\u30fc", "track_number": "05", "url": "-"}, {"name": "fly with the night", "track_number": "06", "url": "-"}, {"name": "\u91d1\u8272\u3078\u306e\u30d7\u30ec\u30ea\u30e5\u30fc\u30c9", "track_number": "07", "url": "-"}, {"name": "The Circle Of Butterflies", "track_number": "08", "url": "-"}, {"name": "\u30cf\u30fc\u30e2\u30cb\u30fc\u30fb\u30c7\u30a4", "track_number": "09", "url": "-"}, {"name": "Sweet Cheers!", "track_number": "10", "url": "-"}, {"name": "\u5bc4\u308b\u8fba\u306eSunny, Sunny", "track_number": "11", "url": "-"}, {"name": "\u8a93\u3044\u306eWingbeat", "track_number": "12", "url": "-"}, {"name": "Ever Sky Blue", "track_number": "13", "url": "-"}, {"name": "Morfonica ZEPP TOUR 2021 \u300cAmabile\u300d \ub3c4\ucfc4 \uacf5\uc5f0 \ub77c\uc774\ube0c \uc601\uc0c1", "track_number": "\u003c|2\u003e Disc 01", "url": "-"}, {"name": "BanG Dream!/\ub77c\uc774\ube0c#s-8.2|Morfonica Concept LIVE \u300cResonance\u300d \ub77c\uc774\ube0c \uc601\uc0c1", "track_number": "\u003c|2\u003e Disc 02", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/nigXkHF2XvV-2Kefd79uZMq_0ZJH0xcxLq8431AZJjkimbPizj0KvM_ExGyw7Ge-mOhNBQ1OHFd6Gn82vC7u-s_nZTBE1NSL0nIOUD4wpMhaLD7x_Xep3ULi97WXp_i7iDRygi6o9POiSo3dKN9KJA.webp" referrerpolicy="no-referrer" alt="QUINTET">
+                    <img src="https://i.namu.wiki/i/nigXkHF2XvV-2Kefd79uZMq_0ZJH0xcxLq8431AZJjkimbPizj0KvM_ExGyw7Ge-mOhNBQ1OHFd6Gn82vC7u-s_nZTBE1NSL0nIOUD4wpMhaLD7x_Xep3ULi97WXp_i7iDRygi6o9POiSo3dKN9KJA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "Polyphony", "band": "morfonica", "img_url": "https://i.namu.wiki/i/wZOhQY3rFTu3-zGcCtSFuoHCxTjKGtBSjSJc3abHGWeRMmRz40sv6HLRHbhbYkN6z3xMtJSQT0BvR5WeLeYw-5P8xYikUKtN1VxSDhSw70zqoi6kWRQP1TUPIlQ2TkjUMhml6Z8svqIZ813Us31xhQ.webp", "numbering": "2nd", "tracks": [{"name": "Polyphonyscape", "track_number": "01", "url": "-"}, {"name": "Wreath of Brave", "track_number": "02", "url": "-"}, {"name": "Merry Merry Thanks!!", "track_number": "03", "url": "-"}, {"name": "Sonorous", "track_number": "04", "url": "-"}, {"name": "\u4e21\u7ffc\u306eBrilliance", "track_number": "05", "url": "-"}, {"name": "Steer to Utopia", "track_number": "06", "url": "-"}, {"name": "Fateful...", "track_number": "07", "url": "-"}, {"name": "\u30c6\u30a3\u30ea\u30ab\u30e2\u30cb\u30ab\u30ea\u30e9", "track_number": "08", "url": "-"}, {"name": "Secret Dawn", "track_number": "09", "url": "-"}, {"name": "Angel\u0027s Ladder(BanG Dream!)|Angel\u0027s Ladder", "track_number": "10", "url": "-"}, {"name": "One step at a time", "track_number": "11", "url": "-"}, {"name": "Tempest(BanG Dream!)|Tempest", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/wZOhQY3rFTu3-zGcCtSFuoHCxTjKGtBSjSJc3abHGWeRMmRz40sv6HLRHbhbYkN6z3xMtJSQT0BvR5WeLeYw-5P8xYikUKtN1VxSDhSw70zqoi6kWRQP1TUPIlQ2TkjUMhml6Z8svqIZ813Us31xhQ.webp" referrerpolicy="no-referrer" alt="Polyphony">
+                    <img src="https://i.namu.wiki/i/wZOhQY3rFTu3-zGcCtSFuoHCxTjKGtBSjSJc3abHGWeRMmRz40sv6HLRHbhbYkN6z3xMtJSQT0BvR5WeLeYw-5P8xYikUKtN1VxSDhSw70zqoi6kWRQP1TUPIlQ2TkjUMhml6Z8svqIZ813Us31xhQ.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "forte", "band": "morfonica", "img_url": "https://i.namu.wiki/i/RDoFe2KHN9YqBL0SIm00YckRZf8-pRwzEpAnJQgBJqC2Jt3QSPuhHPtFBFJSOdO8Jf05nWclDK_xzwI6F5non_GSLuWI6UYBrD8SwFEH8sF3nJCmxEkxdoHAv0OJXsImWZ2oFoV3N3SSojdvCdLn7Q.webp", "numbering": "Mini", "tracks": [{"name": "\u30d5\u30ec\u30fc\u30b8\u30f3\u30b0 \u30df\u30e9\u30fc\u30b8\u30e5", "track_number": "01", "url": "-"}, {"name": "MUGEN Reverberate!", "track_number": "02", "url": "-"}, {"name": "\u308f\u305f\u3057\u307e\u3061\u304c\u3044\u3055\u304c\u3057", "track_number": "03", "url": "-"}, {"name": "esora no clover", "track_number": "04", "url": "-"}, {"name": "\u304d\u3087\u3046\u3082Merry go rounD", "track_number": "05", "url": "-"}, {"name": "BanG Dream! 10th\u2606LIVE DAY2 : Morfonica\u300cReverberation\u300d \ub77c\uc774\ube0c \uc601\uc0c1", "track_number": "01", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/RDoFe2KHN9YqBL0SIm00YckRZf8-pRwzEpAnJQgBJqC2Jt3QSPuhHPtFBFJSOdO8Jf05nWclDK_xzwI6F5non_GSLuWI6UYBrD8SwFEH8sF3nJCmxEkxdoHAv0OJXsImWZ2oFoV3N3SSojdvCdLn7Q.webp" referrerpolicy="no-referrer" alt="forte">
+                    <img src="https://i.namu.wiki/i/RDoFe2KHN9YqBL0SIm00YckRZf8-pRwzEpAnJQgBJqC2Jt3QSPuhHPtFBFJSOdO8Jf05nWclDK_xzwI6F5non_GSLuWI6UYBrD8SwFEH8sF3nJCmxEkxdoHAv0OJXsImWZ2oFoV3N3SSojdvCdLn7Q.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -234,13 +219,11 @@
             <div id="band-mugendai_mutype" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u30d7\u30ed\u30b0\u30ec\u30b9 \u30b5\u30a4\u30f3", "band": "mugendai_mutype", "img_url": "https://i.namu.wiki/i/02oeV9UyUa77wdi9NPbwalib0xZAzi4g-_mSo0CPNTq6m6PmylC3UZZIqxgAnDubRJde9lqw5Aa1wMRFdo6r3gUJjbo12FA908I5z8L09qc4zJEfcSnqJM1hnP0-NiqdS8p3PN9T_SkZDQL65WBCRg.webp", "numbering": "1st", "tracks": [{"name": "\u30a2\u30a4\u306e\u5922\u9650", "track_number": "01", "url": "-"}, {"name": "\u3069\u3093\u304c\u3089\u304c\u3063\u3057\u3083\u3093", "track_number": "02", "url": "-"}, {"name": "\u307f\u3085\u30fc\u305f\u3093\u3068\u30df\u30e5\u30fc\u30bf\u30f3\u30c8", "track_number": "03", "url": "-"}, {"name": "\u30c1\u30e5\u30fc\u30cb\u30f3\u30b0", "track_number": "04", "url": "-"}, {"name": "Dream Voyage", "track_number": "05", "url": "-"}, {"name": "\u30b0\u30e9\u30c7\u30a3\u30a8\u30f3\u30c8", "track_number": "06", "url": "-"}, {"name": "LET\u0027S\u3042\u3061\u3042\u3061\u30c8\u30ec\u30fc\u30cb\u30f3\u30b0\uff01", "track_number": "07", "url": "-"}, {"name": "\u771f\u591c\u4e2d\u904a\u5712\u5730", "track_number": "08", "url": "-"}, {"name": "\u30c6\u30ec\u30d1\u30b7\u30fc", "track_number": "09", "url": "-"}, {"name": "TRASH LIFE", "track_number": "10", "url": "-"}, {"name": "\u65b0\u4eba\u985e\u306f\u4eee\u60f3\u4e16\u754c\u306e\u5922\u3092\u898b\u308b\u304b?", "track_number": "11", "url": "-"}, {"name": "\u30b3\u30df\u30e5\u7740\u706bFire!", "track_number": "12", "url": "-"}, {"name": "Calling(BanG Dream!)|Calling", "track_number": "13", "url": "-"}, {"name": "Hi-Vision", "track_number": "14", "url": "-"}, {"name": "\u30b3\u30cf\u30af(BanG Dream!)|\u30b3\u30cf\u30af", "track_number": "15", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/02oeV9UyUa77wdi9NPbwalib0xZAzi4g-_mSo0CPNTq6m6PmylC3UZZIqxgAnDubRJde9lqw5Aa1wMRFdo6r3gUJjbo12FA908I5z8L09qc4zJEfcSnqJM1hnP0-NiqdS8p3PN9T_SkZDQL65WBCRg.webp" referrerpolicy="no-referrer" alt="プログレス サイン">
+                    <img src="https://i.namu.wiki/i/02oeV9UyUa77wdi9NPbwalib0xZAzi4g-_mSo0CPNTq6m6PmylC3UZZIqxgAnDubRJde9lqw5Aa1wMRFdo6r3gUJjbo12FA908I5z8L09qc4zJEfcSnqJM1hnP0-NiqdS8p3PN9T_SkZDQL65WBCRg.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u30b9\u30bf\u30fc\u30c8\u30e9\u30a4\u30f3", "band": "mugendai_mutype", "img_url": "https://i.namu.wiki/i/PTF-Um1cMhoBUC8Fb-TI4lzwJgjGmityd918uVWI81Db44S11HAhSy2Ar13eCz8Due1brKyN2UMQCgePvIhpk2y5oPkwFFoFHCK3czBfxDFq_m5P-aOndZw6cAdKLEEmx7JhaODxs1h48RtZSALc1Q.webp", "numbering": "Mini", "tracks": [{"name": "\u271eanima\u308b\u30d1\u30fc\u30c6\u30a3\u271e\u958b\u50ac\u4e2d\u271e", "track_number": "01", "url": "-"}, {"name": "\u30a8\u30f3\u30d7\u30c6\u30a3\u30d1\u30da\u30c3\u30c8", "track_number": "02", "url": "-"}, {"name": "\u9650\u754c\u73fe\u5b9f\u30b5\u30d0\u30a4\u30d6\u5929\u4f7f", "track_number": "03", "url": "-"}, {"name": "\u30d3\u30c3\u30b0\u30de\u30a6\u30b9", "track_number": "04", "url": "-"}, {"name": "\u5922\u73fe\u5984\u60f3\u4e16\u754c", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/PTF-Um1cMhoBUC8Fb-TI4lzwJgjGmityd918uVWI81Db44S11HAhSy2Ar13eCz8Due1brKyN2UMQCgePvIhpk2y5oPkwFFoFHCK3czBfxDFq_m5P-aOndZw6cAdKLEEmx7JhaODxs1h48RtZSALc1Q.webp" referrerpolicy="no-referrer" alt="スタートライン">
+                    <img src="https://i.namu.wiki/i/PTF-Um1cMhoBUC8Fb-TI4lzwJgjGmityd918uVWI81Db44S11HAhSy2Ar13eCz8Due1brKyN2UMQCgePvIhpk2y5oPkwFFoFHCK3czBfxDFq_m5P-aOndZw6cAdKLEEmx7JhaODxs1h48RtZSALc1Q.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -248,18 +231,15 @@
             <div id="band-mygo" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u8ff7\u8de1\u6ce2", "band": "mygo", "img_url": "https://i.namu.wiki/i/wJtmWASmh-dqULaJdA2NZuGoG7TNDhIrh-dICdHXfY8tC8UHJR1OHVp-Ji1igT3zL8MT2aJ0A2DsnaBkO_xyVy6A2zdSDOjeQ06t7L55IkxpS-1lFjhUT5nHkTgQggEKUzmfeElQGaU731HumFT31w.webp", "numbering": "1st", "tracks": [{"name": "\u8ff7\u661f\u53eb", "track_number": "01", "url": "-"}, {"name": "\u58f1\u96eb\u7a7a", "track_number": "02", "url": "-"}, {"name": "\u78a7\u5929\u4f34\u8d70", "track_number": "03", "url": "-"}, {"name": "\u5f71\u8272\u821e", "track_number": "04", "url": "-"}, {"name": "\u6b4c\u3044\u307e\u3057\u3087\u3046\u9cf4\u3089\u3057\u307e\u3057\u3087\u3046", "track_number": "05", "url": "-"}, {"name": "\u6f5c\u5728\u8868\u660e", "track_number": "06", "url": "-"}, {"name": "\u97f3\u4e00\u4f1a", "track_number": "07", "url": "-"}, {"name": "\u6625\u65e5\u5f71 (MyGO!!!!! ver.)", "track_number": "08", "url": "-"}, {"name": "\u8a69\u8d85\u7d46", "track_number": "09", "url": "-"}, {"name": "\u8ff7\u8def\u65e5\u3005", "track_number": "10", "url": "-"}, {"name": "\u7121\u8def\u77e2", "track_number": "11", "url": "-"}, {"name": "\u540d\u7121\u58f0", "track_number": "12", "url": "-"}, {"name": "\u681e(BanG Dream!)|\u681e", "track_number": "13", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/wJtmWASmh-dqULaJdA2NZuGoG7TNDhIrh-dICdHXfY8tC8UHJR1OHVp-Ji1igT3zL8MT2aJ0A2DsnaBkO_xyVy6A2zdSDOjeQ06t7L55IkxpS-1lFjhUT5nHkTgQggEKUzmfeElQGaU731HumFT31w.webp" referrerpolicy="no-referrer" alt="迷跡波">
+                    <img src="https://i.namu.wiki/i/wJtmWASmh-dqULaJdA2NZuGoG7TNDhIrh-dICdHXfY8tC8UHJR1OHVp-Ji1igT3zL8MT2aJ0A2DsnaBkO_xyVy6A2zdSDOjeQ06t7L55IkxpS-1lFjhUT5nHkTgQggEKUzmfeElQGaU731HumFT31w.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u8de1\u6696\u7a7a", "band": "mygo", "img_url": "https://i.namu.wiki/i/_wrZDTZ3P4AWJhloBDCyfD3WaXCd9tx8jBJyXaYCMV24ETbfLZLDWI1SXeW6ZnwD1ZbYd6ZjHJFsI-oMSYa8BtbnhMrxWacmM63r0CduK9bbgVFLp1w2H8IKXjmBzH5wEA-fCfGki_j3WX4aqPplUw.webp", "numbering": "2nd", "tracks": [{"name": "\u6b69\u62fe\u9053", "track_number": "01", "url": "-"}, {"name": "\u660e\u5f26\u97f3", "track_number": "02", "url": "-"}, {"name": "\u5b64\u58ca\u7262", "track_number": "03", "url": "-"}, {"name": "\u9727\u5468\u9014", "track_number": "04", "url": "-"}, {"name": "\u7aef\u7a0b\u5c71", "track_number": "05", "url": "-"}, {"name": "\u51e6\u6551\u751f", "track_number": "06", "url": "-"}, {"name": "\u8f2a\u7b26\u96e8", "track_number": "07", "url": "-"}, {"name": "\u591c\u96a0\u67d3", "track_number": "08", "url": "-"}, {"name": "\u904e\u60f0\u5e7b", "track_number": "09", "url": "-"}, {"name": "\u56de\u5c64\u6d6e", "track_number": "10", "url": "-"}, {"name": "\u7802\u5bf8\u594f", "track_number": "11", "url": "-"}, {"name": "\u711a\u97f3\u6253", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/_wrZDTZ3P4AWJhloBDCyfD3WaXCd9tx8jBJyXaYCMV24ETbfLZLDWI1SXeW6ZnwD1ZbYd6ZjHJFsI-oMSYa8BtbnhMrxWacmM63r0CduK9bbgVFLp1w2H8IKXjmBzH5wEA-fCfGki_j3WX4aqPplUw.webp" referrerpolicy="no-referrer" alt="跡暖空">
+                    <img src="https://i.namu.wiki/i/_wrZDTZ3P4AWJhloBDCyfD3WaXCd9tx8jBJyXaYCMV24ETbfLZLDWI1SXeW6ZnwD1ZbYd6ZjHJFsI-oMSYa8BtbnhMrxWacmM63r0CduK9bbgVFLp1w2H8IKXjmBzH5wEA-fCfGki_j3WX4aqPplUw.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u81f4\u4e26\u8de1", "band": "mygo", "img_url": "https://i.namu.wiki/i/KKgIAN6q6yINzHUDpeaPDIXjoIR2LqjcEGiW-VYuMDpVt_ENwd-HzUXWS80FA5gRjY_GIwxbFY-8SMXlXbv9fiwWQwkjfCQpao0FOwtbhrTS1EN0mGnNhHSBsXsdyxMA0RQigWazhPcHBCnljYn_GA.webp", "numbering": "3rd", "tracks": [{"name": "\u6b8b\u75d5\u5b57", "track_number": "02", "url": "-"}, {"name": "\u638c\u5fc3\u6b63\u9298", "track_number": "03", "url": "-"}, {"name": "\u8a3c\u547d\u8b83\u6b4c", "track_number": "04", "url": "-"}, {"name": "\u30a8\u30ac\u30af\u30df\u30e9\u30a4", "track_number": "05", "url": "-"}, {"name": "\u9759\u964d\u60f3", "track_number": "06", "url": "-"}, {"name": "\u807f\u65e5\u7b8b\u79cb", "track_number": "09", "url": "-"}, {"name": "\u5f80\u6b04\u5370", "track_number": "10", "url": "-"}, {"name": "\ud2b9\uc81c \uc544\ud06c\ub9b4 \uc2a4\ud0e0\ub4dc 5\uc885 \uc138\ud2b8", "track_number": "01", "url": "-"}, {"name": "\ud2b9\uc81c \ubc15\uc2a4", "track_number": "02", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/KKgIAN6q6yINzHUDpeaPDIXjoIR2LqjcEGiW-VYuMDpVt_ENwd-HzUXWS80FA5gRjY_GIwxbFY-8SMXlXbv9fiwWQwkjfCQpao0FOwtbhrTS1EN0mGnNhHSBsXsdyxMA0RQigWazhPcHBCnljYn_GA.webp" referrerpolicy="no-referrer" alt="致並跡">
+                    <img src="https://i.namu.wiki/i/KKgIAN6q6yINzHUDpeaPDIXjoIR2LqjcEGiW-VYuMDpVt_ENwd-HzUXWS80FA5gRjY_GIwxbFY-8SMXlXbv9fiwWQwkjfCQpao0FOwtbhrTS1EN0mGnNhHSBsXsdyxMA0RQigWazhPcHBCnljYn_GA.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -267,23 +247,19 @@
             <div id="band-pastel_palettes" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "TITLE IDOL", "band": "pastel_palettes", "img_url": "https://i.namu.wiki/i/M2gCfwCUsv3u7I971PFO200j_rSypgzuRlj1DRwNJ4_0Ls_iEC5SS5ucpz9uCUqUYVx_uHVoMCZFu08SITc8SRJl5oSEbyn2rtSc5Qr6VnzAyQkUusbIdgVFOklFqfmAKWUQjKNuC6xJK9q8SuJ_cA.webp", "numbering": "1st", "tracks": [{"name": "TITLE IDOL", "track_number": "01", "url": "-"}, {"name": "\u30ef\u30af\u30ef\u30afmeets\u30c8\u30ea\u30c3\u30d7", "track_number": "02", "url": "-"}, {"name": "\u3086\u3089\u30fb\u3086\u3089Ring-Dong-Dance", "track_number": "03", "url": "-"}, {"name": "\u3082\u3046\u3044\u3061\u3069 \u30eb\u30df\u30ca\u30b9", "track_number": "04", "url": "-"}, {"name": "\u3042\u3063\u3064\u3042\u3064 \u5e38\u590f \u3089\u3076\u2606\u30b5\u30de\u30fc\uff01", "track_number": "05", "url": "-"}, {"name": "\u5929\u4e0b\u30c8\u30fc\u30a4\u30c4 A to Z\u2606", "track_number": "06", "url": "-"}, {"name": "\u3057\u3085\u308f\u308a\u3093\u2606\u3069\u308a\u301c\u307f\u3093", "track_number": "07", "url": "-"}, {"name": "Power of LOVE!!!", "track_number": "08", "url": "-"}, {"name": "\u304d\u3085\uff5e\u307e\u3044\uff0aflower", "track_number": "09", "url": "-"}, {"name": "Winking\u2606Cheer", "track_number": "10", "url": "-"}, {"name": "\u3086\u3081\u3086\u3081\u30b0\u30e9\u30c7\u30fc\u30b7\u30e7\u30f3", "track_number": "11", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/M2gCfwCUsv3u7I971PFO200j_rSypgzuRlj1DRwNJ4_0Ls_iEC5SS5ucpz9uCUqUYVx_uHVoMCZFu08SITc8SRJl5oSEbyn2rtSc5Qr6VnzAyQkUusbIdgVFOklFqfmAKWUQjKNuC6xJK9q8SuJ_cA.webp" referrerpolicy="no-referrer" alt="TITLE IDOL">
+                    <img src="https://i.namu.wiki/i/M2gCfwCUsv3u7I971PFO200j_rSypgzuRlj1DRwNJ4_0Ls_iEC5SS5ucpz9uCUqUYVx_uHVoMCZFu08SITc8SRJl5oSEbyn2rtSc5Qr6VnzAyQkUusbIdgVFOklFqfmAKWUQjKNuC6xJK9q8SuJ_cA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "Pastel \u00e0 la mode", "band": "pastel_palettes", "img_url": "https://i.namu.wiki/i/c4ndErbNGhWsWAEoAejeymFzJ7QF8v7IL7CMwSRLGuK1B8HIMmivFo14T_WB35jNYSJm66_pBUVoTqVllmIxrkpyJP8Ak1biusE-qIE1S9ln99OKNc0omaSUwVtrK_7J1Lv-KnwepL9XKdXG7KOX7g.webp", "numbering": "2nd", "tracks": [{"name": "\u306f\u306a\u307e\u308b\u25ce\u30a2\u30f3\u30c0\u30f3\u30c6", "track_number": "01", "url": "-"}, {"name": "\u30d1\u30b9\u30d1\u30ec\u30dc\u30ea\u30e5\u30fc\u30b7\u30e7\u30f3\u305a\u2606", "track_number": "02", "url": "-"}, {"name": "SURVIVOR \u306d\u3070\u30fc\u304e\u3076\u3042\u3063\u3077!", "track_number": "03", "url": "-"}, {"name": "Wonderland Girl", "track_number": "04", "url": "-"}, {"name": "\u30bc\u30c3\u30bf\u30a4\u5ba3\u8a00\uff5eRecital\uff5e", "track_number": "05", "url": "-"}, {"name": "\u304e\u3085\u3063DAYS\u266a", "track_number": "06", "url": "-"}, {"name": "Wonderful Sweet!", "track_number": "07", "url": "-"}, {"name": "\u308b\u3093\u3063\u266a\u3066\u3043\u3066\u3043\u30fc\uff01", "track_number": "08", "url": "-"}, {"name": "\u30d1\u30c3\u30d1\u30ec\u2606\u4eba\u751f\uff01\u30d0\u30fc\u30f3\u4e07\u6b73\uff01", "track_number": "09", "url": "-"}, {"name": "Brand new Pastel Road!", "track_number": "10", "url": "-"}, {"name": "\u3042\u3053\u304c\u308cacross", "track_number": "11", "url": "-"}, {"name": "\u30cf\u30ec\u30cf\u30ec\u2606\u30d5\u30a9\u30fc\u30c1\u30e5\u30f3", "track_number": "12", "url": "-"}, {"name": "\u30cf\u30ca\u30d2\u30d0\u30ca", "track_number": "13", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/c4ndErbNGhWsWAEoAejeymFzJ7QF8v7IL7CMwSRLGuK1B8HIMmivFo14T_WB35jNYSJm66_pBUVoTqVllmIxrkpyJP8Ak1biusE-qIE1S9ln99OKNc0omaSUwVtrK_7J1Lv-KnwepL9XKdXG7KOX7g.webp" referrerpolicy="no-referrer" alt="Pastel à la mode">
+                    <img src="https://i.namu.wiki/i/c4ndErbNGhWsWAEoAejeymFzJ7QF8v7IL7CMwSRLGuK1B8HIMmivFo14T_WB35jNYSJm66_pBUVoTqVllmIxrkpyJP8Ak1biusE-qIE1S9ln99OKNc0omaSUwVtrK_7J1Lv-KnwepL9XKdXG7KOX7g.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u3044\u308d\u3068\u308a\u3069\u308a", "band": "pastel_palettes", "img_url": "https://i.namu.wiki/i/qnLJ8cHeYVmv61xMTz4W4bTcNIGojPyQ0Guwg1PYq0kb0FsK8hpryIkTh4FPFqub_PBiX9Hlroh87fnvD-hrKeDB_yGUL_oucFmtOXb2Nd871APuOKDRqudgRctV7pSCQD1DhvKhjf79RRkN61oZMg.webp", "numbering": "Mini", "tracks": [{"name": "\u30c8\u30ea\u30c9\u30ea\uff0a\u30d1\u30ec\u30c3\u30c8", "track_number": "01", "url": "-"}, {"name": "\u30c9\u30e9\u30de\u30c1\u30c3\u30af\uff01\u30a2\u30e9\u30a4\u30d6", "track_number": "02", "url": "-"}, {"name": "Radiate Warriors", "track_number": "03", "url": "-"}, {"name": "ReReRe\u30a8\u30dc\u30ea\u30e5\u30fc\u30b7\u30e7\u30f3\u305a\u2606", "track_number": "04", "url": "-"}, {"name": "everyday flower", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/qnLJ8cHeYVmv61xMTz4W4bTcNIGojPyQ0Guwg1PYq0kb0FsK8hpryIkTh4FPFqub_PBiX9Hlroh87fnvD-hrKeDB_yGUL_oucFmtOXb2Nd871APuOKDRqudgRctV7pSCQD1DhvKhjf79RRkN61oZMg.webp" referrerpolicy="no-referrer" alt="いろとりどり">
+                    <img src="https://i.namu.wiki/i/qnLJ8cHeYVmv61xMTz4W4bTcNIGojPyQ0Guwg1PYq0kb0FsK8hpryIkTh4FPFqub_PBiX9Hlroh87fnvD-hrKeDB_yGUL_oucFmtOXb2Nd871APuOKDRqudgRctV7pSCQD1DhvKhjf79RRkN61oZMg.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u304d\u307f\u3068 Stage by Stage", "band": "pastel_palettes", "img_url": "https://i.namu.wiki/i/rIFAbRcUCZwAFrPmtlwFL_YGl0WD-w23NoRYesAQEoqXlsf6xwB-d9fGmHYLbQF92fHBY7jRSCNeBTIFAIlMbPZT2swjGPe2RnLoNAYPsWVuuEaaFFaWPHzqGeB_Q0gUmUKRv93WMaqwwwzPixlRrw.webp", "numbering": "Mini", "tracks": [{"name": "With\u301c\u304d\u307f\u3068\u308f\u305f\u3057\u305f\u3061\u306e\u7269\u8a9e\u301c", "track_number": "01", "url": "-"}, {"name": "\u30d5\u30ec\u3063\u3068\u30d1\u30ec\u30c3\u30c8Fight Song!!", "track_number": "02", "url": "-"}, {"name": "\u30c7\u30a4\u30aa\u30d5\u30fb\u30e9\u30d5\u30fb\u30e9\u30d6\u30fb\u30b5\u30f3\u30af\u30b9", "track_number": "03", "url": "-"}, {"name": "\u30db\u30ef\u30a4\u30c8 \u30ce\u30b9\u30bf\u30eb\u30b8\u30a2", "track_number": "04", "url": "-"}, {"name": "Y.O.L.O!!!!!|Y.O.L.O\uff01\uff01\uff01\uff01\uff01(\u30d1\u30b9\u30d1\u30ecver.)", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/rIFAbRcUCZwAFrPmtlwFL_YGl0WD-w23NoRYesAQEoqXlsf6xwB-d9fGmHYLbQF92fHBY7jRSCNeBTIFAIlMbPZT2swjGPe2RnLoNAYPsWVuuEaaFFaWPHzqGeB_Q0gUmUKRv93WMaqwwwzPixlRrw.webp" referrerpolicy="no-referrer" alt="きみと Stage by Stage">
+                    <img src="https://i.namu.wiki/i/rIFAbRcUCZwAFrPmtlwFL_YGl0WD-w23NoRYesAQEoqXlsf6xwB-d9fGmHYLbQF92fHBY7jRSCNeBTIFAIlMbPZT2swjGPe2RnLoNAYPsWVuuEaaFFaWPHzqGeB_Q0gUmUKRv93WMaqwwwzPixlRrw.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -291,28 +267,23 @@
             <div id="band-poppin_party" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "Poppin\u0027on!", "band": "poppin_party", "img_url": "https://i.namu.wiki/i/zPGP6wy20c2fUYhMEtY9IChn259rppMHQuyVOGG_x6NGmQGHB8z2JddAuXpmcThMcfckyF_h8ntfWWnRJjOEWOS_HkDt3S36Vu7ESu84zRCdc5pSImju029W8p9ADwQPpfIn82i7eNJnTjwRm1cnaQ.webp", "numbering": "1st", "tracks": [{"name": "Disc 2", "track_number": "Disc 1", "url": "-"}, {"name": "01. Yes! BanG_Dream!", "track_number": "01", "url": "-"}, {"name": "02. STAR BEAT\uff01\u301c\u30db\u30b7\u30ce\u30b3\u30c9\u30a6\u301c|STAR BEAT!\uff5e\u30db\u30b7\u30ce\u30b3\u30c9\u30a6\uff5e", "track_number": "02", "url": "-"}, {"name": "03. \u8d70\u308a\u59cb\u3081\u305f\u3070\u304b\u308a\u306e\u30ad\u30df\u306b", "track_number": "03", "url": "-"}, {"name": "04. \u30c6\u30a3\u30a2\u30c9\u30ed\u30c3\u30d7\u30b9", "track_number": "04", "url": "-"}, {"name": "05. \u3068\u304d\u3081\u304d\u30a8\u30af\u30b9\u30da\u30ea\u30a8\u30f3\u30b9\uff01", "track_number": "05", "url": "-"}, {"name": "06. \u30ad\u30e9\u30ad\u30e9\u3060\u3068\u304b\u5922\u3060\u3068\u304b ~Sing Girls~|\u30ad\u30e9\u30ad\u30e9\u3060\u3068\u304b\u5922\u3060\u3068\u304b \uff5eSing Girls\uff5e", "track_number": "06", "url": "-"}, {"name": "07. \u79c1\u306e\u5fc3\u306f\u30c1\u30e7\u30b3\u30b3\u30ed\u30cd", "track_number": "07", "url": "-"}, {"name": "08. \u524d\u3078\u30b9\u30b9\u30e1\uff01", "track_number": "08", "url": "-"}, {"name": "09. \u5922\u307f\u308bSunflower", "track_number": "09", "url": "-"}, {"name": "10. \u30c6\u30a3\u30a2\u30c9\u30ed\u30c3\u30d7\u30b9|\u30c6\u30a3\u30a2\u30c9\u30ed\u30c3\u30d7\u30b9 \uff5ePopipa Acoustic Ver.\uff5e", "track_number": "10", "url": "-"}, {"name": "11. \u8d70\u308a\u59cb\u3081\u305f\u3070\u304b\u308a\u306e\u30ad\u30df\u306b|\u8d70\u308a\u59cb\u3081\u305f\u3070\u304b\u308a\u306e\u30ad\u30df\u306b \uff5ePopipa Acoustic Ver.\uff5e", "track_number": "11", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/zPGP6wy20c2fUYhMEtY9IChn259rppMHQuyVOGG_x6NGmQGHB8z2JddAuXpmcThMcfckyF_h8ntfWWnRJjOEWOS_HkDt3S36Vu7ESu84zRCdc5pSImju029W8p9ADwQPpfIn82i7eNJnTjwRm1cnaQ.webp" referrerpolicy="no-referrer" alt="Poppin'on!">
+                    <img src="https://i.namu.wiki/i/zPGP6wy20c2fUYhMEtY9IChn259rppMHQuyVOGG_x6NGmQGHB8z2JddAuXpmcThMcfckyF_h8ntfWWnRJjOEWOS_HkDt3S36Vu7ESu84zRCdc5pSImju029W8p9ADwQPpfIn82i7eNJnTjwRm1cnaQ.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "Breakthrough!", "band": "poppin_party", "img_url": "https://i.namu.wiki/i/9-lT7nq7Ycnvwfiv9IC3YV053oJ15Ta11BMbod2k8O1WnFzSdXtSdHJWNWviqkuURIdq4XFOFGyl3TXgNjc8sZ4LZxt0_86ZEEe1faboJAkH9mAZM5iol1C9FKpq_eXH0lH6Dy63gwPaRyNKqLukuA.webp", "numbering": "2nd", "tracks": [{"name": "Disc 2[* \ube14\ub8e8\ub808\uc774 \uc218\ub85d\ud310 \ud55c\uc815]", "track_number": "Disc 1", "url": "-"}, {"name": "01. Breakthrough!", "track_number": "01", "url": "-"}, {"name": "02. NO GIRL NO CRY|NO GIRL NO CRY/Poppin\u0027Party Ver.", "track_number": "02", "url": "-"}, {"name": "03. \u30a4\u30cb\u30b7\u30e3\u30eb", "track_number": "03", "url": "-"}, {"name": "04. Hello! Wink!", "track_number": "04", "url": "-"}, {"name": "05. Step\u00d7Step!", "track_number": "05", "url": "-"}, {"name": "06. Jumpin\u0027", "track_number": "06", "url": "-"}, {"name": "07. White Afternoon", "track_number": "07", "url": "-"}, {"name": "08. \u30ad\u30e9\u30ad\u30e9\u30b9\u30bf\u30fc\uff01", "track_number": "08", "url": "-"}, {"name": "09. Returns", "track_number": "09", "url": "-"}, {"name": "10. Dreamers Go!", "track_number": "10", "url": "-"}, {"name": "11. \u30ad\u30ba\u30ca\u30df\u30e5\u30fc\u30b8\u30c3\u30af\u266a", "track_number": "11", "url": "-"}, {"name": "12. \u30df\u30e9\u30a4\u30c8\u30ec\u30a4\u30f3", "track_number": "12", "url": "-"}, {"name": "13. \u5922\u3092\u6483\u3061\u629c\u304f\u77ac\u9593\u306b\uff01", "track_number": "13", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/9-lT7nq7Ycnvwfiv9IC3YV053oJ15Ta11BMbod2k8O1WnFzSdXtSdHJWNWviqkuURIdq4XFOFGyl3TXgNjc8sZ4LZxt0_86ZEEe1faboJAkH9mAZM5iol1C9FKpq_eXH0lH6Dy63gwPaRyNKqLukuA.webp" referrerpolicy="no-referrer" alt="Breakthrough!">
+                    <img src="https://i.namu.wiki/i/9-lT7nq7Ycnvwfiv9IC3YV053oJ15Ta11BMbod2k8O1WnFzSdXtSdHJWNWviqkuURIdq4XFOFGyl3TXgNjc8sZ4LZxt0_86ZEEe1faboJAkH9mAZM5iol1C9FKpq_eXH0lH6Dy63gwPaRyNKqLukuA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "POPIGENIC", "band": "poppin_party", "img_url": "https://i.namu.wiki/i/PxhJft6DYBuacvnGe7P6-076b2EUOzknIFEEmpCX1aQP8M6rYO9X0ySIK7tnCqAYcpj-OGMYA3cAVnTntEbpR6PtnWHFIU5hvlHY16Lal8Xf5KsK1SdaJ_bIfUjnAnBKQAHNHcc3gAOiWlgFJpkSRQ.webp", "numbering": "3rd", "tracks": [{"name": "\uc624\ub9ac\uc9c0\ub110 \uce90\ub9ad\ud130 \uce74\ub4dc 1\uc7a5(\uc804 5\uc885)", "track_number": "01", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/PxhJft6DYBuacvnGe7P6-076b2EUOzknIFEEmpCX1aQP8M6rYO9X0ySIK7tnCqAYcpj-OGMYA3cAVnTntEbpR6PtnWHFIU5hvlHY16Lal8Xf5KsK1SdaJ_bIfUjnAnBKQAHNHcc3gAOiWlgFJpkSRQ.webp" referrerpolicy="no-referrer" alt="POPIGENIC">
+                    <img src="https://i.namu.wiki/i/PxhJft6DYBuacvnGe7P6-076b2EUOzknIFEEmpCX1aQP8M6rYO9X0ySIK7tnCqAYcpj-OGMYA3cAVnTntEbpR6PtnWHFIU5hvlHY16Lal8Xf5KsK1SdaJ_bIfUjnAnBKQAHNHcc3gAOiWlgFJpkSRQ.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "Live Beyond!!", "band": "poppin_party", "img_url": "https://i.namu.wiki/i/x6kNZw18-B_3zbc0-U6yhWyUpkEB8fnw8m0h0Ypn-v4nyt0gphHlU68X8fSYrDomzxKYkccJXTWAb0yuK8BOH4vwz_vsCJsw7gRftJk4eKv0YGk5ZDkRrjO5AR9mlcXeSU_866vRFXud0FWTLFz2GA.webp", "numbering": "Mini", "tracks": [{"name": "Disc 2[* \ube14\ub8e8\ub808\uc774 \uc218\ub85d\ud310 \ud55c\uc815]", "track_number": "Disc 1", "url": "-"}, {"name": "01. Live Beyond!!", "track_number": "01", "url": "-"}, {"name": "02. Sweets BAN!", "track_number": "02", "url": "-"}, {"name": "03. \u30ad\u30df\u304c\u59cb\u307e\u308b\uff01[* \uac78\ud30c \uc2a4\uc704\uce58\ud310 \uc8fc\uc81c\uac00]", "track_number": "03", "url": "-"}, {"name": "04. Moonlight Walk[* \uc9c4\ud654\uc758 \uc5f4\ub9e4 ~\ubaa8\ub974\ub294 \uc0ac\uc774 \uc131\uacf5\ud55c \uc778\uc0dd~(\uc560\ub2c8\uba54\uc774\uc158 1\uae30)|\uc9c4\ud654\uc758 \uc5f4\ub9e4 ~\ubaa8\ub974\ub294 \uc0ac\uc774 \uc131\uacf5\ud55c \uc778\uc0dd~ ED]", "track_number": "04", "url": "-"}, {"name": "05. \u3053\u3053\u304b\u3089\u5148\u306f\u6b4c\u306b\u306a\u3089\u306a\u3044[* \uc6b0\ub9ac\ub4e4\uc758 \ub9ac\uba54\uc774\ud06c/\uc560\ub2c8\uba54\uc774\uc158|\uc6b0\ub9ac\ub4e4\uc758 \ub9ac\uba54\uc774\ud06c OP]", "track_number": "05", "url": "-"}, {"name": "06", "track_number": "\u003c|4\u003e", "url": "-"}, {"name": "07. STAR BEAT\uff01\u301c\u30db\u30b7\u30ce\u30b3\u30c9\u30a6\u301c", "track_number": "07", "url": "-"}, {"name": "08. \u30c6\u30a3\u30a2\u30c9\u30ed\u30c3\u30d7\u30b9", "track_number": "08", "url": "-"}, {"name": "09. \u30df\u30e9\u30a4\u30c8\u30ec\u30a4\u30f3", "track_number": "09", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/x6kNZw18-B_3zbc0-U6yhWyUpkEB8fnw8m0h0Ypn-v4nyt0gphHlU68X8fSYrDomzxKYkccJXTWAb0yuK8BOH4vwz_vsCJsw7gRftJk4eKv0YGk5ZDkRrjO5AR9mlcXeSU_866vRFXud0FWTLFz2GA.webp" referrerpolicy="no-referrer" alt="Live Beyond!!">
+                    <img src="https://i.namu.wiki/i/x6kNZw18-B_3zbc0-U6yhWyUpkEB8fnw8m0h0Ypn-v4nyt0gphHlU68X8fSYrDomzxKYkccJXTWAb0yuK8BOH4vwz_vsCJsw7gRftJk4eKv0YGk5ZDkRrjO5AR9mlcXeSU_866vRFXud0FWTLFz2GA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "\u9752\u6625 To Be Continued", "band": "poppin_party", "img_url": "https://i.namu.wiki/i/btV212JS912YtwH0ZizX3TbYUMX0xxo72eobaa1outy-Ey1Gwu_4jBUyY51zgQDTckzoxoyHBr4lMEGE1l6lWkhEL8nFM-0DISDGgZIxHXIC3W7anVZGh7tcAzOwxM2X5U36SIsUsV_Q6vZb0zC13w.webp", "numbering": "Mini", "tracks": [{"name": "\u9752\u6625 To Be Continued", "track_number": "01", "url": "-"}, {"name": "Future Place(BanG Dream!)|Future Place", "track_number": "02", "url": "-"}, {"name": "\u5927\u597d\u304d\uff01(BanG Dream!)|\u5927\u597d\u304d\uff01", "track_number": "03", "url": "-"}, {"name": "Five Letters", "track_number": "04", "url": "-"}, {"name": "\u6700\u5f37\u2606\u30bd\u30f3\u30b0", "track_number": "05", "url": "-"}, {"name": "RiNG A BELL", "track_number": "06", "url": "-"}, {"name": "\ud3ec\ud1a0 \uc18c\ucc45\uc790", "track_number": "02", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/btV212JS912YtwH0ZizX3TbYUMX0xxo72eobaa1outy-Ey1Gwu_4jBUyY51zgQDTckzoxoyHBr4lMEGE1l6lWkhEL8nFM-0DISDGgZIxHXIC3W7anVZGh7tcAzOwxM2X5U36SIsUsV_Q6vZb0zC13w.webp" referrerpolicy="no-referrer" alt="青春 To Be Continued">
+                    <img src="https://i.namu.wiki/i/btV212JS912YtwH0ZizX3TbYUMX0xxo72eobaa1outy-Ey1Gwu_4jBUyY51zgQDTckzoxoyHBr4lMEGE1l6lWkhEL8nFM-0DISDGgZIxHXIC3W7anVZGh7tcAzOwxM2X5U36SIsUsV_Q6vZb0zC13w.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -320,23 +291,19 @@
             <div id="band-raise_a_suiren" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "ERA", "band": "raise_a_suiren", "img_url": "https://i.namu.wiki/i/nKsGh7NcEemmnEoPmil3RBp38J7SJHrrxibd-traeyTDq7V73OpENv2J8SwgvsWrICmrbQNtgE93DuWdyAi0OE-HrpiSFUvuRkvWdEtK0Pt4_NIS3c6ZH99EEwxvJ4NZHkQjeW3LrGXeUlM85ed60w.webp", "numbering": "1st", "tracks": [{"name": "Invincible Fighter", "track_number": "01", "url": "-"}, {"name": "A DECLARATION OF \u00d7\u00d7\u00d7", "track_number": "02", "url": "-"}, {"name": "SOUL SOLDIER", "track_number": "03", "url": "-"}, {"name": "UNSTOPPABLE(\ub77c\uc2a4)|UNSTOPPABLE", "track_number": "04", "url": "-"}, {"name": "HELL! or HELL?", "track_number": "05", "url": "-"}, {"name": "Beautiful Birthday", "track_number": "06", "url": "-"}, {"name": "Takin\u2019 my Heart", "track_number": "07", "url": "-"}, {"name": "DRIVE US CRAZY", "track_number": "08", "url": "-"}, {"name": "!NVADE SHOW!", "track_number": "09", "url": "-"}, {"name": "REIGNING", "track_number": "10", "url": "-"}, {"name": "EXPOSE \u2018Burn out!!!\u2019", "track_number": "11", "url": "-"}, {"name": "R\u30fbI\u30fbO\u30fbT", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/nKsGh7NcEemmnEoPmil3RBp38J7SJHrrxibd-traeyTDq7V73OpENv2J8SwgvsWrICmrbQNtgE93DuWdyAi0OE-HrpiSFUvuRkvWdEtK0Pt4_NIS3c6ZH99EEwxvJ4NZHkQjeW3LrGXeUlM85ed60w.webp" referrerpolicy="no-referrer" alt="ERA">
+                    <img src="https://i.namu.wiki/i/nKsGh7NcEemmnEoPmil3RBp38J7SJHrrxibd-traeyTDq7V73OpENv2J8SwgvsWrICmrbQNtgE93DuWdyAi0OE-HrpiSFUvuRkvWdEtK0Pt4_NIS3c6ZH99EEwxvJ4NZHkQjeW3LrGXeUlM85ed60w.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "SAVAGE", "band": "raise_a_suiren", "img_url": "https://i.namu.wiki/i/w5hPnHTMlID8lAJ_74a74QxWtQoio-8apzZMLYnoNHRGKpl63D707kQhnUprTkxOd_FIZQCTkxdifE0YTU7qD8Aymn1JoQ9lz4uNSBOfsBCrqjdC3eu5YxdQY-Ix_2XA-k55JxsZVBlFjIeh4Jtmzw.jpg", "numbering": "2nd", "tracks": [{"name": "V.I.P MONSTER", "track_number": "01", "url": "-"}, {"name": "mind of Prominence", "track_number": "02", "url": "-"}, {"name": "Ray of hope", "track_number": "03", "url": "-"}, {"name": "EXIST(BanG Dream!)|EXIST", "track_number": "04", "url": "-"}, {"name": "Sacred world", "track_number": "05", "url": "-"}, {"name": "-N-E-M-E-S-I-S-", "track_number": "06", "url": "-"}, {"name": "DANCING DARING", "track_number": "07", "url": "-"}, {"name": "BATTLE CRY", "track_number": "08", "url": "-"}, {"name": "Domination to world", "track_number": "09", "url": "-"}, {"name": "THE WAY OF LIFE", "track_number": "10", "url": "-"}, {"name": "\u707c\u71b1 Bonfire!", "track_number": "11", "url": "-"}, {"name": "Repaint", "track_number": "12", "url": "-"}, {"name": "Life on the Lotus", "track_number": "13", "url": "-"}, {"name": "CORUSCATE -DNA-", "track_number": "14", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/w5hPnHTMlID8lAJ_74a74QxWtQoio-8apzZMLYnoNHRGKpl63D707kQhnUprTkxOd_FIZQCTkxdifE0YTU7qD8Aymn1JoQ9lz4uNSBOfsBCrqjdC3eu5YxdQY-Ix_2XA-k55JxsZVBlFjIeh4Jtmzw.jpg" referrerpolicy="no-referrer" alt="SAVAGE">
+                    <img src="https://i.namu.wiki/i/w5hPnHTMlID8lAJ_74a74QxWtQoio-8apzZMLYnoNHRGKpl63D707kQhnUprTkxOd_FIZQCTkxdifE0YTU7qD8Aymn1JoQ9lz4uNSBOfsBCrqjdC3eu5YxdQY-Ix_2XA-k55JxsZVBlFjIeh4Jtmzw.jpg" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "THE THIRD\uff08\u4eee\uff091st \u30e9\u30a4\u30d6", "band": "raise_a_suiren", "img_url": "https://i.namu.wiki/i/JVnxFw_Jc1rqgA-0aVHVypuBpR7Q0_nmFjky7UpKWHAtOWmZg4su64o-LVAR1DUbCgPYtPO5KGjvI0wsnHLOwH_H99zKM61YHU3SqtA8iooTUL0NbWze3ckDhyaaO1i1p8qGGwN7HzdmWCz5z-0h7w.webp", "numbering": "Mini", "tracks": [{"name": "That Is How I Roll!", "track_number": "1", "url": "-"}, {"name": "\u3057\u3085\u308f\u308a\u3093\u2606\u3069\u308a\uff5e\u307f\u3093", "track_number": "2", "url": "-"}, {"name": "\u30d1\u30b9\u30d1\u30ec\u30dc\u30ea\u30e5\u30fc\u30b7\u30e7\u30f3\u305a\u2606", "track_number": "3", "url": "-"}, {"name": "\u3048\u304c\u304a\u306e\u30aa\u30fc\u30b1\u30b9\u30c8\u30e9\u3063\uff01", "track_number": "4", "url": "-"}, {"name": "Don\u0027t be afraid!", "track_number": "5", "url": "-"}, {"name": "\u3086\u3089\u30fb\u3086\u3089Ring-Dong-Dance", "track_number": "6", "url": "-"}, {"name": "Hey-day\u72c2\u9a12\u66f2(\u30ab\u30d7\u30ea\u30c1\u30aa)", "track_number": "7", "url": "-"}, {"name": "Scarlet Sky", "track_number": "8", "url": "-"}, {"name": "\u30b4\u30fc\u30ab\uff01\u3054\u30fc\u304b\u3044\uff01\uff1f\u30d5\u30a1\u30f3\u30c8\u30e0\u30b7\u30fc\u30d5\uff01", "track_number": "9", "url": "-"}, {"name": "R\u30fbI\u30fbO\u30fbT", "track_number": "10", "url": "-"}, {"name": "That Is How I Roll!", "track_number": "11", "url": "-"}, {"name": "R\u30fbI\u30fbO\u30fbT", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/JVnxFw_Jc1rqgA-0aVHVypuBpR7Q0_nmFjky7UpKWHAtOWmZg4su64o-LVAR1DUbCgPYtPO5KGjvI0wsnHLOwH_H99zKM61YHU3SqtA8iooTUL0NbWze3ckDhyaaO1i1p8qGGwN7HzdmWCz5z-0h7w.webp" referrerpolicy="no-referrer" alt="THE THIRD（仮）1st ライブ">
+                    <img src="https://i.namu.wiki/i/JVnxFw_Jc1rqgA-0aVHVypuBpR7Q0_nmFjky7UpKWHAtOWmZg4su64o-LVAR1DUbCgPYtPO5KGjvI0wsnHLOwH_H99zKM61YHU3SqtA8iooTUL0NbWze3ckDhyaaO1i1p8qGGwN7HzdmWCz5z-0h7w.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "REVELATION", "band": "raise_a_suiren", "img_url": "https://i.namu.wiki/i/PwkaPtC0OtlfZd0WMpWZ5o2DJ0eUP1CXarXdtwoyueSGQIFwJgx8JzBn7SiSQ6uFwA1ykceXDjsQlNWa4al17qq_PDw8ohiUYzvN97wWTGMCZ3Zph1dbLuV4tTduPNpMbStn1XW1rtiI6xwDdfAfCw.webp", "numbering": "Mini", "tracks": [{"name": "Apocalypse(BanG Dream!)|Apocalypse", "track_number": "01", "url": "-"}, {"name": "TWIN TALE", "track_number": "02", "url": "-"}, {"name": "STRAY CERBERUS", "track_number": "03", "url": "-"}, {"name": "BERSER-KEY", "track_number": "04", "url": "-"}, {"name": "POLARIS", "track_number": "05", "url": "-"}, {"name": "2024 \ub144 \uac1c\ucd5c \uc608\uc815 RAISE A SUILEN \ub2e8\ub3c5 \ub77c\uc774\ube0c \uc774\ubca4\ud2b8 \ucd5c\uc18d \uc120\ud589 \ucd94\ucca8 \uc2e0\uccad", "track_number": "01", "url": "-"}, {"name": "\uc7ac\ud0b7 \ub514\uc790\uc778 \uc2a4\ud2f0\ucee4 1 \uc7a5 (\ud55c\uc815\ud310 Ver.) (\uc804 1 \uc885)[* Blu-ray \ucca8\ubd80 \uc0dd\uc0b0 \ud55c\uc815\ud310] or \uc624\ub9ac\uc9c0\ub110 \uce90\ub9ad\ud130 \uce74\ub4dc 1\uc7a5(\uc804 1\uc885)[* \uce90\ub9ad\ud130 ver. \ubcc4\ub85c]", "track_number": "02", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/PwkaPtC0OtlfZd0WMpWZ5o2DJ0eUP1CXarXdtwoyueSGQIFwJgx8JzBn7SiSQ6uFwA1ykceXDjsQlNWa4al17qq_PDw8ohiUYzvN97wWTGMCZ3Zph1dbLuV4tTduPNpMbStn1XW1rtiI6xwDdfAfCw.webp" referrerpolicy="no-referrer" alt="REVELATION">
+                    <img src="https://i.namu.wiki/i/PwkaPtC0OtlfZd0WMpWZ5o2DJ0eUP1CXarXdtwoyueSGQIFwJgx8JzBn7SiSQ6uFwA1ykceXDjsQlNWa4al17qq_PDw8ohiUYzvN97wWTGMCZ3Zph1dbLuV4tTduPNpMbStn1XW1rtiI6xwDdfAfCw.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -344,23 +311,19 @@
             <div id="band-roselia" class="band-content ">
                 
                 <div class="bank-item" data-album-json='{"album_title": "Anfang", "band": "roselia", "img_url": "https://i.namu.wiki/i/-5EQtRQPzQ4ToGY3WtioWSmehQjaZVcy1kR20DLM-Inx9oL6Gmdv6qK6vqj9TRM7TYU1zdwiQ_61Y_xkFnJr-VRADHFMyyr_kLnKwExkcrl93cCIASZEopDgcyrmkgkWyMFzbtErMgHS5Gqi-Jr8TQ.webp", "numbering": "1st", "tracks": [{"name": "Neo-Aspect", "track_number": "01", "url": "-"}, {"name": "BLACK SHOUT", "track_number": "02", "url": "-"}, {"name": "Opera of the wasteland", "track_number": "03", "url": "-"}, {"name": "\u967d\u3060\u307e\u308a\u30ed\u30fc\u30c9\u30ca\u30a4\u30c8(\uc591\uc9c0 \ub85c\ub3c4\ub098\uc774\ud2b8)", "track_number": "04", "url": "-"}, {"name": "ONENESS", "track_number": "05", "url": "-"}, {"name": "Re:birth day", "track_number": "06", "url": "-"}, {"name": "Legendary", "track_number": "07", "url": "-"}, {"name": "- HEROIC ADVENT -", "track_number": "08", "url": "-"}, {"name": "Determination Symphony", "track_number": "09", "url": "-"}, {"name": "\u71b1\u8272\u30b9\u30bf\u30fc\u30de\u30a4\u30f3", "track_number": "10", "url": "-"}, {"name": "\u8ecc\u8de1", "track_number": "11", "url": "-"}, {"name": "LOUDER", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/-5EQtRQPzQ4ToGY3WtioWSmehQjaZVcy1kR20DLM-Inx9oL6Gmdv6qK6vqj9TRM7TYU1zdwiQ_61Y_xkFnJr-VRADHFMyyr_kLnKwExkcrl93cCIASZEopDgcyrmkgkWyMFzbtErMgHS5Gqi-Jr8TQ.webp" referrerpolicy="no-referrer" alt="Anfang">
+                    <img src="https://i.namu.wiki/i/-5EQtRQPzQ4ToGY3WtioWSmehQjaZVcy1kR20DLM-Inx9oL6Gmdv6qK6vqj9TRM7TYU1zdwiQ_61Y_xkFnJr-VRADHFMyyr_kLnKwExkcrl93cCIASZEopDgcyrmkgkWyMFzbtErMgHS5Gqi-Jr8TQ.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "Wahl", "band": "roselia", "img_url": "https://i.namu.wiki/i/Vmic0L7X6H2-_fMamx68zuEFwXaSHvE-tn23oxrqYWen33YDkx0ZDcQhlwpOprYo5vhmsl9VFbxxcvLjQe9hnkfWAmp2gwFJ81Lal_Ny2F11wxFbwv64yl7EN6gqmJ2EUd73GVIKc_vEOWcZg6FkWA.webp", "numbering": "2nd", "tracks": [{"name": "BRAVE JEWEL", "track_number": "02", "url": "-"}, {"name": "Determination Symphony", "track_number": "03", "url": "-"}, {"name": "FIRE BIRD(Roselia)|FIRE BIRD", "track_number": "04", "url": "-"}, {"name": "Safe and Sound", "track_number": "05", "url": "-"}, {"name": "Avant-garde HISTORY", "track_number": "06", "url": "-"}, {"name": "Break your desire", "track_number": "07", "url": "-"}, {"name": "Re:birth day", "track_number": "08", "url": "-"}, {"name": "Neo-Aspect", "track_number": "09", "url": "-"}, {"name": "\u7d04\u675f(BanG Dream!)|\u7d04\u675f", "track_number": "10", "url": "-"}, {"name": "\"UNIONS\" Road", "track_number": "11", "url": "-"}, {"name": "Song I am.", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/Vmic0L7X6H2-_fMamx68zuEFwXaSHvE-tn23oxrqYWen33YDkx0ZDcQhlwpOprYo5vhmsl9VFbxxcvLjQe9hnkfWAmp2gwFJ81Lal_Ny2F11wxFbwv64yl7EN6gqmJ2EUd73GVIKc_vEOWcZg6FkWA.webp" referrerpolicy="no-referrer" alt="Wahl">
+                    <img src="https://i.namu.wiki/i/Vmic0L7X6H2-_fMamx68zuEFwXaSHvE-tn23oxrqYWen33YDkx0ZDcQhlwpOprYo5vhmsl9VFbxxcvLjQe9hnkfWAmp2gwFJ81Lal_Ny2F11wxFbwv64yl7EN6gqmJ2EUd73GVIKc_vEOWcZg6FkWA.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "F\u00fcr immer", "band": "roselia", "img_url": "https://i.namu.wiki/i/1jtM45aiLMuzhqNEV-j4sq5NnLNL_neofWdYQzgn2GMuBek6_2OGIqI0E4LWchTIOhx1LhnEhd_HC5eaPz5FhRHOIXsvSIdOeMFkLRHa-JfENhK0j9xHV3yUP2LsL1PzquG7ifObdwDqZpA1v_L_Nw.webp", "numbering": "3rd", "tracks": [{"name": "Sage der Rosen", "track_number": "01", "url": "-"}, {"name": "BLACK SHOUT", "track_number": "02", "url": "-"}, {"name": "\u899a\u609f\u306eLiberation", "track_number": "03", "url": "-"}, {"name": "-HEROIC ADVENT-", "track_number": "04", "url": "-"}, {"name": "\u967d\u3060\u307e\u308a\u30ed\u30fc\u30c9\u30ca\u30a4\u30c8", "track_number": "05", "url": "-"}, {"name": "Keep Heart", "track_number": "06", "url": "-"}, {"name": "\u71b1\u8272\u30b9\u30bf\u30fc\u30de\u30a4\u30f3", "track_number": "07", "url": "-"}, {"name": "ONENESS", "track_number": "08", "url": "-"}, {"name": "Original Call", "track_number": "09", "url": "-"}, {"name": "LOUDER", "track_number": "10", "url": "-"}, {"name": "Always recall.", "track_number": "11", "url": "-"}, {"name": "Floral Haven", "track_number": "12", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/1jtM45aiLMuzhqNEV-j4sq5NnLNL_neofWdYQzgn2GMuBek6_2OGIqI0E4LWchTIOhx1LhnEhd_HC5eaPz5FhRHOIXsvSIdOeMFkLRHa-JfENhK0j9xHV3yUP2LsL1PzquG7ifObdwDqZpA1v_L_Nw.webp" referrerpolicy="no-referrer" alt="Für immer">
+                    <img src="https://i.namu.wiki/i/1jtM45aiLMuzhqNEV-j4sq5NnLNL_neofWdYQzgn2GMuBek6_2OGIqI0E4LWchTIOhx1LhnEhd_HC5eaPz5FhRHOIXsvSIdOeMFkLRHa-JfENhK0j9xHV3yUP2LsL1PzquG7ifObdwDqZpA1v_L_Nw.webp" referrerpolicy="no-referrer">
                 </div>
                 
                 <div class="bank-item" data-album-json='{"album_title": "ROZEN HORIZON", "band": "roselia", "img_url": "https://i.namu.wiki/i/qiRGdqwx9EgmnhddRdnXoKRccMdS9oOctlD5WgXT8KuCXQCTwvWTDPCPGu7SYxy2j_f2vvkiLinDCGwG00kPHvrxBXnTW65Fg3htrmuhNpJhpxzZB_CHLMm1YreqKauixz28DjCgrbr04qrq7Ul-vw.webp", "numbering": "Mini", "tracks": [{"name": "Sprechchor", "track_number": "01", "url": "-"}, {"name": "\u9583\u5149", "track_number": "02", "url": "-"}, {"name": "THE HISTORIC...", "track_number": "03", "url": "-"}, {"name": "ROZEN HORIZON", "track_number": "04", "url": "-"}, {"name": "\u5efb\u5efb\u5947\u8b5a", "track_number": "05", "url": "-"}]}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
-                    <img src="https://i.namu.wiki/i/qiRGdqwx9EgmnhddRdnXoKRccMdS9oOctlD5WgXT8KuCXQCTwvWTDPCPGu7SYxy2j_f2vvkiLinDCGwG00kPHvrxBXnTW65Fg3htrmuhNpJhpxzZB_CHLMm1YreqKauixz28DjCgrbr04qrq7Ul-vw.webp" referrerpolicy="no-referrer" alt="ROZEN HORIZON">
+                    <img src="https://i.namu.wiki/i/qiRGdqwx9EgmnhddRdnXoKRccMdS9oOctlD5WgXT8KuCXQCTwvWTDPCPGu7SYxy2j_f2vvkiLinDCGwG00kPHvrxBXnTW65Fg3htrmuhNpJhpxzZB_CHLMm1YreqKauixz28DjCgrbr04qrq7Ul-vw.webp" referrerpolicy="no-referrer">
                 </div>
                 
             </div>
@@ -370,55 +333,74 @@
 </div>
 
 <script>
+    // CORS 프록시 서비스 (나무위키 이미지 차단 우회용)
+    const PROXY_URL = "https://images.weserv.nl/?url=";
+
     function toggleTier() {
         const wrapper = document.getElementById('tier-wrapper');
-        const btn = document.getElementById('toggle-btn');
         wrapper.classList.toggle('expanded');
-        btn.innerText = wrapper.classList.contains('expanded') ? '◀' : '▶';
+        document.getElementById('toggle-btn').innerText = wrapper.classList.contains('expanded') ? '◀' : '▶';
     }
 
-    function showBand(bandName, btnElement) {
-        document.querySelectorAll('.band-btn').forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
-        document.querySelectorAll('.band-content').forEach(content => content.classList.remove('active'));
+    function showBand(bandName, btn) {
+        document.querySelectorAll('.band-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.band-content').forEach(c => c.classList.remove('active'));
         document.getElementById('band-' + bandName).classList.add('active');
     }
 
-    function handleAlbumClick(element) {
-        const albumData = JSON.parse(element.getAttribute('data-album-json'));
+    function handleAlbumClick(el) {
+        const data = JSON.parse(el.getAttribute('data-album-json'));
         const img = document.getElementById('preview-img');
-        const container = document.getElementById('track-info-container');
-        img.src = albumData.img_url; img.style.display = 'block';
-        container.innerHTML = `<strong>${albumData.album_title}</strong><br>`;
-        albumData.tracks.forEach(t => {
-            container.innerHTML += `<div style="margin-top:2px;">${t.track_number}. ${t.name}</div>`;
+        img.src = data.img_url; img.style.display = 'block';
+        const info = document.getElementById('track-info-container');
+        info.innerHTML = `<b>${data.album_title}</b><br>` + data.tracks.map(t => `${t.track_number}. ${t.name}`).join('<br>');
+    }
+
+    // 이미지를 Base64로 변환하는 함수
+    async function getBase64Image(url) {
+        const response = await fetch(PROXY_URL + encodeURIComponent(url.replace(/^https?:\/\//, '')));
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.band-content').forEach(bank => {
             new Sortable(bank, {
                 group: { name: 'shared', pull: 'clone', put: false },
-                sort: false, animation: 150, delay: 50, delayOnTouchOnly: true
+                sort: false, animation: 150
             });
         });
 
         document.querySelectorAll('.drop-zone').forEach(zone => {
             new Sortable(zone, {
                 group: 'shared', animation: 150,
-                onAdd: function (evt) {
+                onAdd: async function (evt) {
                     const item = evt.item;
                     item.classList.add('tier-item');
-                    // 드래그된 이미지의 속성 재설정 (캡처용)
                     const img = item.querySelector('img');
-                    if (img) {
-                        img.setAttribute('referrerpolicy', 'no-referrer');
-                        img.removeAttribute('crossorigin');
+                    
+                    // 핵심: 티어 보드에 추가될 때 이미지를 CORS 걱정 없는 Base64로 교체
+                    if (img && !img.src.startsWith('data:')) {
+                        try {
+                            const originalSrc = img.src;
+                            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"; // 로딩용 더미
+                            const base64 = await getBase64Image(originalSrc);
+                            img.src = base64;
+                        } catch (e) {
+                            console.error("Image conversion failed", e);
+                        }
                     }
+
                     if (!item.querySelector('.del-btn')) {
                         const btn = document.createElement('div');
                         btn.className = 'del-btn'; btn.innerText = 'X';
-                        btn.onclick = (e) => { e.stopPropagation(); item.remove(); };
+                        btn.onclick = () => item.remove();
                         item.appendChild(btn);
                     }
                 }
@@ -427,44 +409,30 @@
     });
 
     async function exportTier() {
+        const area = document.querySelector("#tier-capture-area");
         const wrapper = document.getElementById('tier-wrapper');
-        const captureTarget = document.querySelector("#tier-capture-area");
         const wasExpanded = wrapper.classList.contains('expanded');
         
-        wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
+        wrapper.classList.add('expanded');
 
-        // 1. 티어 보드 내의 모든 이미지가 로드될 때까지 명시적으로 대기
-        const images = captureTarget.getElementsByTagName('img');
-        const loadPromises = Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(r => { img.onload = r; img.onerror = r; });
-        });
-        await Promise.all(loadPromises);
+        // 이미지 렌더링 대기
+        await new Promise(r => setTimeout(r, 500));
 
-        // 2. 브라우저 렌더링 동기화를 위한 지연
-        await new Promise(r => setTimeout(r, 300));
-
-        try {
-            const canvas = await html2canvas(captureTarget, {
-                scale: 2,
-                useCORS: true,       // 외부 이미지 허용
-                allowTaint: true,    // 보안 정책 우회 시도
-                backgroundColor: "#ffffff",
-                logging: false
-            });
-            
-            const a = document.createElement('a');
-            a.href = canvas.toDataURL("image/png");
-            a.download = `tier-list-${Date.now()}.png`;
-            a.click();
-        } catch (err) {
-            console.error("캡처 실패:", err);
-            alert("이미지 생성에 실패했습니다. 이미지가 완전히 로드된 후 다시 시도해주세요.");
-        } finally {
+        html2canvas(area, {
+            useCORS: true,
+            allowTaint: false, // Base64를 사용하므로 Taint가 발생하지 않음
+            scale: 2,
+            backgroundColor: "#ffffff"
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `bang-dream-tier.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }).finally(() => {
             document.body.classList.remove('capturing');
             if (!wasExpanded) wrapper.classList.remove('expanded');
-        }
+        });
     }
 </script>
 </body>
