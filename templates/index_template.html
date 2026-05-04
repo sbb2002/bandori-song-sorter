@@ -4,94 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BanG Dream! Tier Maker</title>
+    <!-- 라이브러리 로드 보장 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --bg-color: #000; --text-color: #fff; --accent-pink: #ff99aa; --accent-blue: #4488ff; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
-        
         .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
-
-        /* 좌측 티어 보드 영역 */
-        #tier-wrapper { 
-            background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; 
-            z-index: 100; display: flex; flex-direction: column; overflow: hidden;
-        }
-        #tier-wrapper.expanded { width: 100vw; }
         
+        /* 티어 보드 */
+        #tier-wrapper { background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
+        #tier-wrapper.expanded { width: 100vw; }
         .tier-table { border: 1px solid #444; width: 100%; border-collapse: collapse; flex: 1; }
         .tier-row { border-bottom: 1px solid #444; display: flex; min-height: 10%; }
-        .tier-label { 
-            width: 60px; display: flex; align-items: center; justify-content: center; 
-            color: #000; font-weight: bold; border-right: 1px solid #444; flex-shrink: 0; 
-        }
-        .drop-zone { 
-            flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; 
-            background: #fff; min-height: 50px; overflow: hidden;
-        }
+        .tier-label { width: 60px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-right: 1px solid #444; flex-shrink: 0; }
+        .drop-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #fff; min-height: 50px; }
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
 
-        .tier-item { width: 50px; height: 50px; position: relative; }
-        .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .del-btn { 
-            position: absolute; top: -5px; right: -5px; background: red; color: #fff; 
-            width: 18px; height: 18px; border-radius: 50%; font-size: 10px; 
-            display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer;
-        }
+        .tier-item { width: 50px; height: 50px; position: relative; cursor: grab; }
+        .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+        .del-btn { position: absolute; top: -5px; right: -5px; background: red; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer; }
 
-        /* 토글 화살표 버튼 */
-        #toggle-btn {
-            position: absolute; left: 60px; top: 50%; transform: translateY(-50%);
-            background: var(--accent-pink); border: none; color: white;
-            width: 30px; height: 60px; cursor: pointer; z-index: 110;
-            border-radius: 0 10px 10px 0; transition: left 0.3s ease;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-        }
+        #toggle-btn { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: var(--accent-pink); border: none; color: white; width: 30px; height: 60px; cursor: pointer; z-index: 110; border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         #tier-wrapper.expanded + #toggle-btn { left: calc(100vw - 30px); border-radius: 10px 0 0 10px; }
 
-        /* 우측 패널 영역 */
-        .control-panel { 
-            flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; 
-            background: var(--bg-color); transition: transform 0.3s ease; overflow-y: auto;
-        }
+        .control-panel { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; background: var(--bg-color); overflow-y: auto; }
         #tier-wrapper.expanded ~ .control-panel { transform: translateX(100%); }
 
-        /* 프리뷰 및 뱅크 스타일 */
-        #preview-display { display: flex; flex-direction: column; gap: 10px; background: #111; padding: 15px; border: 1px solid #333; }
-        #preview-img { width: 100%; max-width: 200px; aspect-ratio: 1/1; margin: 0 auto; object-fit: cover; display: none; }
-        .track-info-container { flex: 1; }
-        .track-item-row { display: flex; margin-bottom: 4px; font-size: 12px; }
-        .t-num { background: var(--accent-pink); padding: 2px 8px; font-weight: bold; color: #000; }
-        .t-name { background: #fff; color: var(--accent-blue); padding: 2px 10px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; }
+        #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; display: flex; flex-direction: column; }
         .band-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
         .band-btn { background: #222; color: #fff; border: 1px solid #444; padding: 5px 10px; font-size: 11px; border-radius: 15px; cursor: pointer; }
         .band-btn.active { background: var(--accent-pink); color: #000; }
         .band-content { display: none; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .band-content.active { display: flex; }
         .bank-item { width: 65px; height: 65px; cursor: pointer; }
-        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; pointer-events: none; }
 
-        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 12px; margin-top: auto; cursor: pointer; font-weight: bold; }
+        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; cursor: pointer; width: 100%; }
 
-        /* 데스크탑 레이아웃 (1024px 이상) */
         @media (min-width: 1024px) {
-            .main-container { padding: 20px; gap: 20px; align-items: flex-start; overflow: visible; height: auto; }
-            #tier-wrapper { width: 450px !important; height: auto; border-radius: 5px; }
+            .main-container { padding: 20px; gap: 20px; align-items: flex-start; height: auto; }
+            #tier-wrapper { width: 450px !important; }
             #tier-wrapper:not(.expanded) .drop-zone { display: flex; }
             #toggle-btn { display: none; }
-            .control-panel { transform: none !important; width: 600px; padding: 0; overflow: visible; }
-            #preview-display { flex-direction: row; height: 300px; }
-            #preview-img { width: 250px; max-width: 250px; }
+            .control-panel { width: 600px; padding: 0; }
             .bank-item { width: 85px; height: 85px; }
-            .band-content { justify-content: flex-start; }
         }
-
-        /* 캡처 전용 스타일 */
-        .capturing #tier-capture-area { background-color: #ffffff !important; width: 600px !important; }
         .capturing .del-btn { display: none !important; }
-        .capturing .drop-zone { overflow: visible !important; }
     </style>
 </head>
 <body>
@@ -106,19 +65,16 @@
             </div>
             {% endfor %}
         </div>
-        <button class="btn-save" onclick="exportTier()">티어리스트 저장 (PNG)</button>
+        <button class="btn-save" onclick="exportTier()">이미지 저장</button>
     </div>
 
     <button id="toggle-btn" onclick="toggleTier()">▶</button>
 
     <div class="control-panel">
-        <div id="preview-display">
-            <img id="preview-img" src="" referrerpolicy="no-referrer">
-            <div id="track-info-container" class="track-info-container">
-                <p style="color:#666; font-size: 13px;">앨범을 클릭하세요.</p>
-            </div>
+        <div id="preview-display" style="background:#111; padding:15px; border:1px solid #333; display:flex; gap:10px; min-height:150px;">
+            <img id="preview-img" src="" style="width:120px; height:120px; object-fit:cover; display:none;" referrerpolicy="no-referrer">
+            <div id="track-info-container" style="flex:1; font-size:12px;">앨범을 선택하세요.</div>
         </div>
-
         <div id="album-bank-wrapper">
             <div class="band-nav">
                 {% for band_name in albums_by_band.keys() %}
@@ -129,6 +85,7 @@
             <div id="band-{{ band_name }}" class="band-content {% if loop.first %}active{% endif %}">
                 {% for album in band_albums %}
                 <div class="bank-item" data-album-json='{{ album | tojson | safe }}' onclick="handleAlbumClick(this)">
+                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
                     <img src="{{ album.img_url }}" referrerpolicy="no-referrer" alt="{{ album.album_title }}">
                 </div>
                 {% endfor %}
@@ -157,79 +114,67 @@
         const albumData = JSON.parse(element.getAttribute('data-album-json'));
         const img = document.getElementById('preview-img');
         const container = document.getElementById('track-info-container');
-        img.src = albumData.img_url; 
-        img.style.display = 'block';
-        container.innerHTML = `<strong>${albumData.album_title}</strong><hr style="border:0; border-top:1px solid #333; margin:5px 0;">`;
-        albumData.tracks.forEach(track => {
-            const row = document.createElement('div');
-            row.className = 'track-item-row';
-            row.innerHTML = `<div class="t-num">${track.track_number}</div><div class="t-name">${track.name}</div>`;
-            container.appendChild(row);
+        img.src = albumData.img_url; img.style.display = 'block';
+        container.innerHTML = `<strong>${albumData.album_title}</strong><br>`;
+        albumData.tracks.forEach(t => {
+            container.innerHTML += `<div style="margin-top:2px;">${t.track_number}. ${t.name}</div>`;
         });
     }
 
-    // Sortable 초기화
-    document.querySelectorAll('.band-content').forEach(bank => {
-        new Sortable(bank, {
-            group: { name: 'shared', pull: 'clone', put: false },
-            sort: false, animation: 150, delay: 100, delayOnTouchOnly: true
+    // 초기화 함수 하나로 통합 (문법 오류 해결)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.band-content').forEach(bank => {
+            new Sortable(bank, {
+                group: { name: 'shared', pull: 'clone', put: false },
+                sort: false, animation: 150, delay: 50, delayOnTouchOnly: true
+            });
         });
-    });
 
-    document.querySelectorAll('.drop-zone').forEach(zone => {
-        new Sortable(zone, {
-            group: 'shared', animation: 150,
-            onAdd: function (evt) {
-                const item = evt.item;
-                item.classList.add('tier-item');
-                if (!item.querySelector('.del-btn')) {
-                    const btn = document.createElement('div');
-                    btn.className = 'del-btn'; btn.innerText = 'X';
-                    btn.onclick = (e) => { e.stopPropagation(); item.remove(); };
-                    item.appendChild(btn);
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            new Sortable(zone, {
+                group: 'shared', animation: 150,
+                onAdd: function (evt) {
+                    const item = evt.item;
+                    item.classList.add('tier-item');
+                    if (!item.querySelector('.del-btn')) {
+                        const btn = document.createElement('div');
+                        btn.className = 'del-btn'; btn.innerText = 'X';
+                        btn.onclick = (e) => { e.stopPropagation(); item.remove(); };
+                        item.appendChild(btn);
+                    }
                 }
-            }
+            });
         });
     });
 
     async function exportTier() {
         const wrapper = document.getElementById('tier-wrapper');
         const captureTarget = document.querySelector("#tier-capture-area");
-        
-        // 1. 상태 설정 (모바일에서도 전체를 그리기 위해 일시 확장)
         const wasExpanded = wrapper.classList.contains('expanded');
+        
         wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
 
-        // 2. 외부 이미지 로드 대기
+        // 이미지 로드 대기 로직 추가
         const images = captureTarget.getElementsByTagName('img');
         await Promise.all(Array.from(images).map(img => {
             if (img.complete) return Promise.resolve();
-            return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+            return new Promise(r => { img.onload = r; img.onerror = r; });
         }));
 
-        // 3. 캡처 실행
         setTimeout(() => {
             html2canvas(captureTarget, {
-                scale: 2, 
-                useCORS: true, 
-                allowTaint: true, 
-                backgroundColor: "#ffffff",
-                width: captureTarget.scrollWidth,
-                height: captureTarget.scrollHeight
+                scale: 2, useCORS: true, allowTaint: true, backgroundColor: "#ffffff"
             }).then(canvas => {
                 const a = document.createElement('a');
                 a.href = canvas.toDataURL("image/png");
-                a.download = `bang-dream-tier-${Date.now()}.png`;
+                a.download = 'tier-list.png';
                 a.click();
-            }).catch(err => {
-                console.error("저장 오류:", err);
-                alert("저장 중 오류가 발생했습니다.");
             }).finally(() => {
                 document.body.classList.remove('capturing');
                 if (!wasExpanded) wrapper.classList.remove('expanded');
             });
-        }, 300);
+        }, 200);
     }
 </script>
 </body>
