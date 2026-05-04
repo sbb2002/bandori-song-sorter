@@ -82,18 +82,40 @@
     </div>
 </div>
 <script>
-    async function getBase64ViaProxy(url) {
-        // i.namu.wiki URL에서 불필요한 인코딩 문자열을 제거하거나 정규화하여 전달
-        const cleanUrl = url.split('?')[0]; 
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(cleanUrl)}`;
+    // 나무위키 CORS 정책 우회를 위해 좀 더 강력한 프록시 및 Blob 변환 방식 사용
+    async function convertToBase64(url) {
+        if (url.startsWith('data:')) return url;
+        
+        // corsproxy.io는 나무위키 이미지 로드에 비교적 성공적임
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+        
         try {
             const response = await fetch(proxyUrl);
-            if (!response.ok) throw new Error('Proxy Network response was not ok');
-            const data = await response.json();
-            return data.contents; 
+            if (!response.ok) throw new Error('Proxy fetch failed');
+            const blob = await response.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
         } catch (e) {
-            console.error("Proxy error for URL:", url, e);
-            return null;
+            console.warn("Primary proxy failed, trying backup...", e);
+            // Backup: AllOrigins
+            try {
+                const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                const response = await fetch(backupUrl);
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e2) {
+                console.error("All proxies failed for:", url);
+                return null;
+            }
         }
     }
 
@@ -113,7 +135,8 @@
     function handleAlbumClick(el) {
         const data = JSON.parse(el.getAttribute('data-album-json'));
         const img = document.getElementById('preview-img');
-        img.src = data.img_url; img.style.display = 'block';
+        img.src = data.img_url; 
+        img.style.display = 'block';
         const info = document.getElementById('track-info-container');
         info.innerHTML = `<b>${data.album_title}</b><br>` + data.tracks.map(t => `${t.track_number}. ${t.name}`).join('<br>');
     }
@@ -133,18 +156,21 @@
                     const item = evt.item;
                     item.classList.add('tier-item');
                     const img = item.querySelector('img');
+                    
                     if (img && !img.src.startsWith('data:')) {
                         const originalSrc = img.src;
-                        img.style.opacity = "0.3";
-                        const base64 = await getBase64ViaProxy(originalSrc);
-                        if (base64) {
-                            img.src = base64;
+                        // 즉시 투명화하여 placeholder 효과
+                        img.style.opacity = "0"; 
+                        const b64 = await convertToBase64(originalSrc);
+                        if (b64) {
+                            img.src = b64;
                             img.style.opacity = "1";
                         } else {
-                            // 프록시 실패 시 원본 시도 (CORS 위험 감수)
-                            img.style.opacity = "1";
+                            // 실패 시 에러 이미지나 placeholder 적용 가능
+                            img.style.opacity = "0.5";
                         }
                     }
+
                     if (!item.querySelector('.del-btn')) {
                         const btn = document.createElement('div');
                         btn.className = 'del-btn'; btn.innerText = 'X';
@@ -160,17 +186,36 @@
         const node = document.getElementById('tier-capture-area');
         const wrapper = document.getElementById('tier-wrapper');
         const wasExpanded = wrapper.classList.contains('expanded');
+        
+        // 캡처 전 모든 이미지가 Base64인지 최종 확인 (dom-to-image 에러 방지 핵심)
+        const imgs = node.querySelectorAll('img');
+        for (let img of imgs) {
+            if (!img.src.startsWith('data:')) {
+                const b64 = await convertToBase64(img.src);
+                if (b64) img.src = b64;
+            }
+        }
+
         wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
-        await new Promise(r => setTimeout(r, 500));
-        domtoimage.toPng(node, { bgcolor: '#ffffff' })
+        
+        // DOM 업데이트 대기
+        await new Promise(r => setTimeout(r, 600));
+
+        domtoimage.toPng(node, { 
+            bgcolor: '#ffffff',
+            // dom-to-image 내부의 fetch 시도를 차단하기 위해 cache buster나 원본 접근 금지 전략
+        })
         .then(function (dataUrl) {
             const link = document.createElement('a');
-            link.download = `tier-${Date.now()}.png`;
+            link.download = `bandori-tier-${Date.now()}.png`;
             link.href = dataUrl;
             link.click();
         })
-        .catch(function (error) { console.error('Export failed', error); })
+        .catch(function (error) {
+            console.error('Export Failed:', error);
+            alert("이미지 로딩 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        })
         .finally(() => {
             document.body.classList.remove('capturing');
             if (!wasExpanded) wrapper.classList.remove('expanded');
