@@ -1,12 +1,13 @@
-/* script.js */
 let player;
 let timer;
 
-// YouTube IFrame API 초기화
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('youtube-player', {
-        height: '0', width: '0',
-        events: { 'onStateChange': onPlayerStateChange }
+        height: '0',
+        width: '0',
+        events: {
+            'onStateChange': onPlayerStateChange
+        }
     });
 }
 
@@ -15,7 +16,6 @@ function loadAndPlay(url, title) {
     if (videoId) {
         player.loadVideoById(videoId);
         document.getElementById('current-song-title').innerText = title;
-        document.getElementById('master-play').innerText = '||';
     }
 }
 
@@ -27,18 +27,29 @@ function extractVideoId(url) {
 
 function togglePlay() {
     const state = player.getPlayerState();
-    if (state === 1) { player.pauseVideo(); } else { player.playVideo(); }
+    if (state === 1) {
+        player.pauseVideo();
+    } else {
+        player.playVideo();
+    }
 }
 
-function pauseVideo() { player.pauseVideo(); }
-function stopVideo() { player.stopVideo(); document.getElementById('timeline').value = 0; }
+function pauseVideo() {
+    player.pauseVideo();
+}
+
+function stopVideo() {
+    player.stopVideo();
+    document.getElementById('timeline').value = 0;
+}
 
 function onPlayerStateChange(event) {
+    const btn = document.getElementById('master-play');
     if (event.data == YT.PlayerState.PLAYING) {
-        document.getElementById('master-play').innerText = '||';
+        btn.innerText = '||';
         startTimer();
     } else {
-        document.getElementById('master-play').innerText = '▶';
+        btn.innerText = '▶';
         clearInterval(timer);
     }
 }
@@ -73,11 +84,21 @@ function showInfo(el) {
     i.src = './' + d.img_url;
     i.style.display = 'block';
     
-    let html = `<b>${d.album_title}</b><br>`;
+    let html = `<div class="track-info-wrap"><strong>${d.album_title}</strong><div class="track-list">`;
     d.tracks.forEach(t => {
         html += `<div onclick="loadAndPlay('${t.url}', '${t.name}')">${t.track_number}. ${t.name}</div>`;
     });
+    html += `</div></div>`;
     document.getElementById('t-info').innerHTML = html;
+}
+
+function filterBand(bandName, btn) {
+    document.querySelectorAll('.band-content').forEach(c => c.classList.remove('active'));
+    const targetId = 'band-' + bandName.replace(/\s+/g, '-');
+    document.getElementById(targetId).classList.add('active');
+    
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 }
 
 function exportTier() {
@@ -90,9 +111,20 @@ function exportTier() {
     });
 }
 
-// 드래그 앤 드롭 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.drop-zone').forEach(z => {
-        new Sortable(z, { group: 'shared', animation: 150 });
+    const zones = document.querySelectorAll('.drop-zone, .band-content');
+    zones.forEach(z => {
+        new Sortable(z, {
+            group: 'shared',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onAdd: function (evt) {
+                if (evt.to.classList.contains('drop-zone')) {
+                    evt.item.classList.add('tier-item');
+                } else {
+                    evt.item.classList.remove('tier-item');
+                }
+            }
+        });
     });
 });
