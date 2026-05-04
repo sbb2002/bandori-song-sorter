@@ -3,48 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BanG Dream! Album Sorter</title>
+    <title>BanG Dream! Album Sorter & Player</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
-        :root { --bg: #0d0d0d; --card-bg: #1a1a1a; --txt: #eeeeee; --pink: #ff99aa; --border: #333333; }
-        body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; overflow: hidden; height: 100vh; }
-        .main-container { display: flex; width: 100vw; height: 100vh; position: relative; }
-        #tier-wrapper { background: #ffffff; width: 80px; flex-shrink: 0; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
+        :root { --bg: #0d0d0d; --card-bg: #1a1a1a; --txt: #eeeeee; --pink: #ff99aa; --border: #333333; --player-h: 80px; }
+        body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--txt); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        .main-container { display: flex; flex: 1; width: 100vw; height: calc(100vh - var(--player-h)); position: relative; }
+        
+        /* Tier Table Area */
+        #tier-wrapper { background: #ffffff; width: 80px; flex-shrink: 0; transition: width 0.4s; z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
         #tier-wrapper.expanded { width: 100vw; }
-        .tier-table { border: none; width: 100%; flex: 1; display: flex; flex-direction: column; background: #fff; }
+        .tier-table { width: 100%; flex: 1; display: flex; flex-direction: column; background: #fff; }
         .tier-row { display: flex; min-height: 80px; border-bottom: 1px solid #eee; flex: 1; }
         .tier-label { width: 80px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 900; font-size: 1.2rem; flex-shrink: 0; }
         .drop-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; align-content: flex-start; }
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
-        .tier-item { width: 70px; height: 70px; position: relative; cursor: grab; }
+        .tier-item { width: 70px; height: 70px; position: relative; }
         .tier-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
-        .del-btn { position: absolute; top: -5px; right: -5px; background: #ff4444; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; z-index: 10; }
-        #toggle-btn { position: absolute; left: 80px; top: 50%; transform: translateY(-50%); background: var(--pink); border: none; width: 28px; height: 60px; cursor: pointer; z-index: 110; border-radius: 0 12px 12px 0; transition: left 0.4s; }
-        #tier-wrapper.expanded + #toggle-btn { left: calc(100vw - 28px); border-radius: 12px 0 0 12px; }
+        .del-btn { position: absolute; top: -5px; right: -5px; background: #ff4444; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; }
+
+        /* Control Panel */
         .control-panel { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 15px; background: var(--bg); overflow-y: auto; }
         #tier-wrapper.expanded ~ .control-panel { display: none; }
-        #preview-display { background: var(--card-bg); padding: 15px; border-radius: 8px; display: flex; gap: 15px; min-height: 120px; align-items: center; border: 1px solid var(--border); }
+        #preview-display { background: var(--card-bg); padding: 15px; border-radius: 8px; display: flex; gap: 15px; min-height: 120px; border: 1px solid var(--border); }
         #p-img { width: 90px; height: 90px; object-fit: cover; border-radius: 4px; }
-        #t-info { font-size: 13px; color: #ccc; }
-        .band-nav { display: flex; flex-wrap: wrap; gap: 6px; }
-        .band-btn { background: #252525; color: #888; border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; cursor: pointer; }
-        .band-btn.active { background: var(--pink); color: #000; font-weight: bold; }
-        .bank-container { background: var(--card-bg); border-radius: 8px; padding: 10px; flex: 1; border: 1px solid var(--border); }
-        .band-content { display: none; flex-wrap: wrap; gap: 8px; }
-        .band-content.active { display: flex; }
-        .bank-item { width: 65px; height: 65px; cursor: pointer; }
-        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
-        .btn-save { background: var(--pink); color: #000; border: none; padding: 12px; cursor: pointer; font-weight: bold; margin-top: auto; }
+        .track-list div { cursor: pointer; padding: 2px 5px; border-radius: 4px; }
+        .track-list div:hover { background: #333; color: var(--pink); }
+
+        /* Bottom Player Bar */
+        #player-bar { height: var(--player-h); background: var(--pink); color: #000; display: flex; align-items: center; padding: 0 20px; gap: 20px; z-index: 200; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; }
+        .player-controls { display: flex; gap: 15px; align-items: center; }
+        .play-btn { font-size: 30px; cursor: pointer; border: 2px solid #000; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: none; }
+        .stop-btn { font-size: 20px; cursor: pointer; border: 2px solid #000; width: 40px; height: 40px; background: #fff; }
+        
+        .player-center { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+        .song-info { font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; }
+        .timeline-container { display: flex; align-items: center; gap: 10px; width: 100%; }
+        #timeline { flex: 1; cursor: pointer; accent-color: #000; }
+        
+        .btn-save-wrap { width: 150px; text-align: right; }
+        .btn-save { background: #fdf2bb; color: #000; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; border-radius: 8px; box-shadow: 0 4px #e6d8a0; }
+        .btn-save:active { transform: translateY(2px); box-shadow: 0 2px #e6d8a0; }
+
+        #youtube-player { position: absolute; top: -9999px; left: -9999px; } /* 숨겨진 플레이어 */
+
         @media (min-width: 1024px) {
             #tier-wrapper { width: 550px !important; }
             #tier-wrapper:not(.expanded) .drop-zone { display: flex; }
-            #toggle-btn { display: none; }
         }
-        .capturing .del-btn { display: none !important; }
     </style>
 </head>
 <body>
+
 <div class="main-container">
     <div id="tier-wrapper">
         <div class="tier-table" id="tier-capture-area">
@@ -55,29 +68,20 @@
             </div>
             {% endfor %}
         </div>
-        <button class="btn-save" onclick="exportTier()">DOWNLOAD RANKING (PNG)</button>
     </div>
-    
-    <button id="toggle-btn" onclick="toggleTier()">▶</button>
     
     <div class="control-panel">
         <div id="preview-display">
             <img id="p-img" src="" style="display:none;">
-            <div id="t-info">앨범을 클릭하여 정보를 확인하세요.</div>
+            <div id="t-info" class="track-list">앨범을 선택하세요.</div>
         </div>
         
-        <div class="band-nav">
-            {% for b in albums_by_band.keys() %}
-            <button class="band-btn {% if loop.first %}active{% endif %}" onclick="switchBand('{{b}}', this)">{{b|upper}}</button>
-            {% endfor %}
-        </div>
-
         <div class="bank-container">
             {% for b, albs in albums_by_band.items() %}
-            <div id="b-{{b}}" class="band-content {% if loop.first %}active{% endif %}">
+            <div class="band-content active">
                 {% for a in albs %}
                 <div class="bank-item" data-json='{{a|tojson|safe}}' onclick="showInfo(this)">
-                    <img data-src="{{a.img_url}}" class="lazy-load">
+                    <img src="./{{a.img_url}}" style="width:65px; height:65px; object-fit:cover; border-radius:4px;">
                 </div>
                 {% endfor %}
             </div>
@@ -86,102 +90,126 @@
     </div>
 </div>
 
-<script>
-    // GitHub Pages 경로 문제를 해결하는 핵심 함수
-    function fixPath(path) {
-        if (!path) return '';
-        if (path.startsWith('http') || path.startsWith('data:')) return path;
-        
-        // 역슬래시를 슬래시로 변경하고 앞뒤 공백 제거
-        let cleanPath = path.replace(/\\/g, '/').trim();
-        
-        // 경로가 'assets/'로 시작한다면 그대로 반환하거나 './'를 붙임
-        // 만약 sbb2002.github.io/bandori-album-sorter/ 환경이라면 
-        // 상대 경로인 './assets/...' 가 가장 확실합니다.
-        if (cleanPath.startsWith('/')) {
-            cleanPath = cleanPath.substring(1);
-        }
-    
-    return './' + cleanPath;
-}
+<!-- Player Bar -->
+<div id="player-bar">
+    <div class="player-controls">
+        <button class="play-btn" onclick="togglePlay()" id="master-play">▶</button>
+        <button class="play-btn" onclick="pauseVideo()">||</button>
+        <button class="stop-btn" onclick="stopVideo()">■</button>
+    </div>
+    <div class="player-center">
+        <div class="song-info">
+            <span id="current-song-title">곡을 선택하세요</span>
+            <span id="time-display">0:00 / 0:00</span>
+        </div>
+        <div class="timeline-container">
+            <input type="range" id="timeline" value="0" min="0" max="100" step="1" oninput="seekVideo(this.value)">
+        </div>
+    </div>
+    <div class="btn-save-wrap">
+        <button class="btn-save" onclick="exportTier()">이미지 저장</button>
+    </div>
+</div>
 
-    function toggleTier() {
-        const w = document.getElementById('tier-wrapper');
-        const btn = document.getElementById('toggle-btn');
-        w.classList.toggle('expanded');
-        btn.innerText = w.classList.contains('expanded') ? '◀' : '▶';
+<div id="youtube-player"></div>
+
+<script>
+    let player;
+    let timer;
+
+    // YouTube IFrame API 초기화
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            height: '0', width: '0',
+            events: { 'onStateChange': onPlayerStateChange }
+        });
     }
 
-    function switchBand(name, btn) {
-        document.querySelectorAll('.band-btn').forEach(x => x.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.band-content').forEach(x => x.classList.remove('active'));
-        document.getElementById('b-' + name).classList.add('active');
+    function loadAndPlay(url, title) {
+        const videoId = extractVideoId(url);
+        if (videoId) {
+            player.loadVideoById(videoId);
+            document.getElementById('current-song-title').innerText = title;
+            document.getElementById('master-play').innerText = '||';
+        }
+    }
+
+    function extractVideoId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length == 11) ? match[2] : null;
+    }
+
+    function togglePlay() {
+        const state = player.getPlayerState();
+        if (state === 1) { player.pauseVideo(); } else { player.playVideo(); }
+    }
+
+    function pauseVideo() { player.pauseVideo(); }
+    function stopVideo() { player.stopVideo(); document.getElementById('timeline').value = 0; }
+
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            document.getElementById('master-play').innerText = '||';
+            startTimer();
+        } else {
+            document.getElementById('master-play').innerText = '▶';
+            clearInterval(timer);
+        }
+    }
+
+    function startTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => {
+            const curr = player.getCurrentTime();
+            const dur = player.getDuration();
+            if (dur > 0) {
+                const prog = (curr / dur) * 100;
+                document.getElementById('timeline').value = prog;
+                document.getElementById('time-display').innerText = formatTime(curr) + " / " + formatTime(dur);
+            }
+        }, 1000);
+    }
+
+    function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return m + ":" + (s < 10 ? "0" + s : s);
+    }
+
+    function seekVideo(val) {
+        const dur = player.getDuration();
+        player.seekTo(dur * (val / 100), true);
     }
 
     function showInfo(el) {
         const d = JSON.parse(el.getAttribute('data-json'));
         const i = document.getElementById('p-img');
-        i.src = fixPath(d.img_url);
+        i.src = './' + d.img_url;
         i.style.display = 'block';
-        document.getElementById('t-info').innerHTML = `<b>${d.album_title}</b>${d.tracks.map(t=> `<div>${t.track_number}. ${t.name}</div>`).join('')}`;
+        
+        let html = `<b>${d.album_title}</b><br>`;
+        d.tracks.forEach(t => {
+            html += `<div onclick="loadAndPlay('${t.url}', '${t.name}')">${t.track_number}. ${t.name}</div>`;
+        });
+        document.getElementById('t-info').innerHTML = html;
+    }
+
+    function exportTier() {
+        const area = document.getElementById('tier-capture-area');
+        domtoimage.toPng(area, { bgcolor: '#ffffff' }).then(dataUrl => {
+            const link = document.createElement('a');
+            link.download = `tier-${Date.now()}.png`;
+            link.href = dataUrl;
+            link.click();
+        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // 이미지 경로 초기화 (중요)
-        document.querySelectorAll('.lazy-load').forEach(img => {
-            img.src = fixPath(img.getAttribute('data-src'));
-        });
-
-        document.querySelectorAll('.band-content').forEach(c => {
-            new Sortable(c, { 
-                group: { name: 'shared', pull: 'clone', put: false }, 
-                sort: false 
-            });
-        });
-
         document.querySelectorAll('.drop-zone').forEach(z => {
-            new Sortable(z, {
-                group: 'shared',
-                animation: 150,
-                onAdd: (e) => {
-                    const item = e.item;
-                    item.classList.add('tier-item');
-                    if (!item.querySelector('.del-btn')) {
-                        const b = document.createElement('div');
-                        b.className = 'del-btn';
-                        b.innerText = '✕';
-                        b.onclick = () => item.remove();
-                        item.appendChild(b);
-                    }
-                    // 드롭 시 이미지 경로가 유지되도록 보장
-                    const img = item.querySelector('img');
-                    if (img) img.src = fixPath(img.getAttribute('src') || img.getAttribute('data-src'));
-                }
-            });
+            new Sortable(z, { group: 'shared', animation: 150 });
         });
     });
-
-    async function exportTier() {
-        const area = document.getElementById('tier-capture-area');
-        const wrapper = document.getElementById('tier-wrapper');
-        wrapper.classList.add('expanded');
-        document.body.classList.add('capturing');
-
-        await new Promise(r => setTimeout(r, 600));
-
-        domtoimage.toPng(area, { bgcolor: '#ffffff' })
-            .then(dataUrl => {
-                const link = document.createElement('a');
-                link.download = `tier-${Date.now()}.png`;
-                link.href = dataUrl;
-                link.click();
-            })
-            .finally(() => {
-                document.body.classList.remove('capturing');
-                if (window.innerWidth < 1024) wrapper.classList.remove('expanded');
-            });
-    }
 </script>
 </body>
 </html>
