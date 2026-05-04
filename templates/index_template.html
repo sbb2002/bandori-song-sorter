@@ -92,11 +92,18 @@
         if (!path) return '';
         if (path.startsWith('http') || path.startsWith('data:')) return path;
         
-        // 경로의 시작이 / 이거나 assets 이면 앞에 ./ 를 붙여 상대경로 명시
-        let cleanPath = path.replace(/\\/g, '/'); // 혹시 모를 역슬래시 치환
-        if (cleanPath.startsWith('/')) cleanPath = cleanPath.substring(1);
-        return './' + cleanPath;
-    }
+        // 역슬래시를 슬래시로 변경하고 앞뒤 공백 제거
+        let cleanPath = path.replace(/\\/g, '/').trim();
+        
+        // 경로가 'assets/'로 시작한다면 그대로 반환하거나 './'를 붙임
+        // 만약 sbb2002.github.io/bandori-album-sorter/ 환경이라면 
+        // 상대 경로인 './assets/...' 가 가장 확실합니다.
+        if (cleanPath.startsWith('/')) {
+            cleanPath = cleanPath.substring(1);
+        }
+    
+    return './' + cleanPath;
+}
 
     function toggleTier() {
         const w = document.getElementById('tier-wrapper');
