@@ -89,8 +89,86 @@ function exportTier() {
     });
 }
 
+function showBand(band) {
+    document.querySelectorAll('.band-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.band === band);
+    });
+    document.querySelectorAll('.band-albums').forEach(panel => {
+        panel.style.display = panel.dataset.band === band ? 'grid' : 'none';
+    });
+    const activePanel = document.querySelector(`.band-albums[data-band="${band}"]`);
+    if (activePanel) {
+        activePanel.scrollTop = 0;
+    }
+}
+
+function updateHistogram() {
+    const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
+    if (!bandButtons.length) return;
+
+    const bands = bandButtons.map(btn => btn.dataset.band);
+    const counts = {};
+
+    document.querySelectorAll('#tier-wrapper .tier-row').forEach(row => {
+        const tier = row.querySelector('.tier-label')?.textContent.trim();
+        if (!tier) return;
+        counts[tier] = counts[tier] || {};
+        bands.forEach(band => counts[tier][band] = 0);
+        row.querySelectorAll('.drop-zone > *').forEach(item => {
+            const json = item.getAttribute('data-json');
+            if (!json) return;
+            try {
+                const album = JSON.parse(json);
+                const band = album.band || item.dataset.band;
+                if (band && counts[tier][band] !== undefined) {
+                    counts[tier][band] += 1;
+                }
+            } catch (e) {
+                // ignore malformed item
+            }
+        });
+    });
+
+    let maxCount = 1;
+    Object.values(counts).forEach(tierCounts => {
+        Object.values(tierCounts).forEach(value => {
+            if (value > maxCount) maxCount = value;
+        });
+    });
+
+    document.querySelectorAll('.bar-cell').forEach(cell => {
+        const band = cell.dataset.band;
+        const tier = cell.dataset.tier;
+        const value = (counts[tier] && counts[tier][band]) || 0;
+        const widthPct = maxCount > 0 ? Math.max(10, (value / maxCount) * 100) : 10;
+        cell.querySelector('.bar-fill').style.width = `${widthPct}%`;
+        cell.querySelector('.bar-label').innerText = value;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.drop-zone').forEach(z => {
-        new Sortable(z, { group: 'shared', animation: 150 });
+        new Sortable(z, {
+            group: 'shared',
+            animation: 150,
+            onAdd: updateHistogram,
+            onSort: updateHistogram,
+            onRemove: updateHistogram
+        });
     });
+
+    document.querySelectorAll('.band-albums').forEach(panel => {
+        new Sortable(panel, {
+            group: { name: 'shared', pull: 'clone', put: false },
+            animation: 150,
+            sort: false
+        });
+    });
+
+    const firstBtn = document.querySelector('.band-btn.active');
+    if (firstBtn) {
+        showBand(firstBtn.dataset.band);
+    }
+
+    updateHistogram();
 });

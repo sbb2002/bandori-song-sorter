@@ -23,6 +23,29 @@ body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--b
 .track-list div { cursor: pointer; padding: 2px 5px; border-radius: 4px; }
 .track-list div:hover { background: #333; color: var(--pink); }
 
+.right-panel-section { display: flex; flex-direction: column; gap: 10px; }
+.section-header { font-size: 0.92rem; font-weight: 800; letter-spacing: 0.08em; color: var(--pink); text-transform: uppercase; }
+.band-buttons { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.band-buttons::-webkit-scrollbar { height: 6px; }
+.band-buttons::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 999px; }
+.band-btn { border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--txt); padding: 9px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease; }
+.band-btn:hover, .band-btn.active { background: var(--pink); color: #000; border-color: transparent; transform: translateY(-1px); }
+.album-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; min-height: 150px; max-height: 280px; padding: 10px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow-y: auto; }
+.band-albums { display: none; grid-template-columns: inherit; gap: inherit; }
+.album-card { display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 10px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+.album-card:hover { transform: translateY(-2px); border-color: var(--pink); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+.album-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 12px; }
+.album-title { font-size: 0.88rem; font-weight: 700; line-height: 1.2; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.histogram-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; min-height: 240px; overflow: auto; }
+.histogram-container { display: flex; flex-direction: column; gap: 6px; overflow-x: auto; }
+.histogram-row { display: grid; grid-template-columns: 80px repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; align-items: center; padding: 6px 0; }
+.histogram-head { font-size: 0.82rem; opacity: 0.75; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; }
+.histogram-cell { min-height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 6px; position: relative; overflow: hidden; }
+.tier-name { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.bar-cell { justify-content: flex-start; padding: 6px; }
+.bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: rgba(255,153,170,0.85); border-radius: 10px; z-index: 1; transition: width 0.2s ease; }
+.bar-label { position: relative; z-index: 2; color: var(--txt); font-size: 0.82rem; font-weight: 700; }
+
 /* Bottom Player Bar */
 #player-bar { height: var(--player-h); background: var(--pink); color: #000; display: flex; align-items: center; padding: 0 20px; gap: 20px; z-index: 200; position: fixed; bottom: 0; width: 100%; box-sizing: border-box; }
 .player-controls { display: flex; gap: 15px; align-items: center; }

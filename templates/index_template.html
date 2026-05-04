@@ -24,22 +24,59 @@
     </div>
 
     <div class="control-panel">
-        <div id="preview-display">
-            <img id="p-img" src="" style="display:none;">
-            <div id="t-info" class="track-list">앨범을 선택하세요.</div>
-        </div>
+        <section class="right-panel-section" id="tracklist-panel">
+            <div class="section-header">Track List</div>
+            <div id="preview-display">
+                <img id="p-img" src="" style="display:none;">
+                <div id="t-info" class="track-list">앨범을 선택하세요.</div>
+            </div>
+        </section>
 
-        <div class="bank-container">
-            {% for b, albs in albums_by_band.items() %}
-            <div class="band-content active">
-                {% for a in albs %}
-                <div class="bank-item" data-json='{{a|tojson|safe}}' onclick="showInfo(this)">
-                    <img src="./{{a.img_url}}" style="width:65px; height:65px; object-fit:cover; border-radius:4px;">
+        <section class="right-panel-section" id="album-panel">
+            <div class="section-header">Bands</div>
+            <div class="band-buttons" id="band-buttons">
+                {% for band in albums_by_band.keys() %}
+                <button class="band-btn{% if loop.first %} active{% endif %}" type="button" data-band="{{ band }}" onclick="showBand('{{ band }}')">{{ band.replace('_', ' ') }}</button>
+                {% endfor %}
+            </div>
+            <div class="album-grid" id="album-grid">
+                {% for band, albs in albums_by_band.items() %}
+                <div class="band-albums" data-band="{{ band }}" style="display: {% if loop.first %}grid{% else %}none{% endif %};">
+                    {% for a in albs %}
+                    <div class="album-card" data-json='{{ a|tojson|safe }}' onclick="showInfo(this)">
+                        <img src="./{{ a.img_url }}" alt="{{ a.album_title }}">
+                        <div class="album-title">{{ a.album_title }}</div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+        </section>
+
+        <section class="right-panel-section" id="histogram-panel">
+            <div class="section-header">Tier × Band Histogram</div>
+            <div class="histogram-card">
+                <div class="histogram-container">
+                    <div class="histogram-row histogram-head">
+                        <div class="histogram-cell tier-name">Tier</div>
+                        {% for band in albums_by_band.keys() %}
+                        <div class="histogram-cell band-name">{{ band.replace('_', ' ') }}</div>
+                        {% endfor %}
+                    </div>
+                    {% for label, color in [('S+', '#ff7f7f'), ('S', '#ff9999'), ('A+', '#ffbf7f'), ('A', '#ffff7f'), ('B+', '#bfff7f'), ('B', '#7fff7f'), ('C+', '#7fffff'), ('C', '#7f7fff'), ('D', '#bf7fff'), ('F', '#cccccc')] %}
+                    <div class="histogram-row" data-tier="{{ label }}">
+                        <div class="histogram-cell tier-name" style="background:{{ color }}; color:#000;">{{ label }}</div>
+                        {% for band in albums_by_band.keys() %}
+                        <div class="histogram-cell bar-cell" data-band="{{ band }}" data-tier="{{ label }}">
+                            <div class="bar-fill" style="width:0;"></div>
+                            <span class="bar-label">0</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
     </div>
 </div>
 
