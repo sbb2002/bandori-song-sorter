@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BanG Dream! Album Sorter & Player</title>
+    <link rel="stylesheet" href="./style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
-    <link rel="stylesheet" href="{{ static_paths.css }}">
 </head>
 <body>
 
@@ -22,25 +22,19 @@
             {% endfor %}
         </div>
     </div>
-    
-    <div class="control-panel">
-        <div class="band-tabs">
-            {% for band in albums_by_band.keys() %}
-            <button class="tab-btn {{ 'active' if loop.first }}" onclick="filterBand('{{ band }}', this)">{{ band }}</button>
-            {% endfor %}
-        </div>
 
+    <div class="control-panel">
         <div id="preview-display">
             <img id="p-img" src="" style="display:none;">
-            <div id="t-info" class="track-list">앨범을 선택하여 트랙을 확인하세요.</div>
+            <div id="t-info" class="track-list">앨범을 선택하세요.</div>
         </div>
-        
+
         <div class="bank-container">
             {% for b, albs in albums_by_band.items() %}
-            <div id="band-{{ b|replace(' ', '-') }}" class="band-content {{ 'active' if loop.first }}">
+            <div class="band-content active">
                 {% for a in albs %}
                 <div class="bank-item" data-json='{{a|tojson|safe}}' onclick="showInfo(this)">
-                    <img src="./{{a.img_url}}" draggable="false">
+                    <img src="./{{a.img_url}}" style="width:65px; height:65px; object-fit:cover; border-radius:4px;">
                 </div>
                 {% endfor %}
             </div>
@@ -49,6 +43,7 @@
     </div>
 </div>
 
+<!-- Player Bar -->
 <div id="player-bar">
     <div class="player-controls">
         <button class="play-btn" onclick="togglePlay()" id="master-play">▶</button>
@@ -71,6 +66,6 @@
 
 <div id="youtube-player"></div>
 
-<script src="{{ static_paths.js }}"></script>
+<script src="./script.js"></script>
 </body>
 </html>
