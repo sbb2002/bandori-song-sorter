@@ -40,7 +40,7 @@
             <div id="band-{{ b|replace(' ', '-') }}" class="band-content {{ 'active' if loop.first }}">
                 {% for a in albs %}
                 <div class="bank-item" data-json='{{a|tojson|safe}}' onclick="showInfo(this)">
-                    <img src="./{{a.img_url}}">
+                    <img src="./{{a.img_url}}" draggable="false">
                 </div>
                 {% endfor %}
             </div>

@@ -26,7 +26,6 @@ body {
     position: relative;
 }
 
-/* Tier Table Area */
 #tier-wrapper {
     background: #ffffff;
     width: 80px;
@@ -36,10 +35,6 @@ body {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-}
-
-#tier-wrapper.expanded {
-    width: 100vw;
 }
 
 .tier-table {
@@ -74,24 +69,29 @@ body {
     padding: 10px;
     align-content: flex-start;
     min-height: 70px;
+    background-color: #fcfcfc;
 }
 
-.tier-item {
+.bank-item, .tier-item {
     width: 70px;
     height: 70px;
-    position: relative;
     cursor: grab;
+    position: relative;
 }
 
-.tier-item img {
+.bank-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 4px;
-    pointer-events: none;
+    display: block;
 }
 
-/* Control Panel & Band Tabs */
+.sortable-ghost {
+    opacity: 0.4;
+    background: var(--pink);
+}
+
 .control-panel {
     flex: 1;
     display: flex;
@@ -125,7 +125,6 @@ body {
     font-weight: bold;
 }
 
-/* Preview Display (Tracklist) */
 #preview-display {
     background: var(--card-bg);
     padding: 15px;
@@ -173,41 +172,23 @@ body {
     color: #000;
 }
 
-/* Bank (Album List) */
 .bank-container {
     display: flex;
     flex-direction: column;
+    min-height: 200px;
 }
 
 .band-content {
     display: none;
     flex-wrap: wrap;
     gap: 10px;
+    min-height: 100px;
 }
 
 .band-content.active {
     display: flex;
 }
 
-.bank-item {
-    width: 70px;
-    height: 70px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.bank-item:hover {
-    transform: scale(1.05);
-}
-
-.bank-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-/* Player Bar */
 #player-bar {
     height: var(--player-h);
     background: var(--pink);
@@ -283,11 +264,6 @@ body {
     font-weight: bold;
     border-radius: 8px;
     box-shadow: 0 4px #e6d8a0;
-}
-
-.btn-save:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px #e6d8a0;
 }
 
 #youtube-player {

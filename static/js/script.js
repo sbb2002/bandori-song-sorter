@@ -34,13 +34,11 @@ function togglePlay() {
     }
 }
 
-function pauseVideo() {
-    player.pauseVideo();
-}
-
 function stopVideo() {
-    player.stopVideo();
-    document.getElementById('timeline').value = 0;
+    if(player && player.stopVideo) {
+        player.stopVideo();
+        document.getElementById('timeline').value = 0;
+    }
 }
 
 function onPlayerStateChange(event) {
@@ -85,17 +83,23 @@ function showInfo(el) {
     i.style.display = 'block';
     
     let html = `<div class="track-info-wrap"><strong>${d.album_title}</strong><div class="track-list">`;
-    d.tracks.forEach(t => {
-        html += `<div onclick="loadAndPlay('${t.url}', '${t.name}')">${t.track_number}. ${t.name}</div>`;
-    });
+    if (d.tracks && d.tracks.length > 0) {
+        d.tracks.forEach(t => {
+            html += `<div onclick="loadAndPlay('${t.url}', '${t.name}')">${t.track_number}. ${t.name}</div>`;
+        });
+    } else {
+        html += `<div>트랙 정보가 없습니다.</div>`;
+    }
     html += `</div></div>`;
     document.getElementById('t-info').innerHTML = html;
 }
 
 function filterBand(bandName, btn) {
     document.querySelectorAll('.band-content').forEach(c => c.classList.remove('active'));
-    const targetId = 'band-' + bandName.replace(/\s+/g, '-');
-    document.getElementById(targetId).classList.add('active');
+    // 공백을 하이픈으로 치환하여 ID 매칭
+    const targetId = 'band-' + bandName.split(' ').join('-');
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) targetEl.classList.add('active');
     
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -111,20 +115,28 @@ function exportTier() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// 드래그 앤 드롭 초기화 함수 분리
+function initSortable() {
     const zones = document.querySelectorAll('.drop-zone, .band-content');
     zones.forEach(z => {
+        // 기존 인스턴스 파괴 후 재설정 (중복 방지)
+        if (Sortable.get(z)) {
+            Sortable.get(z).destroy();
+        }
+        
         new Sortable(z, {
             group: 'shared',
             animation: 150,
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
             ghostClass: 'sortable-ghost',
-            onAdd: function (evt) {
-                if (evt.to.classList.contains('drop-zone')) {
-                    evt.item.classList.add('tier-item');
-                } else {
-                    evt.item.classList.remove('tier-item');
-                }
+            onEnd: function (evt) {
+                // 드래그 종료 시 앨범 클릭 이벤트 유지 확인용
             }
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initSortable();
 });
