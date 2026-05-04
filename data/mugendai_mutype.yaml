@@ -1,7 +1,7 @@
 - band: 'mugendai_mutype'
   numbering: '1st'
   album_title: 'プログレス サイン'
-  img_url: https://i.namu.wiki/i/02oeV9UyUa77wdi9NPbwalib0xZAzi4g-_mSo0CPNTq6m6PmylC3UZZIqxgAnDubRJde9lqw5Aa1wMRFdo6r3gUJjbo12FA908I5z8L09qc4zJEfcSnqJM1hnP0-NiqdS8p3PN9T_SkZDQL65WBCRg.webp
+  img_url: assets/mugendai_mutype/a01.webp
   tracks:
     - track_number: '01'
       name: 'アイの夢限'
@@ -52,7 +52,7 @@
 - band: 'mugendai_mutype'
   numbering: 'Mini'
   album_title: 'スタートライン'
-  img_url: https://i.namu.wiki/i/PTF-Um1cMhoBUC8Fb-TI4lzwJgjGmityd918uVWI81Db44S11HAhSy2Ar13eCz8Due1brKyN2UMQCgePvIhpk2y5oPkwFFoFHCK3czBfxDFq_m5P-aOndZw6cAdKLEEmx7JhaODxs1h48RtZSALc1Q.webp
+  img_url: assets/mugendai_mutype/m01.webp
   tracks:
     - track_number: '01'
       name: '✞animaるパーティ✞開催中✞'

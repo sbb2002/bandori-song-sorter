@@ -1,7 +1,7 @@
 - band: 'hello_happy_world'
   numbering: '1st'
   album_title: 'にこにこねくと！'
-  img_url: https://i.namu.wiki/i/KhVBz41jSEBM4CJ_NJfB_tPC2TgWennMJwD4IqWwE79psashVnui71SRqLTm2c-G-W0TGuUTA3W3gToISGmX0YkRRpPQSUOyWba7LPmyyYQKLVaMPXLHUAcFJgKByTSy2K-HLVTr7F_r9GP67ljJ8g.webp
+  img_url: assets/hello_happy_world/a01.webp
   tracks:
     - track_number: '01'
       name: 'キミがいなくちゃっ！'
@@ -40,7 +40,7 @@
 - band: 'hello_happy_world'
   numbering: '2nd'
   album_title: 'SMILE ON PARADE'
-  img_url: https://i.namu.wiki/i/qZ3ZncDcWE45Mp3lfuydDeoh7LLbeuncLMmTzn3DJWWpTOewX0jQuP1w7-1OnfFavXyIyI8xsuxU32uYXwJab_zUq8WJsZEf-NDXNhrEs0OCwi_-m72M7AzGgxPTXKyAITXBf-FnKX96U7EpJxPnpA.webp
+  img_url: assets/hello_happy_world/a02.webp
   tracks:
     - track_number: '01'
       name: 'ふぁいぶスマイル◯オールインっ！'
@@ -85,7 +85,7 @@
 - band: 'hello_happy_world'
   numbering: 'Mini'
   album_title: 'どうしたってカーニバル！'
-  img_url: https://i.namu.wiki/i/J8jo5LhAOfXjGkuHKRhSAy9ZcqeYV5RL_MDNVhHibe0Yj2Gv_baWWq_fctELlkIN5D2BvcFVXtdkADI5twUylkDWWK6FL430XaOo9pYzLx4XD_N2UIzhG15JZvhqzuYVlUcYNtVYn1WtuoO82pks8A.webp
+  img_url: assets/hello_happy_world/m01.webp
   tracks:
     - track_number: '01'
       name: 'サンバロハッピ〜！'
@@ -106,7 +106,7 @@
 - band: 'hello_happy_world'
   numbering: 'Mini'
   album_title: 'いっつあ！すまいるわーるど！！'
-  img_url: https://i.namu.wiki/i/FUKZ7korhM9o7piFRDvvnKaSnmBqYXRnrSZN55jBixmgBNzXnpnI72JvOCnLdx2heecadc7lq3vVLlXrtTNc41aXFkAZpD4k1reCeu85zgOCOIdSldhUl_h2dMuYuTaQoScgbkbaUw9uCz3n7_63GA.webp
+  img_url: assets/hello_happy_world/m02.webp
   tracks:
     - track_number: '01'
       name: 'れっつ・スマイル・すとり〜みんぐっ♪'

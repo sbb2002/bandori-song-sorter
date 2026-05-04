@@ -1,7 +1,7 @@
 - band: 'poppin_party'
   numbering: '1st'
   album_title: "Poppin'on!"
-  img_url: https://i.namu.wiki/i/zPGP6wy20c2fUYhMEtY9IChn259rppMHQuyVOGG_x6NGmQGHB8z2JddAuXpmcThMcfckyF_h8ntfWWnRJjOEWOS_HkDt3S36Vu7ESu84zRCdc5pSImju029W8p9ADwQPpfIn82i7eNJnTjwRm1cnaQ.webp
+  img_url: assets/poppin_party/a01.webp
   tracks:
     - track_number: 'Disc 1'
       name: 'Disc 2'
@@ -43,7 +43,7 @@
 - band: 'poppin_party'
   numbering: '2nd'
   album_title: 'Breakthrough!'
-  img_url: https://i.namu.wiki/i/9-lT7nq7Ycnvwfiv9IC3YV053oJ15Ta11BMbod2k8O1WnFzSdXtSdHJWNWviqkuURIdq4XFOFGyl3TXgNjc8sZ4LZxt0_86ZEEe1faboJAkH9mAZM5iol1C9FKpq_eXH0lH6Dy63gwPaRyNKqLukuA.webp
+  img_url: assets/poppin_party/a02.webp
   tracks:
     - track_number: 'Disc 1'
       name: 'Disc 2[* 블루레이 수록판 한정]'
@@ -91,7 +91,7 @@
 - band: 'poppin_party'
   numbering: '3rd'
   album_title: 'POPIGENIC'
-  img_url: https://i.namu.wiki/i/PxhJft6DYBuacvnGe7P6-076b2EUOzknIFEEmpCX1aQP8M6rYO9X0ySIK7tnCqAYcpj-OGMYA3cAVnTntEbpR6PtnWHFIU5hvlHY16Lal8Xf5KsK1SdaJ_bIfUjnAnBKQAHNHcc3gAOiWlgFJpkSRQ.webp
+  img_url: assets/poppin_party/a03.webp
   tracks:
     - track_number: '01'
       name: '오리지널 캐릭터 카드 1장(전 5종)'
@@ -100,7 +100,7 @@
 - band: 'poppin_party'
   numbering: 'Mini'
   album_title: 'Live Beyond!!'
-  img_url: https://i.namu.wiki/i/x6kNZw18-B_3zbc0-U6yhWyUpkEB8fnw8m0h0Ypn-v4nyt0gphHlU68X8fSYrDomzxKYkccJXTWAb0yuK8BOH4vwz_vsCJsw7gRftJk4eKv0YGk5ZDkRrjO5AR9mlcXeSU_866vRFXud0FWTLFz2GA.webp
+  img_url: assets/poppin_party/m01.webp
   tracks:
     - track_number: 'Disc 1'
       name: 'Disc 2[* 블루레이 수록판 한정]'
@@ -136,7 +136,7 @@
 - band: 'poppin_party'
   numbering: 'Mini'
   album_title: '青春 To Be Continued'
-  img_url: https://i.namu.wiki/i/btV212JS912YtwH0ZizX3TbYUMX0xxo72eobaa1outy-Ey1Gwu_4jBUyY51zgQDTckzoxoyHBr4lMEGE1l6lWkhEL8nFM-0DISDGgZIxHXIC3W7anVZGh7tcAzOwxM2X5U36SIsUsV_Q6vZb0zC13w.webp
+  img_url: assets/poppin_party/m02.webp
   tracks:
     - track_number: '01'
       name: '青春 To Be Continued'

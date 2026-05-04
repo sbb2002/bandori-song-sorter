@@ -1,7 +1,7 @@
 - band: 'raise_a_suiren'
   numbering: '1st'
   album_title: 'ERA'
-  img_url: https://i.namu.wiki/i/nKsGh7NcEemmnEoPmil3RBp38J7SJHrrxibd-traeyTDq7V73OpENv2J8SwgvsWrICmrbQNtgE93DuWdyAi0OE-HrpiSFUvuRkvWdEtK0Pt4_NIS3c6ZH99EEwxvJ4NZHkQjeW3LrGXeUlM85ed60w.webp
+  img_url: assets/raise_a_suiren/a01.webp
   tracks:
     - track_number: '01'
       name: 'Invincible Fighter'
@@ -43,7 +43,7 @@
 - band: 'raise_a_suiren'
   numbering: '2nd'
   album_title: 'SAVAGE'
-  img_url: https://i.namu.wiki/i/w5hPnHTMlID8lAJ_74a74QxWtQoio-8apzZMLYnoNHRGKpl63D707kQhnUprTkxOd_FIZQCTkxdifE0YTU7qD8Aymn1JoQ9lz4uNSBOfsBCrqjdC3eu5YxdQY-Ix_2XA-k55JxsZVBlFjIeh4Jtmzw.jpg
+  img_url: assets/raise_a_suiren/a02.jpg
   tracks:
     - track_number: '01'
       name: 'V.I.P MONSTER'
@@ -91,7 +91,7 @@
 - band: 'raise_a_suiren'
   numbering: 'Mini'
   album_title: 'THE THIRD（仮）1st ライブ'
-  img_url: https://i.namu.wiki/i/JVnxFw_Jc1rqgA-0aVHVypuBpR7Q0_nmFjky7UpKWHAtOWmZg4su64o-LVAR1DUbCgPYtPO5KGjvI0wsnHLOwH_H99zKM61YHU3SqtA8iooTUL0NbWze3ckDhyaaO1i1p8qGGwN7HzdmWCz5z-0h7w.webp
+  img_url: assets/raise_a_suiren/m01.webp
   tracks:
     - track_number: '1'
       name: 'That Is How I Roll!'
@@ -133,7 +133,7 @@
 - band: 'raise_a_suiren'
   numbering: 'Mini'
   album_title: 'REVELATION'
-  img_url: https://i.namu.wiki/i/PwkaPtC0OtlfZd0WMpWZ5o2DJ0eUP1CXarXdtwoyueSGQIFwJgx8JzBn7SiSQ6uFwA1ykceXDjsQlNWa4al17qq_PDw8ohiUYzvN97wWTGMCZ3Zph1dbLuV4tTduPNpMbStn1XW1rtiI6xwDdfAfCw.webp
+  img_url: assets/raise_a_suiren/m02.webp
   tracks:
     - track_number: '01'
       name: 'Apocalypse(BanG Dream!)|Apocalypse'

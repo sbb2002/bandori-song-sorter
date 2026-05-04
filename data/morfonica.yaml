@@ -1,7 +1,7 @@
 - band: 'morfonica'
   numbering: '1st'
   album_title: 'QUINTET'
-  img_url: https://i.namu.wiki/i/nigXkHF2XvV-2Kefd79uZMq_0ZJH0xcxLq8431AZJjkimbPizj0KvM_ExGyw7Ge-mOhNBQ1OHFd6Gn82vC7u-s_nZTBE1NSL0nIOUD4wpMhaLD7x_Xep3ULi97WXp_i7iDRygi6o9POiSo3dKN9KJA.webp
+  img_url: assets/morfonica/a01.webp
   tracks:
     - track_number: '01'
       name: 'Daylight -デイライト-'
@@ -52,7 +52,7 @@
 - band: 'morfonica'
   numbering: '2nd'
   album_title: 'Polyphony'
-  img_url: https://i.namu.wiki/i/wZOhQY3rFTu3-zGcCtSFuoHCxTjKGtBSjSJc3abHGWeRMmRz40sv6HLRHbhbYkN6z3xMtJSQT0BvR5WeLeYw-5P8xYikUKtN1VxSDhSw70zqoi6kWRQP1TUPIlQ2TkjUMhml6Z8svqIZ813Us31xhQ.webp
+  img_url: assets/morfonica/a02.webp
   tracks:
     - track_number: '01'
       name: 'Polyphonyscape'
@@ -94,7 +94,7 @@
 - band: 'morfonica'
   numbering: 'Mini'
   album_title: 'forte'
-  img_url: https://i.namu.wiki/i/RDoFe2KHN9YqBL0SIm00YckRZf8-pRwzEpAnJQgBJqC2Jt3QSPuhHPtFBFJSOdO8Jf05nWclDK_xzwI6F5non_GSLuWI6UYBrD8SwFEH8sF3nJCmxEkxdoHAv0OJXsImWZ2oFoV3N3SSojdvCdLn7Q.webp
+  img_url: assets/morfonica/m01.webp
   tracks:
     - track_number: '01'
       name: 'フレージング ミラージュ'

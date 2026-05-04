@@ -1,7 +1,7 @@
 - band: 'afterglow'
   numbering: '1st'
   album_title: 'ONE OF US'
-  img_url: https://i.namu.wiki/i/YDihzSPPzPey20RHsh9EgR_RQ8EA5lYGJbb5y72KYs1rl3Lztdf0hC34hqSDHHJGOQ5awlJWeYVazGBfhJaFBV51cuk7A0q7fU4_jMwQmClcKFWmkCDiBFVVAdnMEavNS2eTzbG0Ffz8IyVzWfkSSQ.webp
+  img_url: assets/afterglow/a01.webp
   tracks:
     - track_number: '01'
       name: 'ON YOUR MARK'
@@ -40,7 +40,7 @@
 - band: 'afterglow'
   numbering: '2nd'
   album_title: 'STAY GLOW'
-  img_url: https://i.namu.wiki/i/ckmMJevkM7XGGcVNHtK16NC47q5iewMwCbW5bQDNLQjTQHcg_uklMVD4AB_pdDEw3vr6o7bl2JyDsRYS78kH9fYXrgw5GB1WqYgzRZtv2PE-gYI6MaAb7Gv11-3qVEewd6WatZLcZM7iTAO0BWfhMQ.webp
+  img_url: assets/afterglow/a02.webp
   tracks:
     - track_number: '01'
       name: 'Scarlet Sky'
@@ -85,7 +85,7 @@
 - band: 'afterglow'
   numbering: 'Mini'
   album_title: '忘れらんない日々のこと'
-  img_url: https://i.namu.wiki/i/YU7dEc4s5IBfE3AKbEboYj-5YGWzkKmGSxBsK2-QS0KKxXvls0RWmIoWRid3P0phr7yQcb5yDECMkY-19sD_gQvZZZiIn43ZVmA8lUa_nopdnSdByzy43He-buYIginFoVWRPEUx6-WNpbBB4exbGw.webp
+  img_url: assets/afterglow/m01.webp
   tracks:
     - track_number: '01'
       name: '燦々'
@@ -106,7 +106,7 @@
 - band: 'afterglow'
   numbering: 'Mini'
   album_title: 'GLOW GOES ON'
-  img_url: https://i.namu.wiki/i/-oqifpsqOv5OBJ-UOD0eqb9KkePokA6k-tQfk6iCJM43lhJHlSe6OakKO9Fvcr4XXQLOLrL-4qAUr4CuWEvQXSLd6T9LH0Hywl5PFSaEiWR_-HqzsQqNJa15YfRi9GikMsmMUqz0bzporGaBMdPkLA.webp
+  img_url: assets/afterglow/m02.webp
   tracks:
     - track_number: '01'
       name: 'Glowing After'
