@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BanG Dream! Tier Maker</title>
+    <!-- 라이브러리 로드 순서 확인 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -17,7 +18,6 @@
             background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; 
             z-index: 100; display: flex; flex-direction: column; overflow: hidden;
         }
-        /* [모바일 확장 상태] */
         #tier-wrapper.expanded { width: 100vw; }
         
         .tier-table { border: 1px solid #444; width: 100%; border-collapse: collapse; flex: 1; }
@@ -28,20 +28,20 @@
         }
         .drop-zone { 
             flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; 
-            background: #fff; min-height: 50px; overflow: hidden;
+            background: #fff; min-height: 50px; overflow-y: auto;
         }
-        /* 모바일 기본 상태에서 드롭존 숨김 */
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
 
-        .tier-item { width: 50px; height: 50px; position: relative; }
-        .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        /* 드래그되는 아이템 스타일 */
+        .tier-item { width: 50px; height: 50px; position: relative; cursor: grab; }
+        .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
         .del-btn { 
             position: absolute; top: -5px; right: -5px; background: red; color: #fff; 
             width: 18px; height: 18px; border-radius: 50%; font-size: 10px; 
-            display: flex; align-items: center; justify-content: center; z-index: 10; 
+            display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer;
         }
 
-        /* 토글 화살표 버튼 */
+        /* 토글 버튼 */
         #toggle-btn {
             position: absolute; left: 60px; top: 50%; transform: translateY(-50%);
             background: var(--accent-pink); border: none; color: white;
@@ -51,79 +51,63 @@
         }
         #tier-wrapper.expanded + #toggle-btn { left: calc(100vw - 30px); border-radius: 10px 0 0 10px; }
 
-        /* 우측 패널 영역 */
+        /* 우측 제어 패널 */
         .control-panel { 
             flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; 
             background: var(--bg-color); transition: transform 0.3s ease; overflow-y: auto;
         }
         #tier-wrapper.expanded ~ .control-panel { transform: translateX(100%); }
 
-        /* 프리뷰 및 뱅크 스타일 */
-        #preview-display { display: flex; flex-direction: column; gap: 10px; background: #111; padding: 15px; border: 1px solid #333; }
-        #preview-img { width: 100%; max-width: 200px; aspect-ratio: 1/1; margin: 0 auto; object-fit: cover; display: none; }
-        .track-info-container { flex: 1; }
-        .track-item-row { display: flex; margin-bottom: 4px; font-size: 12px; }
-        .t-num { background: var(--accent-pink); padding: 2px 8px; font-weight: bold; }
-        .t-name { background: #fff; color: var(--accent-blue); padding: 2px 10px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; }
-        .band-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        /* 앨범 뱅크 스타일 */
+        #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+        .band-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; flex-shrink: 0; }
         .band-btn { background: #222; color: #fff; border: 1px solid #444; padding: 5px 10px; font-size: 11px; border-radius: 15px; cursor: pointer; }
         .band-btn.active { background: var(--accent-pink); color: #000; }
-        .band-content { display: none; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        
+        .band-content-container { flex: 1; overflow-y: auto; }
+        .band-content { display: none; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
         .band-content.active { display: flex; }
-        .bank-item { width: 65px; height: 65px; cursor: pointer; }
-        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        
+        /* 뱅크 내 아이템 */
+        .bank-item { width: 65px; height: 65px; cursor: pointer; position: relative; }
+        .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; pointer-events: none; }
 
-        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; margin-top: auto; cursor: pointer; }
+        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; margin-top: auto; cursor: pointer; flex-shrink: 0; }
 
-        /* 데스크탑 레이아웃 (1024px 이상) */
         @media (min-width: 1024px) {
             .main-container { padding: 20px; gap: 20px; align-items: flex-start; overflow: visible; height: auto; }
             #tier-wrapper { width: 450px !important; height: auto; border-radius: 5px; }
             #tier-wrapper:not(.expanded) .drop-zone { display: flex; }
             #toggle-btn { display: none; }
             .control-panel { transform: none !important; width: 600px; padding: 0; overflow: visible; }
-            #preview-display { flex-direction: row; height: 300px; }
-            #preview-img { width: 250px; max-width: 250px; }
             .bank-item { width: 85px; height: 85px; }
-            .band-content { justify-content: flex-start; }
         }
 
-        /* 캡처 전용 스타일 (상태 클래스) */
-        .capturing #tier-capture-area {
-            background-color: #ffffff !important;
-            width: 450px !important; 
-        }
         .capturing .del-btn { display: none !important; }
-        .capturing .drop-zone { display: flex !important; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <!-- 좌측: 티어 보드 -->
     <div id="tier-wrapper">
         <div class="tier-table" id="tier-capture-area">
             {% for label, color in [('S+', '#ff7f7f'), ('S', '#ff9999'), ('A+', '#ffbf7f'), ('A', '#ffff7f'), ('B+', '#bfff7f'), ('B', '#7fff7f'), ('C+', '#7fffff'), ('C', '#7f7fff'), ('D', '#bf7fff'), ('F', '#cccccc')] %}
             <div class="tier-row">
                 <div class="tier-label" style="background: {{color}};">{{label}}</div>
-                <div class="drop-zone"></div>
+                <div class="drop-zone" data-tier="{{label}}"></div>
             </div>
             {% endfor %}
         </div>
         <button class="btn-save" onclick="exportTier()">이미지 저장</button>
     </div>
 
-    <!-- 중앙 토글 버튼 (모바일 전용) -->
     <button id="toggle-btn" onclick="toggleTier()">▶</button>
 
-    <!-- 우측: 제어 패널 -->
     <div class="control-panel">
-        <div id="preview-display">
-            <img id="preview-img" src="">
-            <div id="track-info-container" class="track-info-container">
-                <p style="color:#666; font-size: 13px;">앨범을 클릭하세요.</p>
+        <div id="preview-display" style="background: #111; padding: 15px; border: 1px solid #333; display: flex; gap: 15px; min-height: 150px;">
+            <img id="preview-img" src="" style="width: 120px; height: 120px; object-fit: cover; display: none;">
+            <div id="track-info-container" style="flex: 1; font-size: 12px;">
+                <p style="color:#666;">앨범을 선택하면 트랙 정보가 표시됩니다.</p>
             </div>
         </div>
 
@@ -133,21 +117,23 @@
                 <button class="band-btn {% if loop.first %}active{% endif %}" onclick="showBand('{{ band_name }}', this)">{{ band_name }}</button>
                 {% endfor %}
             </div>
-            {% for band_name, band_albums in albums_by_band.items() %}
-            <div id="band-{{ band_name }}" class="band-content {% if loop.first %}active{% endif %}">
-                {% for album in band_albums %}
-                <div class="bank-item" data-album-json='{{ album | tojson | safe }}' onclick="handleAlbumClick(this)">
-                    <img src="{{ album.img_url }}" crossorigin="anonymous" alt="{{ album.album_title }}">
+            <div class="band-content-container">
+                {% for band_name, band_albums in albums_by_band.items() %}
+                <div id="band-{{ band_name }}" class="band-content {% if loop.first %}active{% endif %}">
+                    {% for album in band_albums %}
+                    <div class="bank-item" data-album-json='{{ album | tojson | safe }}' onclick="handleAlbumClick(this)">
+                        <img src="{{ album.img_url }}" crossorigin="anonymous" alt="{{ album.album_title }}">
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
 </div>
 
 <script>
-    // 티어 보드 확장/축소 토글 (모바일)
+    // 1. 모바일 토글 로직
     function toggleTier() {
         const wrapper = document.getElementById('tier-wrapper');
         const btn = document.getElementById('toggle-btn');
@@ -155,6 +141,7 @@
         btn.innerText = wrapper.classList.contains('expanded') ? '◀' : '▶';
     }
 
+    // 2. 밴드 전환 로직
     function showBand(bandName, btnElement) {
         document.querySelectorAll('.band-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
@@ -162,98 +149,102 @@
         document.getElementById('band-' + bandName).classList.add('active');
     }
 
+    // 3. 프리뷰 로직
     function handleAlbumClick(element) {
         const albumData = JSON.parse(element.getAttribute('data-album-json'));
         const img = document.getElementById('preview-img');
         const container = document.getElementById('track-info-container');
+        
         img.src = albumData.img_url; 
         img.style.display = 'block';
-        container.innerHTML = '';
+        container.innerHTML = `<strong>${albumData.album_title}</strong><hr style="border:0; border-top:1px solid #333; margin:5px 0;">`;
+        
         albumData.tracks.forEach(track => {
             const row = document.createElement('div');
-            row.className = 'track-item-row';
-            row.innerHTML = `<div class="t-num">${track.track_number}</div><div class="t-name">${track.name}</div>`;
+            row.style.marginBottom = '2px';
+            row.innerHTML = `<span style="color:var(--accent-pink)">${track.track_number}.</span> ${track.name}`;
             container.appendChild(row);
         });
     }
 
-    // Sortable 초기화 (모든 밴드 뱅크)
-    document.querySelectorAll('.band-content').forEach(bank => {
-        new Sortable(bank, {
-            group: { name: 'shared', pull: 'clone', put: false },
-            sort: false, animation: 150, delay: 100, delayOnTouchOnly: true
+    // 4. 드래그 앤 드롭 (Sortable) 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        // 모든 밴드 뱅크 초기화
+        document.querySelectorAll('.band-content').forEach(bank => {
+            new Sortable(bank, {
+                group: {
+                    name: 'shared',
+                    pull: 'clone', // 복사해서 드래그
+                    put: false     // 뱅크로 다시 넣는 것은 금지
+                },
+                sort: false,       // 뱅크 내 순서 변경 금지
+                animation: 150,
+                delay: 50,         // 터치 시 클릭과 드래그 구분
+                delayOnTouchOnly: true,
+                touchStartThreshold: 5
+            });
         });
-    });
 
-    // Sortable 초기화 (티어 드롭존)
-    document.querySelectorAll('.drop-zone').forEach(zone => {
-        new Sortable(zone, {
-            group: 'shared', animation: 150,
-            onAdd: function (evt) {
-                const item = evt.item;
-                if (!item.querySelector('.del-btn')) {
-                    item.classList.add('tier-item'); // 클래스 추가
-                    const btn = document.createElement('div');
-                    btn.className = 'del-btn'; btn.innerText = 'X';
-                    btn.onclick = (e) => { e.stopPropagation(); item.remove(); };
-                    item.appendChild(btn);
+        // 모든 티어 드롭존 초기화
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            new Sortable(zone, {
+                group: 'shared',
+                animation: 150,
+                onAdd: function (evt) {
+                    const item = evt.item;
+                    // 복제된 아이템에 스타일 및 삭제 버튼 추가
+                    item.classList.add('tier-item');
+                    item.classList.remove('bank-item'); // 기존 뱅크 스타일 제거
+                    
+                    if (!item.querySelector('.del-btn')) {
+                        const btn = document.createElement('div');
+                        btn.className = 'del-btn';
+                        btn.innerText = 'X';
+                        btn.onclick = (e) => {
+                            e.stopPropagation();
+                            item.remove();
+                        };
+                        item.appendChild(btn);
+                    }
                 }
-            }
+            });
         });
     });
 
-    // 최종 이미지 저장 로직
+    // 5. 이미지 저장 로직
     async function exportTier() {
         const wrapper = document.getElementById('tier-wrapper');
-        const captureTarget = document.querySelector("#tier-capture-area");
-        
-        // 1. 상태 설정 (캡처 모드 진입)
+        const captureTarget = document.getElementById("tier-capture-area");
         const wasExpanded = wrapper.classList.contains('expanded');
+        
         wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
 
-        try {
-            // 2. 모든 이미지 로드 대기 (투명화 방지 핵심)
-            const images = captureTarget.getElementsByTagName('img');
-            const imagePromises = Array.from(images).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
-            });
-            await Promise.all(imagePromises);
+        // 이미지 로딩 대기
+        const images = captureTarget.getElementsByTagName('img');
+        await Promise.all(Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+        }));
 
-            // 3. 렌더링 안정화를 위한 미세 지연
-            await new Promise(resolve => setTimeout(resolve, 200));
-
-            // 4. html2canvas 실행
-            const canvas = await html2canvas(captureTarget, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: false,
-                backgroundColor: "#ffffff",
-                width: captureTarget.offsetWidth,
-                height: captureTarget.offsetHeight,
-                onclone: (clonedDoc) => {
-                    const target = clonedDoc.querySelector("#tier-capture-area");
-                    target.style.display = "block";
-                    const delBtns = clonedDoc.querySelectorAll('.del-btn');
-                    delBtns.forEach(btn => btn.style.display = 'none');
-                }
-            });
-
-            // 5. 다운로드
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL("image/png");
-            link.download = `my-bang-dream-tier-${Date.now()}.png`;
-            link.click();
-
-        } catch (err) {
-            console.error("저장 중 오류:", err);
-            alert("이미지 생성 중 오류가 발생했습니다.");
-        } finally {
-            // 6. 상태 복구
-            document.body.classList.remove('capturing');
-            if (!wasExpanded) wrapper.classList.remove('expanded');
-        }
+        setTimeout(async () => {
+            try {
+                const canvas = await html2canvas(captureTarget, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#ffffff"
+                });
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL("image/png");
+                link.download = `tier-list-${Date.now()}.png`;
+                link.click();
+            } catch (e) {
+                alert("저장 실패: " + e.message);
+            } finally {
+                document.body.classList.remove('capturing');
+                if (!wasExpanded) wrapper.classList.remove('expanded');
+            }
+        }, 300);
     }
 </script>
 </body>
