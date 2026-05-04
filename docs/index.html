@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BanG Dream! Tier Maker</title>
-    <!-- 라이브러리 로드 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <!-- dom-to-image 사용 (CORS 대응에 더 강력함) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <style>
         :root { --bg-color: #000; --text-color: #fff; --accent-pink: #ff99aa; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
         .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
-        
-        /* 티어 보드 영역 */
         #tier-wrapper { background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
         #tier-wrapper.expanded { width: 100vw; }
         .tier-table { border: 1px solid #444; width: 100%; border-collapse: collapse; flex: 1; }
@@ -21,17 +17,13 @@
         .tier-label { width: 60px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-right: 1px solid #444; flex-shrink: 0; }
         .drop-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #fff; min-height: 50px; }
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
-
         .tier-item { width: 50px; height: 50px; position: relative; }
         .tier-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .del-btn { position: absolute; top: -5px; right: -5px; background: red; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer; }
-
         #toggle-btn { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: var(--accent-pink); border: none; color: white; width: 30px; height: 60px; cursor: pointer; z-index: 110; border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; font-weight: bold; transition: left 0.3s ease; }
         #tier-wrapper.expanded + #toggle-btn { left: calc(100vw - 30px); border-radius: 10px 0 0 10px; }
-
         .control-panel { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; background: var(--bg-color); overflow-y: auto; }
         #tier-wrapper.expanded ~ .control-panel { display: none; }
-
         #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; display: flex; flex-direction: column; }
         .band-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
         .band-btn { background: #222; color: #fff; border: 1px solid #444; padding: 5px 10px; font-size: 11px; border-radius: 15px; cursor: pointer; }
@@ -40,9 +32,7 @@
         .band-content.active { display: flex; }
         .bank-item { width: 65px; height: 65px; cursor: pointer; }
         .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; pointer-events: none; }
-
         .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; cursor: pointer; width: 100%; font-weight: bold; margin-top: auto; }
-
         @media (min-width: 1024px) {
             .main-container { padding: 20px; gap: 20px; align-items: flex-start; height: auto; }
             #tier-wrapper { width: 450px !important; }
@@ -55,7 +45,6 @@
     </style>
 </head>
 <body>
-
 <div class="main-container">
     <div id="tier-wrapper">
         <div class="tier-table" id="tier-capture-area">
@@ -113,9 +102,7 @@
         </div>
         <button class="btn-save" onclick="exportTier()">티어리스트 저장 (PNG)</button>
     </div>
-
     <button id="toggle-btn" onclick="toggleTier()">▶</button>
-
     <div class="control-panel">
         <div id="preview-display" style="background:#111; padding:15px; border:1px solid #333; display:flex; gap:10px; min-height:150px;">
             <img id="preview-img" src="" style="width:120px; height:120px; object-fit:cover; display:none;" referrerpolicy="no-referrer">
@@ -333,17 +320,18 @@
         </div>
     </div>
 </div>
-
 <script>
-    // allOrigins 프록시를 사용하여 Base64를 가져오는 함수
     async function getBase64ViaProxy(url) {
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        // i.namu.wiki URL에서 불필요한 인코딩 문자열을 제거하거나 정규화하여 전달
+        const cleanUrl = url.split('?')[0]; 
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(cleanUrl)}`;
         try {
             const response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error('Proxy Network response was not ok');
             const data = await response.json();
-            return data.contents; // Base64 데이터 문자열 반환
+            return data.contents; 
         } catch (e) {
-            console.error("Proxy error:", e);
+            console.error("Proxy error for URL:", url, e);
             return null;
         }
     }
@@ -373,7 +361,7 @@
         document.querySelectorAll('.band-content').forEach(bank => {
             new Sortable(bank, {
                 group: { name: 'shared', pull: 'clone', put: false },
-                sort: false, animation: 150, delay: 50, delayOnTouchOnly: true
+                sort: false, animation: 150
             });
         });
 
@@ -384,19 +372,18 @@
                     const item = evt.item;
                     item.classList.add('tier-item');
                     const img = item.querySelector('img');
-
-                    // 드래그된 이미지를 즉시 프록시 기반 Base64로 교체
                     if (img && !img.src.startsWith('data:')) {
                         const originalSrc = img.src;
-                        // 로딩 표시용 (선택 사항)
                         img.style.opacity = "0.3";
                         const base64 = await getBase64ViaProxy(originalSrc);
                         if (base64) {
                             img.src = base64;
                             img.style.opacity = "1";
+                        } else {
+                            // 프록시 실패 시 원본 시도 (CORS 위험 감수)
+                            img.style.opacity = "1";
                         }
                     }
-
                     if (!item.querySelector('.del-btn')) {
                         const btn = document.createElement('div');
                         btn.className = 'del-btn'; btn.innerText = 'X';
@@ -412,27 +399,17 @@
         const node = document.getElementById('tier-capture-area');
         const wrapper = document.getElementById('tier-wrapper');
         const wasExpanded = wrapper.classList.contains('expanded');
-        
         wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
-
-        // 렌더링 동기화 대기
         await new Promise(r => setTimeout(r, 500));
-
-        // dom-to-image를 사용하여 PNG 생성
-        domtoimage.toPng(node, {
-            bgcolor: '#ffffff',
-            quality: 1.0
-        })
+        domtoimage.toPng(node, { bgcolor: '#ffffff' })
         .then(function (dataUrl) {
             const link = document.createElement('a');
-            link.download = `tier-list-${Date.now()}.png`;
+            link.download = `tier-${Date.now()}.png`;
             link.href = dataUrl;
             link.click();
         })
-        .catch(function (error) {
-            console.error('oops, something went wrong!', error);
-        })
+        .catch(function (error) { console.error('Export failed', error); })
         .finally(() => {
             document.body.classList.remove('capturing');
             if (!wasExpanded) wrapper.classList.remove('expanded');
