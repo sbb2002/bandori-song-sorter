@@ -26,14 +26,23 @@
         .control-panel { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 15px; background: var(--bg); overflow-y: auto; }
         #tier-wrapper.expanded ~ .control-panel { display: none; }
         #preview-display { background: var(--card-bg); padding: 18px; border-radius: 14px; display: flex; gap: 16px; min-height: 170px; align-items: flex-start; border: 1px solid var(--border); }
-        #p-img { width: 110px; height: 110px; object-fit: cover; border-radius: 14px; box-shadow: 0 16px 40px rgba(0,0,0,0.35); }
+        .preview-cover { position: relative; width: 110px; min-width: 110px; height: 110px; }
+        .lp-disc { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.12), rgba(255,255,255,0.04) 38%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0.5) 100%); box-shadow: inset 0 0 0 4px rgba(255,255,255,0.05), inset 0 0 0 10px rgba(255,255,255,0.02); }
+        .lp-disc::before { content: ''; position: absolute; inset: 22%; border-radius: 50%; background: rgba(0,0,0,0.25); }
+        .lp-disc::after { content: ''; position: absolute; inset: 44%; border-radius: 50%; background: rgba(255,255,255,0.35); }
+        .lp-disc.playing { animation: spin 2.5s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #p-img { position: relative; width: 110px; height: 110px; object-fit: cover; border-radius: 14px; box-shadow: 0 16px 40px rgba(0,0,0,0.35); z-index: 2; }
         .preview-info { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .preview-title { font-size: 1rem; font-weight: 800; margin-bottom: 8px; color: #fff; }
         #t-info { font-size: 13px; color: #ccc; overflow: hidden; }
         .track-list { display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; padding-right: 4px; }
-        .track-item { cursor: pointer; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.03); color: #eee; transition: background 0.2s ease, color 0.2s ease; }
-        .track-item:hover { background: rgba(255,153,170,0.16); color: var(--pink); }
-        .track-item.disabled { background: rgba(255,255,255,0.02); color: #777; cursor: default; }
+        .track-list::-webkit-scrollbar { width: 8px; }
+        .track-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
+        .track-item { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.03); transition: background 0.2s ease, color 0.2s ease; }
+        .track-item.playable { color: #fff; cursor: pointer; }
+        .track-item.playable:hover { background: rgba(255,153,170,0.2); color: var(--pink); }
+        .track-item.disabled { color: #777; cursor: default; background: rgba(255,255,255,0.02); }
         .band-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
         .band-btn { background: #252525; color: #888; border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; cursor: pointer; }
         .band-btn.active { background: var(--pink); color: #000; font-weight: bold; }
@@ -43,10 +52,6 @@
         .bank-item { width: 100%; padding-bottom: 100%; position: relative; cursor: pointer; overflow: hidden; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.01); }
         .bank-item:hover { transform: translateY(-2px); box-shadow: 0 18px 50px rgba(0,0,0,0.25); }
         .bank-item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
-        .track-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-        .track-item { cursor: pointer; padding: 8px 10px; border-radius: 10px; transition: background 0.2s ease, color 0.2s ease; }
-        .track-item:hover { background: rgba(255,255,255,0.05); color: var(--pink); }
-        .track-item.disabled { opacity: 0.45; cursor: not-allowed; }
         .histogram-card { background: rgba(28,28,28,0.95); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin-top: 10px; }
         .histogram-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.08em; color: var(--pink); text-transform: uppercase; }
         .histogram-container { display: flex; flex-direction: column; gap: 8px; overflow-x: auto; }
@@ -93,7 +98,10 @@
     
     <div class="control-panel">
         <div id="preview-display">
-            <img id="p-img" src="" style="display:none;">
+            <div class="preview-cover">
+                <div class="lp-disc" id="lp-disc"></div>
+                <img id="p-img" src="" style="display:none;">
+            </div>
             <div class="preview-info">
                 <div class="preview-title">앨범을 클릭하여 정보를 확인하세요.</div>
                 <div id="t-info"></div>
@@ -203,6 +211,17 @@
         document.getElementById('play-toggle').innerText = '||';
     }
 
+    function updateLPState() {
+        const disc = document.getElementById('lp-disc');
+        if (!disc || !player) return;
+        const state = player.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+            disc.classList.add('playing');
+        } else {
+            disc.classList.remove('playing');
+        }
+    }
+
     function togglePlay() {
         if (!player) return;
         const state = player.getPlayerState();
@@ -213,8 +232,15 @@
         }
     }
 
-    function pauseVideo() { if (player) player.pauseVideo(); }
-    function stopVideo() { if (player) player.stopVideo(); document.getElementById('timeline').value = 0; }
+    function pauseVideo() {
+        if (player) player.pauseVideo();
+        updateLPState();
+    }
+    function stopVideo() {
+        if (player) player.stopVideo();
+        document.getElementById('timeline').value = 0;
+        updateLPState();
+    }
 
     function onPlayerStateChange(event) {
         const toggle = document.getElementById('play-toggle');
@@ -226,6 +252,7 @@
             toggle.innerText = '▶';
             clearInterval(timer);
         }
+        updateLPState();
     }
 
     function startTimer() {
