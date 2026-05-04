@@ -4,31 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BanG Dream! Tier Maker</title>
-    <!-- 라이브러리 로드 보장 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --bg-color: #000; --text-color: #fff; --accent-pink: #ff99aa; --accent-blue: #4488ff; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; overflow-x: hidden; }
-        .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
         
-        /* 티어 보드 */
-        #tier-wrapper { background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; z-index: 100; display: flex; flex-direction: column; overflow: hidden; }
+        .main-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+
+        /* 좌측 티어 보드 영역 */
+        #tier-wrapper { 
+            background: #fff; width: 60px; flex-shrink: 0; transition: width 0.3s ease; 
+            z-index: 100; display: flex; flex-direction: column; overflow: hidden;
+        }
         #tier-wrapper.expanded { width: 100vw; }
+        
         .tier-table { border: 1px solid #444; width: 100%; border-collapse: collapse; flex: 1; }
         .tier-row { border-bottom: 1px solid #444; display: flex; min-height: 10%; }
-        .tier-label { width: 60px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; border-right: 1px solid #444; flex-shrink: 0; }
-        .drop-zone { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; background: #fff; min-height: 50px; }
+        .tier-label { 
+            width: 60px; display: flex; align-items: center; justify-content: center; 
+            color: #000; font-weight: bold; border-right: 1px solid #444; flex-shrink: 0; 
+        }
+        .drop-zone { 
+            flex: 1; display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; 
+            background: #fff; min-height: 50px;
+        }
         #tier-wrapper:not(.expanded) .drop-zone { display: none; }
 
         .tier-item { width: 50px; height: 50px; position: relative; cursor: grab; }
         .tier-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-        .del-btn { position: absolute; top: -5px; right: -5px; background: red; color: #fff; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer; }
+        .del-btn { 
+            position: absolute; top: -5px; right: -5px; background: red; color: #fff; 
+            width: 18px; height: 18px; border-radius: 50%; font-size: 10px; 
+            display: flex; align-items: center; justify-content: center; z-index: 10; cursor: pointer;
+        }
 
-        #toggle-btn { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: var(--accent-pink); border: none; color: white; width: 30px; height: 60px; cursor: pointer; z-index: 110; border-radius: 0 10px 10px 0; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        #toggle-btn {
+            position: absolute; left: 60px; top: 50%; transform: translateY(-50%);
+            background: var(--accent-pink); border: none; color: white;
+            width: 30px; height: 60px; cursor: pointer; z-index: 110;
+            border-radius: 0 10px 10px 0; transition: left 0.3s ease;
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
         #tier-wrapper.expanded + #toggle-btn { left: calc(100vw - 30px); border-radius: 10px 0 0 10px; }
 
-        .control-panel { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; background: var(--bg-color); overflow-y: auto; }
+        .control-panel { 
+            flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 15px; 
+            background: var(--bg-color); transition: transform 0.3s ease; overflow-y: auto;
+        }
         #tier-wrapper.expanded ~ .control-panel { transform: translateX(100%); }
 
         #album-bank-wrapper { background: #111; padding: 10px; border: 1px solid #333; flex: 1; display: flex; flex-direction: column; }
@@ -40,16 +63,18 @@
         .bank-item { width: 65px; height: 65px; cursor: pointer; }
         .bank-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; pointer-events: none; }
 
-        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 10px; cursor: pointer; width: 100%; }
+        .btn-save { background: #222; color: #fff; border: 1px solid #fff; padding: 12px; margin-top: auto; cursor: pointer; font-weight: bold; }
 
         @media (min-width: 1024px) {
             .main-container { padding: 20px; gap: 20px; align-items: flex-start; height: auto; }
-            #tier-wrapper { width: 450px !important; }
+            #tier-wrapper { width: 450px !important; border-radius: 5px; }
             #tier-wrapper:not(.expanded) .drop-zone { display: flex; }
             #toggle-btn { display: none; }
             .control-panel { width: 600px; padding: 0; }
             .bank-item { width: 85px; height: 85px; }
         }
+
+        /* 캡처 시 삭제 버튼 숨김 */
         .capturing .del-btn { display: none !important; }
     </style>
 </head>
@@ -65,16 +90,17 @@
             </div>
             {% endfor %}
         </div>
-        <button class="btn-save" onclick="exportTier()">이미지 저장</button>
+        <button class="btn-save" onclick="exportTier()">티어리스트 저장 (PNG)</button>
     </div>
 
     <button id="toggle-btn" onclick="toggleTier()">▶</button>
 
     <div class="control-panel">
-        <div id="preview-display" style="background:#111; padding:15px; border:1px solid #333; display:flex; gap:10px; min-height:150px;">
+        <div id="preview-display" style="background:#111; padding:15px; border:1px solid #333; display:flex; gap:15px; min-height:150px;">
             <img id="preview-img" src="" style="width:120px; height:120px; object-fit:cover; display:none;" referrerpolicy="no-referrer">
             <div id="track-info-container" style="flex:1; font-size:12px;">앨범을 선택하세요.</div>
         </div>
+
         <div id="album-bank-wrapper">
             <div class="band-nav">
                 {% for band_name in albums_by_band.keys() %}
@@ -85,7 +111,7 @@
             <div id="band-{{ band_name }}" class="band-content {% if loop.first %}active{% endif %}">
                 {% for album in band_albums %}
                 <div class="bank-item" data-album-json='{{ album | tojson | safe }}' onclick="handleAlbumClick(this)">
-                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 -->
+                    <!-- 해결: referrerpolicy 추가 및 crossorigin 제거 (나무위키 이미지 로딩용) -->
                     <img src="{{ album.img_url }}" referrerpolicy="no-referrer" alt="{{ album.album_title }}">
                 </div>
                 {% endfor %}
@@ -115,18 +141,18 @@
         const img = document.getElementById('preview-img');
         const container = document.getElementById('track-info-container');
         img.src = albumData.img_url; img.style.display = 'block';
-        container.innerHTML = `<strong>${albumData.album_title}</strong><br>`;
-        albumData.tracks.forEach(t => {
-            container.innerHTML += `<div style="margin-top:2px;">${t.track_number}. ${t.name}</div>`;
+        container.innerHTML = `<strong>${albumData.album_title}</strong><hr style="border:0; border-top:1px solid #333; margin:5px 0;">`;
+        albumData.tracks.forEach(track => {
+            container.innerHTML += `<div>${track.track_number}. ${track.name}</div>`;
         });
     }
 
-    // 초기화 함수 하나로 통합 (문법 오류 해결)
+    // Sortable 초기화
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.band-content').forEach(bank => {
             new Sortable(bank, {
                 group: { name: 'shared', pull: 'clone', put: false },
-                sort: false, animation: 150, delay: 50, delayOnTouchOnly: true
+                sort: false, animation: 150, delay: 100, delayOnTouchOnly: true
             });
         });
 
@@ -147,34 +173,38 @@
         });
     });
 
+    // 캡처 함수 (중복 제거 및 문법 수정)
     async function exportTier() {
         const wrapper = document.getElementById('tier-wrapper');
         const captureTarget = document.querySelector("#tier-capture-area");
-        const wasExpanded = wrapper.classList.contains('expanded');
         
+        const wasExpanded = wrapper.classList.contains('expanded');
         wrapper.classList.add('expanded');
         document.body.classList.add('capturing');
 
-        // 이미지 로드 대기 로직 추가
+        // 이미지 로딩 대기
         const images = captureTarget.getElementsByTagName('img');
         await Promise.all(Array.from(images).map(img => {
             if (img.complete) return Promise.resolve();
-            return new Promise(r => { img.onload = r; img.onerror = r; });
+            return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
         }));
 
         setTimeout(() => {
             html2canvas(captureTarget, {
-                scale: 2, useCORS: true, allowTaint: true, backgroundColor: "#ffffff"
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: "#ffffff"
             }).then(canvas => {
                 const a = document.createElement('a');
                 a.href = canvas.toDataURL("image/png");
-                a.download = 'tier-list.png';
+                a.download = `bang-dream-tier.png`;
                 a.click();
             }).finally(() => {
                 document.body.classList.remove('capturing');
                 if (!wasExpanded) wrapper.classList.remove('expanded');
             });
-        }, 200);
+        }, 300);
     }
 </script>
 </body>
