@@ -498,8 +498,8 @@ body {
 
 /* 히트맵 헤더 밴드 아이콘 */
 .heatmap-band-icon {
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
     max-width: 32px;
     max-height: 32px;
     object-fit: contain;
