@@ -625,7 +625,6 @@ function syncHeatmapForCapture() {
     const rows = Array.from(document.querySelectorAll('.histogram-row[data-tier]'));
 
     // grid 스타일: tier열 + band열
-    const colCount  = bandNames.length + 1;
     grid.style.display            = 'grid';
     grid.style.gridTemplateColumns = `48px repeat(${bandButtons.length}, 1fr)`;
     grid.style.gap                = '3px';
