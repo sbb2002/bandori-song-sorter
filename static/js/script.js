@@ -305,6 +305,8 @@ function initSortable() {
             group: { name: 'shared', pull: 'clone', put: false },
             animation: 150,
             sort: false,
+            delay: 300,
+            delayOnTouchOnly: true,
         });
     });
 
@@ -313,6 +315,8 @@ function initSortable() {
         new Sortable(zone, {
             group: 'shared',
             animation: 150,
+            delay: 300,
+            delayOnTouchOnly: true,
             onAdd(e) {
                 const item       = e.item;
                 const targetZone = e.to;
