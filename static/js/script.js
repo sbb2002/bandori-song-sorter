@@ -618,9 +618,8 @@ function syncHeatmapForCapture() {
     const grid = document.getElementById('heatmap-capture-grid');
     if (!grid) return;
 
-    // 헤더 행 구성: 밴드 이름 수집
+    // 헤더 행 구성: bandButtons에서 직접 아이콘 경로 추출
     const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
-    const bandNames   = bandButtons.map(btn => btn.textContent.trim());
 
     // 실제 히트맵 행 수집
     const rows = Array.from(document.querySelectorAll('.histogram-row[data-tier]'));
@@ -628,21 +627,26 @@ function syncHeatmapForCapture() {
     // grid 스타일: tier열 + band열
     const colCount  = bandNames.length + 1;
     grid.style.display            = 'grid';
-    grid.style.gridTemplateColumns = `48px repeat(${bandNames.length}, 1fr)`;
+    grid.style.gridTemplateColumns = `48px repeat(${bandButtons.length}, 1fr)`;
     grid.style.gap                = '3px';
 
     grid.innerHTML = '';
 
-    // 헤더 행
+    // 헤더 행: 빈 Tier 셀 + 밴드 아이콘
     const tierHead = document.createElement('div');
     tierHead.textContent  = 'Tier';
     tierHead.style.cssText = 'font-size:0.7rem;font-weight:700;color:#aaa;display:flex;align-items:center;justify-content:center;';
     grid.appendChild(tierHead);
 
-    bandNames.forEach(name => {
+    bandButtons.forEach(btn => {
         const cell = document.createElement('div');
-        cell.textContent  = name;
-        cell.style.cssText = 'font-size:0.65rem;font-weight:700;color:#aaa;display:flex;align-items:center;justify-content:center;padding:2px;';
+        cell.style.cssText = 'display:flex;align-items:center;justify-content:center;padding:2px;';
+
+        const icon = document.createElement('img');
+        icon.src    = `./assets/icon/${btn.dataset.band}.png`;
+        icon.alt    = btn.dataset.band || '';
+        icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
+        cell.appendChild(icon);
         grid.appendChild(cell);
     });
 
