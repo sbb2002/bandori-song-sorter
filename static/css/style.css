@@ -390,7 +390,7 @@ body {
 .band-content {
     display: none;
     gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 120px)); /* 열 자동 배치 */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 180px)); /* 열 자동 배치 */
     grid-auto-rows: minmax(0, auto);
     overflow-y: auto;
 }
