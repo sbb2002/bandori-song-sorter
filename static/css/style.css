@@ -761,6 +761,15 @@ body {
         flex-direction: column;
     }
 
+    #t-info {
+        overflow: visible;
+        min-height: auto;
+    }
+
+    .track-list {
+        max-height: none; /* 모바일에서 트랙리스트 높이 제한 해제 */
+    }
+
     .video-panel {
         width: 100%;
         max-width: 100%;
