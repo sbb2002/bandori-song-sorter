@@ -115,6 +115,7 @@
             {% for b in albums_by_band.keys() %}
             <button
                 class="band-btn {% if loop.first %}active{% endif %}"
+                data-band="{{ b }}"
                 onclick="switchBand('{{ b }}', this)"
             ><img src="./assets/icon/{{ b }}.png" alt="{{ b.replace('_', ' ') }}" class="band-btn-icon"></button>
             {% endfor %}

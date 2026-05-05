@@ -217,9 +217,9 @@ function updateHistogram() {
     const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
     if (!bandButtons.length) return;
 
-    // band-btn 텍스트 → 데이터 키 형식으로 정규화
+    // band-btn의 data-band 속성에서 밴드명 추출 (img 교체 후 textContent 빈값 방지)
     const bands  = bandButtons.map(btn =>
-        btn.textContent.trim().toLowerCase().replace(/\s+/g, '_')
+        (btn.dataset.band || '').trim().toLowerCase()
     );
     const counts = {};
 
