@@ -18,9 +18,37 @@
 <div class="main-container">
 
     <!-- ============================
-         Tier Sidebar
+         Tier Section (상단)
          ============================ -->
     <div id="tier-wrapper">
+
+        <!-- 모바일: 티어 라벨 바 + 접기/펼치기 토글 -->
+        <div id="tier-header">
+            <div id="tier-label-bar">
+                
+                <div class="tier-label-chip" style="background: #ff7f7f">S+</div>
+                
+                <div class="tier-label-chip" style="background: #ff9999">S</div>
+                
+                <div class="tier-label-chip" style="background: #ffbf7f">A+</div>
+                
+                <div class="tier-label-chip" style="background: #ffff7f">A</div>
+                
+                <div class="tier-label-chip" style="background: #bfff7f">B+</div>
+                
+                <div class="tier-label-chip" style="background: #7fff7f">B</div>
+                
+                <div class="tier-label-chip" style="background: #7fffff">C+</div>
+                
+                <div class="tier-label-chip" style="background: #7f7fff">C</div>
+                
+                <div class="tier-label-chip" style="background: #bf7fff">D</div>
+                
+                <div class="tier-label-chip" style="background: #cccccc">F</div>
+                
+            </div>
+            <button id="toggle-btn" onclick="toggleTier()">▼</button>
+        </div>
 
         <!-- 캡처 대상: 티어리스트 + 히트맵 -->
         <div id="export-capture-area" style="background:#ffffff;">
@@ -89,14 +117,10 @@
 
         </div>
 
-        <button class="btn-save" onclick="exportTier()">DOWNLOAD RANKING (PNG)</button>
     </div>
 
-    <!-- Toggle Button (모바일 전용) -->
-    <button id="toggle-btn" onclick="toggleTier()">▶</button>
-
     <!-- ============================
-         Control Panel
+         Control Panel (중단)
          ============================ -->
     <div class="control-panel">
 
@@ -371,7 +395,7 @@
             
         </div>
 
-        <!-- Tier × Band 히스토그램 -->
+        <!-- Tier × Band 히트맵 (하단) -->
         <div class="histogram-card">
             <div class="histogram-title">Tier × Band Histogram</div>
             <div class="histogram-container">
@@ -681,6 +705,9 @@
     </div><!-- /.control-panel -->
 
 </div><!-- /.main-container -->
+
+<!-- 최하단 고정 다운로드 버튼 -->
+<button class="btn-save-fixed" onclick="exportTier()">DOWNLOAD RANKING (PNG)</button>
 
 <!-- App Script (build.py가 주입한 경로) -->
 <script src="./static/js/script.js"></script>

@@ -29,7 +29,13 @@ function toggleTier() {
     const wrapper = document.getElementById('tier-wrapper');
     const btn     = document.getElementById('toggle-btn');
     wrapper.classList.toggle('expanded');
-    btn.innerText = wrapper.classList.contains('expanded') ? '◀' : '▶';
+    const isExpanded = wrapper.classList.contains('expanded');
+    // PC: ◀/▶, 모바일: ▲/▼
+    if (window.innerWidth >= 1024) {
+        btn.innerText = isExpanded ? '◀' : '▶';
+    } else {
+        btn.innerText = isExpanded ? '▲' : '▼';
+    }
 }
 
 // ───────────────────────────

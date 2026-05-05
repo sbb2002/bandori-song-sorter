@@ -401,7 +401,7 @@ body {
 .band-content {
     display: none;
     gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 180px)); /* 열 자동 배치 */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 120px)); /* 열 자동 배치 */
     grid-auto-rows: minmax(0, auto);
     overflow-y: auto;
 }
@@ -563,7 +563,7 @@ body {
 }
 
 /* ===========================
-   Save Button
+   Save Button (PC - tier sidebar 안)
    =========================== */
 .btn-save {
     background: var(--pink);
@@ -573,6 +573,12 @@ body {
     cursor: pointer;
     font-weight: bold;
     margin-top: auto;
+    display: block;
+}
+
+/* 모바일 고정 다운로드 버튼 (기본 숨김) */
+.btn-save-fixed {
+    display: none;
 }
 
 /* ===========================
@@ -583,9 +589,175 @@ body {
 }
 
 /* ===========================
-   Responsive
+   PC Layout (≥1024px)
+   =========================== */
+@media (min-width: 1024px) {
+    #tier-wrapper {
+        width: 550px !important;
+        flex-direction: column;
+    }
+
+    #tier-header {
+        display: none; /* PC에서는 tier-header 숨김 */
+    }
+
+    #export-capture-area {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    #tier-wrapper:not(.expanded) .drop-zone {
+        display: flex;
+    }
+
+    #toggle-btn {
+        display: none;
+    }
+
+    .btn-save {
+        display: block;
+    }
+
+    .btn-save-fixed {
+        display: none !important;
+    }
+}
+
+/* ===========================
+   Mobile Layout (≤1023px)
    =========================== */
 @media (max-width: 1023px) {
+
+    /* 전체 레이아웃: 세로 스택 */
+    .main-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-bottom: 64px; /* 고정 버튼 높이만큼 여백 */
+    }
+
+    /* ── 티어 영역 (상단) ── */
+    #tier-wrapper {
+        width: 100% !important;
+        height: auto;
+        flex-direction: column;
+        overflow: visible;
+        z-index: auto;
+        transition: none;
+    }
+
+    /* 티어 헤더: 라벨 바 + 토글 버튼 */
+    #tier-header {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+
+    #tier-label-bar {
+        display: flex;
+        flex: 1;
+        overflow-x: auto;
+    }
+
+    #tier-label-bar::-webkit-scrollbar { display: none; }
+
+    .tier-label-chip {
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 0.8rem;
+        color: #000;
+        flex-shrink: 0;
+        border-right: 1px solid rgba(0,0,0,0.08);
+    }
+
+    #toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: static;
+        transform: none;
+        width: 44px;
+        height: 40px;
+        border-radius: 0;
+        border-left: 1px solid #ddd;
+        background: var(--pink);
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    /* 티어 드롭존 영역: 기본 숨김, expanded 시 표시 */
+    #export-capture-area {
+        display: none;
+    }
+
+    #tier-wrapper.expanded #export-capture-area {
+        display: block;
+    }
+
+    /* 티어 테이블 모바일 */
+    .tier-table {
+        width: 100%;
+    }
+
+    .tier-row {
+        min-height: 70px;
+    }
+
+    .tier-label {
+        width: 48px;
+        font-size: 0.85rem;
+    }
+
+    .drop-zone {
+        display: flex !important;
+        max-height: 156px;
+        overflow-y: auto;
+    }
+
+    /* PC용 btn-save 숨김 */
+    .btn-save {
+        display: none;
+    }
+
+    /* 고정 다운로드 버튼 */
+    .btn-save-fixed {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 16px;
+        background: var(--pink);
+        color: #000;
+        border: none;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        z-index: 200;
+        box-sizing: border-box;
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.2);
+    }
+
+    /* ── 컨트롤 패널 (중단) ── */
+    .control-panel {
+        width: 100%;
+        box-sizing: border-box;
+        overflow-y: visible;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    /* 프리뷰: 세로 스택 */
     #preview-display {
         flex-direction: column;
         min-height: auto;
@@ -598,19 +770,25 @@ body {
     .video-panel {
         width: 100%;
         max-width: 100%;
-    }
-}
-
-@media (min-width: 1024px) {
-    #tier-wrapper {
-        width: 550px !important;
+        min-height: auto;
     }
 
-    #tier-wrapper:not(.expanded) .drop-zone {
-        display: flex;
+    #youtube-player {
+        min-height: 200px;
     }
 
-    #toggle-btn {
-        display: none;
+    /* 앨범 뱅크 */
+    .bank-container {
+        min-height: 200px;
+    }
+
+    .band-content {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
+    }
+
+    /* 히트맵 */
+    .histogram-card {
+        margin-top: 0;
+        margin-bottom: 8px;
     }
 }
