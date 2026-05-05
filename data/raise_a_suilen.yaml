@@ -47,46 +47,46 @@
   tracks:
     - track_number: '01'
       name: 'V.I.P MONSTER'
-      url: 
+      url: https://youtu.be/ci5Ot5n-8_k?si=VMKmHnLvtERnjCzD
     - track_number: '02'
       name: 'mind of Prominence'
-      url: 
+      url: https://youtu.be/CmEGhNuz_zs?si=i2JvWPAOxbUZZ_Qj
     - track_number: '03'
       name: 'Ray of hope'
-      url: 
+      url: https://youtu.be/bjHImc6cTqE?si=9h-GlcthIK5Qeiph
     - track_number: '04'
-      name: 'EXIST(BanG Dream!)|EXIST'
-      url: 
+      name: 'EXIST'
+      url: https://youtu.be/Vo3lvsrP9mY?si=1OinLPfGA-uW1_m9
     - track_number: '05'
       name: 'Sacred world'
-      url: 
+      url: https://youtu.be/4b3deIpxkSk?si=E0fcAhJLvKNLQlzp
     - track_number: '06'
       name: '-N-E-M-E-S-I-S-'
-      url: 
+      url: https://youtu.be/caxxCfDdklI?si=IniiwPjJgG-9wDbP
     - track_number: '07'
       name: 'DANCING DARING'
-      url: 
+      url: https://youtu.be/cmbqhJ7OM8w?si=5B7B_PolkU0QbvRn
     - track_number: '08'
       name: 'BATTLE CRY'
-      url: 
+      url: https://youtu.be/pW01z1Q-MQY?si=IEXfSC27yaQ3oqA5
     - track_number: '09'
       name: 'Domination to world'
-      url: 
+      url: https://youtu.be/41K7ic6HN4E?si=WedNM394MwfSG8Z4
     - track_number: '10'
       name: 'THE WAY OF LIFE'
-      url: 
+      url: https://youtu.be/W5bmkfq6_Wo?si=VCYdQK7CVrUn5I48
     - track_number: '11'
       name: '灼熱 Bonfire!'
-      url: 
+      url: https://youtu.be/Uh2MjQ9Q324?si=KNYrBXyZzi8lcqqJ
     - track_number: '12'
       name: 'Repaint'
-      url: 
+      url: https://youtu.be/eJp3_buirj4?si=ZrnvOZvrbzknxhoh
     - track_number: '13'
       name: 'Life on the Lotus'
-      url: 
+      url: https://youtu.be/zle_8SGQgcg?si=VTmX32FjZRHR2AjW
     - track_number: '14'
       name: 'CORUSCATE -DNA-'
-      url: 
+      url: https://youtu.be/1NgjttSojKw?si=KSEtS6XpnOKvvmSE
 
 - band: 'raise_a_suilen'
   numbering: 'Mini'
@@ -95,40 +95,40 @@
   tracks:
     - track_number: '1'
       name: 'That Is How I Roll!'
-      url: 
+      url: https://youtu.be/YsdbJl-eg2o?si=b62FczonPhAK2PsJ
     - track_number: '2'
       name: 'しゅわりん☆どり～みん'
-      url: 
+      url: https://youtu.be/xFat9vDHNJE?si=XBMCImkvq2EntNQQ
     - track_number: '3'
       name: 'パスパレボリューションず☆'
-      url: 
+      url: https://youtu.be/mDKUbNpjzDU?si=L8wXtJrxwBEEfh1O
     - track_number: '4'
       name: 'えがおのオーケストラっ！'
-      url: 
+      url: https://youtu.be/Vlp3NkDZh7c?si=J36L6z1uuVNNon02
     - track_number: '5'
       name: "Don't be afraid!"
-      url: 
+      url: https://youtu.be/Wv9HiA6ONbI?si=W50kgkYtYjfJyF33
     - track_number: '6'
       name: 'ゆら・ゆらRing-Dong-Dance'
-      url: 
+      url: https://youtu.be/j69ZFBRuOlA?si=bepI9FhQLxALIzKI
     - track_number: '7'
       name: 'Hey-day狂騒曲(カプリチオ)'
-      url: 
+      url: https://youtu.be/dQuVrNLZOFM?si=F_SYifFeYq8kduiA
     - track_number: '8'
       name: 'Scarlet Sky'
-      url: 
+      url: https://youtu.be/bRWWFTSHICg?si=L6RZ2PHNTUoSksWD
     - track_number: '9'
       name: 'ゴーカ！ごーかい！？ファントムシーフ！'
-      url: 
+      url: https://youtu.be/sooblFkVWdo?si=qG1JdftaZ0A9JoV2
     - track_number: '10'
       name: 'R・I・O・T'
-      url: 
+      url: https://youtu.be/NTkFFLOLuCc?si=tC9hJiVSUd4S73fI
     - track_number: '11'
-      name: 'That Is How I Roll!'
-      url: 
+      name: 'That Is How I Roll! (ライブ / アンコール)'
+      url: https://youtu.be/inRDSCi2O_E?si=tOSOrqOPeODTwDiQ
     - track_number: '12'
-      name: 'R・I・O・T'
-      url: 
+      name: 'R･I･O･T (ライブ / アンコール)'
+      url: https://youtu.be/eyjb_cL2nag?si=x8xGkE8sUKMFY0rO
 
 - band: 'raise_a_suilen'
   numbering: 'Mini'
@@ -136,23 +136,17 @@
   img_url: assets/raise_a_suilen/m02.webp
   tracks:
     - track_number: '01'
-      name: 'Apocalypse(BanG Dream!)|Apocalypse'
-      url: 
+      name: 'Apocalypse'
+      url: https://youtu.be/0fBH7M4EY1M?si=06Q7d98ThTBNEL9J
     - track_number: '02'
       name: 'TWIN TALE'
-      url: 
+      url: https://youtu.be/pB350d7RuAg?si=wJtL7tN0CetlAIrd
     - track_number: '03'
       name: 'STRAY CERBERUS'
-      url: 
+      url: https://youtu.be/e_5VjvDrHz8?si=4VInKK68dhQjfPTF
     - track_number: '04'
       name: 'BERSER-KEY'
-      url: 
+      url: https://youtu.be/cmwOP8goDTw?si=JrkvnODLrbWDm3Lb
     - track_number: '05'
       name: 'POLARIS'
-      url: 
-    - track_number: '01'
-      name: '2024 년 개최 예정 RAISE A SUILEN 단독 라이브 이벤트 최속 선행 추첨 신청'
-      url: 
-    - track_number: '02'
-      name: '재킷 디자인 스티커 1 장 (한정판 Ver.) (전 1 종)[* Blu-ray 첨부 생산 한정판] or 오리지널 캐릭터 카드 1장(전 1종)[* 캐릭터 ver. 별로]'
-      url: 
+      url: https://youtu.be/M-6HMvPPnLM?si=dA1WMAPvZETd8FTI

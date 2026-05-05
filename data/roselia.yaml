@@ -5,79 +5,82 @@
   tracks:
     - track_number: '01'
       name: 'Neo-Aspect'
-      url: '-'
+      url: https://youtu.be/03iVXFZ8jrs?si=sX7B0ghBwvUGYh0y
     - track_number: '02'
       name: 'BLACK SHOUT'
-      url: '-'
+      url: https://youtu.be/MmnU-s1TdsI?si=f--aWSuIRubRaezU
     - track_number: '03'
       name: 'Opera of the wasteland'
-      url: '-'
+      url: https://youtu.be/kzzXxwU3qo4?si=ZdzAotIUHUJCeAnc
     - track_number: '04'
-      name: '陽だまりロードナイト(양지 로도나이트)'
-      url: '-'
+      name: '陽だまりロードナイト'
+      url: https://youtu.be/KjgjeK-ppd0?si=paC4PLcErG8T8--1
     - track_number: '05'
       name: 'ONENESS'
-      url: '-'
+      url: https://youtu.be/m3mZynIlQe0?si=Ednz31TEd7wtyd3h
     - track_number: '06'
       name: 'Re:birth day'
-      url: '-'
+      url: https://youtu.be/cqY4sBLd-_E?si=WQSlMMUq4CbtEoCs
     - track_number: '07'
       name: 'Legendary'
-      url: '-'
+      url: https://youtu.be/MaWXiKOzwUc?si=-eo7PnCX4vUI7uP8
     - track_number: '08'
       name: '- HEROIC ADVENT -'
-      url: '-'
+      url: https://youtu.be/HD--qY58fsM?si=6XzMQlf36FCE_eSS
     - track_number: '09'
       name: 'Determination Symphony'
-      url: '-'
+      url: https://youtu.be/4jyT00Gn2Ec?si=vZbNrCoq0iiqFhcH
     - track_number: '10'
       name: '熱色スターマイン'
-      url: '-'
+      url: https://youtu.be/DZNOUNsvWps?si=5AR_9XSGau5xEpk0
     - track_number: '11'
       name: '軌跡'
-      url: '-'
+      url: https://youtu.be/P2BT98BC1N8?si=DDzyiwXxGjo7rSo9
     - track_number: '12'
       name: 'LOUDER'
-      url: '-'
+      url: https://youtu.be/RZBHAjojJhg?si=hmnopqylQBcvq0Ir
 
 - band: 'roselia'
   numbering: '2nd'
   album_title: 'Wahl'
   img_url: assets/roselia/a02.webp
   tracks:
+    - track_number: '01'
+      name: 'R'
+      url: https://youtu.be/ZqdMPCDsCeE?si=1LeUcaqEMOAja74B
     - track_number: '02'
       name: 'BRAVE JEWEL'
-      url: '-'
+      url: https://youtu.be/MHXRfiufs2o?si=rI8mdUE6AbXFZWDk
     - track_number: '03'
       name: 'Determination Symphony'
-      url: '-'
+      url: https://youtu.be/4jyT00Gn2Ec?si=IXap-O20_nE9gyW8
     - track_number: '04'
-      name: 'FIRE BIRD(Roselia)|FIRE BIRD'
-      url: '-'
+      name: 'FIRE BIRD'
+      url: https://youtu.be/8RTLNiCWPKQ?si=LZJU5lCBEZN_9lvG
     - track_number: '05'
       name: 'Safe and Sound'
-      url: '-'
+      url: https://youtu.be/0Hj-eXZzL90?si=NjGODlkImmjP9c5s
     - track_number: '06'
       name: 'Avant-garde HISTORY'
-      url: '-'
+      url: https://youtu.be/C3vzihABDZQ?si=yEO7gG3XbJQgnfvw
     - track_number: '07'
       name: 'Break your desire'
-      url: '-'
+      url: https://youtu.be/tzXB1HCJAQo?si=rd0rMNNTUy9GKOYJ
     - track_number: '08'
       name: 'Re:birth day'
-      url: '-'
+      url: https://youtu.be/cqY4sBLd-_E?si=bU4nlq16J7tL3EqK
     - track_number: '09'
       name: 'Neo-Aspect'
-      url: '-'
+      url: https://youtu.be/Izq3AAix1Os?si=ei5OusCIooBcd3oe
     - track_number: '10'
-      name: '約束(BanG Dream!)|約束'
-      url: '-'
+      name: '約束'
+      url: https://youtu.be/Xrx-qzgzhek?si=l-HczzTXfz-bkkks
     - track_number: '11'
       name: '"UNIONS" Road'
-      url: '-'
+      url: https://youtu.be/1afLYh5w8XY?si=3DbRTSHm5B4EOllZ
     - track_number: '12'
       name: 'Song I am.'
-      url: '-'
+      url: https://youtu.be/Kohn9PRanoY?si=KufCDx6nK7fKsRji
 
 - band: 'roselia'
   numbering: '3rd'
@@ -86,40 +89,40 @@
   tracks:
     - track_number: '01'
       name: 'Sage der Rosen'
-      url: '-'
+      url: https://youtu.be/z0jU3sNiA44?si=ufCUQBjycqeCb1-5
     - track_number: '02'
       name: 'BLACK SHOUT'
-      url: '-'
+      url: https://youtu.be/MmnU-s1TdsI?si=I4U5jSqXheZmQsni
     - track_number: '03'
       name: '覚悟のLiberation'
-      url: '-'
+      url: https://youtu.be/ncY1KiGbQk8?si=Zlspew49TtPLknTs
     - track_number: '04'
       name: '-HEROIC ADVENT-'
-      url: '-'
+      url: https://youtu.be/HD--qY58fsM?si=Nwirwj8vwEcc9JNY
     - track_number: '05'
       name: '陽だまりロードナイト'
-      url: '-'
+      url: https://youtu.be/KjgjeK-ppd0?si=srNYDK6Gz0EXy-cE
     - track_number: '06'
       name: 'Keep Heart'
-      url: '-'
+      url: https://youtu.be/0e9gzU4spFU?si=lXxYGzk3p5zF-RPo
     - track_number: '07'
       name: '熱色スターマイン'
-      url: '-'
+      url: https://youtu.be/DZNOUNsvWps?si=JtdAT8a89fQSM3Di
     - track_number: '08'
       name: 'ONENESS'
-      url: '-'
+      url: https://youtu.be/m3mZynIlQe0?si=mUSOx3aI_8FNWP3U
     - track_number: '09'
       name: 'Original Call'
-      url: '-'
+      url: https://youtu.be/Rfw6OoJj3Cw?si=RTH8qouyFYK0ifmB
     - track_number: '10'
       name: 'LOUDER'
-      url: '-'
+      url: https://youtu.be/RZBHAjojJhg?si=s3XqCTlYchwjSffi
     - track_number: '11'
       name: 'Always recall.'
-      url: '-'
+      url: https://youtu.be/M5h9Td238hI?si=XDw1bsKGpL43Ycd0
     - track_number: '12'
       name: 'Floral Haven'
-      url: '-'
+      url: https://youtu.be/Qa7n53DmlHg?si=SnOJB3PdV4Wq_aus
 
 - band: 'roselia'
   numbering: 'Mini'
@@ -128,16 +131,25 @@
   tracks:
     - track_number: '01'
       name: 'Sprechchor'
-      url: '-'
+      url: https://youtu.be/OpSimLr7ouc?si=XBdmdOP38-3cEs5Q
     - track_number: '02'
       name: '閃光'
-      url: '-'
+      url: https://youtu.be/I0s49imrtho?si=C4mA4Mwtz6tnZmN7
     - track_number: '03'
       name: 'THE HISTORIC...'
-      url: '-'
+      url: https://youtu.be/2AjNrv9FhRQ?si=fJVqr0sFzQbZ1Xt2
     - track_number: '04'
       name: 'ROZEN HORIZON'
-      url: '-'
-    - track_number: '05'
+      url: https://youtu.be/8Cygbjd1h8Y?si=PDt3cNoGUvtnH_4R
+    - track_number: '05-1'
       name: '廻廻奇譚'
-      url: '-'
+      url: https://youtu.be/Upm95P9Wye0?si=cwREKWcg0nqTKk3U
+    - track_number: '05-2'
+      name: '鳥の詩'
+      url: https://youtu.be/Y5CTSrakFlY?si=Es1iJshWu4Ny_cen
+    - track_number: '05-3'
+      name: 'Synchrogazer'
+      url: https://youtu.be/3QeYCxU7ftQ?si=lyMPxsgWo7Ze_cs4
+    - track_number: '05-4'
+      name: '名前のない怪物'
+      url: https://youtu.be/7jOjYce_f4c?si=0w7A7gjYmWxV8c8p
