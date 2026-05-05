@@ -391,7 +391,7 @@ body {
 
 .bank-item {
     width: 100%;
-    padding-bottom: 100%;
+    padding-bottom: 80%;
     position: relative;
     cursor: pointer;
     overflow: hidden;
