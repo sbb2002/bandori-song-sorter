@@ -900,7 +900,7 @@ body {
     }
 
     .tier-row {
-        min-height: 70px;
+        min-height: 52px;
     }
 
     .tier-label {
@@ -910,8 +910,20 @@ body {
 
     .drop-zone {
         display: flex !important;
-        max-height: 156px;
+        max-height: 110px; /* 48px × 2줄 + gap + padding */
         overflow-y: auto;
+    }
+
+    /* 모바일 tier-item 크기 축소 */
+    .tier-item {
+        width: 48px;
+        height: 48px;
+    }
+
+    .drop-zone .tier-item,
+    .drop-zone .bank-item.tier-item {
+        width: 48px !important;
+        height: 48px !important;
     }
 
     /* ── 컨트롤 패널 (중단) ── */
