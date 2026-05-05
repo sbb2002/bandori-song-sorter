@@ -95,7 +95,7 @@
             {% for b, albs in albums_by_band.items() %}
             <div id="b-{{ b }}" class="band-content {% if loop.first %}active{% endif %}">
                 {% for a in albs %}
-                <div class="bank-item" data-json="{{ a | tojson | safe }}" onclick="showInfo(this)">
+                <div class="bank-item" data-json='{{ a | tojson | safe }}' onclick="showInfo(this)">
                     <img data-src="{{ a.img_url }}" class="lazy-load" alt="{{ a.album_title }}">
                 </div>
                 {% endfor %}
