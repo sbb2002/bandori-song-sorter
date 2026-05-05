@@ -254,8 +254,9 @@ function attachLongPress(item) {
     let startX = 0;
     let startY = 0;
 
-    // 브라우저 기본 컨텍스트 메뉴 비활성화
+    // 브라우저 기본 컨텍스트 메뉴 비활성화 (img 태그 포함)
     item.addEventListener('contextmenu', e => e.preventDefault());
+    item.querySelector('img')?.addEventListener('contextmenu', e => e.preventDefault());
 
     item.addEventListener('touchstart', e => {
         if (window.innerWidth >= 1024) return;
@@ -265,7 +266,7 @@ function attachLongPress(item) {
         pressTimer = setTimeout(() => {
             pressTimer = null;
             showTierPopup(item);
-        }, 300);
+        }, 350); // Sortable delay(300ms)보다 늦게 발동하여 경쟁 조건 방지
     }, { passive: true });
 
     // 손가락이 움직이면 (드래그 의도) 타이머 취소
