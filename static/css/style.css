@@ -632,6 +632,12 @@ body {
    =========================== */
 @media (max-width: 1023px) {
 
+    /* body overflow 해제 - YouTube IFrame 초기화 보장 */
+    body {
+        overflow: auto;
+        height: auto;
+    }
+
     /* 전체 레이아웃: 세로 스택 */
     .main-container {
         flex-direction: column;
@@ -763,6 +769,7 @@ body {
 
     #youtube-player {
         min-height: 200px;
+        height: 200px; /* 명시적 높이 - IFrame 초기화 보장 */
     }
 
     /* 앨범 뱅크 */

@@ -81,12 +81,30 @@ function extractVideoId(url) {
 /** 영상 로드 및 재생 */
 function loadAndPlay(url, title) {
     const videoId = extractVideoId(url);
-    if (!videoId || !player) {
+    if (!videoId) {
         alert('재생할 수 없는 URL입니다.');
         return;
     }
-    player.loadVideoById(videoId);
 
+    // player가 아직 준비 안 됐으면 최대 3초 대기 후 재시도
+    if (!player || typeof player.loadVideoById !== 'function') {
+        let waited = 0;
+        const interval = setInterval(() => {
+            waited += 200;
+            if (player && typeof player.loadVideoById === 'function') {
+                clearInterval(interval);
+                player.loadVideoById(videoId);
+                const videoTitle = document.getElementById('video-title');
+                if (videoTitle) videoTitle.innerText = title;
+            } else if (waited >= 3000) {
+                clearInterval(interval);
+                alert('유튜브 플레이어가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }, 200);
+        return;
+    }
+
+    player.loadVideoById(videoId);
     const videoTitle = document.getElementById('video-title');
     if (videoTitle) videoTitle.innerText = title;
 }
