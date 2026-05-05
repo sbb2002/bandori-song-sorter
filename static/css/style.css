@@ -84,6 +84,8 @@ body {
     gap: 6px;
     padding: 8px;
     align-content: flex-start;
+    max-height: 156px;  /* 70px(이미지) × 2줄 + 6px(gap) + 8px×2(padding) */
+    overflow-y: auto;   /* 2줄 초과 시 스크롤 활성화 */
 }
 
 #tier-wrapper:not(.expanded) .drop-zone {
