@@ -418,7 +418,7 @@ body {
 }
 
 /* ===========================
-   Histogram
+   Heatmap
    =========================== */
 .histogram-card {
     background: rgba(28, 28, 28, 0.95);
@@ -440,57 +440,50 @@ body {
 .histogram-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     overflow-x: auto;
 }
 
 .histogram-row {
     display: grid;
-    grid-template-columns: 80px repeat(auto-fit, minmax(80px, 1fr));
-    gap: 8px;
+    grid-template-columns: 48px repeat(auto-fit, minmax(60px, 1fr));
+    gap: 4px;
     align-items: center;
 }
 
 .histogram-head {
-    font-size: 0.82rem;
-    opacity: 0.8;
+    font-size: 0.75rem;
+    opacity: 0.7;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding-bottom: 6px;
 }
 
+/* 티어 라벨 셀 (좌측) */
 .histogram-cell {
-    min-height: 40px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 10px;
-    padding: 6px;
-    position: relative;
-    overflow: hidden;
-}
-
-.bar-cell {
-    justify-content: flex-start;
-    padding-left: 6px;
-}
-
-.bar-fill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    background: rgba(255, 153, 170, 0.75);
-    border-radius: 10px;
-    transition: width 0.2s ease;
-    z-index: 1;
-}
-
-.bar-label {
-    position: relative;
-    z-index: 2;
-    font-size: 0.85rem;
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 0.78rem;
     font-weight: 700;
+    transition: background-color 0.3s ease;
+}
+
+/* 히트맵 데이터 셀 */
+.heatmap-cell {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* 초기값: 흰색 배경 */
+    background-color: #ffffff;
+    color: transparent;
 }
 
 /* ===========================

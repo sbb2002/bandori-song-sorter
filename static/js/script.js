@@ -237,20 +237,36 @@ function updateHistogram() {
         });
     });
 
-    // 최대값 계산 (bar width 비율용)
+    // 전체 최대값 계산 (색상 강도 기준)
     let maxCount = 1;
     Object.values(counts).forEach(tierCounts =>
         Object.values(tierCounts).forEach(v => { if (v > maxCount) maxCount = v; })
     );
 
-    document.querySelectorAll('.bar-cell').forEach(cell => {
-        const band     = cell.dataset.band.toString().trim().toLowerCase();
-        const tier     = cell.dataset.tier;
-        const value    = counts[tier]?.[band] || 0;
-        const widthPct = Math.max(10, (value / maxCount) * 100);
+    /**
+     * 카운트 값을 흰색(0) → 붉은색(max) 사이의 색상으로 변환
+     * white: rgb(255,255,255) → red: rgb(180,0,0)
+     */
+    function heatColor(value) {
+        if (value === 0) return { bg: '#ffffff', text: 'transparent' };
+        const t  = value / maxCount;           // 0.0 ~ 1.0
+        const r  = 255;
+        const g  = Math.round(255 * (1 - t));  // 255 → 0
+        const b  = Math.round(255 * (1 - t));  // 255 → 0
+        // 값이 충분히 크면(t > 0.5) 숫자를 흰색으로, 작으면 어두운색으로
+        const textColor = t > 0.5 ? '#ffffff' : '#660000';
+        return { bg: `rgb(${r},${g},${b})`, text: textColor };
+    }
 
-        cell.querySelector('.bar-fill').style.width = `${widthPct}%`;
-        cell.querySelector('.bar-label').innerText  = value;
+    document.querySelectorAll('.heatmap-cell').forEach(cell => {
+        const band  = cell.dataset.band.toString().trim().toLowerCase();
+        const tier  = cell.dataset.tier;
+        const value = counts[tier]?.[band] || 0;
+        const { bg, text } = heatColor(value);
+
+        cell.style.backgroundColor = bg;
+        cell.style.color            = text;
+        cell.innerText              = value > 0 ? value : '';
     });
 }
 

@@ -132,10 +132,7 @@
                 <div class="histogram-row" data-tier="{{ label }}">
                     <div class="histogram-cell" style="background: {{ color }}; color: #000;">{{ label }}</div>
                     {% for b in albums_by_band.keys() %}
-                    <div class="histogram-cell bar-cell" data-tier="{{ label }}" data-band="{{ b }}">
-                        <div class="bar-fill" style="width: 0;"></div>
-                        <span class="bar-label">0</span>
-                    </div>
+                    <div class="heatmap-cell" data-tier="{{ label }}" data-band="{{ b }}"></div>
                     {% endfor %}
                 </div>
                 {% endfor %}
