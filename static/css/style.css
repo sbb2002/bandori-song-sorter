@@ -640,6 +640,7 @@ body {
         overflow-y: auto;
         overflow-x: hidden;
         padding-bottom: 64px; /* 고정 버튼 높이만큼 여백 */
+        padding-top: 40px;    /* 고정 tier-header 높이만큼 여백 */
     }
 
     /* ── 티어 영역 (상단) ── */
@@ -650,6 +651,7 @@ body {
         overflow: visible;
         z-index: auto;
         transition: none;
+        background: transparent;
     }
 
     /* 티어 헤더: 라벨 바 + 토글 버튼 */
@@ -658,9 +660,13 @@ body {
         align-items: center;
         background: #fff;
         border-bottom: 1px solid #ddd;
-        position: sticky;
+        position: fixed;
         top: 0;
-        z-index: 50;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        box-sizing: border-box;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     #tier-label-bar {
