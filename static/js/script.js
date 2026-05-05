@@ -695,6 +695,15 @@ async function exportTier() {
     wrapper.classList.add('expanded');
     document.body.classList.add('capturing');
 
+    // 스크롤 초기화 + overflow 일시 해제하여 캡처 시 잘림 방지
+    const prevOverflow    = area.style.overflow;
+    const prevHeight      = area.style.height;
+    area.style.overflow   = 'visible';
+    area.style.height     = 'auto';
+
+    // drop-zone 스크롤도 모두 초기화
+    area.querySelectorAll('.drop-zone').forEach(z => { z.scrollTop = 0; });
+
     // 히트맵 미러 동기화
     syncHeatmapForCapture();
 
@@ -708,6 +717,9 @@ async function exportTier() {
             link.click();
         })
         .finally(() => {
+            // overflow/height 복원
+            area.style.overflow = prevOverflow;
+            area.style.height   = prevHeight;
             document.body.classList.remove('capturing');
             wrapper.classList.remove('expanded');
         });

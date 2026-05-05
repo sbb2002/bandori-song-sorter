@@ -760,6 +760,11 @@ body {
     display: block;
 }
 
+.capturing #export-capture-area {
+    overflow: visible !important;
+    height: auto !important;
+}
+
 .capturing .del-btn {
     display: none !important;
 }
