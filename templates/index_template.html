@@ -99,7 +99,7 @@
             <button
                 class="band-btn {% if loop.first %}active{% endif %}"
                 onclick="switchBand('{{ b }}', this)"
-            >{{ b.replace('_', ' ') }}</button>
+            ><img src="./assets/icon/{{ b }}.png" alt="{{ b.replace('_', ' ') }}" class="band-btn-icon"></button>
             {% endfor %}
         </div>
 

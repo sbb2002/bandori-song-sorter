@@ -361,15 +361,26 @@ body {
     background: #252525;
     color: #888;
     border: 1px solid var(--border);
-    padding: 6px 12px;
+    padding: 4px;
     border-radius: 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .band-btn.active {
     background: var(--pink);
     color: #000;
     font-weight: bold;
+}
+
+/* 밴드 버튼 아이콘 */
+.band-btn-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    display: block;
 }
 
 /* ===========================
@@ -390,7 +401,7 @@ body {
 .band-content {
     display: none;
     gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 180px)); /* 열 자동 배치 */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 120px)); /* 열 자동 배치 */
     grid-auto-rows: minmax(0, auto);
     overflow-y: auto;
 }
@@ -498,8 +509,8 @@ body {
 
 /* 히트맵 헤더 밴드 아이콘 */
 .heatmap-band-icon {
-    /* width: 100%; */
-    /* height: 100%; */
+    width: 100%;
+    height: 100%;
     max-width: 32px;
     max-height: 32px;
     object-fit: contain;
