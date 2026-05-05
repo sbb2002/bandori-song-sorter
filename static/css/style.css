@@ -581,7 +581,6 @@ body {
 /* PC: tier-wrapper 하단 */
 @media (min-width: 1024px) {
     .disclaimer-pc {
-        margin-top: auto;
         display: block;
     }
 
@@ -599,7 +598,8 @@ body {
     .disclaimer-mobile {
         display: block;
         background: #1a1a1a;
-        color: #666;
+        color: #555;
+        font-size: 0.65rem;
         border-top: 1px solid #333;
         margin-bottom: 64px;
     }
@@ -707,6 +707,16 @@ body {
 /* ===========================
    Export / Capture
    =========================== */
+
+/* 히트맵 미러: 평소 숨김, 캡처 시에만 표시 */
+#heatmap-capture {
+    display: none;
+}
+
+.capturing #heatmap-capture {
+    display: block;
+}
+
 .capturing .del-btn {
     display: none !important;
 }
