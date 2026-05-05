@@ -876,7 +876,7 @@ body {
     }
 
     .histogram-row {
-        grid-template-columns: 32px repeat(auto-fit, minmax(28px, 1fr));
+        grid-template-columns: 32px repeat(auto-fit, minmax(10px, 1fr));
         gap: 2px;
     }
 
