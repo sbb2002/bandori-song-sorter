@@ -21,27 +21,40 @@
          Tier Sidebar
          ============================ -->
     <div id="tier-wrapper">
-        <div class="tier-table" id="tier-capture-area">
 
-            {% for label, color in [
-                ('S+', '#ff7f7f'),
-                ('S',  '#ff9999'),
-                ('A+', '#ffbf7f'),
-                ('A',  '#ffff7f'),
-                ('B+', '#bfff7f'),
-                ('B',  '#7fff7f'),
-                ('C+', '#7fffff'),
-                ('C',  '#7f7fff'),
-                ('D',  '#bf7fff'),
-                ('F',  '#cccccc')
-            ] %}
-            <div class="tier-row">
-                <div class="tier-label" style="background: {{ color }}">{{ label }}</div>
-                <div class="drop-zone"></div>
+        <!-- 캡처 대상: 티어리스트 + 히트맵 -->
+        <div id="export-capture-area" style="background:#ffffff;">
+
+            <div class="tier-table" id="tier-capture-area">
+                {% for label, color in [
+                    ('S+', '#ff7f7f'),
+                    ('S',  '#ff9999'),
+                    ('A+', '#ffbf7f'),
+                    ('A',  '#ffff7f'),
+                    ('B+', '#bfff7f'),
+                    ('B',  '#7fff7f'),
+                    ('C+', '#7fffff'),
+                    ('C',  '#7f7fff'),
+                    ('D',  '#bf7fff'),
+                    ('F',  '#cccccc')
+                ] %}
+                <div class="tier-row">
+                    <div class="tier-label" style="background: {{ color }}">{{ label }}</div>
+                    <div class="drop-zone"></div>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+            <!-- 히트맵 미러 (캡처 전용, JS가 동기화) -->
+            <div id="heatmap-capture" style="padding:12px 16px; background:#1c1c1c;">
+                <div style="font-size:0.78rem; font-weight:700; letter-spacing:0.08em; color:#ff99aa; text-transform:uppercase; margin-bottom:6px;">
+                    Tier × Band Heatmap
+                </div>
+                <div id="heatmap-capture-grid"></div>
+            </div>
 
         </div>
+
         <button class="btn-save" onclick="exportTier()">DOWNLOAD RANKING (PNG)</button>
     </div>
 

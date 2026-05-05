@@ -319,12 +319,93 @@ function initSortable() {
 // 8. Export (PNG)
 // ───────────────────────────
 
+/**
+ * 캡처 전용 히트맵 미러를 #heatmap-capture-grid에 동기화.
+ * 실제 히트맵(.heatmap-cell)의 색상/텍스트를 그대로 복사한다.
+ */
+function syncHeatmapForCapture() {
+    const grid = document.getElementById('heatmap-capture-grid');
+    if (!grid) return;
+
+    // 헤더 행 구성: 밴드 이름 수집
+    const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
+    const bandNames   = bandButtons.map(btn => btn.textContent.trim());
+
+    // 실제 히트맵 행 수집
+    const rows = Array.from(document.querySelectorAll('.histogram-row[data-tier]'));
+
+    // grid 스타일: tier열 + band열
+    const colCount  = bandNames.length + 1;
+    grid.style.display            = 'grid';
+    grid.style.gridTemplateColumns = `48px repeat(${bandNames.length}, 1fr)`;
+    grid.style.gap                = '3px';
+
+    grid.innerHTML = '';
+
+    // 헤더 행
+    const tierHead = document.createElement('div');
+    tierHead.textContent  = 'Tier';
+    tierHead.style.cssText = 'font-size:0.7rem;font-weight:700;color:#aaa;display:flex;align-items:center;justify-content:center;';
+    grid.appendChild(tierHead);
+
+    bandNames.forEach(name => {
+        const cell = document.createElement('div');
+        cell.textContent  = name;
+        cell.style.cssText = 'font-size:0.65rem;font-weight:700;color:#aaa;display:flex;align-items:center;justify-content:center;padding:2px;';
+        grid.appendChild(cell);
+    });
+
+    // 데이터 행: 실제 .heatmap-cell에서 색상 복사
+    rows.forEach(row => {
+        const tier      = row.dataset.tier;
+        const tierLabel = row.querySelector('.histogram-cell');
+        const cells     = Array.from(row.querySelectorAll('.heatmap-cell'));
+
+        // 티어 라벨
+        const labelCell = document.createElement('div');
+        labelCell.textContent  = tier;
+        labelCell.style.cssText = `
+            background: ${tierLabel ? tierLabel.style.background : '#eee'};
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            min-height: 28px;
+        `;
+        grid.appendChild(labelCell);
+
+        // 히트맵 데이터 셀
+        cells.forEach(src => {
+            const dst = document.createElement('div');
+            dst.style.cssText = `
+                background-color: ${src.style.backgroundColor || '#ffffff'};
+                color: ${src.style.color || 'transparent'};
+                font-size: 0.75rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                min-height: 28px;
+            `;
+            dst.textContent = src.innerText;
+            grid.appendChild(dst);
+        });
+    });
+}
+
 async function exportTier() {
-    const area    = document.getElementById('tier-capture-area');
+    const area    = document.getElementById('export-capture-area');
     const wrapper = document.getElementById('tier-wrapper');
 
     wrapper.classList.add('expanded');
     document.body.classList.add('capturing');
+
+    // 히트맵 미러 동기화
+    syncHeatmapForCapture();
 
     await new Promise(r => setTimeout(r, 600));
 
