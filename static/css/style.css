@@ -749,7 +749,7 @@ body {
 
     /* PC에서 고정 버튼이 tier-wrapper를 가리지 않도록 여백 */
     .main-container {
-        padding-bottom: 56px;
+        padding-bottom: 80px;
     }
 }
 
