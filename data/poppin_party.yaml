@@ -157,8 +157,41 @@
   img_url: assets/poppin_party/a03.webp
   tracks:
     - track_number: '01'
-      name: '오리지널 캐릭터 카드 1장(전 5종)'
-      url: 
+      name: "Tomorrow's Door"
+      url: https://youtu.be/j7o8KLDowG8?si=wL_72CLtVaFIazNZ
+    - track_number: '02'
+      name: 'イントロダクション'
+      url: https://youtu.be/KfuOq4v5H_A?si=w-GBxriq2T_9hfNd
+    - track_number: '03'
+      name: 'TARINAI'
+      url: https://youtu.be/aIaSbIpxXb8?si=O5-2r5Lrt7q_lQgi
+    - track_number: '04'
+      name: 'DOKI DOKI SCARY'
+      url: https://youtu.be/T6a3TbucVIk?si=UUWu4XChn90e2Qa0
+    - track_number: '05'
+      name: 'Photograph'
+      url: https://youtu.be/jLWs8qcXF7o?si=HLfazNhUiJEKSH6c
+    - track_number: '06'
+      name: '夏に閉じこめて'
+      url: https://youtu.be/02n9fIuuew8?si=qv7scWox3Rfuvudq
+    - track_number: '07'
+      name: "ぽっぴん'どりーむ！"
+      url: https://youtu.be/-ISFvqdfTHo?si=JDM-JI9QK_AQlvxR
+    - track_number: '08'
+      name: '星の約束'
+      url: https://youtu.be/fa9khQQc5HE?si=LuroVjoy9ojmAUO0
+    - track_number: '09'
+      name: '新しい季節に'
+      url: https://youtu.be/bqKoweXOY1I?si=w8vEG83kJhRC2VPe
+    - track_number: '10'
+      name: 'トレモロアイズ'
+      url: https://youtu.be/lsRTa_4Q9iU?si=WgE8DhS9TFVPMha0
+    - track_number: '11'
+      name: '雨上がり、キミと'
+      url: https://youtu.be/6PWbcFhH1sc?si=jsMW1FtNoP5VN4ya
+    - track_number: '12'
+      name: '花咲く未来に'
+      url: https://youtu.be/rTVN1M1DNx8?si=qSCRgEbPAO0fgJej
 
 - band: 'poppin_party'
   numbering: 'Mini'
