@@ -290,9 +290,34 @@ function initSortable() {
             group: 'shared',
             animation: 150,
             onAdd(e) {
-                const item    = e.item;
+                const item       = e.item;
+                const targetZone = e.to;
+                const json       = item.getAttribute('data-json');
+
+                // ── 중복 감지 ──────────────────────────────────────────
+                // 모든 drop-zone에서 동일한 data-json을 가진 기존 아이템 탐색
+                const duplicate = Array.from(
+                    document.querySelectorAll('.drop-zone > *')
+                ).find(el => el !== item && el.getAttribute('data-json') === json);
+
+                if (duplicate) {
+                    const duplicateZone = duplicate.closest('.drop-zone');
+
+                    if (duplicateZone === targetZone) {
+                        // 같은 랭크에 이미 존재 → 새로 드래그한 것만 제거
+                        item.remove();
+                    } else {
+                        // 다른 랭크에 존재 → 기존 아이템을 새 랭크로 이동 후 새 것 제거
+                        targetZone.appendChild(duplicate);
+                        item.remove();
+                    }
+                    updateHistogram();
+                    return;
+                }
+                // ───────────────────────────────────────────────────────
+
                 item.classList.add('tier-item');
-                item.dataset.band = JSON.parse(item.getAttribute('data-json')).band || '';
+                item.dataset.band = JSON.parse(json).band || '';
 
                 // 삭제 버튼 (중복 방지)
                 if (!item.querySelector('.del-btn')) {
