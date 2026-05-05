@@ -501,7 +501,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 320px;
+    min-height: 240px;
     width: 420px;
     max-width: 45vw;
     flex-shrink: 0;
@@ -515,7 +515,7 @@ body {
 
 #youtube-player {
     width: 100%;
-    min-height: 240px;
+    min-height: 160px;
     border-radius: 14px;
     overflow: hidden;
     background: #000;
