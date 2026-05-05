@@ -125,7 +125,9 @@
                 <div class="histogram-row histogram-head">
                     <div class="histogram-cell">Tier</div>
                     {% for b in albums_by_band.keys() %}
-                    <div class="histogram-cell">{{ b.replace('_', ' ') }}</div>
+                    <div class="histogram-cell">
+                        <img src="./assets/icon/{{ b }}.png" alt="{{ b.replace('_', ' ') }}" class="heatmap-band-icon">
+                    </div>
                     {% endfor %}
                 </div>
 
