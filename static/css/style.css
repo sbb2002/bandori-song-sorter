@@ -374,7 +374,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    min-height: 340px;
+    min-height: 240px;
 }
 
 .band-content {
