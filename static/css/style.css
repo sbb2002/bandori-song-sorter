@@ -380,7 +380,7 @@ body {
 .band-content {
     display: none;
     gap: 10px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 120px)); /* 열 자동 배치 */
     grid-auto-rows: minmax(0, auto);
     overflow-y: auto;
 }
@@ -390,8 +390,11 @@ body {
 }
 
 .bank-item {
-    width: 100%;
-    padding-bottom: 80%;
+    /* width: 100%; */
+    /* padding-bottom: 80%; */
+    width: 120px;          /* 고정 너비 */
+    height: 120px;         /* 고정 높이 */
+    padding-bottom: 0;     /* 기존 비율 트릭 제거 */
     position: relative;
     cursor: pointer;
     overflow: hidden;
