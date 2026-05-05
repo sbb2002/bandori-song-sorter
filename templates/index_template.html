@@ -8,7 +8,6 @@
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
 
     <!-- App Styles (build.py가 주입한 경로) -->
     <link rel="stylesheet" href="{{ static_paths.css }}">
@@ -182,6 +181,8 @@
 
 <!-- App Script (build.py가 주입한 경로) -->
 <script src="{{ static_paths.js }}"></script>
+<!-- YouTube IFrame API: script.js 이후 로드하여 onYouTubeIframeAPIReady 타이밍 보장 -->
+<script src="https://www.youtube.com/iframe_api"></script>
 
 </body>
 </html>

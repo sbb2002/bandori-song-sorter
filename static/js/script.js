@@ -58,6 +58,11 @@ let timer;
 
 /** YouTube IFrame API 준비 완료 콜백 (전역 함수명 고정) */
 function onYouTubeIframeAPIReady() {
+    initYouTubePlayer();
+}
+
+function initYouTubePlayer() {
+    if (player && typeof player.loadVideoById === 'function') return; // 이미 초기화됨
     player = new YT.Player('youtube-player', {
         height: '100%',
         width: '100%',
@@ -673,4 +678,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initSortable();
     updateHistogram();
+
+    // YouTube IFrame API가 script.js 로드 전에 이미 준비된 경우 직접 초기화
+    // (모바일에서 타이밍 역전 방지)
+    if (window.YT && window.YT.Player) {
+        initYouTubePlayer();
+    }
 });
