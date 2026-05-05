@@ -589,6 +589,72 @@ body {
 }
 
 /* ===========================
+   Mobile Tier Popup (말풍선)
+   =========================== */
+#tier-popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: transparent;
+}
+
+#tier-popup {
+    position: absolute;
+    z-index: 301;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 14px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    max-width: 260px;
+    /* 말풍선 꼬리 (아래쪽) */
+}
+
+#tier-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #fff;
+    border-bottom: none;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
+}
+
+/* 말풍선이 아래에 표시될 때 꼬리 위로 */
+#tier-popup.popup-below::after {
+    bottom: auto;
+    top: -10px;
+    border-top: none;
+    border-bottom: 6px solid #fff;
+    border-top-color: transparent;
+}
+
+.tier-popup-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 0.8rem;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tier-popup-btn:active {
+    transform: scale(0.92);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================
    Export / Capture
    =========================== */
 .capturing .del-btn {

@@ -225,8 +225,147 @@ function showInfo(el) {
     });
 
     tinfo.appendChild(list);
+
+    // 모바일에서만 말풍선 티어 선택 표시
+    if (window.innerWidth < 1024) {
+        showTierPopup(el);
+    }
 }
 
+// ───────────────────────────
+// 5-1. 모바일 티어 선택 말풍선
+// ───────────────────────────
+
+const TIER_LIST = [
+    { label: 'S+', color: '#ff7f7f' },
+    { label: 'S',  color: '#ff9999' },
+    { label: 'A+', color: '#ffbf7f' },
+    { label: 'A',  color: '#ffff7f' },
+    { label: 'B+', color: '#bfff7f' },
+    { label: 'B',  color: '#7fff7f' },
+    { label: 'C+', color: '#7fffff' },
+    { label: 'C',  color: '#7f7fff' },
+    { label: 'D',  color: '#bf7fff' },
+    { label: 'F',  color: '#cccccc' },
+];
+
+function showTierPopup(bankItem) {
+    closeTierPopup();
+
+    const json = bankItem.getAttribute('data-json');
+
+    // 바깥 클릭 시 닫는 오버레이
+    const overlay = document.createElement('div');
+    overlay.id = 'tier-popup-overlay';
+    overlay.onclick = closeTierPopup;
+
+    // 말풍선 본체
+    const popup = document.createElement('div');
+    popup.id = 'tier-popup';
+
+    TIER_LIST.forEach(({ label, color }) => {
+        const btn = document.createElement('button');
+        btn.className        = 'tier-popup-btn';
+        btn.textContent      = label;
+        btn.style.background = color;
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            assignToTier(json, label);
+            closeTierPopup();
+        };
+        popup.appendChild(btn);
+    });
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+
+    // bankItem 위 중앙에 배치
+    const rect    = bankItem.getBoundingClientRect();
+    const scrollY = window.scrollY;
+
+    // 일단 위쪽에 배치 시도
+    popup.style.visibility = 'hidden';
+    popup.style.top  = '0px';
+    popup.style.left = '0px';
+
+    // 렌더링 후 실제 크기 측정
+    requestAnimationFrame(() => {
+        const popupH = popup.offsetHeight;
+        const popupW = popup.offsetWidth;
+
+        let top  = rect.top + scrollY - popupH - 12;
+        let left = rect.left + window.scrollX + rect.width / 2 - popupW / 2;
+
+        // 화면 위로 벗어나면 아래에 표시
+        if (top < scrollY + 8) {
+            top = rect.bottom + scrollY + 12;
+            popup.classList.add('popup-below');
+        } else {
+            popup.classList.remove('popup-below');
+        }
+
+        // 좌우 경계 보정
+        left = Math.max(8, Math.min(left, window.innerWidth - popupW - 8));
+
+        popup.style.top        = `${top}px`;
+        popup.style.left       = `${left}px`;
+        popup.style.visibility = 'visible';
+    });
+}
+
+function closeTierPopup() {
+    document.getElementById('tier-popup-overlay')?.remove();
+    document.getElementById('tier-popup')?.remove();
+}
+
+/**
+ * 선택한 티어의 drop-zone에 앨범 등록.
+ * 중복 로직은 드래그와 동일하게 처리.
+ */
+function assignToTier(json, tierLabel) {
+    const allRows   = Array.from(document.querySelectorAll('#tier-capture-area .tier-row'));
+    const targetRow = allRows.find(row =>
+        row.querySelector('.tier-label')?.textContent.trim() === tierLabel
+    );
+    if (!targetRow) return;
+    const targetZone = targetRow.querySelector('.drop-zone');
+    if (!targetZone) return;
+
+    // 중복 감지
+    const existing = Array.from(
+        document.querySelectorAll('.drop-zone > *')
+    ).find(el => el.getAttribute('data-json') === json);
+
+    if (existing) {
+        const existingZone = existing.closest('.drop-zone');
+        if (existingZone === targetZone) return; // 같은 티어 → 무시
+        targetZone.appendChild(existing);         // 다른 티어 → 이동
+        updateHistogram();
+        return;
+    }
+
+    // 신규 등록
+    const data = JSON.parse(json);
+
+    const item       = document.createElement('div');
+    item.className   = 'tier-item';
+    item.setAttribute('data-json', json);
+    item.dataset.band = data.band || '';
+
+    const img = document.createElement('img');
+    img.src   = fixPath(data.img_url);
+    img.alt   = data.album_title || '';
+    item.appendChild(img);
+
+    const delBtn     = document.createElement('div');
+    delBtn.className = 'del-btn';
+    delBtn.innerText = '✕';
+    delBtn.onclick   = () => { item.remove(); updateHistogram(); };
+    item.appendChild(delBtn);
+
+    targetZone.appendChild(item);
+    updateHistogram();
+}
 // ───────────────────────────
 // 6. Histogram
 // ───────────────────────────
