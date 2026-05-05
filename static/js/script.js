@@ -250,49 +250,96 @@ const TIER_LIST = [
 ];
 
 /**
- * 모바일 전용 long press(300ms) → 랭크 셀렉터 말풍선.
+ * 모바일 전용 long press(350ms) → 랭크 셀렉터 말풍선.
  * - contextmenu(길게 눌러 우클릭 메뉴) 비활성화
  * - touchmove / touchend로 취소 처리
+ * - conic-gradient로 진행 애니메이션 표시
  */
 function attachLongPress(item) {
-    let pressTimer = null;
-    let startX = 0;
-    let startY = 0;
+    let pressTimer  = null;
+    let rafId       = null;
+    let startTime   = null;
+    let startX      = 0;
+    let startY      = 0;
+    const DURATION  = 350;
 
     // 브라우저 기본 컨텍스트 메뉴 비활성화 (img 태그 포함)
     item.addEventListener('contextmenu', e => e.preventDefault());
     item.querySelector('img')?.addEventListener('contextmenu', e => e.preventDefault());
+
+    function startAnimation() {
+        startTime = performance.now();
+        item.classList.add('long-pressing');
+
+        function tick(now) {
+            const elapsed  = now - startTime;
+            const progress = Math.min(elapsed / DURATION, 1);
+            item.style.setProperty('--lp-progress', progress);
+
+            if (progress < 1) {
+                rafId = requestAnimationFrame(tick);
+            }
+        }
+        rafId = requestAnimationFrame(tick);
+    }
+
+    function resetAnimation() {
+        // rAF 취소
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+        // 타이머 취소
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+        // 애니메이션 리셋 (transition으로 부드럽게 0으로)
+        item.style.setProperty('--lp-progress', 0);
+        // transition 후 클래스 제거
+        setTimeout(() => {
+            item.classList.remove('long-pressing');
+            item.style.removeProperty('--lp-progress');
+        }, 200);
+        startTime = null;
+    }
 
     item.addEventListener('touchstart', e => {
         if (window.innerWidth >= 1024) return;
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
 
+        startAnimation();
+
         pressTimer = setTimeout(() => {
             pressTimer = null;
-            showTierPopup(item);
-        }, 350); // Sortable delay(300ms)보다 늦게 발동하여 경쟁 조건 방지
+            // 애니메이션 즉시 완료 상태로
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+            item.style.setProperty('--lp-progress', 1);
+            setTimeout(() => {
+                item.classList.remove('long-pressing');
+                item.style.removeProperty('--lp-progress');
+                showTierPopup(item);
+            }, 80);
+        }, DURATION);
     }, { passive: true });
 
-    // 손가락이 움직이면 (드래그 의도) 타이머 취소
+    // 손가락이 움직이면 취소
     item.addEventListener('touchmove', e => {
-        if (!pressTimer) return;
+        if (!startTime) return;
         const dx = Math.abs(e.touches[0].clientX - startX);
         const dy = Math.abs(e.touches[0].clientY - startY);
         if (dx > 8 || dy > 8) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
+            resetAnimation();
         }
     }, { passive: true });
 
     item.addEventListener('touchend', () => {
-        clearTimeout(pressTimer);
-        pressTimer = null;
+        resetAnimation();
     });
 
     item.addEventListener('touchcancel', () => {
-        clearTimeout(pressTimer);
-        pressTimer = null;
+        resetAnimation();
     });
 }
 
