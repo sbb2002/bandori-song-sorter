@@ -32,22 +32,22 @@
   tracks:
     - track_number: '01'
       name: '黒のバースデイ'
-      url: '-'
+      url: https://youtu.be/WIhtJ7eJ-oI?si=5JXjRO6Z71SyI6MK
     - track_number: '02'
       name: 'ふたつの月 ~Deep Into The Forest~'
-      url: '-'
+      url: https://youtu.be/6USzFX8HnSY?si=8drn4U4_vkw2CR_6
     - track_number: '03'
       name: 'Choir ‘S’ Choir'
-      url: '-'
+      url: https://youtu.be/7llj4mh4L-8?si=emJCkzP0SCsKy8zU
     - track_number: '04'
       name: '神さま、バカ'
-      url: '-'
+      url: https://youtu.be/OT9KqYBAkQc?si=M2bF9WIxwHjfwrRB
     - track_number: '05'
       name: 'Mas?uerade Rhapsody Re?uest'
-      url: '-'
+      url: https://youtu.be/VLxM8q6PF4I?si=GTV5OD95GfrBMF0B
     - track_number: '06'
       name: 'Ave Mujica(노래)|Ave Mujica'
-      url: '-'
+      url: https://youtu.be/QDsd0nyzwz0?si=2-LMlTse4pmt73jL
 
 - band: 'ave_mujica'
   numbering: 'Mini'
@@ -56,16 +56,16 @@
   tracks:
     - track_number: '01'
       name: 'Symbol I : △'
-      url: '-'
+      url: https://youtu.be/2O5C0mJx0Fs?si=sqj7XipjFcoDMFpC
     - track_number: '02'
       name: 'Symbol II : Air'
-      url: '-'
+      url: https://youtu.be/pMk3iHPlUaI?si=Zn0Ltgkcx8Xm9E2M
     - track_number: '03'
       name: 'Symbol III : ▽'
-      url: '-'
+      url: https://youtu.be/NB3PxWLn9v4?si=MB6CwEx4yWTVRT5p
     - track_number: '04'
       name: 'Symbol IV : Earth'
-      url: '-'
+      url: https://youtu.be/WqQPM0dZpXc?si=Br4G43rO942ZZnLC
     - track_number: '05'
-      name: 'Ether(BanG Dream!)|Ether'
-      url: '-'
+      name: 'Ether'
+      url: https://youtu.be/z6k7YIIZ6Hk?si=xLd38TfQTOAXKtA2
