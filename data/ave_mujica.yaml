@@ -5,25 +5,25 @@
   tracks:
     - track_number: '01'
       name: 'KiLLKiSS'
-      url: '-'
+      url: https://youtu.be/RexyoaXaQ1o?si=4KnLfmVcLXGZU9ok
     - track_number: '02'
       name: 'Georgette Me, Georgette You'
-      url: '-'
+      url: https://youtu.be/vKDa7yfpd2M?si=yhKbsQ5ExrDDi9NY
     - track_number: '03'
       name: 'Imprisoned XII'
-      url: '-'
+      url: https://youtu.be/0YNMV7xljD4?si=QjWhMdaqgR9XDG6W
     - track_number: '04'
       name: 'Crucifix X'
-      url: '-'
+      url: https://youtu.be/XP8al1l38Po?si=zDrNoOG9PHkFP_Yt
     - track_number: '05'
       name: '八芒星ダンス'
-      url: '-'
+      url: https://youtu.be/tevtnb427Mw?si=4nvbwLFuyK2TdIEK
     - track_number: '06'
-      name: '顔(BanG Dream!)|顔'
-      url: '-'
+      name: '顔'
+      url: https://youtu.be/6umH5XQpXws?si=3tpJuj0GmgRhOx0H
     - track_number: '07'
       name: '天球のMúsica'
-      url: '-'
+      url: https://youtu.be/2Bo-ULStqLo?si=0WxuknHcbQoOEbYS
 
 - band: 'ave_mujica'
   numbering: 'Mini'

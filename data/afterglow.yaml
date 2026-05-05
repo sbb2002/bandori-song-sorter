@@ -42,45 +42,75 @@
   album_title: 'STAY GLOW'
   img_url: assets/afterglow/a02.webp
   tracks:
-    - track_number: '01'
+    - track_number: 'Disc1-01'
       name: 'Scarlet Sky'
       url: https://youtu.be/tfZBC32tcwo?si=-sUSsnHjiHtgirQv
-    - track_number: '02'
+    - track_number: 'Disc1-02'
       name: 'Off we go.'
       url: https://youtu.be/bg2UuSTbyqk?si=VPkxJWjOy8kAD0AH
-    - track_number: '03'
+    - track_number: 'Disc1-03'
       name: 'いつも通りのBrand new days'
       url: https://youtu.be/Ku2GV2VkQcA?si=ZBYdL2ShXx_t4S0H
-    - track_number: '04'
+    - track_number: 'Disc1-04'
       name: 'SWITCH ON NOW'
       url: https://youtu.be/jsPk4RqO3N8?si=LyNULSTvSIA_RCJJ
-    - track_number: '05'
+    - track_number: 'Disc1-05'
       name: 'ランブリングメモリー'
       url: https://youtu.be/vRHfyDdge6s?si=f112hlyDPJw2rd-6
-    - track_number: '06'
+    - track_number: 'Disc1-06'
       name: 'COMIC PANIC!!!'
       url: https://youtu.be/LhpHCRJAAKw?si=Teq4BLYU0NJlYFvS
-    - track_number: '07'
+    - track_number: 'Disc1-07'
       name: 'Trouble Joyful!!'
       url: https://youtu.be/RepUyAXXlD8?si=HXSXkm8hhkZRPCV_
-    - track_number: '08'
+    - track_number: 'Disc1-08'
       name: 'Jamboree!Journey!'
       url: https://youtu.be/UEBaKDkey40?si=HzLWQemlKGUY9sNW
-    - track_number: '09'
+    - track_number: 'Disc1-09'
       name: 'カナユメ'
       url: https://youtu.be/ZFXt0Ul0YA8?si=S6n9ScyUYOnXbBeb
-    - track_number: '10'
+    - track_number: 'Disc1-10'
       name: '独創収差'
       url: https://youtu.be/8rQjShGMPYs?si=Uyj3jhLPcX4-XvXs
-    - track_number: '11'
+    - track_number: 'Disc1-11'
       name: '極彩色(BanG Dream!)|極彩色'
       url: https://youtu.be/YvpL2A3FZk4?si=rYbukf4NN7-ej-I0
-    - track_number: '12'
+    - track_number: 'Disc1-12'
       name: 'サクラゼンセン'
       url: https://youtu.be/RJ98HN9hl6I?si=7xaaialcY5VrB7BV
-    - track_number: '13'
+    - track_number: 'Disc1-13'
       name: 'True color'
       url: https://youtu.be/zOTQpZkq_vk?si=RVfrn_8QUQYgVgbd
+    - track_number: 'Disc2-01'
+      name: 'Crow Song'
+      url: https://youtu.be/mpPPaC8vfsU?si=TRJ4wMOSQf-IESds
+    - track_number: 'Disc2-02'
+      name: 'カサブタ'
+      url: https://youtu.be/-0QIHYtgwwQ?si=246TcAMhzW4hdID6
+    - track_number: 'Disc2-03'
+      name: 'アイのシナリオ'
+      url: https://youtu.be/TFvTI-1uz7g?si=eTBNpDfRd7AhbBZP
+    - track_number: 'Disc2-04'
+      name: 'Northern lights'
+      url: https://youtu.be/qrbkufy83yY?si=NOiHesaVoKxsr0n2
+    - track_number: 'Disc2-05'
+      name: 'トーキョーワンダー。'
+      url: https://youtu.be/4vNlqraef0E?si=bFXa6NIwhBFq33Hb
+    - track_number: 'Disc2-06'
+      name: 'Reach Out To The Truth'
+      url: https://youtu.be/ufMWpo-RKpQ?si=QpRF38EojKO0lIVA
+    - track_number: 'Disc2-07'
+      name: 'Listen!!'
+      url: https://youtu.be/VDWm77vSOR8?si=GqGlju3DgNMsMbfF
+    - track_number: 'Disc2-08'
+      name: '青い栞'
+      url: https://youtu.be/bzJW33heiqw?si=81wZoTTnaeuwF0i0
+    - track_number: 'Disc2-09'
+      name: 'イマジネーション'
+      url: https://youtu.be/PDtPDiaQOK8?si=-K1cxmldhf736JxO
+    - track_number: 'Disc2-10'
+      name: 'Butter-Fly'
+      url: https://youtu.be/GlylV3xII5k?si=2wKE6I9na17e4Dwa
 
 - band: 'afterglow'
   numbering: 'Mini'

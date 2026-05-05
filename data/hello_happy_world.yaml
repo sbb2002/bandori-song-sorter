@@ -5,82 +5,112 @@
   tracks:
     - track_number: '01'
       name: 'キミがいなくちゃっ！'
-      url: '-'
+      url: https://youtu.be/9itZp8utiAw?si=YIRUah3PT0DesLsK
     - track_number: '02'
       name: 'ハイファイブ∞あどべんちゃっ'
-      url: '-'
+      url: https://youtu.be/_Smbu0U70Ko?si=T6_fPf-jB5k62qBK
     - track_number: '03'
       name: 'スマイルブーケで た〜まや〜！'
-      url: '-'
+      url: https://youtu.be/37b4LJg0yFk?si=7NkdYCE-Q17_RDQI
     - track_number: '04'
       name: 'えがお･シング･あ･ソング'
-      url: '-'
+      url: https://youtu.be/B-I2KAxGKD8?si=XalAvDlTbifInOnw
     - track_number: '05'
       name: 'YAPPY! SCHOOL CARNIVAL☆彡'
-      url: '-'
+      url: https://youtu.be/xNA7DZfdstI?si=2wCKPlHM5sx851DT
     - track_number: '06'
       name: 'にこ×にこ=ハイパースマイルパワー！'
-      url: '-'
+      url: https://youtu.be/YRQHVpYDHAU?si=pM4xTfwePh72vlmz
     - track_number: '07'
       name: 'ないすみちゅっ！'
-      url: '-'
+      url: https://youtu.be/ByAniAhEdhk?si=AD-1w3tpOQkduaew
     - track_number: '08'
       name: 'ゴーカ！ごーかい！？ファントムシーフ！'
-      url: '-'
+      url: https://youtu.be/35xJFtwHx7Q?si=_dkdu9JBTZnweVsF
     - track_number: '09'
       name: 'うぃーきゃん☆フレフレっ！'
-      url: '-'
+      url: https://youtu.be/VJDcALjsZ80?si=cD0XVu7GihuEkqcG
     - track_number: '10'
       name: 'えがおのオーケストラっ！'
-      url: '-'
+      url: https://youtu.be/24Xzx6dH5tg?si=kY-sUYj3En-RN9CJ
     - track_number: '11'
       name: 'にこにこねくと！'
-      url: '-'
+      url: https://youtu.be/B0AssN_z5gU?si=E1ZQsvj8vM74wLoT
 
 - band: 'hello_happy_world'
   numbering: '2nd'
   album_title: 'SMILE ON PARADE'
   img_url: assets/hello_happy_world/a02.webp
   tracks:
-    - track_number: '01'
+    - track_number: 'Disc1-01'
       name: 'ふぁいぶスマイル◯オールインっ！'
-      url: '-'
-    - track_number: '02'
+      url: https://youtu.be/fTgVisxMdOQ?si=Bu_l6eQlEhM8olx5
+    - track_number: 'Disc1-02'
       name: 'せかいのっびのびトレジャー！'
-      url: '-'
-    - track_number: '03'
+      url: https://youtu.be/t-YRHYvIqEE?si=FXgXWTWs_J3-jytG
+    - track_number: 'Disc1-03'
       name: 'きらっ☆と キミフェス！'
-      url: '-'
-    - track_number: '04'
+      url: https://youtu.be/VRSbIOh8w3U?si=qPCNmJ4RSBgyiH-j
+    - track_number: 'Disc1-04'
       name: 'うちゃパ！で ぱっぴかポーんっ！'
-      url: '-'
-    - track_number: '05'
+      url: https://youtu.be/Ibs-CJd-qws?si=DEmKfZlwebzTsk8L
+    - track_number: 'Disc1-05'
       name: 'はれやか すこやか ぴかりんりん♪'
-      url: '-'
-    - track_number: '06'
+      url: https://youtu.be/hstT4_F2Hqg?si=LRZA0X3-kMZ6-jSP
+    - track_number: 'Disc1-06'
       name: 'ふわふわ☆ゆめいろサンドイッチ'
-      url: '-'
-    - track_number: '07'
+      url: https://youtu.be/pAB-NYhMXFc?si=J-kMUzdPil40H8Cr
+    - track_number: 'Disc1-07'
       name: 'Happy! Happier! Happiest!'
-      url: '-'
-    - track_number: '08'
+      url: https://youtu.be/xpECEzVaWH8?si=yl5nc2zIvtBUSov-
+    - track_number: 'Disc1-08'
       name: '現るっ！大怪盗ハロハッピー！'
-      url: '-'
-    - track_number: '09'
+      url: https://youtu.be/sLn7oV54kYY?si=DMU56d_vogSoX1Aj
+    - track_number: 'Disc1-09'
       name: 'わちゃ・もちゃ・ぺったん行進曲'
-      url: '-'
-    - track_number: '10'
+      url: https://youtu.be/Qq1_N9wKA0I?si=wdVJqg-RfUMTe_e8
+    - track_number: 'Disc1-10'
       name: 'おもいでイルミネーション'
-      url: '-'
-    - track_number: '11'
+      url: https://youtu.be/ZC84bEuG6AA?si=SoQYSjXDLNOG-2Md
+    - track_number: 'Disc1-11'
       name: 'おもいやりハーモニー'
-      url: '-'
-    - track_number: '12'
+      url: https://youtu.be/tMlaNbpRmSE?si=snol28tR6JCB95rl
+    - track_number: 'Disc1-12'
       name: 'ハピネスっ！ハピィーマジカルっ♪'
-      url: '-'
-    - track_number: '13'
+      url: https://youtu.be/wPDP9eT2-Cs?si=hHOB4LYVz8K6LITX
+    - track_number: 'Disc1-13'
       name: 'えがお、あーゆーれでぃ???'
-      url: '-'
+      url: https://youtu.be/DAxR0sfi-pk?si=sfhGDb9MzMYejflh
+    - track_number: 'Disc2-01'
+      name: 'ハッピーサマーウェディング'
+      url: https://youtu.be/SQrYhJ6x7kE?si=FhLABGHADt9Ax9Qs
+    - track_number: 'Disc2-02'
+      name: 'ひまわりの約束'
+      url: https://youtu.be/WC3paFpeKTo?si=8t0GLZ2u8hUNRqvn
+    - track_number: 'Disc2-03' 
+      name: 'ハッピー☆マテリアル'
+      url: https://youtu.be/YBNg45T7_2M?si=ps1aBdvFcdPrAFUM
+    - track_number: 'Disc2-04'
+      name: '太陽曰く燃えよカオス'
+      url: https://youtu.be/OHypaKK3Jww?si=I1W2dA79dfU7NC3G
+    - track_number: 'Disc2-05
+      name: 'エクストラ・マジック・アワー'
+      url: https://youtu.be/kRQTnmIO5Jw?si=fHdipFX__siyZm6N
+    - track_number: 'Disc2-06
+      name: 'コレカラ'
+      url: https://youtu.be/9DpyAgb_DO8?si=N--hx4ysbN9NG3H2
+    - track_number: 'Disc2-07
+      name: '全力少年'
+      url: https://youtu.be/-YBcjF1R-Es?si=jzq3nCUlUZxdq0VK
+    - track_number: 'Disc2-08
+      name: 'オレンジ'
+      url: https://youtu.be/YtgT2EaDZ0A?si=v23nCCy1vn0vCtfi
+    - track_number: 'Disc2-09
+      name: 'Happy Girl'
+      url: https://youtu.be/AcAaiJqg8Ps?si=mEtj9q_WaBFIWKiB
+    - track_number: 'Disc2-10
+      name: 'ン・パカマーチ'
+      url: https://youtu.be/KazeDrpkrBY?si=Tu48iUpIYCMUradi
 
 - band: 'hello_happy_world'
   numbering: 'Mini'
@@ -89,19 +119,19 @@
   tracks:
     - track_number: '01'
       name: 'サンバロハッピ〜！'
-      url: '-'
+      url: https://youtu.be/RvtTwS_wErQ?si=uxaaQnduQe2muKnh
     - track_number: '02'
       name: "ボクらの夏's☆ショーたいむっ！！"
-      url: '-'
+      url: https://youtu.be/Wi9V_T-igiw?si=aP2po-cZ84Fi6oT_
     - track_number: '03'
       name: 'むすんでわらって'
-      url: '-'
+      url: https://youtu.be/pdncPARjwrw?si=5X9bAK1dsFIgKT8S
     - track_number: '04'
       name: 'キミを れっつ・はぶ・ふぁん♪'
-      url: '-'
+      url: https://youtu.be/2CnDHPhRVyQ?si=i4_rUZSuXZiCwZU9
     - track_number: '05'
       name: 'らいふ・いず・みゅーじかるっ♪♪♪'
-      url: '-'
+      url: https://youtu.be/SnlhQO2t8Zo?si=umUgrq5mUZ3Vh_1c
 
 - band: 'hello_happy_world'
   numbering: 'Mini'
@@ -110,16 +140,16 @@
   tracks:
     - track_number: '01'
       name: 'れっつ・スマイル・すとり〜みんぐっ♪'
-      url: '-'
+      url: https://youtu.be/5IcpLkGA54I?si=hXvKqShlYjaxx3PY
     - track_number: '02'
       name: 'やっほー！いっぽ！わんだふぉー！'
-      url: '-'
+      url: https://youtu.be/1rfk9_lj-iA?si=BH5_I5pzwtzV2g7p
     - track_number: '03'
       name: 'とーくとぅみー・とーくとぅゆー'
-      url: '-'
+      url: https://youtu.be/7HxPLgP9AEo?si=8nsIv1g07diaiNn4
     - track_number: '04'
       name: 'ハイタッチ／＼びりーばーず☆'
-      url: '-'
+      url: https://youtu.be/rCQsYw_x7Us?si=gk-vlD3Rqo5IWv5f
     - track_number: '05'
       name: 'Listen to Smile!'
-      url: '-'
+      url: https://youtu.be/5Bz8TBMardI?si=dQIwi4bkghxECUTo
