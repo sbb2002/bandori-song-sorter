@@ -654,6 +654,14 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* 모바일 long press 시 이미지 피드백 */
+@media (max-width: 1023px) {
+    .bank-item {
+        -webkit-touch-callout: none; /* iOS 길게 누르기 메뉴 비활성화 */
+        user-select: none;
+    }
+}
+
 /* ===========================
    Export / Capture
    =========================== */

@@ -225,11 +225,6 @@ function showInfo(el) {
     });
 
     tinfo.appendChild(list);
-
-    // 모바일에서만 말풍선 티어 선택 표시
-    if (window.innerWidth < 1024) {
-        showTierPopup(el);
-    }
 }
 
 // ───────────────────────────
@@ -248,6 +243,52 @@ const TIER_LIST = [
     { label: 'D',  color: '#bf7fff' },
     { label: 'F',  color: '#cccccc' },
 ];
+
+/**
+ * 모바일 전용 long press(300ms) → 랭크 셀렉터 말풍선.
+ * - contextmenu(길게 눌러 우클릭 메뉴) 비활성화
+ * - touchmove / touchend로 취소 처리
+ */
+function attachLongPress(item) {
+    let pressTimer = null;
+    let startX = 0;
+    let startY = 0;
+
+    // 브라우저 기본 컨텍스트 메뉴 비활성화
+    item.addEventListener('contextmenu', e => e.preventDefault());
+
+    item.addEventListener('touchstart', e => {
+        if (window.innerWidth >= 1024) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+
+        pressTimer = setTimeout(() => {
+            pressTimer = null;
+            showTierPopup(item);
+        }, 300);
+    }, { passive: true });
+
+    // 손가락이 움직이면 (드래그 의도) 타이머 취소
+    item.addEventListener('touchmove', e => {
+        if (!pressTimer) return;
+        const dx = Math.abs(e.touches[0].clientX - startX);
+        const dy = Math.abs(e.touches[0].clientY - startY);
+        if (dx > 8 || dy > 8) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+    }, { passive: true });
+
+    item.addEventListener('touchend', () => {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+    });
+
+    item.addEventListener('touchcancel', () => {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+    });
+}
 
 function showTierPopup(bankItem) {
     closeTierPopup();
@@ -446,6 +487,11 @@ function initSortable() {
             sort: false,
             delay: 300,
             delayOnTouchOnly: true,
+        });
+
+        // 모바일 long press → 랭크 셀렉터 말풍선
+        container.querySelectorAll('.bank-item').forEach(item => {
+            attachLongPress(item);
         });
     });
 
