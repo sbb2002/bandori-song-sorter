@@ -96,6 +96,7 @@ body {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 999px;
 }
+
 #tier-wrapper:not(.expanded) .drop-zone {
     display: none;
 }
@@ -401,7 +402,7 @@ body {
 .band-content {
     display: none;
     gap: 10px;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 180px)); /* 열 자동 배치 */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 180px));
     grid-auto-rows: minmax(0, auto);
     overflow-y: auto;
 }
@@ -411,11 +412,9 @@ body {
 }
 
 .bank-item {
-    /* width: 100%; */
-    /* padding-bottom: 80%; */
-    width: 180px;          /* 고정 너비 */
-    height: 180px;         /* 고정 높이 */
-    padding-bottom: 0;     /* 기존 비율 트릭 제거 */
+    width: 180px;
+    height: 180px;
+    padding-bottom: 0;
     position: relative;
     cursor: pointer;
     overflow: hidden;
@@ -502,17 +501,14 @@ body {
     font-size: 0.82rem;
     font-weight: 700;
     transition: background-color 0.3s ease, color 0.3s ease;
-    /* 초기값: 흰색 배경 */
     background-color: #ffffff;
     color: transparent;
 }
 
 /* 히트맵 헤더 밴드 아이콘 */
 .heatmap-band-icon {
-    width: 100%;
-    height: 100%;
-    max-width: 32px;
-    max-height: 32px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
 }
 
@@ -563,10 +559,57 @@ body {
 }
 
 /* ===========================
+   Disclaimer
+   =========================== */
+.disclaimer {
+    padding: 16px;
+    color: #555;
+    font-size: 0.65rem;
+    line-height: 1.6;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+}
+
+.disclaimer p {
+    margin: 0 0 6px 0;
+}
+
+.disclaimer p:last-child {
+    margin-bottom: 0;
+}
+
+/* PC: tier-wrapper 하단 */
+@media (min-width: 1024px) {
+    .disclaimer-pc {
+        margin-top: auto;
+        display: block;
+    }
+
+    .disclaimer-mobile {
+        display: none;
+    }
+}
+
+/* 모바일: control-panel 최하단 */
+@media (max-width: 1023px) {
+    .disclaimer-pc {
+        display: none;
+    }
+
+    .disclaimer-mobile {
+        display: block;
+        background: #1a1a1a;
+        color: #666;
+        border-top: 1px solid #333;
+        margin-bottom: 64px;
+    }
+}
+
+/* ===========================
    Save Button (항상 하단 고정)
    =========================== */
 .btn-save {
-    display: none; /* tier-wrapper 안의 버튼은 숨김 */
+    display: none;
 }
 
 /* 모바일/PC 공통 고정 다운로드 버튼 */
@@ -609,7 +652,6 @@ body {
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
     max-width: 260px;
-    /* 말풍선 꼬리 (아래쪽) */
 }
 
 #tier-popup::after {
@@ -621,7 +663,7 @@ body {
     border: 6px solid transparent;
     border-top-color: #fff;
     border-bottom: none;
-    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));
 }
 
 /* 말풍선이 아래에 표시될 때 꼬리 위로 */
@@ -657,7 +699,7 @@ body {
 /* 모바일 long press 시 이미지 피드백 */
 @media (max-width: 1023px) {
     .bank-item {
-        -webkit-touch-callout: none; /* iOS 길게 누르기 메뉴 비활성화 */
+        -webkit-touch-callout: none;
         user-select: none;
     }
 }
@@ -719,8 +761,8 @@ body {
         min-height: 100vh;
         overflow-y: auto;
         overflow-x: hidden;
-        padding-bottom: 64px; /* 고정 버튼 높이만큼 여백 */
-        padding-top: 40px;    /* 고정 tier-header 높이만큼 여백 */
+        padding-bottom: 64px;
+        padding-top: 40px;
     }
 
     /* ── 티어 영역 (상단) ── */
@@ -767,7 +809,7 @@ body {
         font-size: 0.8rem;
         color: #000;
         flex-shrink: 0;
-        border-right: 1px solid rgba(0,0,0,0.08);
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     #toggle-btn {
@@ -814,8 +856,6 @@ body {
         overflow-y: auto;
     }
 
-    /* PC용 btn-save 숨김 (공통으로 처리됨) */
-
     /* ── 컨트롤 패널 (중단) ── */
     .control-panel {
         width: 100%;
@@ -841,7 +881,7 @@ body {
     }
 
     .track-list {
-        max-height: 180px; /* 모바일 트랙리스트 높이 고정 + 스크롤 */
+        max-height: 180px;
         overflow-y: auto;
     }
 
@@ -853,7 +893,7 @@ body {
 
     #youtube-player {
         min-height: 200px;
-        height: 200px; /* 명시적 높이 - IFrame 초기화 보장 */
+        height: 200px;
     }
 
     /* 앨범 뱅크 */
