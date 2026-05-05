@@ -392,8 +392,8 @@ body {
 .bank-item {
     /* width: 100%; */
     /* padding-bottom: 80%; */
-    width: 120px;          /* 고정 너비 */
-    height: 120px;         /* 고정 높이 */
+    width: 180px;          /* 고정 너비 */
+    height: 180px;         /* 고정 높이 */
     padding-bottom: 0;     /* 기존 비율 트릭 제거 */
     position: relative;
     cursor: pointer;
