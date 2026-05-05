@@ -841,7 +841,8 @@ body {
     }
 
     .track-list {
-        max-height: none; /* 모바일에서 트랙리스트 높이 제한 해제 */
+        max-height: 180px; /* 모바일 트랙리스트 높이 고정 + 스크롤 */
+        overflow-y: auto;
     }
 
     .video-panel {
