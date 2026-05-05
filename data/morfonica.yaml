@@ -3,51 +3,45 @@
   album_title: 'QUINTET'
   img_url: assets/morfonica/a01.webp
   tracks:
-    - track_number: '01'
+    - track_number: 'Disc1-01'
       name: 'Daylight -デイライト-'
       url: https://www.youtube.com/watch?v=DhYniTbW2P0&list=RDDhYniTbW2P0&start_radio=1
-    - track_number: '02'
+    - track_number: 'Disc1-02'
       name: 'メランコリックララバイ'
-      url: '-'
-    - track_number: '03'
+      url: https://youtu.be/D_uUbtZUOPc?si=RGDa_H4ihPOkTGEl
+    - track_number: 'Disc1-03'
       name: 'flame of hope'
-      url: '-'
-    - track_number: '04'
+      url: https://youtu.be/4kLyLp8Oco0?si=5VZdCv4ecjTjueC0
+    - track_number: 'Disc1-04'
       name: 'ブルームブルーム'
-      url: '-'
-    - track_number: '05'
+      url: https://youtu.be/ulnZ8yiS7Jg?si=C08JaPKXLcl-qK1C
+    - track_number: 'Disc1-05'
       name: 'カラフルリバティー'
-      url: '-'
-    - track_number: '06'
+      url: https://youtu.be/HqDa4NOAt8w?si=FWkeNCY1UUuyz3uq
+    - track_number: 'Disc1-06'
       name: 'fly with the night'
-      url: '-'
-    - track_number: '07'
+      url: https://youtu.be/DpnFf8UINbs?si=ce3rP2W0uN81avAh
+    - track_number: 'Disc1-07'
       name: '金色へのプレリュード'
-      url: '-'
-    - track_number: '08'
+      url: https://youtu.be/Qam2U-LF_Ks?si=6lCOlvt2EarapbTM
+    - track_number: 'Disc1-08'
       name: 'The Circle Of Butterflies'
-      url: '-'
-    - track_number: '09'
+      url: https://youtu.be/eMR-LxXyCKs?si=lDEaCnfYiHNV5l30
+    - track_number: 'Disc1-09'
       name: 'ハーモニー・デイ'
-      url: '-'
-    - track_number: '10'
+      url: https://youtu.be/NuhjVeWwvoM?si=B6ardgZ5lielqQzf
+    - track_number: 'Disc1-10'
       name: 'Sweet Cheers!'
-      url: '-'
-    - track_number: '11'
+      url: https://youtu.be/e8IQBZMVIGw?si=f3pziKrkxWk1UPdx
+    - track_number: 'Disc1-11'
       name: '寄る辺のSunny, Sunny'
-      url: '-'
-    - track_number: '12'
+      url: https://youtu.be/6C4NOz-t3QA?si=4ljWqTr_THSYSskt
+    - track_number: 'Disc1-12'
       name: '誓いのWingbeat'
-      url: '-'
-    - track_number: '13'
+      url: https://youtu.be/nnpD32__lAY?si=jAZuH3gM30TkLH4L
+    - track_number: 'Disc1-13'
       name: 'Ever Sky Blue'
-      url: '-'
-    - track_number: '<|2> Disc 01'
-      name: 'Morfonica ZEPP TOUR 2021 「Amabile」 도쿄 공연 라이브 영상'
-      url: '-'
-    - track_number: '<|2> Disc 02'
-      name: 'BanG Dream!/라이브#s-8.2|Morfonica Concept LIVE 「Resonance」 라이브 영상'
-      url: '-'
+      url: https://youtu.be/Ar7QtswUNGw?si=rWdpDYUvjpyrzPi7
 
 - band: 'morfonica'
   numbering: '2nd'
@@ -56,40 +50,40 @@
   tracks:
     - track_number: '01'
       name: 'Polyphonyscape'
-      url: '-'
+      url: https://youtu.be/I6h4Rm32k-I?si=lDAhwR9T4h8cbhUd
     - track_number: '02'
       name: 'Wreath of Brave'
-      url: '-'
+      url: https://youtu.be/5O3gAE65_34?si=A5Y020-z-OIrq3y7
     - track_number: '03'
       name: 'Merry Merry Thanks!!'
-      url: '-'
+      url: https://youtu.be/j3W3NHurJnk?si=eOoA7p6q1A4Dc-ff
     - track_number: '04'
       name: 'Sonorous'
-      url: '-'
+      url: https://youtu.be/Wl5LZ3iJNzM?si=LY7wHLxghfOpApaA
     - track_number: '05'
       name: '両翼のBrilliance'
-      url: '-'
+      url: https://youtu.be/O0jB7IA5tZg?si=AjpySBB8SN06BPs1
     - track_number: '06'
       name: 'Steer to Utopia'
-      url: '-'
+      url: https://youtu.be/wjpVRH7GOFc?si=wUCATTuP1DTe51tF
     - track_number: '07'
       name: 'Fateful...'
-      url: '-'
+      url: https://youtu.be/RD_6TSNkxg0?si=elJWxxwQh2GlQ43V
     - track_number: '08'
       name: 'ティリカモニカリラ'
-      url: '-'
+      url: https://youtu.be/d32zOmV118k?si=K8tyTzw_1s0DD47I
     - track_number: '09'
       name: 'Secret Dawn'
-      url: '-'
+      url: https://youtu.be/eWqv5RB6jng?si=SPt97my-I_orybqJ
     - track_number: '10'
-      name: "Angel's Ladder(BanG Dream!)|Angel's Ladder"
-      url: '-'
+      name: "Angel's Ladder"
+      url: https://youtu.be/7Hml249yhKg?si=SMPb5U1kUrpsqC4Q
     - track_number: '11'
       name: 'One step at a time'
-      url: '-'
+      url: https://youtu.be/T_a1YLnxD50?si=YSHzQ-CN8F_GEDMZ
     - track_number: '12'
       name: 'Tempest(BanG Dream!)|Tempest'
-      url: '-'
+      url: https://youtu.be/OWTf5lEPT_g?si=Gzq3RJu2CU6qv71Q
 
 - band: 'morfonica'
   numbering: 'Mini'
@@ -98,19 +92,17 @@
   tracks:
     - track_number: '01'
       name: 'フレージング ミラージュ'
-      url: '-'
+      url: https://youtu.be/zY9c9Ws9I3Y?si=QT9YMnl5dZJY8wSl
     - track_number: '02'
       name: 'MUGEN Reverberate!'
-      url: '-'
+      url: https://youtu.be/cQcaYexUpQw?si=wT-5kyEi-3qdI3Cl
     - track_number: '03'
       name: 'わたしまちがいさがし'
-      url: '-'
+      url: https://youtu.be/UgP_YbdsoB8?si=QmzLjANEgVeyiZQ6
     - track_number: '04'
       name: 'esora no clover'
-      url: '-'
+      url: https://youtu.be/kEtHiPc5HJY?si=ezuPsTM56Ml_FgMe
     - track_number: '05'
       name: 'きょうもMerry go rounD'
-      url: '-'
-    - track_number: '01'
-      name: 'BanG Dream! 10th☆LIVE DAY2 : Morfonica「Reverberation」 라이브 영상'
-      url: '-'
+      url: https://youtu.be/RDhZVoPqL8k?si=VeD4hXJzOGdbUSDZ
+

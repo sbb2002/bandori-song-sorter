@@ -3,90 +3,153 @@
   album_title: "Poppin'on!"
   img_url: assets/poppin_party/a01.webp
   tracks:
-    - track_number: 'Disc 1'
-      name: 'Disc 2'
-      url: '-'
-    - track_number: '01'
-      name: '01. Yes! BanG_Dream!'
-      url: '-'
-    - track_number: '02'
-      name: '02. STAR BEAT！〜ホシノコドウ〜|STAR BEAT!～ホシノコドウ～'
-      url: '-'
-    - track_number: '03'
-      name: '03. 走り始めたばかりのキミに'
-      url: '-'
-    - track_number: '04'
-      name: '04. ティアドロップス'
-      url: '-'
-    - track_number: '05'
-      name: '05. ときめきエクスペリエンス！'
-      url: '-'
-    - track_number: '06'
-      name: '06. キラキラだとか夢だとか ~Sing Girls~|キラキラだとか夢だとか ～Sing Girls～'
-      url: '-'
-    - track_number: '07'
-      name: '07. 私の心はチョココロネ'
-      url: '-'
-    - track_number: '08'
-      name: '08. 前へススメ！'
-      url: '-'
-    - track_number: '09'
-      name: '09. 夢みるSunflower'
-      url: '-'
-    - track_number: '10'
-      name: '10. ティアドロップス|ティアドロップス ～Popipa Acoustic Ver.～'
-      url: '-'
-    - track_number: '11'
-      name: '11. 走り始めたばかりのキミに|走り始めたばかりのキミに ～Popipa Acoustic Ver.～'
-      url: '-'
+    - track_number: 'Disc1-01'
+      name: 'Yes! BanG_Dream!'
+      url: https://youtu.be/tBSpLDIqbHc?si=vHju1lbfGg3am8YC
+    - track_number: 'Disc1-02'
+      name: 'STAR BEAT!～ホシノコドウ～'
+      url: https://youtu.be/RtKwXh18gkc?si=WoeEkc3fditQZN9a
+    - track_number: 'Disc1-03'
+      name: '走り始めたばかりのキミに'
+      url: https://youtu.be/pBKo-SAbtcM?si=d0Tt5LBIV3LTXCJI
+    - track_number: 'Disc1-04'
+      name: 'ティアドロップス'
+      url: https://youtu.be/lOE3DB6Ur4A?si=vH023zN4tWxBQJAa
+    - track_number: 'Disc1-05'
+      name: 'ときめきエクスペリエンス！'
+      url: https://youtu.be/OqN-TbVubpA?si=hWMcqYo7QoSn9KsK
+    - track_number: 'Disc1-06'
+      name: 'キラキラだとか夢だとか ～Sing Girls～'
+      url: https://youtu.be/4YrfrDTabQk?si=QT2Bt0cTLJ2ZSpfa
+    - track_number: 'Disc1-07'
+      name: '私の心はチョココロネ'
+      url: https://youtu.be/ZnaBCQTeHYI?si=vogNuxkOUrQLEh5W
+    - track_number: 'Disc1-08'
+      name: '前へススメ！'
+      url: https://youtu.be/3ugLz4FMdeI?si=Hu9WUNGgIGK9BJoF
+    - track_number: 'Disc1-09'
+      name: '夢みるSunflower'
+      url: https://youtu.be/yQ0ebf3C1zM?si=uHDo9Zpbb-M7mEPY
+    - track_number: 'Disc1-10'
+      name: 'ティアドロップス ～Popipa Acoustic Ver.～'
+      url: https://youtu.be/lOE3DB6Ur4A?si=_0tFAcKEJlkicIR4
+    - track_number: 'Disc1-11'
+      name: '走り始めたばかりのキミに ～Popipa Acoustic Ver.～'
+      url: https://youtu.be/pBKo-SAbtcM?si=Gd69DzIvNQVbrsxB
+    - track_number: 'Disc2-01'
+      name: 'Time Lapse'
+      url: https://youtu.be/ap3LhZJvbiw?si=YGl6KMcbppgOw80i
+    - track_number: 'Disc2-02'
+      name: '八月のif'
+      url: https://youtu.be/y_wsqM33BaY?si=QqTFmOmo2U01dphD
+    - track_number: 'Disc2-03'
+      name: 'クリスマスのうた'
+      url: https://youtu.be/EMwYk4qPK1k?si=kL8v8G9Omg56kvPK
+    - track_number: 'Disc2-04'
+      name: 'B.O.F'
+      url: https://youtu.be/dW25FkbQC58?si=H82z43mM7SQeD2W_
+    - track_number: 'Disc2-05'
+      name: 'CiRCLING'
+      url: https://youtu.be/Zj4qzqS--UY?si=Esecu2hQZJasXXtR
+    - track_number: 'Disc2-06'
+      name: '二重の虹(ダブル レインボウ)'
+      url: https://youtu.be/sNaJuqFB-_g?si=S8bgZzeriZJdd0_B
+    - track_number: 'Disc2-07'
+      name: '最高(さあ行こう)！'
+      url: https://youtu.be/w5jX2B8W6l8?si=68FTGmCQEG3SVmxU
+    - track_number: 'Disc2-08'
+      name: 'ガールズコード'
+      url: https://youtu.be/94djfHnNylA?si=d1AjtbIYIZhUYwe8
+    - track_number: 'Disc2-09'
+      name: 'Yes! BanG_Dream! ～Popipa Acoustic Ver.～'
+      url: https://youtu.be/tBSpLDIqbHc?si=jwOedCiP5_4EaWn2
+    - track_number: 'Disc2-10'
+      name: '夏空 SUN! SUN! SEVEN! ～Popipa Acoustic Ver.～'
+      url: https://youtu.be/AwmICsVBWLU?si=UQDIGF1gzJruwhza
+    - track_number: 'Disc2-11'
+      name: 'STAR BEAT!～ホシノコドウ～ ～Popipa Acoustic Ver.～'
+      url: https://youtu.be/RtKwXh18gkc?si=vvcdbL8jWvKAK09M
 
 - band: 'poppin_party'
   numbering: '2nd'
   album_title: 'Breakthrough!'
   img_url: assets/poppin_party/a02.webp
   tracks:
-    - track_number: 'Disc 1'
-      name: 'Disc 2[* 블루레이 수록판 한정]'
-      url: '-'
-    - track_number: '01'
-      name: '01. Breakthrough!'
-      url: '-'
-    - track_number: '02'
-      name: "02. NO GIRL NO CRY|NO GIRL NO CRY/Poppin'Party Ver."
-      url: '-'
-    - track_number: '03'
-      name: '03. イニシャル'
-      url: '-'
-    - track_number: '04'
-      name: '04. Hello! Wink!'
-      url: '-'
-    - track_number: '05'
-      name: '05. Step×Step!'
-      url: '-'
-    - track_number: '06'
-      name: "06. Jumpin'"
-      url: '-'
-    - track_number: '07'
-      name: '07. White Afternoon'
-      url: '-'
-    - track_number: '08'
-      name: '08. キラキラスター！'
-      url: '-'
-    - track_number: '09'
-      name: '09. Returns'
-      url: '-'
-    - track_number: '10'
-      name: '10. Dreamers Go!'
-      url: '-'
-    - track_number: '11'
-      name: '11. キズナミュージック♪'
-      url: '-'
-    - track_number: '12'
-      name: '12. ミライトレイン'
-      url: '-'
-    - track_number: '13'
-      name: '13. 夢を撃ち抜く瞬間に！'
-      url: '-'
+    - track_number: 'Disc1-01'
+      name: 'Breakthrough!'
+      url: https://youtu.be/jL9BEY5Lt7Q?si=3gjWxJXgJdVEezms
+    - track_number: 'Disc1-02'
+      name: "NO GIRL NO CRY/Poppin'Party Ver."
+      url: https://youtu.be/D1ONxAWcbGE?si=D1ivUgGUrKEbCJMF
+    - track_number: 'Disc1-03'
+      name: 'イニシャル'
+      url: https://youtu.be/Yb9FzUPpk0Y?si=I1XLg7aP1FcHxMhr
+    - track_number: 'Disc1-04'
+      name: 'Hello! Wink!'
+      url: https://youtu.be/BduVH7BZj2k?si=-VDBsLg_KE8ufwPn
+    - track_number: 'Disc1-05'
+      name: 'Step×Step!'
+      url: https://youtu.be/yJSDaYtRGto?si=vjKsTM9gaOhujV9V
+    - track_number: 'Disc1-06'
+      name: "Jumpin'"
+      url: https://youtu.be/SIF5yp2lNqA?si=QzUY0kBozaLNqwoH
+    - track_number: 'Disc1-07'
+      name: 'White Afternoon'
+      url: https://youtu.be/Q7Y-vskuNVQ?si=ziwYtIty_qCEUoa-
+    - track_number: 'Disc1-08'
+      name: 'キラキラスター！'
+      url: https://youtu.be/idH2KGN0C4A?si=fVSl6KREthWv299r
+    - track_number: 'Disc1-09'
+      name: 'Returns'
+      url: https://youtu.be/zWKV5yudE18?si=Es7f6paA8ZA5Tbb1
+    - track_number: 'Disc1-10'
+      name: 'Dreamers Go!'
+      url: https://youtu.be/VigNV3bsE_k?si=SKgeG5NdPWSDHd1y
+    - track_number: 'Disc1-11'
+      name: 'キズナミュージック♪'
+      url: https://youtu.be/rvKC_BDWo0o?si=EvK7aSiHBDapaxrG
+    - track_number: 'Disc1-12'
+      name: 'ミライトレイン'
+      url: https://youtu.be/amlyxSdWmTg?si=eEer3T6vuNpgAFHs
+    - track_number: 'Disc1-13'
+      name: '夢を撃ち抜く瞬間に！'
+      url: https://youtu.be/Y8-nQ9ehgZE?si=mrnIg92RvT_NJiSp
+    - track_number: 'Disc2-01'
+      name: "ぽっぴん'しゃっふる"
+      url: https://youtu.be/FNpk2rkmT_U?si=zhM5wqT-NmhLHJnE
+    - track_number: 'Disc2-02'
+      name: '夏空 SUN! SUN! SEVEN!'
+      url: https://youtu.be/AwmICsVBWLU?si=MbTLk3Bgs7f8E4V3
+    - track_number: 'Disc2-03'
+      name: '1000回潤んだ空'
+      url: https://youtu.be/b-ZAiNOYtE0?si=Z5eWvpCUivbEDAFs
+    - track_number: 'Disc2-04'
+      name: 'HAPPY HAPPY PARTY!'
+      url: https://youtu.be/c0brvCZdxeg?si=-B5Y8gpv8nvujs_7
+    - track_number: 'Disc2-05'
+      name: '夏のドーン！'
+      url: https://youtu.be/xtgdECulbbw?si=0xqLcj7vAIgnpwLo
+    - track_number: 'Disc2-06'
+      name: 'キミにもらったもの'
+      url: https://youtu.be/gu85qKfXfj8?si=bKCqrHGDh2hDfI2v
+    - track_number: 'Disc2-07'
+      name: 'Light Delight'
+      url: https://youtu.be/ycVVqPjxPqk?si=UAUvebgZ4IXFXB3f
+    - track_number: 'Disc2-08'
+      name: '切ないSandglass'
+      url: https://youtu.be/W_W3LnZJApA?si=mm9VnZ1MvJgfj_nJ
+    - track_number: 'Disc2-09'
+      name: 'Home Street'
+      url: https://youtu.be/_n8qGOBD0J8?si=reOgKRF63ve9sNL3
+    - track_number: 'Disc2-10'
+      name: "What's the POPIPA!?"
+      url: https://youtu.be/pX8lWO_Jwv4?si=wFVdQF9dK2WwO-Ig
+    - track_number: 'Disc2-11'
+      name: 'SAKURA MEMORIES'
+      url: https://youtu.be/lQF_5FOrl7k?si=6Iw2ZhXZwBpPTM_L
+    - track_number: 'Disc2-12'
+      name: 'アニバーサリー'
+      url: https://youtu.be/0TYq4xK3G8g?si=ZyDa2VPcvUH6QWq4
 
 - band: 'poppin_party'
   numbering: '3rd'
@@ -95,43 +158,55 @@
   tracks:
     - track_number: '01'
       name: '오리지널 캐릭터 카드 1장(전 5종)'
-      url: '-'
+      url: 
 
 - band: 'poppin_party'
   numbering: 'Mini'
   album_title: 'Live Beyond!!'
   img_url: assets/poppin_party/m01.webp
   tracks:
-    - track_number: 'Disc 1'
-      name: 'Disc 2[* 블루레이 수록판 한정]'
-      url: '-'
-    - track_number: '01'
-      name: '01. Live Beyond!!'
-      url: '-'
-    - track_number: '02'
-      name: '02. Sweets BAN!'
-      url: '-'
-    - track_number: '03'
-      name: '03. キミが始まる！[* 걸파 스위치판 주제가]'
-      url: '-'
-    - track_number: '04'
-      name: '04. Moonlight Walk[* 진화의 열매 ~모르는 사이 성공한 인생~(애니메이션 1기)|진화의 열매 ~모르는 사이 성공한 인생~ ED]'
-      url: '-'
-    - track_number: '05'
-      name: '05. ここから先は歌にならない[* 우리들의 리메이크/애니메이션|우리들의 리메이크 OP]'
-      url: '-'
-    - track_number: '<|4>'
-      name: '06'
-      url: '-'
-    - track_number: '07'
-      name: '07. STAR BEAT！〜ホシノコドウ〜'
-      url: '-'
-    - track_number: '08'
-      name: '08. ティアドロップス'
-      url: '-'
-    - track_number: '09'
-      name: '09. ミライトレイン'
-      url: '-'
+    - track_number: 'Disc1-01'
+      name: 'Live Beyond!!'
+      url: https://youtu.be/BQ417cl8-iE?si=bqU63DeoxzDguHS5
+    - track_number: 'Disc1-02'
+      name: 'Sweets BAN!'
+      url: https://youtu.be/_Zbm5jidUmM?si=pCvfBvEjoGDunIa9
+    - track_number: 'Disc1-03'
+      name: 'キミが始まる！'
+      url: https://youtu.be/tjFia-3Se94?si=qMewqhvRpRBNqwmF
+    - track_number: 'Disc1-04'
+      name: 'Moonlight Walk'
+      url: https://youtu.be/Ie0-J4-CMk4?si=3kIoo4kcncoCvTdo
+    - track_number: 'Disc1-05'
+      name: 'ここから先は歌にならない'
+      url: https://youtu.be/YfSxTmBzz9k?si=8ww9YmiOb6as3rDa
+    - track_number: 'Disc2-01'
+      name: 'Time Lapse'
+      url: https://youtu.be/ap3LhZJvbiw?si=_j6M3D_eo-fE7Fmf
+    - track_number: 'Disc2-02'
+      name: 'イニシャル'
+      url: https://youtu.be/Yb9FzUPpk0Y?si=PlSEjsE51SHS32sw
+    - track_number: 'Disc2-03'
+      name: '夏のドーン！'
+      url: https://youtu.be/xtgdECulbbw?si=nGa3HvJ5Pu-_CMxt
+    - track_number: 'Disc2-04'
+      name: '夏空 SUN! SUN! SEVEN!'
+      url: https://youtu.be/AwmICsVBWLU?si=yisBFuGKsk5jFLco
+    - track_number: 'Disc2-05'
+      name: '八月のif'
+      url: https://youtu.be/y_wsqM33BaY?si=ul8BHD_rKiDCeijL
+    - track_number: 'Disc2-06'
+      name: 'ときめきエクスペリエンス！'
+      url: https://youtu.be/OqN-TbVubpA?si=b9afx5tkrilo8SHO
+    - track_number: 'Disc2-07'
+      name: 'STAR BEAT！〜ホシノコドウ〜'
+      url: https://youtu.be/RtKwXh18gkc?si=7AS_WdkSuO_x-IrL
+    - track_number: 'Disc2-08'
+      name: 'ティアドロップス'
+      url: https://youtu.be/lOE3DB6Ur4A?si=isvz1Sn8QQXeC9AC
+    - track_number: 'Disc2-09'
+      name: 'ミライトレイン'
+      url: https://youtu.be/amlyxSdWmTg?si=qp-7DDHYGZuy4AsR
 
 - band: 'poppin_party'
   numbering: 'Mini'
@@ -140,22 +215,19 @@
   tracks:
     - track_number: '01'
       name: '青春 To Be Continued'
-      url: '-'
+      url: https://youtu.be/inyz9fpWPT0?si=a7KDOCAE96bIsGn8
     - track_number: '02'
       name: 'Future Place(BanG Dream!)|Future Place'
-      url: '-'
+      url: https://youtu.be/JonvwJvZFv4?si=Qs2UTBurw9WRBKfe
     - track_number: '03'
-      name: '大好き！(BanG Dream!)|大好き！'
-      url: '-'
+      name: '大好き！'
+      url: https://youtu.be/NW5DnKrpr8M?si=ZR0oZaKdumsdQxt0
     - track_number: '04'
       name: 'Five Letters'
-      url: '-'
+      url: https://youtu.be/-rDKKJcyyTU?si=k6xB4_erApBmP03I
     - track_number: '05'
       name: '最強☆ソング'
-      url: '-'
+      url: https://youtu.be/pSYXzPMhsPQ?si=ez5jAomIBoBwaa5H
     - track_number: '06'
       name: 'RiNG A BELL'
-      url: '-'
-    - track_number: '02'
-      name: '포토 소책자'
-      url: '-'
+      url: https://youtu.be/ai76D_byMgk?si=37GbwCOcOU4ZoUN9

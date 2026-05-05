@@ -5,82 +5,112 @@
   tracks:
     - track_number: '01'
       name: 'TITLE IDOL'
-      url: '-'
+      url: https://youtu.be/DYcKUe6QYtQ?si=fJnjQHJYE54LBy5P
     - track_number: '02'
       name: 'ワクワクmeetsトリップ'
-      url: '-'
+      url: https://youtu.be/2tsI2LPugWE?si=HZd10XGAkdLy7jii
     - track_number: '03'
       name: 'ゆら・ゆらRing-Dong-Dance'
-      url: '-'
+      url: https://youtu.be/IYi3pLHGEo0?si=p8huzJtfuTidIR2j
     - track_number: '04'
       name: 'もういちど ルミナス'
-      url: '-'
+      url: https://youtu.be/674OQz-V6b0?si=V271CwYFuHDVDcbB
     - track_number: '05'
       name: 'あっつあつ 常夏 らぶ☆サマー！'
-      url: '-'
+      url: https://youtu.be/F2XgwwQFcvs?si=at2AKKm_5MQ1xhV0
     - track_number: '06'
       name: '天下トーイツ A to Z☆'
-      url: '-'
+      url: https://youtu.be/F2XgwwQFcvs?si=at2AKKm_5MQ1xhV0
     - track_number: '07'
       name: 'しゅわりん☆どり〜みん'
-      url: '-'
+      url: https://youtu.be/9s_GFDvfUTI?si=WQp6Tt03VTaEaaxg
     - track_number: '08'
       name: 'Power of LOVE!!!'
-      url: '-'
+      url: https://youtu.be/zTJjAOvwhgo?si=n2Ck7aS2Ehm_ec2l
     - track_number: '09'
       name: 'きゅ～まい＊flower'
-      url: '-'
+      url: https://youtu.be/_Y2me3JTTd4?si=PUxYMVA05SoJWfop
     - track_number: '10'
       name: 'Winking☆Cheer'
-      url: '-'
+      url: https://youtu.be/jDHsMU5ZFR0?si=NX5FrEYX2jpSWKKD
     - track_number: '11'
       name: 'ゆめゆめグラデーション'
-      url: '-'
+      url: https://youtu.be/p5ta20-h8vU?si=og-GVdgrHyufk-i3
 
 - band: 'pastel_palettes'
   numbering: '2nd'
   album_title: 'Pastel à la mode'
   img_url: assets/pastel_palettes/a02.webp
   tracks:
-    - track_number: '01'
+    - track_number: 'Disc1-01'
       name: 'はなまる◎アンダンテ'
-      url: '-'
-    - track_number: '02'
+      url: https://youtu.be/QKpgJFE3CgM?si=8_YjocZ7A4zrGV8Y
+    - track_number: 'Disc1-02'
       name: 'パスパレボリューションず☆'
-      url: '-'
-    - track_number: '03'
+      url: https://youtu.be/02-G0MAcdmc?si=9-qLKSubDxR6O35b
+    - track_number: 'Disc1-03'
       name: 'SURVIVOR ねばーぎぶあっぷ!'
-      url: '-'
-    - track_number: '04'
+      url: https://youtu.be/5emw7-6FnvE?si=766XWrJ80517Mn_y
+    - track_number: 'Disc1-04'
       name: 'Wonderland Girl'
-      url: '-'
-    - track_number: '05'
+      url: https://youtu.be/i_pkiVx3dWo?si=eSKPS2Ibxa3wiMra
+    - track_number: 'Disc1-05'
       name: 'ゼッタイ宣言～Recital～'
-      url: '-'
-    - track_number: '06'
+      url: https://youtu.be/LoW3xxuewLc?si=RuVdRmyqrh6fZ9t9
+    - track_number: 'Disc1-06'
       name: 'ぎゅっDAYS♪'
-      url: '-'
-    - track_number: '07'
+      url: https://youtu.be/Aihl3YY6wFw?si=zVbIppbH9JjTBsk_
+    - track_number: 'Disc1-07'
       name: 'Wonderful Sweet!'
-      url: '-'
-    - track_number: '08'
+      url: https://youtu.be/oMtLVZ4z9wM?si=XI63VK1EX-ZdA1UX
+    - track_number: 'Disc1-08'
       name: 'るんっ♪てぃてぃー！'
-      url: '-'
-    - track_number: '09'
+      url: https://youtu.be/pOhredaA3bY?si=Lp82oJDkr3dWn-Ru
+    - track_number: 'Disc1-09'
       name: 'パッパレ☆人生！バーン万歳！'
-      url: '-'
-    - track_number: '10'
+      url: https://youtu.be/AqU8cxKLmN0?si=Zpb-A4vJ5GhtcmHb
+    - track_number: 'Disc1-10'
       name: 'Brand new Pastel Road!'
-      url: '-'
-    - track_number: '11'
+      url: https://youtu.be/BDy7oYorJzw?si=meR50wp9ZVeQmUEX
+    - track_number: 'Disc1-11'
       name: 'あこがれacross'
-      url: '-'
-    - track_number: '12'
+      url: https://youtu.be/UbKbTPzYNOI?si=Hnxy0Z_tmKHfGdbd
+    - track_number: 'Disc1-12'
       name: 'ハレハレ☆フォーチュン'
-      url: '-'
-    - track_number: '13'
+      url: https://youtu.be/iKRoKPyOXlQ?si=K9oo991jzlS72f0D
+    - track_number: 'Disc1-13'
       name: 'ハナヒバナ'
-      url: '-'
+      url: https://youtu.be/mzgnly7MnCA?si=0C_G1jiiez3dAYJd
+    - track_number: 'Disc2-01'
+      name: 'そばかす'
+      url: https://youtu.be/jSvmpgJLlR4?si=aCgzP_bPpu9jQg03
+    - track_number: 'Disc2-02'
+      name: '気まぐれロマンティック'
+      url: https://youtu.be/Awn0evP-X4k?si=8LtDuWzqL3M_IT4x
+    - track_number: 'Disc2-03'
+      name: 'ドリームパレード'
+      url: https://youtu.be/TOIuxE3mMcI?si=pqu-dUt857z_CMB1
+    - track_number: 'Disc2-04'
+      name: 'ラムのラブソング'
+      url: https://youtu.be/BnlwHfHBafM?si=Eiz5DiYYWZen4LUf
+    - track_number: 'Disc2-05'
+      name: 'DANCE! おジャ魔女'
+      url: https://youtu.be/VkLZPuTArN4?si=NKbf80b4Po6i2BKz
+    - track_number: 'Disc2-06'
+      name: 'DISCOTHEQUE'
+      url: https://youtu.be/OK782ls3yH8?si=gL4yqFUgZD3U34MQ
+    - track_number: 'Disc2-07'
+      name: 'ゆりゆららららゆるゆり大事件'
+      url: https://youtu.be/pSH0gYedUEg?si=xx4jgRztnIXUhGDl
+    - track_number: 'Disc2-08'
+      name: 'SAKURAスキップ'
+      url: https://youtu.be/DxUyKQwPeWU?si=f6jW0Cq2c9ZeDrFl
+    - track_number: 'Disc2-09'
+      name: 'Stay Alive'
+      url: https://youtu.be/cC9iaoSJLqw?si=N79VBVUgROO8s9RB
+    - track_number: 'Disc2-10'
+      name: '秘密の扉から会いにきて'
+      url: https://youtu.be/Vfk4MdZKBn4?si=8k5nYUuFIkS9ND4V
 
 - band: 'pastel_palettes'
   numbering: 'Mini'
@@ -89,19 +119,19 @@
   tracks:
     - track_number: '01'
       name: 'トリドリ＊パレット'
-      url: '-'
+      url: https://youtu.be/bhbqZAY_TEk?si=dgasgtRedvjfyIv7
     - track_number: '02'
       name: 'ドラマチック！アライブ'
-      url: '-'
+      url: https://youtu.be/ppjwpt0H2o4?si=ZPZMf0l6wf2gc2RU
     - track_number: '03'
       name: 'Radiate Warriors'
-      url: '-'
+      url: https://youtu.be/dS-SUwftzmM?si=o8nOXmzjOdOdSm0x
     - track_number: '04'
       name: 'ReReReエボリューションず☆'
-      url: '-'
+      url: https://youtu.be/4XSLFAmgO34?si=JXLxvLVg5sTlWw_u
     - track_number: '05'
       name: 'everyday flower'
-      url: '-'
+      url: https://youtu.be/zEHPkLXcX1I?si=sxN0U16oYk2dl1eZ
 
 - band: 'pastel_palettes'
   numbering: 'Mini'
@@ -110,16 +140,16 @@
   tracks:
     - track_number: '01'
       name: 'With〜きみとわたしたちの物語〜'
-      url: '-'
+      url: https://youtu.be/zjMWXcNc8Uw?si=5uVDCP1luxdOH0Kq
     - track_number: '02'
       name: 'フレっとパレットFight Song!!'
-      url: '-'
+      url: https://youtu.be/ZvK22__1ECE?si=78MYxvjAv2-gf0vW
     - track_number: '03'
       name: 'デイオフ・ラフ・ラブ・サンクス'
-      url: '-'
+      url: https://youtu.be/M4asKbF6F18?si=nguC0nVsxkw6h6xo
     - track_number: '04'
       name: 'ホワイト ノスタルジア'
-      url: '-'
+      url: https://youtu.be/oN98BBBIOnw?si=hCv7L9cqy-sJeSbE
     - track_number: '05'
-      name: 'Y.O.L.O!!!!!|Y.O.L.O！！！！！(パスパレver.)'
-      url: '-'
+      name: 'Y.O.L.O！！！！！(パスパレver.)'
+      url: https://youtu.be/yKkCyuTOi8Q?si=_oei93Jx5ehLhTok

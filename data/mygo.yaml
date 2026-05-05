@@ -5,43 +5,43 @@
   tracks:
     - track_number: '01'
       name: '迷星叫'
-      url: '-'
+      url: https://youtu.be/V6gq-6dAbHA?si=Q97k43QMQJjuICBw
     - track_number: '02'
       name: '壱雫空'
-      url: '-'
+      url: https://youtu.be/bqDL0mTUiLs?si=E_QPqONe2OHdyuod
     - track_number: '03'
       name: '碧天伴走'
-      url: '-'
+      url: https://youtu.be/S7S4gUjXKjo?si=ov7dp_FkTFI08qdu
     - track_number: '04'
       name: '影色舞'
-      url: '-'
+      url: https://youtu.be/5_ZWx7Q26Tw?si=Kn92v06CO6qfhTnf
     - track_number: '05'
       name: '歌いましょう鳴らしましょう'
-      url: '-'
+      url: https://youtu.be/Xtqz4zUlrGY?si=KwS_FsQrqqeMNLD6
     - track_number: '06'
       name: '潜在表明'
-      url: '-'
+      url: https://youtu.be/ljBKERoFUZQ?si=xCIdr5-9DITgseLa
     - track_number: '07'
       name: '音一会'
-      url: '-'
+      url: https://youtu.be/SKj1BxRGdfI?si=svtSq6rS1Sj30gKa
     - track_number: '08'
       name: '春日影 (MyGO!!!!! ver.)'
-      url: '-'
+      url: https://youtu.be/NycFr6D6DSw?si=Zxde29NRdIQBWIdq
     - track_number: '09'
       name: '詩超絆'
-      url: '-'
+      url: https://youtu.be/OenakjvUs24?si=XDQybiJXBpd_y-Mz
     - track_number: '10'
       name: '迷路日々'
-      url: '-'
+      url: https://youtu.be/d0E91J6UHSw?si=KbSb5s0MKc2JpUwP
     - track_number: '11'
       name: '無路矢'
-      url: '-'
+      url: https://youtu.be/b3Rapr2kUTM?si=nMLKorHAEXoa1-DU
     - track_number: '12'
       name: '名無声'
-      url: '-'
+      url: https://youtu.be/DEyXwtinmfs?si=S-aPyJhi6IHgWHWU
     - track_number: '13'
-      name: '栞(BanG Dream!)|栞'
-      url: '-'
+      name: '栞'
+      url: https://youtu.be/SgJFZEI6GSw?si=jroBJeKLpYOR0LIi
 
 - band: 'mygo'
   numbering: '2nd'
@@ -50,70 +50,73 @@
   tracks:
     - track_number: '01'
       name: '歩拾道'
-      url: '-'
+      url: https://youtu.be/EEeYU4-dhZk?si=uEo0ei0RD3m-Ccby
     - track_number: '02'
       name: '明弦音'
-      url: '-'
+      url: https://youtu.be/6sJ7vXe_oMU?si=7pYHZD4gwTNmpkk1
     - track_number: '03'
       name: '孤壊牢'
-      url: '-'
+      url: https://youtu.be/x56aIq5BDQU?si=CpkqnJyJHonbNGUH
     - track_number: '04'
       name: '霧周途'
-      url: '-'
+      url: https://youtu.be/qJPXncScNA4?si=RVKjnMvfpDvrOu8s
     - track_number: '05'
       name: '端程山'
-      url: '-'
+      url: https://youtu.be/2gRiKJ6zxRg?si=I85jZEmS_A1lnuKk
     - track_number: '06'
       name: '処救生'
-      url: '-'
+      url: https://youtu.be/Z2OLVzWFaY0?si=JGxim1loKVFM7Qew
     - track_number: '07'
       name: '輪符雨'
-      url: '-'
+      url: https://youtu.be/5qaDNLKfu3o?si=663cnHhex6CykniO
     - track_number: '08'
       name: '夜隠染'
-      url: '-'
+      url: https://youtu.be/szlxFGtNCs0?si=yh3ieRfqbUjV4Vc_
     - track_number: '09'
       name: '過惰幻'
-      url: '-'
+      url: https://youtu.be/aggmsIQMR4I?si=z3X9xvoBhmRVXkX_
     - track_number: '10'
       name: '回層浮'
-      url: '-'
+      url: https://youtu.be/ZPB6sJ0ehOI?si=dI0RcDAuKlFedr9h
     - track_number: '11'
       name: '砂寸奏'
-      url: '-'
+      url: https://youtu.be/ydoFJ2s-kDA?si=6jIpgQzavWn29rIz
     - track_number: '12'
       name: '焚音打'
-      url: '-'
+      url: https://youtu.be/meUaiXnSeGY?si=DaQXkpINeSwv4_p8
 
 - band: 'mygo'
   numbering: '3rd'
   album_title: '致並跡'
   img_url: assets/mygo/a03.webp
   tracks:
+    - track_number: '01'
+      name: '-'
+      url: 
     - track_number: '02'
       name: '残痕字'
-      url: '-'
+      url: https://youtu.be/lfDO7bvUtn8?si=vY4bvoMZU1L_1na_
     - track_number: '03'
       name: '掌心正銘'
-      url: '-'
+      url: https://youtu.be/Aww91itH5cQ?si=jAiNdHBHlkcxdKql
     - track_number: '04'
       name: '証命讃歌'
-      url: '-'
+      url: https://youtu.be/I5s3q-_HCSk?si=obOTt54iey2XE4In
     - track_number: '05'
       name: 'エガクミライ'
-      url: '-'
+      url: https://youtu.be/T_jH9KJTlsI?si=4S1SOGNNxlmY5i4w
     - track_number: '06'
       name: '静降想'
-      url: '-'
+      url: https://youtu.be/OdVHJhdFYOo?si=1fPM377UHbJVo4FQ
+    - track_number: '07'
+      name: '-'
+      url: 
+    - track_number: '08'
+      name: '-'
+      url: 
     - track_number: '09'
       name: '聿日箋秋'
-      url: '-'
+      url: https://youtu.be/dKPye_tGXFM?si=dmsvI-CX97F_VPnc
     - track_number: '10'
       name: '往欄印'
-      url: '-'
-    - track_number: '01'
-      name: '특제 아크릴 스탠드 5종 세트'
-      url: '-'
-    - track_number: '02'
-      name: '특제 박스'
-      url: '-'
+      url: https://youtu.be/ypcMuQhWdZA?si=5O3OYIJF7_J4CRvz
