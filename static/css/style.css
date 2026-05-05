@@ -563,22 +563,29 @@ body {
 }
 
 /* ===========================
-   Save Button (PC - tier sidebar 안)
+   Save Button (항상 하단 고정)
    =========================== */
 .btn-save {
+    display: none; /* tier-wrapper 안의 버튼은 숨김 */
+}
+
+/* 모바일/PC 공통 고정 다운로드 버튼 */
+.btn-save-fixed {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px;
     background: var(--pink);
     color: #000;
     border: none;
-    padding: 12px;
-    cursor: pointer;
     font-weight: bold;
-    margin-top: auto;
-    display: block;
-}
-
-/* 모바일 고정 다운로드 버튼 (기본 숨김) */
-.btn-save-fixed {
-    display: none;
+    font-size: 1rem;
+    cursor: pointer;
+    z-index: 200;
+    box-sizing: border-box;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ===========================
@@ -598,7 +605,7 @@ body {
     }
 
     #tier-header {
-        display: none; /* PC에서는 tier-header 숨김 */
+        display: none;
     }
 
     #export-capture-area {
@@ -614,12 +621,9 @@ body {
         display: none;
     }
 
-    .btn-save {
-        display: block;
-    }
-
-    .btn-save-fixed {
-        display: none !important;
+    /* PC에서 고정 버튼이 tier-wrapper를 가리지 않도록 여백 */
+    .main-container {
+        padding-bottom: 56px;
     }
 }
 
@@ -724,29 +728,7 @@ body {
         overflow-y: auto;
     }
 
-    /* PC용 btn-save 숨김 */
-    .btn-save {
-        display: none;
-    }
-
-    /* 고정 다운로드 버튼 */
-    .btn-save-fixed {
-        display: block;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding: 16px;
-        background: var(--pink);
-        color: #000;
-        border: none;
-        font-weight: bold;
-        font-size: 1rem;
-        cursor: pointer;
-        z-index: 200;
-        box-sizing: border-box;
-        box-shadow: 0 -2px 12px rgba(0,0,0,0.2);
-    }
+    /* PC용 btn-save 숨김 (공통으로 처리됨) */
 
     /* ── 컨트롤 패널 (중단) ── */
     .control-panel {
