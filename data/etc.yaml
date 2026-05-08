@@ -5,10 +5,10 @@
   tracks:
     - track_number: 'X01'
       name: "Don't be afraid!"
-      url: 
+      url: https://youtu.be/hPnvMOyGgzc?si=Vxzj1NBGCg3b3L45
     - track_number: 'X02'
       name: "Glee! Glee! Glee!"
-      url: 
+      url: https://youtu.be/8ciuJN6xTIo?si=yRqOz81J7SB7O7hO
 
 - band: 'chispa'
   numbering: 'undefined'
@@ -17,7 +17,7 @@
   tracks:
     - track_number: 'X01'
       name: "Be shine, shining!"
-      url: 
+      url: https://youtu.be/tv1Pf0FE6iw?si=dr5B9ftRqfyOY18S
 
 - band: 'sumimi'
   numbering: 'undefined'
@@ -26,7 +26,7 @@
   tracks:
     - track_number: 'X01'
       name: "Here, the world"
-      url: 
+      url: https://youtu.be/LuwRRghPD1A?si=sN-EFlTN-T0DIXow
     - track_number: 'X01'
       name: "Take it easy"
       url: 
