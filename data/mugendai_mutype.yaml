@@ -69,3 +69,12 @@
     - track_number: '05'
       name: '夢現妄想世界'
       url: https://youtu.be/vS2MCoSUEVs?si=WjLCbkRQ04p1OkMd
+
+- band: 'mugendai_mutype'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: "Be shine, shining!"
+      url: 

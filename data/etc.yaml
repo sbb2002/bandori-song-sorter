@@ -1,0 +1,32 @@
+- band: 'glitter*green'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: "Don't be afraid!"
+      url: 
+    - track_number: 'X02'
+      name: "Glee! Glee! Glee!"
+      url: 
+
+- band: 'chispa'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: "Be shine, shining!"
+      url: 
+
+- band: 'sumimi'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: "Here, the world"
+      url: 
+    - track_number: 'X01'
+      name: "Take it easy"
+      url: 
