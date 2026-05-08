@@ -174,15 +174,21 @@
             
             <button
                 class="band-btn "
+                data-band="various_artists"
+                onclick="switchBand('various_artists', this)"
+            ><img src="./assets/icon/various_artists.png" alt="various artists" class="band-btn-icon"></button>
+            
+            <button
+                class="band-btn "
                 data-band="hello_happy_world"
                 onclick="switchBand('hello_happy_world', this)"
             ><img src="./assets/icon/hello_happy_world.png" alt="hello happy world" class="band-btn-icon"></button>
             
             <button
                 class="band-btn "
-                data-band="ikka_dumrock"
-                onclick="switchBand('ikka_dumrock', this)"
-            ><img src="./assets/icon/ikka_dumrock.png" alt="ikka dumrock" class="band-btn-icon"></button>
+                data-band="ikka_dumb_rock"
+                onclick="switchBand('ikka_dumb_rock', this)"
+            ><img src="./assets/icon/ikka_dumb_rock.png" alt="ikka dumb rock" class="band-btn-icon"></button>
             
             <button
                 class="band-btn "
@@ -255,6 +261,10 @@
                     <img data-src="assets/afterglow/m02.webp" class="lazy-load" alt="GLOW GOES ON">
                 </div>
                 
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "afterglow", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Made My Day", "track_number": "X0", "url": "https://youtu.be/YfS7jNzytUs?si=Muy5IxMOPtlnoi-M"}, {"name": "IGNITE GLOW", "track_number": "X0", "url": null}, {"name": "Punchline Halloween!!!", "track_number": "X0", "url": "https://youtu.be/9o7t80l3ycg?si=yJLPCwlRLkkpNqZq"}, {"name": "Sansan", "track_number": "X0", "url": "https://youtu.be/WnTBaFVyDyM?si=GqZSmHegFpexVzDO"}, {"name": "Sakura Zensen", "track_number": "X0", "url": "https://youtu.be/RJ98HN9hl6I?si=ovz4OPAIrd_kAZKp"}, {"name": "Start as Usual", "track_number": "X0", "url": "https://youtu.be/sWjSEnBR4qE?si=H7MiBvao-JK3EHpA"}, {"name": "Part of the Life", "track_number": "X0", "url": "https://youtu.be/O3ZcEs4b-uw?si=RI9q0sW-2kTv-WOW"}, {"name": "\u8a3c\u306f\u8d6b\u304f", "track_number": "X0", "url": null}, {"name": "Choco Typhooooon!!", "track_number": "X0", "url": null}, {"name": "Roki", "track_number": "X0", "url": "https://youtu.be/i-3KO5JZOoA?si=cojTOQ-6NNmt6TqB"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
             </div>
             
             <div id="b-ave_mujica" class="band-content ">
@@ -271,8 +281,24 @@
                     <img data-src="assets/ave_mujica/m02.webp" class="lazy-load" alt="ELEMENTS">
                 </div>
                 
-                <div class="bank-item" data-json='{"album_title": "undefined", "band": "ave_mujica", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Sophie", "track_number": "", "url": "https://youtu.be/ivXQ21xDHfE?si=L3md2MAzZaiTU1cv"}, {"name": "DIVINE", "track_number": "", "url": "https://youtu.be/6bA-vjvi9oI?si=l28nVJnEO5OUCtzH"}, {"name": "\u2018S/\u2019 The Way", "track_number": "", "url": "https://youtu.be/L0Ou9IfobFQ?si=PQRzQJSECaD499FZ"}, {"name": "Angles", "track_number": "", "url": "https://youtu.be/au2A3wyiLIo?si=dMfE3ZeZvKbdRKX2"}]}' onclick="showInfo(this)">
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "ave_mujica", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Sophie", "track_number": "X01", "url": "https://youtu.be/ivXQ21xDHfE?si=L3md2MAzZaiTU1cv"}, {"name": "DIVINE", "track_number": "X02", "url": "https://youtu.be/6bA-vjvi9oI?si=l28nVJnEO5OUCtzH"}, {"name": "\u2018S/\u2019 The Way", "track_number": "X03", "url": "https://youtu.be/L0Ou9IfobFQ?si=PQRzQJSECaD499FZ"}, {"name": "Angles", "track_number": "X04", "url": "https://youtu.be/au2A3wyiLIo?si=dMfE3ZeZvKbdRKX2"}, {"name": "\u5929\u7403(\u305d\u3089)\u306eM\u00fasica", "track_number": "X04", "url": "https://youtu.be/2Bo-ULStqLo?si=Jh6C9b76uPKJV-K8"}, {"name": "\u9854", "track_number": "X04", "url": "https://youtu.be/cVfQBLdIUXk?si=m_bCIUysUFlIX1vB"}]}' onclick="showInfo(this)">
                     <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
+            </div>
+            
+            <div id="b-various_artists" class="band-content ">
+                
+                <div class="bank-item" data-json='{"album_title": "Glitter*Green", "band": "various_artists", "img_url": "assets/etc/glitter_green.jpg", "numbering": "undefined", "tracks": [{"name": "Don\u0027t be afraid!", "track_number": "X01", "url": "https://youtu.be/hPnvMOyGgzc?si=Vxzj1NBGCg3b3L45"}, {"name": "Glee! Glee! Glee!", "track_number": "X02", "url": "https://youtu.be/8ciuJN6xTIo?si=yRqOz81J7SB7O7hO"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/etc/glitter_green.jpg" class="lazy-load" alt="Glitter*Green">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "Chispa", "band": "various_artists", "img_url": "assets/etc/chispa.jpg", "numbering": "undefined", "tracks": [{"name": "Be shine, shining!", "track_number": "X01", "url": "https://youtu.be/tv1Pf0FE6iw?si=dr5B9ftRqfyOY18S"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/etc/chispa.jpg" class="lazy-load" alt="Chispa">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "Sumimi", "band": "various_artists", "img_url": "assets/etc/sumimi.webp", "numbering": "undefined", "tracks": [{"name": "Here, the world", "track_number": "X01", "url": "https://youtu.be/LuwRRghPD1A?si=sN-EFlTN-T0DIXow"}, {"name": "Take it easy", "track_number": "X01", "url": null}]}' onclick="showInfo(this)">
+                    <img data-src="assets/etc/sumimi.webp" class="lazy-load" alt="Sumimi">
                 </div>
                 
             </div>
@@ -295,20 +321,24 @@
                     <img data-src="assets/hello_happy_world/m02.webp" class="lazy-load" alt="いっつあ！すまいるわーるど！！">
                 </div>
                 
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "hello_happy_world", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Nice to Meet You!", "track_number": "X0", "url": "https://youtu.be/ByAniAhEdhk?si=vC9_EkbNgGz4XqM0"}, {"name": "YAPPY! SCHOOL CARNIVAL\u2606\u5f61", "track_number": "X0", "url": "https://youtu.be/xNA7DZfdstI?si=Wx2Yk5rodUgjcdXZ"}, {"name": "\u3046\u3043\u30fc\u304d\u3083\u3093\u2606\u30d5\u30ec\u30d5\u30ec\u3063\uff01", "track_number": "X0", "url": "https://youtu.be/VJDcALjsZ80?si=1Zcf4J77CgxMVJzE"}, {"name": "Egao, mi~kketa!", "track_number": "X0", "url": "https://youtu.be/Gvey12GFPwU?si=50tnOS0DnaYt-4PT"}, {"name": "Kapoon tto Gokuraku\u2606Yuutopia!", "track_number": "X0", "url": null}, {"name": "Mabushii Nee\u2606 Sono Egao!", "track_number": "X0", "url": null}, {"name": "\u3075\u3041\u3044\u3076\u30b9\u30de\u30a4\u30eb\u25ef\u30aa\u30fc\u30eb\u30a4\u30f3\u3063\uff01", "track_number": "X0", "url": "https://youtu.be/fTgVisxMdOQ?si=6fa0IuQSDIIZ4c8G"}, {"name": "\u8a31\u5a5a\u3063\u304d\u3085\u3093 (Iinazukkyun)", "track_number": "X0", "url": "https://youtu.be/X9VNpJdPGWE?si=YvFa33WdjzfjF04w"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
             </div>
             
-            <div id="b-ikka_dumrock" class="band-content ">
+            <div id="b-ikka_dumb_rock" class="band-content ">
                 
-                <div class="bank-item" data-json='{"album_title": "undefined", "band": "ikka_dumrock", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "\u30db\u30fc\u30df\u30fc\u30fb\u30bf\u30a4\u30c3\uff01\uff01", "track_number": "1", "url": "https://youtu.be/BSP-xypGSak?si=dW_BRxOoNVZKCyCp"}]}' onclick="showInfo(this)">
-                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "ikka_dumb_rock", "img_url": "assets/ikka_dumb_rock/temp.jpg", "numbering": "undefined", "tracks": [{"name": "\u30db\u30fc\u30df\u30fc\u30fb\u30bf\u30a4\u30c3\uff01\uff01", "track_number": "X01", "url": "https://youtu.be/BSP-xypGSak?si=dW_BRxOoNVZKCyCp"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/ikka_dumb_rock/temp.jpg" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
             
             <div id="b-millsage" class="band-content ">
                 
-                <div class="bank-item" data-json='{"album_title": "undefined", "band": "millsage", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "\u8d77\u6b7b\u958b\u6226", "track_number": "1", "url": "https://youtu.be/bzPxdHmMW3s?si=e6CpQq3okKvaWUp9"}]}' onclick="showInfo(this)">
-                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "millsage", "img_url": "assets/millsage/temp.jpg", "numbering": "undefined", "tracks": [{"name": "\u8d77\u6b7b\u958b\u6226", "track_number": "X01", "url": "https://youtu.be/bzPxdHmMW3s?si=e6CpQq3okKvaWUp9"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/millsage/temp.jpg" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -319,12 +349,16 @@
                     <img data-src="assets/morfonica/a01.webp" class="lazy-load" alt="QUINTET">
                 </div>
                 
-                <div class="bank-item" data-json='{"album_title": "Polyphony", "band": "morfonica", "img_url": "assets/morfonica/a02.webp", "numbering": "2nd", "tracks": [{"name": "Polyphonyscape", "track_number": "01", "url": "https://youtu.be/I6h4Rm32k-I?si=lDAhwR9T4h8cbhUd"}, {"name": "Wreath of Brave", "track_number": "02", "url": "https://youtu.be/5O3gAE65_34?si=A5Y020-z-OIrq3y7"}, {"name": "Merry Merry Thanks!!", "track_number": "03", "url": "https://youtu.be/j3W3NHurJnk?si=eOoA7p6q1A4Dc-ff"}, {"name": "Sonorous", "track_number": "04", "url": "https://youtu.be/Wl5LZ3iJNzM?si=LY7wHLxghfOpApaA"}, {"name": "\u4e21\u7ffc\u306eBrilliance", "track_number": "05", "url": "https://youtu.be/O0jB7IA5tZg?si=AjpySBB8SN06BPs1"}, {"name": "Steer to Utopia", "track_number": "06", "url": "https://youtu.be/wjpVRH7GOFc?si=wUCATTuP1DTe51tF"}, {"name": "Fateful...", "track_number": "07", "url": "https://youtu.be/RD_6TSNkxg0?si=elJWxxwQh2GlQ43V"}, {"name": "\u30c6\u30a3\u30ea\u30ab\u30e2\u30cb\u30ab\u30ea\u30e9", "track_number": "08", "url": "https://youtu.be/d32zOmV118k?si=K8tyTzw_1s0DD47I"}, {"name": "Secret Dawn", "track_number": "09", "url": "https://youtu.be/eWqv5RB6jng?si=SPt97my-I_orybqJ"}, {"name": "Angel\u0027s Ladder", "track_number": "10", "url": "https://youtu.be/7Hml249yhKg?si=SMPb5U1kUrpsqC4Q"}, {"name": "One step at a time", "track_number": "11", "url": "https://youtu.be/T_a1YLnxD50?si=YSHzQ-CN8F_GEDMZ"}, {"name": "Tempest(BanG Dream!)|Tempest", "track_number": "12", "url": "https://youtu.be/OWTf5lEPT_g?si=Gzq3RJu2CU6qv71Q"}]}' onclick="showInfo(this)">
+                <div class="bank-item" data-json='{"album_title": "Polyphony", "band": "morfonica", "img_url": "assets/morfonica/a02.webp", "numbering": "2nd", "tracks": [{"name": "Polyphonyscape", "track_number": "01", "url": "https://youtu.be/I6h4Rm32k-I?si=lDAhwR9T4h8cbhUd"}, {"name": "Wreath of Brave", "track_number": "02", "url": "https://youtu.be/5O3gAE65_34?si=A5Y020-z-OIrq3y7"}, {"name": "Merry Merry Thanks!!", "track_number": "03", "url": "https://youtu.be/j3W3NHurJnk?si=eOoA7p6q1A4Dc-ff"}, {"name": "Sonorous", "track_number": "04", "url": "https://youtu.be/Wl5LZ3iJNzM?si=LY7wHLxghfOpApaA"}, {"name": "\u4e21\u7ffc\u306eBrilliance", "track_number": "05", "url": "https://youtu.be/O0jB7IA5tZg?si=AjpySBB8SN06BPs1"}, {"name": "Steer to Utopia", "track_number": "06", "url": "https://youtu.be/wjpVRH7GOFc?si=wUCATTuP1DTe51tF"}, {"name": "Fateful...", "track_number": "07", "url": "https://youtu.be/RD_6TSNkxg0?si=elJWxxwQh2GlQ43V"}, {"name": "\u30c6\u30a3\u30ea\u30ab\u30e2\u30cb\u30ab\u30ea\u30e9", "track_number": "08", "url": "https://youtu.be/d32zOmV118k?si=K8tyTzw_1s0DD47I"}, {"name": "Secret Dawn", "track_number": "09", "url": "https://youtu.be/eWqv5RB6jng?si=SPt97my-I_orybqJ"}, {"name": "Angel\u0027s Ladder", "track_number": "10", "url": "https://youtu.be/7Hml249yhKg?si=SMPb5U1kUrpsqC4Q"}, {"name": "One step at a time", "track_number": "11", "url": "https://youtu.be/T_a1YLnxD50?si=YSHzQ-CN8F_GEDMZ"}, {"name": "Tempest", "track_number": "12", "url": "https://youtu.be/OWTf5lEPT_g?si=Gzq3RJu2CU6qv71Q"}]}' onclick="showInfo(this)">
                     <img data-src="assets/morfonica/a02.webp" class="lazy-load" alt="Polyphony">
                 </div>
                 
                 <div class="bank-item" data-json='{"album_title": "forte", "band": "morfonica", "img_url": "assets/morfonica/m01.webp", "numbering": "Mini", "tracks": [{"name": "\u30d5\u30ec\u30fc\u30b8\u30f3\u30b0 \u30df\u30e9\u30fc\u30b8\u30e5", "track_number": "01", "url": "https://youtu.be/zY9c9Ws9I3Y?si=QT9YMnl5dZJY8wSl"}, {"name": "MUGEN Reverberate!", "track_number": "02", "url": "https://youtu.be/cQcaYexUpQw?si=wT-5kyEi-3qdI3Cl"}, {"name": "\u308f\u305f\u3057\u307e\u3061\u304c\u3044\u3055\u304c\u3057", "track_number": "03", "url": "https://youtu.be/UgP_YbdsoB8?si=QmzLjANEgVeyiZQ6"}, {"name": "esora no clover", "track_number": "04", "url": "https://youtu.be/kEtHiPc5HJY?si=ezuPsTM56Ml_FgMe"}, {"name": "\u304d\u3087\u3046\u3082Merry go rounD", "track_number": "05", "url": "https://youtu.be/RDhZVoPqL8k?si=VeD4hXJzOGdbUSDZ"}]}' onclick="showInfo(this)">
                     <img data-src="assets/morfonica/m01.webp" class="lazy-load" alt="forte">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "morfonica", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Resonant Strings", "track_number": "X0", "url": "https://youtu.be/zpHPneTujSA?si=9qQDP2Utvxb5fS9U"}, {"name": "MUGEN Reverberate!", "track_number": "X0", "url": "https://youtu.be/B6602-OMtZI?si=m_EIUqGxG1T7tv2M"}, {"name": "Color of Us", "track_number": "X0", "url": "https://youtu.be/x9I1W3Aigrc?si=ljAa5Apx2kWhmXhH"}, {"name": "Painting New Dawn", "track_number": "X0", "url": null}, {"name": "Shining Leaves", "track_number": "X0", "url": "https://youtu.be/HkruyxEhOPI?si=xNIv922mB5_l7bOV"}, {"name": "Merry Merry Thanks!!", "track_number": "X0", "url": "https://youtu.be/j3W3NHurJnk?si=qN4_VfkArNnHOTNa"}, {"name": "esora no clover", "track_number": "X0", "url": "https://youtu.be/fGgKN9_egCM?si=Hz2WlC_qkVS1RGaP"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -337,6 +371,10 @@
                 
                 <div class="bank-item" data-json='{"album_title": "\u30b9\u30bf\u30fc\u30c8\u30e9\u30a4\u30f3", "band": "mugendai_mutype", "img_url": "assets/mugendai_mutype/m01.webp", "numbering": "Mini", "tracks": [{"name": "\u271eanima\u308b\u30d1\u30fc\u30c6\u30a3\u271e\u958b\u50ac\u4e2d\u271e", "track_number": "01", "url": "https://youtu.be/J_zCYMoy1Cw?si=c7TYa4z2SolsHMNV"}, {"name": "\u30a8\u30f3\u30d7\u30c6\u30a3\u30d1\u30da\u30c3\u30c8", "track_number": "02", "url": "https://youtu.be/xosxYF29mvk?si=7W4jaC1xT4KI6nWu"}, {"name": "\u9650\u754c\u73fe\u5b9f\u30b5\u30d0\u30a4\u30d6\u5929\u4f7f", "track_number": "03", "url": "https://youtu.be/_iX9WOOierg?si=FTsF5AjV9GyeJf1s"}, {"name": "\u30d3\u30c3\u30b0\u30de\u30a6\u30b9", "track_number": "04", "url": "https://youtu.be/3WpaXoun2Tc?si=MS-HAtH1OPJoFzks"}, {"name": "\u5922\u73fe\u5984\u60f3\u4e16\u754c", "track_number": "05", "url": "https://youtu.be/vS2MCoSUEVs?si=WjLCbkRQ04p1OkMd"}]}' onclick="showInfo(this)">
                     <img data-src="assets/mugendai_mutype/m01.webp" class="lazy-load" alt="スタートライン">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "mugendai_mutype", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Mutant Mutant", "track_number": "X01", "url": "https://youtu.be/uab9GICZjy4?si=jY-T1NPsIkhnk0XN"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -353,6 +391,10 @@
                 
                 <div class="bank-item" data-json='{"album_title": "\u81f4\u4e26\u8de1", "band": "mygo", "img_url": "assets/mygo/a03.webp", "numbering": "3rd", "tracks": [{"name": "-", "track_number": "01", "url": null}, {"name": "\u6b8b\u75d5\u5b57", "track_number": "02", "url": "https://youtu.be/lfDO7bvUtn8?si=vY4bvoMZU1L_1na_"}, {"name": "\u638c\u5fc3\u6b63\u9298", "track_number": "03", "url": "https://youtu.be/Aww91itH5cQ?si=jAiNdHBHlkcxdKql"}, {"name": "\u8a3c\u547d\u8b83\u6b4c", "track_number": "04", "url": "https://youtu.be/I5s3q-_HCSk?si=obOTt54iey2XE4In"}, {"name": "\u30a8\u30ac\u30af\u30df\u30e9\u30a4", "track_number": "05", "url": "https://youtu.be/T_jH9KJTlsI?si=4S1SOGNNxlmY5i4w"}, {"name": "\u9759\u964d\u60f3", "track_number": "06", "url": "https://youtu.be/OdVHJhdFYOo?si=1fPM377UHbJVo4FQ"}, {"name": "-", "track_number": "07", "url": null}, {"name": "-", "track_number": "08", "url": null}, {"name": "\u807f\u65e5\u7b8b\u79cb", "track_number": "09", "url": "https://youtu.be/dKPye_tGXFM?si=dmsvI-CX97F_VPnc"}, {"name": "\u5f80\u6b04\u5370", "track_number": "10", "url": "https://youtu.be/ypcMuQhWdZA?si=5O3OYIJF7_J4CRvz"}]}' onclick="showInfo(this)">
                     <img data-src="assets/mygo/a03.webp" class="lazy-load" alt="致並跡">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "mygo", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "\u9759\u964d\u60f3", "track_number": "X0", "url": "https://youtu.be/MPd3OtZ9KRg?si=in4TEc4tucdY4Ij_"}, {"name": "Ningen ni Naritai Uta", "track_number": "X0", "url": null}, {"name": "Haruhikage (Original)", "track_number": "X0", "url": "https://youtu.be/wRwQUk0Dl30?si=cclWnZtT61Gckp6Z"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -373,6 +415,10 @@
                 
                 <div class="bank-item" data-json='{"album_title": "\u304d\u307f\u3068 Stage by Stage", "band": "pastel_palettes", "img_url": "assets/pastel_palettes/m02.webp", "numbering": "Mini", "tracks": [{"name": "With\u301c\u304d\u307f\u3068\u308f\u305f\u3057\u305f\u3061\u306e\u7269\u8a9e\u301c", "track_number": "01", "url": "https://youtu.be/zjMWXcNc8Uw?si=5uVDCP1luxdOH0Kq"}, {"name": "\u30d5\u30ec\u3063\u3068\u30d1\u30ec\u30c3\u30c8Fight Song!!", "track_number": "02", "url": "https://youtu.be/ZvK22__1ECE?si=78MYxvjAv2-gf0vW"}, {"name": "\u30c7\u30a4\u30aa\u30d5\u30fb\u30e9\u30d5\u30fb\u30e9\u30d6\u30fb\u30b5\u30f3\u30af\u30b9", "track_number": "03", "url": "https://youtu.be/M4asKbF6F18?si=nguC0nVsxkw6h6xo"}, {"name": "\u30db\u30ef\u30a4\u30c8 \u30ce\u30b9\u30bf\u30eb\u30b8\u30a2", "track_number": "04", "url": "https://youtu.be/oN98BBBIOnw?si=hCv7L9cqy-sJeSbE"}, {"name": "Y.O.L.O\uff01\uff01\uff01\uff01\uff01(\u30d1\u30b9\u30d1\u30ecver.)", "track_number": "05", "url": "https://youtu.be/yKkCyuTOi8Q?si=_oei93Jx5ehLhTok"}]}' onclick="showInfo(this)">
                     <img data-src="assets/pastel_palettes/m02.webp" class="lazy-load" alt="きみと Stage by Stage">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "pastel_palettes", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Radiate Warriors", "track_number": "X0", "url": "https://youtu.be/dS-SUwftzmM?si=LReM_ItoEKuqU9gX"}, {"name": "ReReRe\u30a8\u30dc\u30ea\u30e5\u30fc\u30b7\u30e7\u30f3\u305a\u2606", "track_number": "X0", "url": "https://youtu.be/4XSLFAmgO34?si=ZSaZmLCXI_oB2-bz"}, {"name": "Everyday flower", "track_number": "X0", "url": "https://youtu.be/zEHPkLXcX1I?si=nRzgY1yunp-4bg1S"}, {"name": "\u30c9\u30e9\u30de\u30c1\u30c3\u30af\uff01\u30a2\u30e9\u30a4\u30d6", "track_number": "X0", "url": "https://youtu.be/ppjwpt0H2o4?si=uAzFP4w2ekvrs_E3"}, {"name": "\u30db\u30ef\u30a4\u30c8 \u30ce\u30b9\u30bf\u30eb\u30b8\u30a2", "track_number": "X0", "url": "https://youtu.be/oN98BBBIOnw?si=3DU5q_tAUzvVNihC"}, {"name": "\u30c8\u30ea\u30c9\u30ea\uff0a\u30d1\u30ec\u30c3\u30c8", "track_number": "X0", "url": "https://youtu.be/bhbqZAY_TEk?si=Hwso4Nyd7ZOVpRVr"}, {"name": "\u30d5\u30ec\u3063\u3068\u30d1\u30ec\u30c3\u30c8Fight Song!!", "track_number": "X0", "url": "https://youtu.be/ZvK22__1ECE?si=7HdgW1t_Z_XReiS7"}, {"name": "\u30c7\u30a4\u30aa\u30d5\u30fb\u30e9\u30d5\u30fb\u30e9\u30d6\u30fb\u30b5\u30f3\u30af\u30b9", "track_number": "X0", "url": "https://youtu.be/M4asKbF6F18?si=jRcnngN3Evr2DJvZ"}, {"name": "\u30d1\u30c3\u30d1\u30ec\u2606\u4eba\u751f\uff01\u30d0\u30fc\u30f3\u4e07\u6b73\uff01", "track_number": "X0", "url": "https://youtu.be/AqU8cxKLmN0?si=93SAPOl0FhI3jZUa"}, {"name": "\u3042\u3053\u304c\u308cacross", "track_number": "X0", "url": "https://youtu.be/UbKbTPzYNOI?si=bzbi2CRjmNmBCQCa"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -399,6 +445,10 @@
                     <img data-src="assets/poppin_party/m02.webp" class="lazy-load" alt="青春 To Be Continued">
                 </div>
                 
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "poppin_party", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "DOKI DOKI DATE", "track_number": "X01", "url": "https://youtu.be/45LUJTzHyek?si=-fQT4IAKqXX6hhJQ"}, {"name": "Game Changer", "track_number": "X02", "url": "https://youtu.be/X7NS0u628lw?si=A7my0UGNVpA3eytt"}, {"name": "Freedom", "track_number": "X03", "url": "https://youtu.be/oy6OCnr9eAg?si=OaC2MpIL7qOLHm56"}, {"name": "NO GIRL NO CRY", "track_number": "X04", "url": "https://youtu.be/D1ONxAWcbGE?si=h0HIVf-gIEm8apcU"}, {"name": "Dokidoki SING OUT!", "track_number": "X05", "url": "https://youtu.be/Y-tnOBf-byo?si=Mxmc_b_CwzSbhqVh"}, {"name": "Hanazono Denki Guitar!!!", "track_number": "X06", "url": "https://youtu.be/Fb6Vxj--Fq4?si=rPetL5o0kJDEaECx"}, {"name": "Chocolate no Teion Recipe", "track_number": "X07", "url": "https://youtu.be/pbDiKPBuTsc?si=7itu7mzdjB0SfVDB"}, {"name": "Tooi Ongaku ~Heartbeat~", "track_number": "X08", "url": "https://youtu.be/jTSPnt5kts0?si=yCNC73uluwyjF8DU"}, {"name": "Su-Suki Nanka Janai!", "track_number": "X09", "url": "https://youtu.be/vdYlI5BnvPk?si=sNW7xED_6pJxCDwd"}, {"name": "\u4e16\u754c\u4e2d\u306e\u9752\u7a7a\u3092\u3042\u3064\u3081\u3066", "track_number": "X10", "url": "https://youtu.be/OuCaAYkV2d8?si=GdPiCq8tld2keDgb"}, {"name": "Kirakiraboshi ~Beginning Stage Ver.~", "track_number": "X11", "url": null}, {"name": "\u52c7\u6c17Limit\uff01", "track_number": "X12", "url": "https://youtu.be/HNpDj7g9Fd0?si=GfW8rUlVAbCIGSIQ"}, {"name": "\u307b\u306a\uff01", "track_number": "X13", "url": "https://youtu.be/hDgXSuDV51A?si=VmqCC9AwFBZta19Z"}, {"name": "Chu Chueen!", "track_number": "X14", "url": "https://youtu.be/5j2a4m1OQsg?si=HDtO13Z2ocNQrqZM"}, {"name": "MATSURI BAYASHI", "track_number": "X15", "url": "https://youtu.be/Gpkg81TpkSA?si=pojuXvPrSTjSCiXF"}, {"name": "GLAMOROUS SKY", "track_number": "X16", "url": null}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
             </div>
             
             <div id="b-raise_a_suilen" class="band-content ">
@@ -419,6 +469,10 @@
                     <img data-src="assets/raise_a_suilen/m02.webp" class="lazy-load" alt="REVELATION">
                 </div>
                 
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "raise_a_suilen", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "WHAT AN EXPLOSION", "track_number": "X0", "url": null}, {"name": "RUNAWAY STAR", "track_number": "X0", "url": null}, {"name": "TWIN TALE", "track_number": "X0", "url": "https://youtu.be/pB350d7RuAg?si=Bo9UiNlGEpv7jCSF"}, {"name": "Apocalypse", "track_number": "X0", "url": "https://youtu.be/0fBH7M4EY1M?si=qbunL9iGoRBavmNE"}, {"name": "DANCING DARING", "track_number": "X0", "url": "https://youtu.be/cmbqhJ7OM8w?si=4LGtALJTnKIbv7S_"}, {"name": "EXPOSE \u0027Burn out!!!\u0027 (English)", "track_number": "X0", "url": "https://youtu.be/JuSc3CMEv34?si=Kf6n7J9jo9OLQf8A"}, {"name": "Takin\u0027 my Heart (English)", "track_number": "X0", "url": "https://youtu.be/ops9Visjdwc?si=YLu5IICRWWPx7AI7"}, {"name": "WELCOME TO PANDEMONIUM", "track_number": "X0", "url": "https://youtu.be/5sj1cxlpp5U?si=NKvNPEn0rwqzMM1S"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
             </div>
             
             <div id="b-roselia" class="band-content ">
@@ -437,6 +491,10 @@
                 
                 <div class="bank-item" data-json='{"album_title": "ROZEN HORIZON", "band": "roselia", "img_url": "assets/roselia/m01.webp", "numbering": "Mini", "tracks": [{"name": "Sprechchor", "track_number": "01", "url": "https://youtu.be/OpSimLr7ouc?si=XBdmdOP38-3cEs5Q"}, {"name": "\u9583\u5149", "track_number": "02", "url": "https://youtu.be/I0s49imrtho?si=C4mA4Mwtz6tnZmN7"}, {"name": "THE HISTORIC...", "track_number": "03", "url": "https://youtu.be/2AjNrv9FhRQ?si=fJVqr0sFzQbZ1Xt2"}, {"name": "ROZEN HORIZON", "track_number": "04", "url": "https://youtu.be/8Cygbjd1h8Y?si=PDt3cNoGUvtnH_4R"}, {"name": "\u5efb\u5efb\u5947\u8b5a", "track_number": "05-1", "url": "https://youtu.be/Upm95P9Wye0?si=cwREKWcg0nqTKk3U"}, {"name": "\u9ce5\u306e\u8a69", "track_number": "05-2", "url": "https://youtu.be/Y5CTSrakFlY?si=Es1iJshWu4Ny_cen"}, {"name": "Synchrogazer", "track_number": "05-3", "url": "https://youtu.be/3QeYCxU7ftQ?si=lyMPxsgWo7Ze_cs4"}, {"name": "\u540d\u524d\u306e\u306a\u3044\u602a\u7269", "track_number": "05-4", "url": "https://youtu.be/7jOjYce_f4c?si=0w7A7gjYmWxV8c8p"}]}' onclick="showInfo(this)">
                     <img data-src="assets/roselia/m01.webp" class="lazy-load" alt="ROZEN HORIZON">
+                </div>
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "roselia", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Fear Nothing", "track_number": "X0", "url": "https://youtu.be/WhEs2KF4zNo?si=XhGz5PgYrRmqHqH8"}, {"name": "Talk to My Tone", "track_number": "X0", "url": "https://youtu.be/ZtHU3JLdNoU?si=IRWiYoce4cpTcFCY"}, {"name": "Sunlit Musical", "track_number": "X0", "url": "https://youtu.be/BtG1mA_1e0s?si=E5D4QkkQCLyCZMID"}, {"name": "Blessing Chord", "track_number": "X0", "url": "https://youtu.be/qKYf5ozmgsE?si=xaq_zEfCe9eVlF1Z"}, {"name": "Sanctuary", "track_number": "X0", "url": "https://youtu.be/LAPLzxHzaHY?si=lviu1wbRal-CJw3w"}, {"name": "PASSIONATE ANTHEM", "track_number": "X0", "url": "https://youtu.be/68Gwwqp1DK4?si=Ufse79nR2TZq36sb"}, {"name": "Requiem for Fate", "track_number": "X0", "url": "https://youtu.be/eoq81V4BpHQ?si=-D3e4WaShB8S1gdA"}, {"name": "\u4e00\u9022\u306eFull Glory", "track_number": "X0", "url": "https://youtu.be/uXgEOq0544w?si=fxiIFfAJ2YcxczA_"}, {"name": "\u790e\u306e\u82b1\u51a0", "track_number": "X0", "url": "https://youtu.be/GyZ4UFCbWZo?si=O5kNngjDMtHva2Uv"}, {"name": "Guren no Yumiya", "track_number": "X0", "url": null}, {"name": "\u60aa\u9b54\u306e\u5b50", "track_number": "X0", "url": "https://youtu.be/kHdgtPHuya8?si=ML8om9e1KikL-BB4"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -461,11 +519,15 @@
                     </div>
                     
                     <div class="heatmap-tier-label">
+                        <img src="./assets/icon/various_artists.png" alt="various artists" class="heatmap-band-icon">
+                    </div>
+                    
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/hello_happy_world.png" alt="hello happy world" class="heatmap-band-icon">
                     </div>
                     
                     <div class="heatmap-tier-label">
-                        <img src="./assets/icon/ikka_dumrock.png" alt="ikka dumrock" class="heatmap-band-icon">
+                        <img src="./assets/icon/ikka_dumb_rock.png" alt="ikka dumb rock" class="heatmap-band-icon">
                     </div>
                     
                     <div class="heatmap-tier-label">
@@ -511,9 +573,11 @@
                     
                     <div class="heatmap-cell" data-tier="S+" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="S+" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="S+" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="S+" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="S+" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="S+" data-band="millsage"></div>
                     
@@ -540,9 +604,11 @@
                     
                     <div class="heatmap-cell" data-tier="S" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="S" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="S" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="S" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="S" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="S" data-band="millsage"></div>
                     
@@ -569,9 +635,11 @@
                     
                     <div class="heatmap-cell" data-tier="A+" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="A+" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="A+" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="A+" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="A+" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="A+" data-band="millsage"></div>
                     
@@ -598,9 +666,11 @@
                     
                     <div class="heatmap-cell" data-tier="A" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="A" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="A" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="A" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="A" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="A" data-band="millsage"></div>
                     
@@ -627,9 +697,11 @@
                     
                     <div class="heatmap-cell" data-tier="B+" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="B+" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="B+" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="B+" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="B+" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="B+" data-band="millsage"></div>
                     
@@ -656,9 +728,11 @@
                     
                     <div class="heatmap-cell" data-tier="B" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="B" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="B" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="B" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="B" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="B" data-band="millsage"></div>
                     
@@ -685,9 +759,11 @@
                     
                     <div class="heatmap-cell" data-tier="C+" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="C+" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="C+" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="C+" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="C+" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="C+" data-band="millsage"></div>
                     
@@ -714,9 +790,11 @@
                     
                     <div class="heatmap-cell" data-tier="C" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="C" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="C" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="C" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="C" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="C" data-band="millsage"></div>
                     
@@ -743,9 +821,11 @@
                     
                     <div class="heatmap-cell" data-tier="D" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="D" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="D" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="D" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="D" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="D" data-band="millsage"></div>
                     
@@ -772,9 +852,11 @@
                     
                     <div class="heatmap-cell" data-tier="F" data-band="ave_mujica"></div>
                     
+                    <div class="heatmap-cell" data-tier="F" data-band="various_artists"></div>
+                    
                     <div class="heatmap-cell" data-tier="F" data-band="hello_happy_world"></div>
                     
-                    <div class="heatmap-cell" data-tier="F" data-band="ikka_dumrock"></div>
+                    <div class="heatmap-cell" data-tier="F" data-band="ikka_dumb_rock"></div>
                     
                     <div class="heatmap-cell" data-tier="F" data-band="millsage"></div>
                     

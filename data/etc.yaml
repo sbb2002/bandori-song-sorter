@@ -1,7 +1,7 @@
-- band: 'glitter*green'
+- band: 'various_artists'
   numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  album_title: 'Glitter*Green'
+  img_url: assets/etc/glitter_green.jpg
   tracks:
     - track_number: 'X01'
       name: "Don't be afraid!"
@@ -10,19 +10,19 @@
       name: "Glee! Glee! Glee!"
       url: https://youtu.be/8ciuJN6xTIo?si=yRqOz81J7SB7O7hO
 
-- band: 'chispa'
+- band: 'various_artists'
   numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  album_title: 'Chispa'
+  img_url: assets/etc/chispa.jpg
   tracks:
     - track_number: 'X01'
       name: "Be shine, shining!"
       url: https://youtu.be/tv1Pf0FE6iw?si=dr5B9ftRqfyOY18S
 
-- band: 'sumimi'
+- band: 'various_artists'
   numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  album_title: 'Sumimi'
+  img_url: assets/etc/sumimi.webp
   tracks:
     - track_number: 'X01'
       name: "Here, the world"

@@ -1,7 +1,7 @@
-- band: 'ikka_dumrock'
+- band: 'ikka_dumb_rock'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/ikka_dumb_rock/temp.jpg
   tracks:
     - track_number: 'X01'
       name: 'ホーミー・タイッ！！'
