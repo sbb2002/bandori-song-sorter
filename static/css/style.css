@@ -187,6 +187,7 @@ body {
 .drop-zone .tier-item,
 .drop-zone .bank-item.tier-item {
   padding-bottom: 0 !important;
+  aspect-ratio: 1 / 1;   /* 티어 zone 안에서도 정사각형 유지 */
   border-radius: 10px;
   box-shadow: none;
   transform: none;
@@ -410,13 +411,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;   /* flex 자식이 부모를 밀어내지 않도록 */
+  overflow: hidden;
 }
 
 .band-content {
   display: none;
   gap: 10px;
-  grid-auto-rows: minmax(0, auto);
+  grid-auto-rows: auto;
   overflow-y: auto;
+  overflow-x: hidden; /* 가로 스크롤 원천 차단 */
+  min-width: 0;
 }
 
 .band-content.active {
@@ -430,7 +435,10 @@ body {
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
-  padding-bottom: 0;
+  /* aspect-ratio로 항상 정사각형 유지 (padding-bottom trick 대체) */
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  min-width: 0;
 }
 
 .bank-item:hover {
@@ -473,13 +481,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-x: auto;
+  /* overflow-x 제거: JS가 열 수를 정확히 주입하므로 가로 스크롤 불필요 */
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 .heatmap-row {
   display: grid;
   gap: 4px;
   align-items: center;
+  /* grid-template-columns는 JS의 --heatmap-cols 변수로 주입 (항상 1행 보장) */
+  grid-template-columns: var(--heatmap-cols, auto);
+  min-width: 0;
 }
 
 .heatmap-head {
@@ -491,6 +504,7 @@ body {
 
 .heatmap-tier-label {
   min-height: 36px;
+  min-width: 0;        /* 그리드 셀 축소 허용 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -499,10 +513,12 @@ body {
   font-size: 0.78rem;
   font-weight: 700;
   transition: background-color 0.3s ease;
+  overflow: hidden;    /* 내용 넘침 방지 */
 }
 
 .heatmap-cell {
   min-height: 36px;
+  min-width: 0;        /* 그리드 셀 축소 허용 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -512,12 +528,15 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
   background-color: #ffffff;
   color: transparent;
+  overflow: hidden;
 }
 
 .heatmap-band-icon {
-  width: 32px;
-  height: 32px;
+  /* 셀 폭에 맞게 아이콘을 유동 축소, 최대 32px */
+  width: min(100%, 32px);
+  height: min(100%, 32px);
   object-fit: contain;
+  flex-shrink: 1;
 }
 
 
@@ -630,6 +649,24 @@ body {
   height: auto !important;
 }
 
+/* 캡처 중: tier-table, tier-row, drop-zone 잘림 방지 */
+.capturing .tier-table {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.capturing .tier-row {
+  min-height: unset !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.capturing .drop-zone {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
 .capturing .del-btn {
   display: none !important;
 }
@@ -699,28 +736,35 @@ body {
     font-size: 1.2rem;
   }
 
-  /* Drop zone */
+  /* Drop zone — 아이템이 늘어나면 행이 자동 확장, 겹침 없음 */
   .drop-zone {
-    max-height: 156px; /* 70px × 2줄 + gap 6px + padding 8px×2 */
+    /* max-height 제거: 내용물 기준으로 높이 자동 결정 */
+    overflow-y: visible;
+    overflow-x: hidden;
   }
 
   #tier-wrapper:not(.expanded) .drop-zone {
     display: flex;
   }
 
-  /* Tier item 크기 */
+  /*
+   * Tier item 크기: 사이드바(550px) - 티어라벨(80px) - 패딩/갭 내에서
+   * 한 행에 약 6개씩 들어가도록 vw 클램프 적용.
+   * calc((550px - 80px - 8px*2 - 6px*5) / 6) ≈ 67px
+   * 화면이 좁아져도 최소 44px, 최대 80px
+   */
   .tier-item {
-    width: 70px;
-    height: 70px;
+    width: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px);
+    height: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px);
   }
 
   .drop-zone .tier-item,
   .drop-zone .bank-item.tier-item {
-    width: 70px !important;
-    height: 70px !important;
+    width: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px) !important;
+    height: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px) !important;
   }
 
-  /* Tier row 높이 */
+  /* Tier row 높이: 아이템 1줄 + 여유, 2줄 이상이면 자동 늘어남 */
   .tier-row {
     min-height: 80px;
   }
@@ -765,19 +809,20 @@ body {
     min-height: 240px;
   }
 
+  /* auto-fill + 1fr: 컨테이너 너비에 따라 열 수·크기가 자동 결정 */
   .band-content {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 180px));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    overflow-x: hidden;
   }
 
+  /* aspect-ratio로 정사각형 유지 — 미디어 쿼리 내에서는 공통 선언 보강만 */
   .bank-item {
-    width: 180px;
-    height: 180px;
+    width: 100%;
+    height: auto; /* aspect-ratio가 높이 결정 */
   }
 
-  /* Heatmap */
-  .heatmap-row {
-    grid-template-columns: 48px repeat(auto-fit, minmax(60px, 1fr));
-  }
+  /* Heatmap — grid-template-columns는 JS --heatmap-cols 변수로 주입 */
+  /* PC: 티어 라벨열 폭을 48px로 고정, 나머지는 CSS 변수 처리 */
 
   /* Disclaimer: PC는 tier-wrapper 하단 */
   .disclaimer-pc { display: block; }
@@ -902,20 +947,22 @@ body {
 
   .drop-zone {
     display: flex !important;
-    max-height: 110px; /* 48px × 2줄 + gap + padding */
-    overflow-y: auto;
+    /* max-height 고정값 제거 → 아이템 수에 따라 자동 확장, 겹침 없음 */
+    overflow-y: visible;
+    overflow-x: hidden;
   }
 
-  /* Tier item 크기 */
+  /* Tier item 크기: 모바일 사이드바 전체폭(100vw) - 라벨(48px) - 패딩(16px) 내에서
+   * 한 행에 약 5개씩. clamp로 최소 36px, 최대 56px 제한 */
   .tier-item {
-    width: 48px;
-    height: 48px;
+    width: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px);
+    height: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px);
   }
 
   .drop-zone .tier-item,
   .drop-zone .bank-item.tier-item {
-    width: 48px !important;
-    height: 48px !important;
+    width: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px) !important;
+    height: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px) !important;
   }
 
   /* Control Panel */
@@ -964,13 +1011,16 @@ body {
     min-height: 200px;
   }
 
+  /* auto-fill + 1fr: 최소 72px, 화면 폭에 따라 자동으로 열 수 결정 */
   .band-content {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 80px));
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    overflow-x: hidden;
   }
 
+  /* aspect-ratio로 정사각형 유지 */
   .bank-item {
-    width: 80px;
-    height: 80px;
+    width: 100%;
+    height: auto; /* aspect-ratio가 높이 결정 */
   }
 
   /* 모바일 롱프레스 시각 피드백 */
@@ -1087,7 +1137,7 @@ body {
   }
 
   .heatmap-row {
-    grid-template-columns: 32px repeat(auto-fit, minmax(10px, 1fr));
+    /* 모바일: JS --heatmap-cols 변수 그대로 사용, gap만 좁힘 */
     gap: 2px;
   }
 

@@ -473,6 +473,17 @@ function updateHeatmap() {
     const bands  = bandButtons.map(btn =>
         (btn.dataset.band || '').trim().toLowerCase()
     );
+
+    // ── 히트맵 열 수를 CSS 변수로 주입 ─────────────────────────────
+    // PC: 티어 라벨 고정폭 48px + 밴드 수만큼 1fr 열
+    // 모바일: 라벨 32px + 밴드 수만큼 1fr 열
+    // → 항상 정확히 1행, 가로 넘침/줄바꿈 없음
+    const isPC        = window.innerWidth >= 1024;
+    const tierColW    = isPC ? '48px' : '32px';
+    const bandCols    = `repeat(${bands.length}, minmax(0, 1fr))`;
+    const colsValue   = `${tierColW} ${bandCols}`;
+    document.documentElement.style.setProperty('--heatmap-cols', colsValue);
+    // ────────────────────────────────────────────────────────────────
     const counts = {};
 
     document.querySelectorAll('#tier-wrapper .tier-row').forEach(row => {
@@ -696,24 +707,72 @@ async function exportTier() {
     const area    = document.getElementById('export-capture-area');
     const wrapper = document.getElementById('tier-wrapper');
 
+    const isPC       = window.innerWidth >= 1024;
+    // PC: 550px 고정, 모바일: 화면 가로폭 그대로
+    const captureW   = isPC ? 550 : window.innerWidth;
+
     wrapper.classList.add('expanded');
     document.body.classList.add('capturing');
 
-    // 스크롤 초기화 + overflow 일시 해제하여 캡처 시 잘림 방지
-    const prevOverflow    = area.style.overflow;
-    const prevHeight      = area.style.height;
-    area.style.overflow   = 'visible';
-    area.style.height     = 'auto';
+    // ── 캡처 대상 영역을 captureW에 고정 ──────────────────────────
+    const prevWidth      = area.style.width;
+    const prevMinWidth   = area.style.minWidth;
+    const prevMaxWidth   = area.style.maxWidth;
+    const prevOverflow   = area.style.overflow;
+    const prevHeight     = area.style.height;
+    const prevPosition   = area.style.position;
 
-    // drop-zone 스크롤도 모두 초기화
-    area.querySelectorAll('.drop-zone').forEach(z => { z.scrollTop = 0; });
+    area.style.width     = captureW + 'px';
+    area.style.minWidth  = captureW + 'px';
+    area.style.maxWidth  = captureW + 'px';
+    area.style.overflow  = 'visible';
+    area.style.height    = 'auto';
+    // 모바일에서 레이아웃 흐름 유지하면서 너비 강제 적용
+    if (!isPC) {
+        area.style.position = 'relative';
+    }
+    // ──────────────────────────────────────────────────────────────
+
+    // drop-zone 스크롤 초기화 + overflow 해제로 잘림 방지
+    area.querySelectorAll('.drop-zone').forEach(z => {
+        z.scrollTop        = 0;
+        z.style.overflow   = 'visible';
+        z.style.maxHeight  = 'none';
+    });
+
+    // tier-table의 각 tier-row도 높이 제한 해제
+    area.querySelectorAll('.tier-row').forEach(r => {
+        r.style.minHeight = 'unset';
+    });
 
     // 히트맵 미러 동기화
     syncHeatmapForCapture();
 
     await new Promise(r => setTimeout(r, 600));
 
-    domtoimage.toPng(area, { bgcolor: '#ffffff' })
+    // ── 캡처 높이: 티어리스트 + 히트맵까지만, 빈 여백 제외 ────────
+    // #heatmap-capture의 bottom을 기준으로 area 상단으로부터의 실제 높이를 계산
+    const heatmapCapture = document.getElementById('heatmap-capture');
+    const areaRect       = area.getBoundingClientRect();
+    const heatmapRect    = heatmapCapture
+        ? heatmapCapture.getBoundingClientRect()
+        : null;
+    // heatmap-capture가 없으면 tier-capture-area 바닥까지
+    const tierCapture    = document.getElementById('tier-capture-area');
+    const tierRect       = tierCapture ? tierCapture.getBoundingClientRect() : null;
+    const bottomEl       = heatmapCapture || tierCapture;
+    const bottomRect     = bottomEl ? bottomEl.getBoundingClientRect() : areaRect;
+    const captureH       = Math.ceil(bottomRect.bottom - areaRect.top);
+    // ────────────────────────────────────────────────────────────────
+
+    domtoimage.toPng(area, {
+        bgcolor : '#ffffff',
+        width   : captureW,
+        height  : captureH,
+        style   : {
+            overflow : 'visible',
+        },
+    })
         .then(dataUrl => {
             const link    = document.createElement('a');
             link.download = `tier-${Date.now()}.png`;
@@ -721,9 +780,22 @@ async function exportTier() {
             link.click();
         })
         .finally(() => {
-            // overflow/height 복원
-            area.style.overflow = prevOverflow;
-            area.style.height   = prevHeight;
+            // 모든 인라인 스타일 복원
+            area.style.width     = prevWidth;
+            area.style.minWidth  = prevMinWidth;
+            area.style.maxWidth  = prevMaxWidth;
+            area.style.overflow  = prevOverflow;
+            area.style.height    = prevHeight;
+            area.style.position  = prevPosition;
+
+            area.querySelectorAll('.drop-zone').forEach(z => {
+                z.style.overflow  = '';
+                z.style.maxHeight = '';
+            });
+            area.querySelectorAll('.tier-row').forEach(r => {
+                r.style.minHeight = '';
+            });
+
             document.body.classList.remove('capturing');
             wrapper.classList.remove('expanded');
         });
@@ -733,6 +805,18 @@ async function exportTier() {
 // 9. Initialisation
 // ───────────────────────────
 
+/**
+ * PC 전용: drop-zone 실제 너비를 CSS 변수 --tier-zone-w 로 주입.
+ * clamp() 계산의 기준값으로 사용되어 tier-item 크기가 컨테이너에 맞게 유동 조절됨.
+ */
+function updateTierZoneVar() {
+    if (window.innerWidth < 1024) return;
+    const zone = document.querySelector('#tier-capture-area .drop-zone');
+    if (!zone) return;
+    const w = zone.clientWidth;
+    document.documentElement.style.setProperty('--tier-zone-w', `${w}px`);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // lazy-load 이미지 경로 보정
     document.querySelectorAll('.lazy-load').forEach(img => {
@@ -741,6 +825,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initSortable();
     updateHeatmap();
+    updateTierZoneVar();
+
+    // tier-wrapper 너비 변화(expanded 토글 등) 감지
+    const tierWrapper = document.getElementById('tier-wrapper');
+    if (tierWrapper && window.ResizeObserver) {
+        new ResizeObserver(updateTierZoneVar).observe(tierWrapper);
+    }
+    window.addEventListener('resize', () => {
+        updateTierZoneVar();
+        updateHeatmap(); // 화면 크기 변경 시 히트맵 열 수도 재계산
+    });
 
     // YouTube IFrame API가 script.js 로드 전에 이미 준비된 경우 직접 초기화
     // (모바일에서 타이밍 역전 방지)
