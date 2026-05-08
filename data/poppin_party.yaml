@@ -264,3 +264,51 @@
     - track_number: '06'
       name: 'RiNG A BELL'
       url: https://youtu.be/ai76D_byMgk?si=37GbwCOcOU4ZoUN9
+
+- band: 'poppin_party'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: 'DOKI DOKI DATE'
+      url: https://youtu.be/45LUJTzHyek?si=-fQT4IAKqXX6hhJQ
+    - track_number: 'X02'
+      name: 'Game Changer'
+      url: https://youtu.be/X7NS0u628lw?si=A7my0UGNVpA3eytt
+    - track_number: 'X03'
+      name: 'Freedom'
+      url: https://youtu.be/oy6OCnr9eAg?si=OaC2MpIL7qOLHm56
+    - track_number: 'X04'
+      name: 'NO GIRL NO CRY'
+      url: https://youtu.be/D1ONxAWcbGE?si=h0HIVf-gIEm8apcU
+    - track_number: 'X05'
+      name: 'Dokidoki SING OUT!'
+      url: https://youtu.be/Y-tnOBf-byo?si=Mxmc_b_CwzSbhqVh
+    - track_number: 'X06'
+      name: 'Hanazono Denki Guitar!!!'
+      url: https://youtu.be/Fb6Vxj--Fq4?si=rPetL5o0kJDEaECx
+    - track_number: 'X07'
+      name: 'Chocolate no Teion Recipe'
+      url: https://youtu.be/pbDiKPBuTsc?si=7itu7mzdjB0SfVDB
+    - track_number: 'X08'
+      name: 'Tooi Ongaku ~Heartbeat~'
+      url: https://youtu.be/jTSPnt5kts0?si=yCNC73uluwyjF8DU
+    - track_number: 'X09'
+      name: 'Su-Suki Nanka Janai!'
+      url: https://youtu.be/vdYlI5BnvPk?si=sNW7xED_6pJxCDwd
+    - track_number: 'X10'
+      name: '世界中の青空をあつめて'
+      url: https://youtu.be/OuCaAYkV2d8?si=GdPiCq8tld2keDgb
+    - track_number: 'X11'
+      name: 'Kirakiraboshi ~Beginning Stage Ver.~'
+      url: 
+    - track_number: 'X12'
+      name: '勇気Limit！'
+      url: https://youtu.be/HNpDj7g9Fd0?si=GfW8rUlVAbCIGSIQ
+    - track_number: 'X13'
+      name: 'ほな！'
+      url: https://youtu.be/hDgXSuDV51A?si=VmqCC9AwFBZta19Z
+    - track_number: 'X14'
+      name: 'Chu Chueen!'
+      url: https://youtu.be/5j2a4m1OQsg?si=HDtO13Z2ocNQrqZM

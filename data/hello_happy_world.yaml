@@ -153,3 +153,36 @@
     - track_number: '05'
       name: 'Listen to Smile!'
       url: https://youtu.be/5Bz8TBMardI?si=dQIwi4bkghxECUTo
+
+- band: 'hello_happy_world'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X0'
+      name: 'Nice to Meet You!'
+      url: 
+    - track_number: 'X0'
+      name: 'YAPPY! SCHOOL CARNIVAL☆彡'
+      url: 
+    - track_number: 'X0'
+      name: 'We Can ☆ Hooray Hooray!'
+      url: 
+    - track_number: 'X0'
+      name: 'Egao, mi~kketa!'
+      url: 
+    - track_number: 'X0'
+      name: 'Kapoon tto Gokuraku☆Yuutopia!'
+      url: 
+    - track_number: 'X0'
+      name: 'Mabushii Nee☆ Sono Egao!'
+      url: 
+    - track_number: 'X0'
+      name: 'High Touch／＼Believers☆'
+      url: 
+    - track_number: 'X0'
+      name: 'Five Smile◯All In!'
+      url: 
+    - track_number: 'X0'
+      name: 'Yahoo! Ippo! Wonderful!'
+      url: 

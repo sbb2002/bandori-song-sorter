@@ -120,3 +120,18 @@
     - track_number: '10'
       name: '往欄印'
       url: https://youtu.be/ypcMuQhWdZA?si=5O3OYIJF7_J4CRvz
+
+- band: 'morfonica'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X0'
+      name: '静降想 (Silent'
+      url: 
+    - track_number: 'X0'
+      name: 'Ningen ni Naritai Uta'
+      url: 
+    - track_number: 'X0'
+      name: 'Haruhikage (Original)'
+      url: 

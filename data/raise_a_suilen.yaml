@@ -150,3 +150,42 @@
     - track_number: '05'
       name: 'POLARIS'
       url: https://youtu.be/M-6HMvPPnLM?si=dA1WMAPvZETd8FTI
+
+- band: 'raise_a_suilen'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X0'
+      name: 'WHAT AN EXPLOSION'
+      url: 
+    - track_number: 'X0'
+      name: 'RUNAWAY STAR'
+      url: 
+    - track_number: 'X0'
+      name: 'TWIN TALE'
+      url: 
+    - track_number: 'X0'
+      name: 'Apocalypse'
+      url: 
+    - track_number: 'X0'
+      name: 'DANCING DARING'
+      url: 
+    - track_number: 'X0'
+      name: 'REIGNING ~The Stage ver.~'
+      url: 
+    - track_number: 'X0'
+      name: 'R・I・O・T ~The Stage ver.~'
+      url: 
+    - track_number: 'X0'
+      name: "EXPOSE 'Burn out!!!' (English)"
+      url: 
+    - track_number: 'X0'
+      name: "Takin' my Heart (English)"
+      url: 
+    - track_number: 'X0'
+      name: 'V.I.P MONSTER'
+      url: 
+    - track_number: 'X0'
+      name: 'WELCOME TO PANDEMONIUM'
+      url: 

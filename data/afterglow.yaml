@@ -153,3 +153,39 @@
     - track_number: '05'
       name: '花笑みのデュオ'
       url: https://youtu.be/m6jnZ8qDw-E?si=aF4h33-Mr9J-u3uR
+
+- band: 'afterglow'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X0'
+      name: 'Made My Day'
+      url: 
+    - track_number: 'X0'
+      name: 'IGNITE GLOW'
+      url: 
+    - track_number: 'X0'
+      name: 'Punchline Halloween!!!'
+      url: 
+    - track_number: 'X0'
+      name: 'Sansan'
+      url: 
+    - track_number: 'X0'
+      name: 'Wonder Night Land'
+      url: 
+    - track_number: 'X0'
+      name: 'Sakura Zensen'
+      url: 
+    - track_number: 'X0'
+      name: 'Start as Usual'
+      url: 
+    - track_number: 'X0'
+      name: 'Part of the Life'
+      url: 
+    - track_number: 'X0'
+      name: 'Akashi wa Kagayaku'
+      url: 
+    - track_number: 'X0'
+      name: 'Choco Typhooooon!!'
+      url: 

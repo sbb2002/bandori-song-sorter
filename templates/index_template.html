@@ -141,15 +141,15 @@
         </div>
 
         <!-- Tier × Band 히트맵 (하단) -->
-        <div class="histogram-card">
-            <div class="histogram-title">Tier × Band Heatmap</div>
-            <div class="histogram-container">
+        <div class="heatmap-card">
+            <div class="heatmap-title">Tier × Band Heatmap</div>
+            <div class="heatmap-container">
 
                 <!-- 헤더 -->
-                <div class="histogram-row histogram-head">
-                    <div class="histogram-cell">Tier</div>
+                <div class="heatmap-row heatmap-head">
+                    <div class="heatmap-tier-label">Tier</div>
                     {% for b in albums_by_band.keys() %}
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/{{ b }}.png" alt="{{ b.replace('_', ' ') }}" class="heatmap-band-icon">
                     </div>
                     {% endfor %}
@@ -168,8 +168,8 @@
                     ('D',  '#bf7fff'),
                     ('F',  '#cccccc')
                 ] %}
-                <div class="histogram-row" data-tier="{{ label }}">
-                    <div class="histogram-cell" style="background: {{ color }}; color: #000;">{{ label }}</div>
+                <div class="heatmap-row" data-tier="{{ label }}">
+                    <div class="heatmap-tier-label" style="background: {{ color }}; color: #000;">{{ label }}</div>
                     {% for b in albums_by_band.keys() %}
                     <div class="heatmap-cell" data-tier="{{ label }}" data-band="{{ b }}"></div>
                     {% endfor %}

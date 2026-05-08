@@ -106,3 +106,32 @@
       name: 'きょうもMerry go rounD'
       url: https://youtu.be/RDhZVoPqL8k?si=VeD4hXJzOGdbUSDZ
 
+- band: 'morfonica'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X0'
+      name: 'Resonant Strings'
+      url: 
+    - track_number: 'X0'
+      name: 'MUGEN Reverberate!'
+      url: 
+    - track_number: 'X0'
+      name: 'Tempest'
+      url: 
+    - track_number: 'X0'
+      name: 'Color of Us'
+      url: 
+    - track_number: 'X0'
+      name: 'Painting New Dawn'
+      url: 
+    - track_number: 'X0'
+      name: 'Shining Leaves'
+      url: 
+    - track_number: 'X0'
+      name: 'Merry Merry Thanks!!'
+      url: 
+    - track_number: 'X0'
+      name: 'esora no clover'
+      url: 

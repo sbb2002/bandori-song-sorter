@@ -69,3 +69,27 @@
     - track_number: '05'
       name: 'Ether'
       url: https://youtu.be/z6k7YIIZ6Hk?si=xLd38TfQTOAXKtA2
+
+- band: 'ave_mujica'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: 'Sophie'
+      url: https://youtu.be/ivXQ21xDHfE?si=L3md2MAzZaiTU1cv
+    - track_number: 'X02'
+      name: 'DIVINE'
+      url: https://youtu.be/6bA-vjvi9oI?si=l28nVJnEO5OUCtzH
+    - track_number: 'X03'
+      name: "‘S/’ The Way"
+      url: https://youtu.be/L0Ou9IfobFQ?si=PQRzQJSECaD499FZ
+    - track_number: 'X04'
+      name: 'Angles'
+      url: https://youtu.be/au2A3wyiLIo?si=dMfE3ZeZvKbdRKX2
+    - track_number: 'X04'
+      name: '天球(そら)의 Música'
+      url: 
+    - track_number: 'X04'
+      name: '顔 (Alter Ego)'
+      url: 

@@ -153,3 +153,42 @@
     - track_number: '05-4'
       name: '名前のない怪物'
       url: https://youtu.be/7jOjYce_f4c?si=0w7A7gjYmWxV8c8p
+
+- band: 'roselia'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X0'
+      name: 'Fear Nothing'
+      url: 
+    - track_number: 'X0'
+      name: 'Talk to My Tone'
+      url: 
+    - track_number: 'X0'
+      name: 'Sunlit Musical'
+      url:
+    - track_number: 'X0'
+      name: 'Blessing Chord'
+      url:
+    - track_number: 'X0'
+      name: 'Sanctuary'
+      url:
+    - track_number: 'X0'
+      name: 'PASSIONATE ANTHEM'
+      url:
+    - track_number: 'X0'
+      name: 'Floral Haven'
+      url:
+    - track_number: 'X0'
+      name: 'Requiem for Fate'
+      url:
+    - track_number: 'X0'
+      name: 'Always recall.'
+      url:
+    - track_number: 'X0'
+      name: 'Ichie no Full Glory'
+      url:
+    - track_number: 'X0'
+      name: 'Ishizue no Hanakanmuri'
+      url:

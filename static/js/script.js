@@ -434,7 +434,7 @@ function assignToTier(json, tierLabel) {
         const existingZone = existing.closest('.drop-zone');
         if (existingZone === targetZone) return; // 같은 티어 → 무시
         targetZone.appendChild(existing);         // 다른 티어 → 이동
-        updateHistogram();
+        updateHeatmap();
         return;
     }
 
@@ -454,17 +454,18 @@ function assignToTier(json, tierLabel) {
     const delBtn     = document.createElement('div');
     delBtn.className = 'del-btn';
     delBtn.innerText = '✕';
-    delBtn.onclick   = () => { item.remove(); updateHistogram(); };
+    delBtn.onclick   = () => { item.remove(); updateHeatmap(); };
     item.appendChild(delBtn);
 
     targetZone.appendChild(item);
-    updateHistogram();
+    updateHeatmap();
 }
+
 // ───────────────────────────
-// 6. Histogram
+// 6. Heatmap
 // ───────────────────────────
 
-function updateHistogram() {
+function updateHeatmap() {
     const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
     if (!bandButtons.length) return;
 
@@ -577,7 +578,7 @@ function initSortable() {
                         targetZone.appendChild(duplicate);
                         item.remove();
                     }
-                    updateHistogram();
+                    updateHeatmap();
                     return;
                 }
                 // ───────────────────────────────────────────────────────
@@ -590,7 +591,7 @@ function initSortable() {
                     const delBtn     = document.createElement('div');
                     delBtn.className = 'del-btn';
                     delBtn.innerText = '✕';
-                    delBtn.onclick   = () => { item.remove(); updateHistogram(); };
+                    delBtn.onclick   = () => { item.remove(); updateHeatmap(); };
                     item.appendChild(delBtn);
                 }
 
@@ -598,10 +599,10 @@ function initSortable() {
                 const img = item.querySelector('img');
                 if (img) img.src = fixPath(img.getAttribute('src') || img.getAttribute('data-src'));
 
-                updateHistogram();
+                updateHeatmap();
             },
-            onRemove: updateHistogram,
-            onSort:   updateHistogram,
+            onRemove: updateHeatmap,
+            onSort:   updateHeatmap,
         });
     });
 }
@@ -621,8 +622,8 @@ function syncHeatmapForCapture() {
     // 헤더 행 구성: bandButtons에서 직접 아이콘 경로 추출
     const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
 
-    // 실제 히트맵 행 수집
-    const rows = Array.from(document.querySelectorAll('.histogram-row[data-tier]'));
+    // 실제 히트맵 행 수집 (.heatmap-row[data-tier] 로 변경)
+    const rows = Array.from(document.querySelectorAll('.heatmap-row[data-tier]'));
 
     // grid 스타일: tier열 + band열
     grid.style.display            = 'grid';
@@ -652,7 +653,7 @@ function syncHeatmapForCapture() {
     // 데이터 행: 실제 .heatmap-cell에서 색상 복사
     rows.forEach(row => {
         const tier      = row.dataset.tier;
-        const tierLabel = row.querySelector('.histogram-cell');
+        const tierLabel = row.querySelector('.heatmap-tier-label'); // .histogram-cell → .heatmap-tier-label
         const cells     = Array.from(row.querySelectorAll('.heatmap-cell'));
 
         // 티어 라벨
@@ -739,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     initSortable();
-    updateHistogram();
+    updateHeatmap();
 
     // YouTube IFrame API가 script.js 로드 전에 이미 준비된 경우 직접 초기화
     // (모바일에서 타이밍 역전 방지)

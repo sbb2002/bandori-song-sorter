@@ -180,6 +180,18 @@
             
             <button
                 class="band-btn "
+                data-band="ikka_dumrock"
+                onclick="switchBand('ikka_dumrock', this)"
+            ><img src="./assets/icon/ikka_dumrock.png" alt="ikka dumrock" class="band-btn-icon"></button>
+            
+            <button
+                class="band-btn "
+                data-band="millsage"
+                onclick="switchBand('millsage', this)"
+            ><img src="./assets/icon/millsage.png" alt="millsage" class="band-btn-icon"></button>
+            
+            <button
+                class="band-btn "
                 data-band="morfonica"
                 onclick="switchBand('morfonica', this)"
             ><img src="./assets/icon/morfonica.png" alt="morfonica" class="band-btn-icon"></button>
@@ -259,6 +271,10 @@
                     <img data-src="assets/ave_mujica/m02.webp" class="lazy-load" alt="ELEMENTS">
                 </div>
                 
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "ave_mujica", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "Sophie", "track_number": "", "url": "https://youtu.be/ivXQ21xDHfE?si=L3md2MAzZaiTU1cv"}, {"name": "DIVINE", "track_number": "", "url": "https://youtu.be/6bA-vjvi9oI?si=l28nVJnEO5OUCtzH"}, {"name": "\u2018S/\u2019 The Way", "track_number": "", "url": "https://youtu.be/L0Ou9IfobFQ?si=PQRzQJSECaD499FZ"}, {"name": "Angles", "track_number": "", "url": "https://youtu.be/au2A3wyiLIo?si=dMfE3ZeZvKbdRKX2"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
             </div>
             
             <div id="b-hello_happy_world" class="band-content ">
@@ -277,6 +293,22 @@
                 
                 <div class="bank-item" data-json='{"album_title": "\u3044\u3063\u3064\u3042\uff01\u3059\u307e\u3044\u308b\u308f\u30fc\u308b\u3069\uff01\uff01", "band": "hello_happy_world", "img_url": "assets/hello_happy_world/m02.webp", "numbering": "Mini", "tracks": [{"name": "\u308c\u3063\u3064\u30fb\u30b9\u30de\u30a4\u30eb\u30fb\u3059\u3068\u308a\u301c\u307f\u3093\u3050\u3063\u266a", "track_number": "01", "url": "https://youtu.be/5IcpLkGA54I?si=hXvKqShlYjaxx3PY"}, {"name": "\u3084\u3063\u307b\u30fc\uff01\u3044\u3063\u307d\uff01\u308f\u3093\u3060\u3075\u3049\u30fc\uff01", "track_number": "02", "url": "https://youtu.be/1rfk9_lj-iA?si=BH5_I5pzwtzV2g7p"}, {"name": "\u3068\u30fc\u304f\u3068\u3045\u307f\u30fc\u30fb\u3068\u30fc\u304f\u3068\u3045\u3086\u30fc", "track_number": "03", "url": "https://youtu.be/7HxPLgP9AEo?si=8nsIv1g07diaiNn4"}, {"name": "\u30cf\u30a4\u30bf\u30c3\u30c1\uff0f\uff3c\u3073\u308a\u30fc\u3070\u30fc\u305a\u2606", "track_number": "04", "url": "https://youtu.be/rCQsYw_x7Us?si=gk-vlD3Rqo5IWv5f"}, {"name": "Listen to Smile!", "track_number": "05", "url": "https://youtu.be/5Bz8TBMardI?si=dQIwi4bkghxECUTo"}]}' onclick="showInfo(this)">
                     <img data-src="assets/hello_happy_world/m02.webp" class="lazy-load" alt="いっつあ！すまいるわーるど！！">
+                </div>
+                
+            </div>
+            
+            <div id="b-ikka_dumrock" class="band-content ">
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "ikka_dumrock", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "\u30db\u30fc\u30df\u30fc\u30fb\u30bf\u30a4\u30c3\uff01\uff01", "track_number": "1", "url": "https://youtu.be/BSP-xypGSak?si=dW_BRxOoNVZKCyCp"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
+                </div>
+                
+            </div>
+            
+            <div id="b-millsage" class="band-content ">
+                
+                <div class="bank-item" data-json='{"album_title": "undefined", "band": "millsage", "img_url": "assets/icon/undefined.png", "numbering": "undefined", "tracks": [{"name": "\u8d77\u6b7b\u958b\u6226", "track_number": "1", "url": "https://youtu.be/bzPxdHmMW3s?si=e6CpQq3okKvaWUp9"}]}' onclick="showInfo(this)">
+                    <img data-src="assets/icon/undefined.png" class="lazy-load" alt="undefined">
                 </div>
                 
             </div>
@@ -412,51 +444,59 @@
         </div>
 
         <!-- Tier × Band 히트맵 (하단) -->
-        <div class="histogram-card">
-            <div class="histogram-title">Tier × Band Heatmap</div>
-            <div class="histogram-container">
+        <div class="heatmap-card">
+            <div class="heatmap-title">Tier × Band Heatmap</div>
+            <div class="heatmap-container">
 
                 <!-- 헤더 -->
-                <div class="histogram-row histogram-head">
-                    <div class="histogram-cell">Tier</div>
+                <div class="heatmap-row heatmap-head">
+                    <div class="heatmap-tier-label">Tier</div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/afterglow.png" alt="afterglow" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/ave_mujica.png" alt="ave mujica" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/hello_happy_world.png" alt="hello happy world" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
+                        <img src="./assets/icon/ikka_dumrock.png" alt="ikka dumrock" class="heatmap-band-icon">
+                    </div>
+                    
+                    <div class="heatmap-tier-label">
+                        <img src="./assets/icon/millsage.png" alt="millsage" class="heatmap-band-icon">
+                    </div>
+                    
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/morfonica.png" alt="morfonica" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/mugendai_mutype.png" alt="mugendai mutype" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/mygo.png" alt="mygo" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/pastel_palettes.png" alt="pastel palettes" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/poppin_party.png" alt="poppin party" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/raise_a_suilen.png" alt="raise a suilen" class="heatmap-band-icon">
                     </div>
                     
-                    <div class="histogram-cell">
+                    <div class="heatmap-tier-label">
                         <img src="./assets/icon/roselia.png" alt="roselia" class="heatmap-band-icon">
                     </div>
                     
@@ -464,14 +504,18 @@
 
                 <!-- 티어 행 -->
                 
-                <div class="histogram-row" data-tier="S+">
-                    <div class="histogram-cell" style="background: #ff7f7f; color: #000;">S+</div>
+                <div class="heatmap-row" data-tier="S+">
+                    <div class="heatmap-tier-label" style="background: #ff7f7f; color: #000;">S+</div>
                     
                     <div class="heatmap-cell" data-tier="S+" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="S+" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="S+" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="S+" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="S+" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="S+" data-band="morfonica"></div>
                     
@@ -489,14 +533,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="S">
-                    <div class="histogram-cell" style="background: #ff9999; color: #000;">S</div>
+                <div class="heatmap-row" data-tier="S">
+                    <div class="heatmap-tier-label" style="background: #ff9999; color: #000;">S</div>
                     
                     <div class="heatmap-cell" data-tier="S" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="S" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="S" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="S" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="S" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="S" data-band="morfonica"></div>
                     
@@ -514,14 +562,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="A+">
-                    <div class="histogram-cell" style="background: #ffbf7f; color: #000;">A+</div>
+                <div class="heatmap-row" data-tier="A+">
+                    <div class="heatmap-tier-label" style="background: #ffbf7f; color: #000;">A+</div>
                     
                     <div class="heatmap-cell" data-tier="A+" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="A+" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="A+" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="A+" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="A+" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="A+" data-band="morfonica"></div>
                     
@@ -539,14 +591,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="A">
-                    <div class="histogram-cell" style="background: #ffff7f; color: #000;">A</div>
+                <div class="heatmap-row" data-tier="A">
+                    <div class="heatmap-tier-label" style="background: #ffff7f; color: #000;">A</div>
                     
                     <div class="heatmap-cell" data-tier="A" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="A" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="A" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="A" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="A" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="A" data-band="morfonica"></div>
                     
@@ -564,14 +620,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="B+">
-                    <div class="histogram-cell" style="background: #bfff7f; color: #000;">B+</div>
+                <div class="heatmap-row" data-tier="B+">
+                    <div class="heatmap-tier-label" style="background: #bfff7f; color: #000;">B+</div>
                     
                     <div class="heatmap-cell" data-tier="B+" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="B+" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="B+" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="B+" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="B+" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="B+" data-band="morfonica"></div>
                     
@@ -589,14 +649,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="B">
-                    <div class="histogram-cell" style="background: #7fff7f; color: #000;">B</div>
+                <div class="heatmap-row" data-tier="B">
+                    <div class="heatmap-tier-label" style="background: #7fff7f; color: #000;">B</div>
                     
                     <div class="heatmap-cell" data-tier="B" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="B" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="B" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="B" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="B" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="B" data-band="morfonica"></div>
                     
@@ -614,14 +678,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="C+">
-                    <div class="histogram-cell" style="background: #7fffff; color: #000;">C+</div>
+                <div class="heatmap-row" data-tier="C+">
+                    <div class="heatmap-tier-label" style="background: #7fffff; color: #000;">C+</div>
                     
                     <div class="heatmap-cell" data-tier="C+" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="C+" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="C+" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="C+" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="C+" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="C+" data-band="morfonica"></div>
                     
@@ -639,14 +707,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="C">
-                    <div class="histogram-cell" style="background: #7f7fff; color: #000;">C</div>
+                <div class="heatmap-row" data-tier="C">
+                    <div class="heatmap-tier-label" style="background: #7f7fff; color: #000;">C</div>
                     
                     <div class="heatmap-cell" data-tier="C" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="C" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="C" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="C" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="C" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="C" data-band="morfonica"></div>
                     
@@ -664,14 +736,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="D">
-                    <div class="histogram-cell" style="background: #bf7fff; color: #000;">D</div>
+                <div class="heatmap-row" data-tier="D">
+                    <div class="heatmap-tier-label" style="background: #bf7fff; color: #000;">D</div>
                     
                     <div class="heatmap-cell" data-tier="D" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="D" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="D" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="D" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="D" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="D" data-band="morfonica"></div>
                     
@@ -689,14 +765,18 @@
                     
                 </div>
                 
-                <div class="histogram-row" data-tier="F">
-                    <div class="histogram-cell" style="background: #cccccc; color: #000;">F</div>
+                <div class="heatmap-row" data-tier="F">
+                    <div class="heatmap-tier-label" style="background: #cccccc; color: #000;">F</div>
                     
                     <div class="heatmap-cell" data-tier="F" data-band="afterglow"></div>
                     
                     <div class="heatmap-cell" data-tier="F" data-band="ave_mujica"></div>
                     
                     <div class="heatmap-cell" data-tier="F" data-band="hello_happy_world"></div>
+                    
+                    <div class="heatmap-cell" data-tier="F" data-band="ikka_dumrock"></div>
+                    
+                    <div class="heatmap-cell" data-tier="F" data-band="millsage"></div>
                     
                     <div class="heatmap-cell" data-tier="F" data-band="morfonica"></div>
                     

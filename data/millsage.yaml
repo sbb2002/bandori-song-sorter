@@ -1,0 +1,8 @@
+- band: 'millsage'
+  numbering: 'undefined'
+  album_title: 'undefined'
+  img_url: assets/icon/undefined.png
+  tracks:
+    - track_number: 'X01'
+      name: '起死開戦'
+      url: https://youtu.be/bzPxdHmMW3s?si=e6CpQq3okKvaWUp9
