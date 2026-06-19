@@ -1,845 +1,802 @@
 /* ===========================
-   BanG Dream! Album Sorter
-   script.js
-   =========================== */
+   BanG Dream! Song Sorter
+   script.js — UI / 인터랙션 / 지속성
+
+   순수 데이터 로직은 core.js(window.BandoriCore)에 위임한다.
+=========================== */
+
+const C = window.BandoriCore;
 
 // ───────────────────────────
-// 1. Path Utilities
+// 1. State
 // ───────────────────────────
 
-/**
- * GitHub Pages 경로 문제를 해결하는 핵심 함수.
- * 역슬래시 정규화 + 절대경로 → 상대경로 보정.
- */
+const STORE_KEY = 'bandori-song-ranks-v1';
+
+let dedupedByBand = {};     // band -> 중복 제거된 곡 배열
+let allSongs = [];          // 전 밴드 평탄화(밴드 순서)
+let bands = [];             // 밴드 순서
+let ranks = loadRanks();    // { songKey: 1..5 }
+
+let currentBand = 'ALL';
+let activeFilters = new Set();   // 0=미평가, 1..5=티어. 비어있으면 전체 표시
+let currentTab = 'hist';
+
+// ───────────────────────────
+// 2. Path / 표시 유틸
+// ───────────────────────────
+
+/** GitHub Pages 경로 보정 (역슬래시 정규화 + 상대경로화) */
 function fixPath(path) {
     if (!path) return '';
     if (path.startsWith('http') || path.startsWith('data:')) return path;
-
-    let cleanPath = path.replace(/\\/g, '/').trim();
-    if (cleanPath.startsWith('/')) cleanPath = cleanPath.substring(1);
-
-    return './' + cleanPath;
+    let clean = path.replace(/\\/g, '/').trim();
+    if (clean.startsWith('/')) clean = clean.substring(1);
+    return './' + clean;
 }
 
+function bandIcon(band) {
+    return fixPath('assets/icon/' + band + '.png');
+}
+
+/** snake_case 밴드명 → 가독 라벨 */
+function bandDisplay(band) {
+    if (band === 'ALL') return '전체 밴드';
+    return band.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function hexToRgba(hex, a) {
+    const m = hex.replace('#', '');
+    const r = parseInt(m.substring(0, 2), 16);
+    const g = parseInt(m.substring(2, 4), 16);
+    const b = parseInt(m.substring(4, 6), 16);
+    return `rgba(${r},${g},${b},${a})`;
+}
+
+const TIER_BY_KEY = {};
+C.TIERS.forEach(t => { TIER_BY_KEY[t.key] = t; });
+
 // ───────────────────────────
-// 2. Tier Sidebar Toggle
+// 3. Persistence
 // ───────────────────────────
 
-function toggleTier() {
-    const wrapper = document.getElementById('tier-wrapper');
-    const btn     = document.getElementById('toggle-btn');
-    wrapper.classList.toggle('expanded');
-    const isExpanded = wrapper.classList.contains('expanded');
-    // PC: ◀/▶, 모바일: ▲/▼
-    if (window.innerWidth >= 1024) {
-        btn.innerText = isExpanded ? '◀' : '▶';
-    } else {
-        btn.innerText = isExpanded ? '▲' : '▼';
+function loadRanks() {
+    try {
+        return JSON.parse(localStorage.getItem(STORE_KEY)) || {};
+    } catch (_) {
+        return {};
     }
 }
 
-// ───────────────────────────
-// 3. Band Navigation
-// ───────────────────────────
+function saveRanks() {
+    try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(ranks));
+    } catch (_) { /* 사생활 모드 등 — 저장 실패는 무시 */ }
+}
 
-function switchBand(name, btn) {
-    document.querySelectorAll('.band-btn').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.band-content').forEach(x => x.classList.remove('active'));
-    document.getElementById('b-' + name).classList.add('active');
+function getRank(song) {
+    return ranks[C.songKey(song.band, song.title)];
+}
+
+function setRank(song, tier) {
+    const key = C.songKey(song.band, song.title);
+    if (tier == null) {
+        delete ranks[key];
+    } else {
+        ranks[key] = tier;
+    }
+    saveRanks();
 }
 
 // ───────────────────────────
-// 4. YouTube Player
+// 4. Data init
 // ───────────────────────────
 
-let player;
-let timer;
+function initData() {
+    const data = window.SONG_DATA || { bands: [], songsByBand: {} };
+    bands = data.bands.slice();
+    dedupedByBand = {};
+    allSongs = [];
+    bands.forEach(b => {
+        dedupedByBand[b] = C.dedupSongs(data.songsByBand[b] || []);
+        allSongs = allSongs.concat(dedupedByBand[b]);
+    });
+}
 
-/** YouTube IFrame API 준비 완료 콜백 (전역 함수명 고정) */
+/** 현재 밴드(또는 ALL)의 곡 — 히스토그램/진행률 등 분포 계산용(필터 무시) */
+function bandSongs() {
+    return currentBand === 'ALL' ? allSongs : (dedupedByBand[currentBand] || []);
+}
+
+/** 리스트 표시용 곡 — 밴드 + 활성 티어 필터 적용 */
+function viewSongs() {
+    let songs = bandSongs();
+    if (activeFilters.size > 0) {
+        songs = songs.filter(s => {
+            const r = getRank(s);
+            const unranked = !C.isRank(r);
+            if (activeFilters.has(0) && unranked) return true;
+            return !unranked && activeFilters.has(r);
+        });
+    }
+    return songs;
+}
+
+// ───────────────────────────
+// 5. Render: Band selector (A)
+// ───────────────────────────
+
+function renderBandSelector() {
+    const el = document.getElementById('band-selector');
+    el.innerHTML = '';
+
+    el.appendChild(makeBandBtn('ALL', true));
+
+    const divider = document.createElement('div');
+    divider.className = 'band-divider';
+    el.appendChild(divider);
+
+    bands.forEach(b => el.appendChild(makeBandBtn(b, false)));
+}
+
+function makeBandBtn(band, isAll) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'band-btn' + (isAll ? ' all' : '') + (band === currentBand ? ' active' : '');
+    btn.title = bandDisplay(band);
+    btn.dataset.band = band;
+
+    if (isAll) {
+        btn.textContent = 'ALL';
+    } else {
+        const img = document.createElement('img');
+        img.src = bandIcon(band);
+        img.alt = bandDisplay(band);
+        img.className = 'band-btn-icon';
+        img.onerror = () => { btn.textContent = bandDisplay(band).slice(0, 4); };
+        btn.appendChild(img);
+    }
+
+    btn.addEventListener('click', () => selectBand(band));
+    return btn;
+}
+
+function selectBand(band) {
+    currentBand = band;
+    document.querySelectorAll('.band-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.band === band);
+    });
+    document.getElementById('band-label').textContent = bandDisplay(band);
+    document.getElementById('hist-band-name').textContent =
+        (band === 'ALL' ? '전체' : bandDisplay(band)) + ' 랭크 분포';
+    renderSongList();
+    renderHistogram();
+}
+
+// ───────────────────────────
+// 6. Render: Filter pills
+// ───────────────────────────
+
+function renderFilterPills() {
+    const el = document.getElementById('filter-pills');
+    el.innerHTML = '';
+    const items = C.TIERS.map(t => ({ key: t.key, label: t.label, color: t.color }))
+        .concat([{ key: 0, label: '미평가', color: null }]);
+
+    items.forEach(({ key, label, color }) => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'pill';
+        pill.textContent = label;
+        const active = activeFilters.has(key);
+        if (active) {
+            pill.classList.add('active');
+            if (color) {
+                pill.style.borderColor = color;
+                pill.style.color = color;
+                pill.style.background = hexToRgba(color, 0.12);
+            } else {
+                pill.style.borderColor = 'var(--text-sub)';
+                pill.style.color = 'var(--text)';
+            }
+        }
+        pill.addEventListener('click', () => {
+            if (activeFilters.has(key)) activeFilters.delete(key);
+            else activeFilters.add(key);
+            renderFilterPills();
+            renderSongList();
+        });
+        el.appendChild(pill);
+    });
+}
+
+// ───────────────────────────
+// 7. Render: Song list (B)
+// ───────────────────────────
+
+function renderSongList() {
+    const list = document.getElementById('song-list');
+    const songs = viewSongs();
+    const frag = document.createDocumentFragment();
+
+    if (songs.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'song-empty';
+        empty.textContent = activeFilters.size > 0 ? '해당 조건의 곡이 없어요.' : '곡이 없어요.';
+        frag.appendChild(empty);
+    }
+
+    songs.forEach((song, i) => {
+        const r = getRank(song);
+        const showBand = (currentBand === 'ALL');
+
+        const row = document.createElement('div');
+        row.className = 'song-item' + (C.isRank(r) ? ' ranked' : '');
+        row.dataset.band = song.band;
+        row.dataset.title = song.title;
+        row.dataset.url = song.url || '';
+        if (C.isRank(r)) row.style.setProperty('--row-tier', TIER_BY_KEY[r].color);
+
+        const num = document.createElement('span');
+        num.className = 'song-num';
+        num.textContent = i + 1;
+        row.appendChild(num);
+
+        const titleEl = document.createElement('span');
+        titleEl.className = 'song-title';
+        titleEl.textContent = song.title;
+        row.appendChild(titleEl);
+
+        if (showBand) {
+            const sub = document.createElement('span');
+            sub.className = 'song-band-tag';
+            sub.textContent = bandDisplay(song.band);
+            row.appendChild(sub);
+        }
+
+        if (!C.isPlayable(song.url)) {
+            const noyt = document.createElement('span');
+            noyt.className = 'song-noyt';
+            noyt.title = '유튜브 링크 없음';
+            noyt.textContent = '♪';
+            row.appendChild(noyt);
+        }
+
+        const badge = document.createElement('span');
+        badge.className = 'rank-badge ' + (C.isRank(r) ? 'rb-' + r : 'rb-empty');
+        badge.textContent = C.isRank(r) ? TIER_BY_KEY[r].icon : '';
+        row.appendChild(badge);
+
+        frag.appendChild(row);
+    });
+
+    list.innerHTML = '';
+    list.appendChild(frag);
+}
+
+function songFromRow(row) {
+    const band = row.dataset.band;
+    const title = row.dataset.title;
+    const arr = dedupedByBand[band] || [];
+    return arr.find(s => s.title === title) || { band, title, url: row.dataset.url };
+}
+
+// ───────────────────────────
+// 8. 통합 프레스 (짧게=재생 / 길게=랭크 팝업) — mouse + touch
+// ───────────────────────────
+
+const LONG_PRESS_MS = 350;
+const MOVE_TOLERANCE = 8;
+
+let pressTimer = null;
+let pressRow = null;
+let pressStartX = 0;
+let pressStartY = 0;
+let longFired = false;
+let moved = false;
+let rafId = null;
+
+function startProgress(row) {
+    const start = performance.now();
+    row.style.setProperty('--lp', 0);
+    function tick(now) {
+        const p = Math.min((now - start) / LONG_PRESS_MS, 1);
+        row.style.setProperty('--lp', p);
+        if (p < 1) rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
+}
+
+function cancelPress() {
+    if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (pressRow) {
+        pressRow.classList.remove('pressing');
+        pressRow.style.removeProperty('--lp');
+    }
+    pressRow = null;
+}
+
+function initPressHandlers() {
+    const list = document.getElementById('song-list');
+
+    list.addEventListener('pointerdown', e => {
+        const row = e.target.closest('.song-item');
+        if (!row) return;
+        if (e.pointerType === 'mouse' && e.button !== 0) return; // 우클릭은 contextmenu가 처리
+        pressRow = row;
+        pressStartX = e.clientX;
+        pressStartY = e.clientY;
+        longFired = false;
+        moved = false;
+        row.classList.add('pressing');
+        startProgress(row);
+        pressTimer = setTimeout(() => {
+            longFired = true;
+            const r = pressRow;
+            cancelPress();
+            openPopup(songFromRow(r));
+        }, LONG_PRESS_MS);
+    });
+
+    list.addEventListener('pointermove', e => {
+        if (!pressRow) return;
+        if (Math.abs(e.clientX - pressStartX) > MOVE_TOLERANCE ||
+            Math.abs(e.clientY - pressStartY) > MOVE_TOLERANCE) {
+            moved = true;
+            cancelPress();
+        }
+    });
+
+    list.addEventListener('pointerup', e => {
+        if (!pressRow) return;
+        const row = pressRow;
+        const fired = longFired;
+        const mv = moved;
+        cancelPress();
+        if (!fired && !mv) playSong(songFromRow(row));
+    });
+
+    list.addEventListener('pointercancel', cancelPress);
+    list.addEventListener('pointerleave', cancelPress);
+
+    // 데스크톱 우클릭 = 랭크 팝업 (+ 모바일 길게눌러 뜨는 기본 메뉴 차단)
+    list.addEventListener('contextmenu', e => {
+        const row = e.target.closest('.song-item');
+        if (!row) return;
+        e.preventDefault();
+        cancelPress();
+        openPopup(songFromRow(row));
+    });
+}
+
+// ───────────────────────────
+// 9. Rank popup (modal)
+// ───────────────────────────
+
+let popupSong = null;
+
+function renderRankButtons() {
+    const wrap = document.getElementById('rank-buttons');
+    wrap.innerHTML = '';
+    C.TIERS.forEach(t => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rank-btn';
+        btn.dataset.tier = t.key;
+        btn.innerHTML =
+            `<span class="rk-icon">${t.icon}</span><span class="rk-label" style="color:${t.color}">${t.label}</span>`;
+        btn.addEventListener('click', () => {
+            if (popupSong) {
+                const cur = getRank(popupSong);
+                // 같은 티어 다시 누르면 해제(토글), 아니면 설정
+                setRank(popupSong, cur === t.key ? null : t.key);
+                refreshAll();
+            }
+            closePopup();
+        });
+        wrap.appendChild(btn);
+    });
+}
+
+function openPopup(song) {
+    popupSong = song;
+    document.getElementById('popup-band').textContent = bandDisplay(song.band);
+    document.getElementById('popup-title').textContent = song.title;
+    const cur = getRank(song);
+    document.querySelectorAll('.rank-btn').forEach(b => {
+        b.classList.toggle('active', Number(b.dataset.tier) === cur);
+    });
+    const popup = document.getElementById('popup');
+    popup.hidden = false;
+    requestAnimationFrame(() => popup.classList.add('open'));
+}
+
+function closePopup() {
+    const popup = document.getElementById('popup');
+    popup.classList.remove('open');
+    popupSong = null;
+    setTimeout(() => { popup.hidden = true; }, 200);
+}
+
+// ───────────────────────────
+// 10. YouTube (C)
+// ───────────────────────────
+
+let player = null;
+
 function onYouTubeIframeAPIReady() {
     initYouTubePlayer();
 }
+window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
 function initYouTubePlayer() {
-    if (player && typeof player.loadVideoById === 'function') return; // 이미 초기화됨
+    if (player && typeof player.loadVideoById === 'function') return;
+    if (!window.YT || !window.YT.Player) return;
     player = new YT.Player('youtube-player', {
         height: '100%',
         width: '100%',
-        playerVars: {
-            autoplay: 0,
-            modestbranding: 1,
-            rel: 0,
-            controls: 1,
-        },
-        events: { onStateChange: onPlayerStateChange },
+        playerVars: { autoplay: 0, modestbranding: 1, rel: 0, controls: 1 },
     });
 }
 
-/** URL에서 YouTube 비디오 ID 추출 */
-function extractVideoId(url) {
-    const regExp = /^.*(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match  = url.match(regExp);
-    return (match && match[1].length === 11) ? match[1] : null;
-}
-
-/** 영상 로드 및 재생 */
-function loadAndPlay(url, title) {
-    const videoId = extractVideoId(url);
+function playSong(song) {
+    const videoId = C.extractVideoId(song.url);
     if (!videoId) {
-        alert('재생할 수 없는 URL입니다.');
+        showNowPlaying(song.title + ' — 유튜브 링크가 없어요', true);
         return;
     }
+    document.getElementById('yt-placeholder').hidden = true;
+    showNowPlaying(song.title, false);
 
-    // player가 아직 준비 안 됐으면 최대 3초 대기 후 재시도
     if (!player || typeof player.loadVideoById !== 'function') {
         let waited = 0;
-        const interval = setInterval(() => {
-            waited += 200;
+        const iv = setInterval(() => {
+            waited += 150;
             if (player && typeof player.loadVideoById === 'function') {
-                clearInterval(interval);
+                clearInterval(iv);
                 player.loadVideoById(videoId);
-                const videoTitle = document.getElementById('video-title');
-                if (videoTitle) videoTitle.innerText = title;
             } else if (waited >= 3000) {
-                clearInterval(interval);
-                alert('유튜브 플레이어가 아직 준비되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                clearInterval(iv);
+                showNowPlaying('플레이어 준비 중… 다시 시도해 주세요', true);
             }
-        }, 200);
+        }, 150);
         return;
     }
-
     player.loadVideoById(videoId);
-    const videoTitle = document.getElementById('video-title');
-    if (videoTitle) videoTitle.innerText = title;
 }
 
-/** LP 디스크 회전 상태 동기화 */
-function updateLPState() {
-    const disc = document.getElementById('lp-disc');
-    if (!disc || !player) return;
-
-    if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-        disc.classList.add('playing');
-    } else {
-        disc.classList.remove('playing');
-    }
-}
-
-function togglePlay() {
-    if (!player) return;
-    if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-        player.pauseVideo();
-    } else {
-        player.playVideo();
-    }
-}
-
-function pauseVideo() {
-    if (player) player.pauseVideo();
-    updateLPState();
-}
-
-function stopVideo() {
-    if (player) player.stopVideo();
-    const timeline = document.getElementById('timeline');
-    if (timeline) timeline.value = 0;
-    updateLPState();
-}
-
-function onPlayerStateChange(event) {
-    const toggle = document.getElementById('play-toggle');
-
-    if (event.data === YT.PlayerState.PLAYING) {
-        if (toggle) toggle.innerText = '||';
-        startTimer();
-    } else {
-        if (toggle) toggle.innerText = '▶';
-        clearInterval(timer);
-    }
-    updateLPState();
-}
-
-function startTimer() {
-    clearInterval(timer);
-    timer = setInterval(() => {
-        if (!player) return;
-        const curr = player.getCurrentTime();
-        const dur  = player.getDuration();
-        if (dur > 0) {
-            const prog        = (curr / dur) * 100;
-            const timeline    = document.getElementById('timeline');
-            const timeDisplay = document.getElementById('time-display');
-            if (timeline)    timeline.value       = prog;
-            if (timeDisplay) timeDisplay.innerText = `${formatTime(curr)} / ${formatTime(dur)}`;
-        }
-    }, 1000);
-}
-
-function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s < 10 ? '0' + s : s}`;
-}
-
-function seekVideo(val) {
-    if (!player) return;
-    player.seekTo(player.getDuration() * (val / 100), true);
+function showNowPlaying(text, muted) {
+    const bar = document.getElementById('yt-now-playing');
+    bar.hidden = false;
+    bar.classList.toggle('muted', !!muted);
+    document.getElementById('yt-song-name').textContent = text;
 }
 
 // ───────────────────────────
-// 5. Album Info Panel
+// 11. Histogram (D)
 // ───────────────────────────
 
-function showInfo(el) {
-    const data = JSON.parse(el.getAttribute('data-json'));
+function renderHistogram() {
+    const counts = C.computeHistogram(bandSongs(), ranks);
+    const max = Math.max(1, ...C.TIERS.map(t => counts[t.key]));
+    const rows = document.getElementById('hist-rows');
+    rows.innerHTML = '';
 
-    // 앨범 커버
-    const img       = document.getElementById('p-img');
-    img.src         = fixPath(data.img_url);
-    img.style.display = 'block';
+    C.TIERS.forEach(t => {
+        const n = counts[t.key];
+        const row = document.createElement('div');
+        row.className = 'hist-row';
 
-    // 제목
-    const titleEl = document.querySelector('.preview-title');
-    if (titleEl) titleEl.textContent = data.album_title;
+        const label = document.createElement('span');
+        label.className = 'hist-label';
+        label.style.color = t.color;
+        label.textContent = t.label;
 
-    // 비디오 패널 초기화
-    const videoTitle = document.getElementById('video-title');
-    if (videoTitle) videoTitle.innerText = '트랙을 선택하면 유튜브 영상이 표시됩니다.';
+        const barBg = document.createElement('div');
+        barBg.className = 'hist-bar-bg';
+        const bar = document.createElement('div');
+        bar.className = 'hist-bar';
+        bar.style.background = t.color;
+        bar.style.width = (n / max * 100) + '%';
 
-    // 트랙 목록 렌더링
-    const tinfo     = document.getElementById('t-info');
-    tinfo.innerHTML = '';
+        const count = document.createElement('span');
+        count.className = 'hist-count';
+        count.textContent = n;
 
-    const list      = document.createElement('div');
-    list.className  = 'track-list';
-
-    (data.tracks || []).forEach(track => {
-        const item       = document.createElement('div');
-        item.className   = 'track-item';
-        item.textContent = `${track.track_number}. ${track.name}`;
-
-        if (track.url && track.url !== '-' && extractVideoId(track.url)) {
-            item.classList.add('playable');
-            item.onclick = () => loadAndPlay(track.url, `${track.track_number}. ${track.name}`);
-        } else {
-            item.classList.add('disabled');
-        }
-
-        list.appendChild(item);
-    });
-
-    tinfo.appendChild(list);
-}
-
-// ───────────────────────────
-// 5-1. 모바일 티어 선택 말풍선
-// ───────────────────────────
-
-const TIER_LIST = [
-    { label: 'S+', color: '#ff7f7f' },
-    { label: 'S',  color: '#ff9999' },
-    { label: 'A+', color: '#ffbf7f' },
-    { label: 'A',  color: '#ffff7f' },
-    { label: 'B+', color: '#bfff7f' },
-    { label: 'B',  color: '#7fff7f' },
-    { label: 'C+', color: '#7fffff' },
-    { label: 'C',  color: '#7f7fff' },
-    { label: 'D',  color: '#bf7fff' },
-    { label: 'F',  color: '#cccccc' },
-];
-
-/**
- * 모바일 전용 long press(350ms) → 랭크 셀렉터 말풍선.
- * - contextmenu(길게 눌러 우클릭 메뉴) 비활성화
- * - touchmove / touchend로 취소 처리
- * - conic-gradient로 진행 애니메이션 표시
- */
-function attachLongPress(item) {
-    let pressTimer  = null;
-    let rafId       = null;
-    let startTime   = null;
-    let startX      = 0;
-    let startY      = 0;
-    const DURATION  = 350;
-
-    // 브라우저 기본 컨텍스트 메뉴 비활성화 (img 태그 포함)
-    item.addEventListener('contextmenu', e => e.preventDefault());
-    item.querySelector('img')?.addEventListener('contextmenu', e => e.preventDefault());
-
-    function startAnimation() {
-        startTime = performance.now();
-        item.classList.add('long-pressing');
-
-        function tick(now) {
-            const elapsed  = now - startTime;
-            const progress = Math.min(elapsed / DURATION, 1);
-            item.style.setProperty('--lp-progress', progress);
-
-            if (progress < 1) {
-                rafId = requestAnimationFrame(tick);
-            }
-        }
-        rafId = requestAnimationFrame(tick);
-    }
-
-    function resetAnimation() {
-        // rAF 취소
-        if (rafId) {
-            cancelAnimationFrame(rafId);
-            rafId = null;
-        }
-        // 타이머 취소
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
-        }
-        // 애니메이션 리셋 (transition으로 부드럽게 0으로)
-        item.style.setProperty('--lp-progress', 0);
-        // transition 후 클래스 제거
-        setTimeout(() => {
-            item.classList.remove('long-pressing');
-            item.style.removeProperty('--lp-progress');
-        }, 200);
-        startTime = null;
-    }
-
-    item.addEventListener('touchstart', e => {
-        if (window.innerWidth >= 1024) return;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-
-        startAnimation();
-
-        pressTimer = setTimeout(() => {
-            pressTimer = null;
-            // 애니메이션 즉시 완료 상태로
-            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-            item.style.setProperty('--lp-progress', 1);
-            setTimeout(() => {
-                item.classList.remove('long-pressing');
-                item.style.removeProperty('--lp-progress');
-                showTierPopup(item);
-            }, 80);
-        }, DURATION);
-    }, { passive: true });
-
-    // 손가락이 움직이면 취소
-    item.addEventListener('touchmove', e => {
-        if (!startTime) return;
-        const dx = Math.abs(e.touches[0].clientX - startX);
-        const dy = Math.abs(e.touches[0].clientY - startY);
-        if (dx > 8 || dy > 8) {
-            resetAnimation();
-        }
-    }, { passive: true });
-
-    item.addEventListener('touchend', () => {
-        resetAnimation();
-    });
-
-    item.addEventListener('touchcancel', () => {
-        resetAnimation();
-    });
-}
-
-function showTierPopup(bankItem) {
-    closeTierPopup();
-
-    const json = bankItem.getAttribute('data-json');
-
-    // 바깥 클릭 시 닫는 오버레이
-    const overlay = document.createElement('div');
-    overlay.id = 'tier-popup-overlay';
-    overlay.onclick = closeTierPopup;
-
-    // 말풍선 본체
-    const popup = document.createElement('div');
-    popup.id = 'tier-popup';
-
-    TIER_LIST.forEach(({ label, color }) => {
-        const btn = document.createElement('button');
-        btn.className        = 'tier-popup-btn';
-        btn.textContent      = label;
-        btn.style.background = color;
-        btn.onclick = (e) => {
-            e.stopPropagation();
-            assignToTier(json, label);
-            closeTierPopup();
-        };
-        popup.appendChild(btn);
-    });
-
-    document.body.appendChild(overlay);
-    document.body.appendChild(popup);
-
-    // bankItem 위 중앙에 배치
-    const rect    = bankItem.getBoundingClientRect();
-    const scrollY = window.scrollY;
-
-    // 일단 위쪽에 배치 시도
-    popup.style.visibility = 'hidden';
-    popup.style.top  = '0px';
-    popup.style.left = '0px';
-
-    // 렌더링 후 실제 크기 측정
-    requestAnimationFrame(() => {
-        const popupH = popup.offsetHeight;
-        const popupW = popup.offsetWidth;
-
-        let top  = rect.top + scrollY - popupH - 12;
-        let left = rect.left + window.scrollX + rect.width / 2 - popupW / 2;
-
-        // 화면 위로 벗어나면 아래에 표시
-        if (top < scrollY + 8) {
-            top = rect.bottom + scrollY + 12;
-            popup.classList.add('popup-below');
-        } else {
-            popup.classList.remove('popup-below');
-        }
-
-        // 좌우 경계 보정
-        left = Math.max(8, Math.min(left, window.innerWidth - popupW - 8));
-
-        popup.style.top        = `${top}px`;
-        popup.style.left       = `${left}px`;
-        popup.style.visibility = 'visible';
-    });
-}
-
-function closeTierPopup() {
-    document.getElementById('tier-popup-overlay')?.remove();
-    document.getElementById('tier-popup')?.remove();
-}
-
-/**
- * 선택한 티어의 drop-zone에 앨범 등록.
- * 중복 로직은 드래그와 동일하게 처리.
- */
-function assignToTier(json, tierLabel) {
-    const allRows   = Array.from(document.querySelectorAll('#tier-capture-area .tier-row'));
-    const targetRow = allRows.find(row =>
-        row.querySelector('.tier-label')?.textContent.trim() === tierLabel
-    );
-    if (!targetRow) return;
-    const targetZone = targetRow.querySelector('.drop-zone');
-    if (!targetZone) return;
-
-    // 중복 감지
-    const existing = Array.from(
-        document.querySelectorAll('.drop-zone > *')
-    ).find(el => el.getAttribute('data-json') === json);
-
-    if (existing) {
-        const existingZone = existing.closest('.drop-zone');
-        if (existingZone === targetZone) return; // 같은 티어 → 무시
-        targetZone.appendChild(existing);         // 다른 티어 → 이동
-        updateHeatmap();
-        return;
-    }
-
-    // 신규 등록
-    const data = JSON.parse(json);
-
-    const item       = document.createElement('div');
-    item.className   = 'tier-item';
-    item.setAttribute('data-json', json);
-    item.dataset.band = data.band || '';
-
-    const img = document.createElement('img');
-    img.src   = fixPath(data.img_url);
-    img.alt   = data.album_title || '';
-    item.appendChild(img);
-
-    const delBtn     = document.createElement('div');
-    delBtn.className = 'del-btn';
-    delBtn.innerText = '✕';
-    delBtn.onclick   = () => { item.remove(); updateHeatmap(); };
-    item.appendChild(delBtn);
-
-    targetZone.appendChild(item);
-    updateHeatmap();
-}
-
-// ───────────────────────────
-// 6. Heatmap
-// ───────────────────────────
-
-function updateHeatmap() {
-    const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
-    if (!bandButtons.length) return;
-
-    // band-btn의 data-band 속성에서 밴드명 추출 (img 교체 후 textContent 빈값 방지)
-    const bands  = bandButtons.map(btn =>
-        (btn.dataset.band || '').trim().toLowerCase()
-    );
-
-    // ── 히트맵 열 수를 CSS 변수로 주입 ─────────────────────────────
-    // PC: 티어 라벨 고정폭 48px + 밴드 수만큼 1fr 열
-    // 모바일: 라벨 32px + 밴드 수만큼 1fr 열
-    // → 항상 정확히 1행, 가로 넘침/줄바꿈 없음
-    const isPC        = window.innerWidth >= 1024;
-    const tierColW    = isPC ? '48px' : '32px';
-    const bandCols    = `repeat(${bands.length}, minmax(0, 1fr))`;
-    const colsValue   = `${tierColW} ${bandCols}`;
-    document.documentElement.style.setProperty('--heatmap-cols', colsValue);
-    // ────────────────────────────────────────────────────────────────
-    const counts = {};
-
-    document.querySelectorAll('#tier-wrapper .tier-row').forEach(row => {
-        const tier = row.querySelector('.tier-label')?.textContent.trim();
-        if (!tier) return;
-
-        counts[tier] = counts[tier] || {};
-        bands.forEach(band => { counts[tier][band] = 0; });
-
-        row.querySelectorAll('.drop-zone > *').forEach(item => {
-            const json = item.getAttribute('data-json');
-            if (!json) return;
-            try {
-                const album = JSON.parse(json);
-                const band  = (album.band || '').toString().trim().toLowerCase();
-                if (band && counts[tier][band] !== undefined) {
-                    counts[tier][band] += 1;
-                }
-            } catch (_) { /* malformed — skip */ }
-        });
-    });
-
-    // 전체 최대값 계산 (색상 강도 기준)
-    let maxCount = 1;
-    Object.values(counts).forEach(tierCounts =>
-        Object.values(tierCounts).forEach(v => { if (v > maxCount) maxCount = v; })
-    );
-
-    /**
-     * 카운트 값을 흰색(0) → 붉은색(max) 사이의 색상으로 변환
-     * white: rgb(255,255,255) → red: rgb(180,0,0)
-     */
-    function heatColor(value) {
-        if (value === 0) return { bg: '#ffffff', text: 'transparent' };
-        const t  = value / maxCount;           // 0.0 ~ 1.0
-        const r  = 255;
-        const g  = Math.round(255 * (1 - t));  // 255 → 0
-        const b  = Math.round(255 * (1 - t));  // 255 → 0
-        // 값이 충분히 크면(t > 0.5) 숫자를 흰색으로, 작으면 어두운색으로
-        const textColor = t > 0.5 ? '#ffffff' : '#660000';
-        return { bg: `rgb(${r},${g},${b})`, text: textColor };
-    }
-
-    document.querySelectorAll('.heatmap-cell').forEach(cell => {
-        const band  = cell.dataset.band.toString().trim().toLowerCase();
-        const tier  = cell.dataset.tier;
-        const value = counts[tier]?.[band] || 0;
-        const { bg, text } = heatColor(value);
-
-        cell.style.backgroundColor = bg;
-        cell.style.color            = text;
-        cell.innerText              = value > 0 ? value : '';
+        barBg.appendChild(bar);
+        row.appendChild(label);
+        row.appendChild(barBg);
+        row.appendChild(count);
+        rows.appendChild(row);
     });
 }
 
 // ───────────────────────────
-// 7. Drag-and-Drop (Sortable)
+// 12. Heatmap (E)
 // ───────────────────────────
 
-function initSortable() {
-    // 앨범 뱅크: 클론 드래그 (원본 유지)
-    document.querySelectorAll('.band-content').forEach(container => {
-        new Sortable(container, {
-            group: { name: 'shared', pull: 'clone', put: false },
-            animation: 150,
-            sort: false,
-            delay: 300,
-            delayOnTouchOnly: true,
-        });
+function renderHeatmap() {
+    const grid = document.getElementById('heatmap-grid');
+    const matrix = C.computeHeatmap(dedupedByBand, ranks);
 
-        // 모바일 long press → 랭크 셀렉터 말풍선
-        container.querySelectorAll('.bank-item').forEach(item => {
-            attachLongPress(item);
-        });
-    });
-
-    // 티어 드롭존: 드래그 받기 + 정렬
-    document.querySelectorAll('.drop-zone').forEach(zone => {
-        new Sortable(zone, {
-            group: 'shared',
-            animation: 150,
-            delay: 300,
-            delayOnTouchOnly: true,
-            onAdd(e) {
-                const item       = e.item;
-                const targetZone = e.to;
-                const json       = item.getAttribute('data-json');
-
-                // ── 중복 감지 ──────────────────────────────────────────
-                // 모든 drop-zone에서 동일한 data-json을 가진 기존 아이템 탐색
-                const duplicate = Array.from(
-                    document.querySelectorAll('.drop-zone > *')
-                ).find(el => el !== item && el.getAttribute('data-json') === json);
-
-                if (duplicate) {
-                    const duplicateZone = duplicate.closest('.drop-zone');
-
-                    if (duplicateZone === targetZone) {
-                        // 같은 랭크에 이미 존재 → 새로 드래그한 것만 제거
-                        item.remove();
-                    } else {
-                        // 다른 랭크에 존재 → 기존 아이템을 새 랭크로 이동 후 새 것 제거
-                        targetZone.appendChild(duplicate);
-                        item.remove();
-                    }
-                    updateHeatmap();
-                    return;
-                }
-                // ───────────────────────────────────────────────────────
-
-                item.classList.add('tier-item');
-                item.dataset.band = JSON.parse(json).band || '';
-
-                // 삭제 버튼 (중복 방지)
-                if (!item.querySelector('.del-btn')) {
-                    const delBtn     = document.createElement('div');
-                    delBtn.className = 'del-btn';
-                    delBtn.innerText = '✕';
-                    delBtn.onclick   = () => { item.remove(); updateHeatmap(); };
-                    item.appendChild(delBtn);
-                }
-
-                // 이미지 경로 보정
-                const img = item.querySelector('img');
-                if (img) img.src = fixPath(img.getAttribute('src') || img.getAttribute('data-src'));
-
-                updateHeatmap();
-            },
-            onRemove: updateHeatmap,
-            onSort:   updateHeatmap,
-        });
-    });
-}
-
-// ───────────────────────────
-// 8. Export (PNG)
-// ───────────────────────────
-
-/**
- * 캡처 전용 히트맵 미러를 #heatmap-capture-grid에 동기화.
- * 실제 히트맵(.heatmap-cell)의 색상/텍스트를 그대로 복사한다.
- */
-function syncHeatmapForCapture() {
-    const grid = document.getElementById('heatmap-capture-grid');
-    if (!grid) return;
-
-    // 헤더 행 구성: bandButtons에서 직접 아이콘 경로 추출
-    const bandButtons = Array.from(document.querySelectorAll('.band-btn'));
-
-    // 실제 히트맵 행 수집 (.heatmap-row[data-tier] 로 변경)
-    const rows = Array.from(document.querySelectorAll('.heatmap-row[data-tier]'));
-
-    // grid 스타일: tier열 + band열
-    grid.style.display            = 'grid';
-    grid.style.gridTemplateColumns = `48px repeat(${bandButtons.length}, 1fr)`;
-    grid.style.gap                = '3px';
+    let globalMax = 1;
+    bands.forEach(b => C.TIERS.forEach(t => {
+        if (matrix[b][t.key] > globalMax) globalMax = matrix[b][t.key];
+    }));
 
     grid.innerHTML = '';
 
-    // 헤더 행: 빈 Tier 셀 + 밴드 아이콘
-    const tierHead = document.createElement('div');
-    tierHead.textContent  = 'Tier';
-    tierHead.style.cssText = 'font-size:0.7rem;font-weight:700;color:#aaa;display:flex;align-items:center;justify-content:center;';
-    grid.appendChild(tierHead);
-
-    bandButtons.forEach(btn => {
-        const cell = document.createElement('div');
-        cell.style.cssText = 'display:flex;align-items:center;justify-content:center;padding:2px;';
-
-        const icon = document.createElement('img');
-        icon.src    = `./assets/icon/${btn.dataset.band}.png`;
-        icon.alt    = btn.dataset.band || '';
-        icon.style.cssText = 'width:24px;height:24px;object-fit:contain;';
-        cell.appendChild(icon);
-        grid.appendChild(cell);
+    // 헤더: 빈칸 + 티어 라벨
+    const corner = document.createElement('div');
+    corner.className = 'hm-head';
+    grid.appendChild(corner);
+    C.TIERS.forEach(t => {
+        const h = document.createElement('div');
+        h.className = 'hm-head';
+        h.style.color = t.color;
+        h.textContent = t.label;
+        grid.appendChild(h);
     });
 
-    // 데이터 행: 실제 .heatmap-cell에서 색상 복사
-    rows.forEach(row => {
-        const tier      = row.dataset.tier;
-        const tierLabel = row.querySelector('.heatmap-tier-label'); // .histogram-cell → .heatmap-tier-label
-        const cells     = Array.from(row.querySelectorAll('.heatmap-cell'));
+    // 밴드 행
+    bands.forEach(b => {
+        const bandCell = document.createElement('div');
+        bandCell.className = 'hm-band';
+        bandCell.title = bandDisplay(b);
+        const icon = document.createElement('img');
+        icon.src = bandIcon(b);
+        icon.alt = bandDisplay(b);
+        icon.className = 'hm-band-icon';
+        icon.onerror = () => { bandCell.textContent = bandDisplay(b).slice(0, 4); };
+        bandCell.appendChild(icon);
+        grid.appendChild(bandCell);
 
-        // 티어 라벨
-        const labelCell = document.createElement('div');
-        labelCell.textContent  = tier;
-        labelCell.style.cssText = `
-            background: ${tierLabel ? tierLabel.style.background : '#eee'};
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            min-height: 28px;
-        `;
-        grid.appendChild(labelCell);
-
-        // 히트맵 데이터 셀
-        cells.forEach(src => {
-            const dst = document.createElement('div');
-            dst.style.cssText = `
-                background-color: ${src.style.backgroundColor || '#ffffff'};
-                color: ${src.style.color || 'transparent'};
-                font-size: 0.75rem;
-                font-weight: 700;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 4px;
-                min-height: 28px;
-            `;
-            dst.textContent = src.innerText;
-            grid.appendChild(dst);
+        C.TIERS.forEach(t => {
+            const n = matrix[b][t.key];
+            const cell = document.createElement('div');
+            cell.className = 'hm-cell';
+            cell.textContent = n > 0 ? n : '';
+            if (n > 0) {
+                const alpha = 0.18 + 0.82 * (n / globalMax);
+                cell.style.background = hexToRgba(t.color, alpha);
+                cell.style.color = alpha > 0.55 ? '#0e0e14' : t.color;
+            }
+            grid.appendChild(cell);
         });
     });
 }
 
-async function exportTier() {
-    const area    = document.getElementById('export-capture-area');
-    const wrapper = document.getElementById('tier-wrapper');
+// ───────────────────────────
+// 13. Progress / Stat chips
+// ───────────────────────────
 
-    const isPC       = window.innerWidth >= 1024;
-    // PC: 550px 고정, 모바일: 화면 가로폭 그대로
-    const captureW   = isPC ? 550 : window.innerWidth;
+function renderProgress() {
+    const { ranked, total } = C.countRanked(allSongs, ranks);
+    document.getElementById('progress-text').textContent = `${ranked} / ${total}곡 평가됨`;
+    const pct = total ? (ranked / total * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+}
 
-    wrapper.classList.add('expanded');
-    document.body.classList.add('capturing');
+function renderStatChips() {
+    const counts = C.computeHistogram(allSongs, ranks);
+    const { ranked, total } = C.countRanked(allSongs, ranks);
+    const el = document.getElementById('stat-chips');
+    el.innerHTML = '';
 
-    // ── 캡처 대상 영역을 captureW에 고정 ──────────────────────────
-    const prevWidth      = area.style.width;
-    const prevMinWidth   = area.style.minWidth;
-    const prevMaxWidth   = area.style.maxWidth;
-    const prevOverflow   = area.style.overflow;
-    const prevHeight     = area.style.height;
-    const prevPosition   = area.style.position;
+    C.TIERS.forEach(t => {
+        const chip = document.createElement('div');
+        chip.className = 'stat-chip';
+        chip.innerHTML =
+            `<span class="stat-dot" style="background:${t.color}"></span>${t.label} ${counts[t.key]}곡`;
+        el.appendChild(chip);
+    });
 
-    area.style.width     = captureW + 'px';
-    area.style.minWidth  = captureW + 'px';
-    area.style.maxWidth  = captureW + 'px';
-    area.style.overflow  = 'visible';
-    area.style.height    = 'auto';
-    // 모바일에서 레이아웃 흐름 유지하면서 너비 강제 적용
-    if (!isPC) {
-        area.style.position = 'relative';
+    const un = document.createElement('div');
+    un.className = 'stat-chip stat-chip-muted';
+    un.textContent = `미평가 ${total - ranked}곡`;
+    el.appendChild(un);
+}
+
+// ───────────────────────────
+// 14. Share: 링크 복사 / Download
+// ───────────────────────────
+
+function copyLinks() {
+    const text = C.buildShareLinks(viewSongs());
+    const btn = document.getElementById('copy-btn');
+    const done = (ok) => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = ok ? '✓ 복사됨' : '복사 실패';
+        setTimeout(() => { btn.innerHTML = orig; }, 1500);
+    };
+    if (!text) { done(false); return; }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => done(true)).catch(() => fallbackCopy(text, done));
+    } else {
+        fallbackCopy(text, done);
     }
-    // ──────────────────────────────────────────────────────────────
+}
 
-    // drop-zone 스크롤 초기화 + overflow 해제로 잘림 방지
-    area.querySelectorAll('.drop-zone').forEach(z => {
-        z.scrollTop        = 0;
-        z.style.overflow   = 'visible';
-        z.style.maxHeight  = 'none';
-    });
+function fallbackCopy(text, done) {
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        done(ok);
+    } catch (_) {
+        done(false);
+    }
+}
 
-    // tier-table의 각 tier-row도 높이 제한 해제
-    area.querySelectorAll('.tier-row').forEach(r => {
-        r.style.minHeight = 'unset';
-    });
+/** Download: 전 밴드 히스토그램 + 히트맵을 오프스크린에 합성 후 PNG 캡처 */
+function exportRanking() {
+    const area = document.getElementById('capture-area');
+    area.innerHTML = '';
+    area.appendChild(buildCaptureDOM());
 
-    // 히트맵 미러 동기화
-    syncHeatmapForCapture();
-
-    await new Promise(r => setTimeout(r, 600));
-
-    // ── 캡처 높이: 티어리스트 + 히트맵까지만, 빈 여백 제외 ────────
-    // #heatmap-capture의 bottom을 기준으로 area 상단으로부터의 실제 높이를 계산
-    const heatmapCapture = document.getElementById('heatmap-capture');
-    const areaRect       = area.getBoundingClientRect();
-    const heatmapRect    = heatmapCapture
-        ? heatmapCapture.getBoundingClientRect()
-        : null;
-    // heatmap-capture가 없으면 tier-capture-area 바닥까지
-    const tierCapture    = document.getElementById('tier-capture-area');
-    const tierRect       = tierCapture ? tierCapture.getBoundingClientRect() : null;
-    const bottomEl       = heatmapCapture || tierCapture;
-    const bottomRect     = bottomEl ? bottomEl.getBoundingClientRect() : areaRect;
-    const captureH       = Math.ceil(bottomRect.bottom - areaRect.top);
-    // ────────────────────────────────────────────────────────────────
-
-    domtoimage.toPng(area, {
-        bgcolor : '#ffffff',
-        width   : captureW,
-        height  : captureH,
-        style   : {
-            overflow : 'visible',
-        },
-    })
+    const node = area.firstChild;
+    if (!window.domtoimage) {
+        alert('이미지 라이브러리 로드 실패. 잠시 후 다시 시도해 주세요.');
+        return;
+    }
+    domtoimage.toPng(node, { bgcolor: '#0e0e14', width: node.offsetWidth, height: node.offsetHeight })
         .then(dataUrl => {
-            const link    = document.createElement('a');
-            link.download = `tier-${Date.now()}.png`;
-            link.href     = dataUrl;
+            const link = document.createElement('a');
+            link.download = `bandori-ranking-${Date.now()}.png`;
+            link.href = dataUrl;
             link.click();
         })
-        .finally(() => {
-            // 모든 인라인 스타일 복원
-            area.style.width     = prevWidth;
-            area.style.minWidth  = prevMinWidth;
-            area.style.maxWidth  = prevMaxWidth;
-            area.style.overflow  = prevOverflow;
-            area.style.height    = prevHeight;
-            area.style.position  = prevPosition;
+        .catch(() => alert('이미지 생성에 실패했어요.'))
+        .finally(() => { area.innerHTML = ''; });
+}
 
-            area.querySelectorAll('.drop-zone').forEach(z => {
-                z.style.overflow  = '';
-                z.style.maxHeight = '';
-            });
-            area.querySelectorAll('.tier-row').forEach(r => {
-                r.style.minHeight = '';
-            });
+function buildCaptureDOM() {
+    const matrix = C.computeHeatmap(dedupedByBand, ranks);
+    const root = document.createElement('div');
+    root.style.cssText =
+        'width:760px;padding:24px;background:#0e0e14;color:#e8e8f0;font-family:Inter,sans-serif;box-sizing:border-box;';
 
-            document.body.classList.remove('capturing');
-            wrapper.classList.remove('expanded');
+    const title = document.createElement('div');
+    const { ranked, total } = C.countRanked(allSongs, ranks);
+    title.style.cssText = 'font-size:20px;font-weight:800;margin-bottom:4px;color:#ff6b9d;';
+    title.textContent = 'BanG Dream! Song Sorter';
+    root.appendChild(title);
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:12px;color:#7a7a9a;margin-bottom:18px;';
+    sub.textContent = `${ranked} / ${total}곡 평가됨`;
+    root.appendChild(sub);
+
+    // 밴드별 히스토그램 (2열)
+    const histGrid = document.createElement('div');
+    histGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:22px;';
+    bands.forEach(b => {
+        const counts = matrix[b];
+        const max = Math.max(1, ...C.TIERS.map(t => counts[t.key]));
+        const block = document.createElement('div');
+
+        const name = document.createElement('div');
+        name.style.cssText = 'font-size:12px;font-weight:700;color:#c084fc;margin-bottom:6px;';
+        name.textContent = bandDisplay(b);
+        block.appendChild(name);
+
+        C.TIERS.forEach(t => {
+            const n = counts[t.key];
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:3px;';
+            row.innerHTML =
+                `<span style="font-size:10px;width:26px;color:${t.color};font-weight:700;">${t.label}</span>` +
+                `<div style="flex:1;height:12px;background:#1e1e2a;border-radius:3px;overflow:hidden;">` +
+                `<div style="height:100%;width:${n / max * 100}%;background:${t.color};border-radius:3px;"></div></div>` +
+                `<span style="font-size:10px;width:14px;text-align:right;color:#7a7a9a;">${n}</span>`;
+            block.appendChild(row);
         });
+        histGrid.appendChild(block);
+    });
+    root.appendChild(histGrid);
+
+    // 히트맵
+    let globalMax = 1;
+    bands.forEach(b => C.TIERS.forEach(t => { if (matrix[b][t.key] > globalMax) globalMax = matrix[b][t.key]; }));
+
+    const hmTitle = document.createElement('div');
+    hmTitle.style.cssText = 'font-size:13px;font-weight:700;color:#ff6b9d;margin-bottom:8px;';
+    hmTitle.textContent = '전체 밴드 히트맵';
+    root.appendChild(hmTitle);
+
+    const hm = document.createElement('div');
+    hm.style.cssText = 'display:grid;grid-template-columns:90px repeat(5,1fr);gap:3px;';
+    const head = ['', ...C.TIERS.map(t => t.label)];
+    head.forEach((h, i) => {
+        const c = document.createElement('div');
+        c.style.cssText = `font-size:10px;font-weight:700;text-align:center;padding:2px;color:${i === 0 ? '#7a7a9a' : C.TIERS[i - 1].color};`;
+        c.textContent = h;
+        hm.appendChild(c);
+    });
+    bands.forEach(b => {
+        const nameCell = document.createElement('div');
+        nameCell.style.cssText = 'font-size:10px;color:#7a7a9a;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
+        nameCell.textContent = bandDisplay(b);
+        hm.appendChild(nameCell);
+        C.TIERS.forEach(t => {
+            const n = matrix[b][t.key];
+            const cell = document.createElement('div');
+            const alpha = n > 0 ? 0.18 + 0.82 * (n / globalMax) : 0;
+            cell.style.cssText =
+                `height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;` +
+                `background:${n > 0 ? hexToRgba(t.color, alpha) : '#1e1e2a'};color:${alpha > 0.55 ? '#0e0e14' : t.color};`;
+            cell.textContent = n > 0 ? n : '';
+            hm.appendChild(cell);
+        });
+    });
+    root.appendChild(hm);
+
+    return root;
 }
 
 // ───────────────────────────
-// 9. Initialisation
+// 15. Tabs / Reset
 // ───────────────────────────
 
-/**
- * PC 전용: drop-zone 실제 너비를 CSS 변수 --tier-zone-w 로 주입.
- * clamp() 계산의 기준값으로 사용되어 tier-item 크기가 컨테이너에 맞게 유동 조절됨.
- */
-function updateTierZoneVar() {
-    if (window.innerWidth < 1024) return;
-    const zone = document.querySelector('#tier-capture-area .drop-zone');
-    if (!zone) return;
-    const w = zone.clientWidth;
-    document.documentElement.style.setProperty('--tier-zone-w', `${w}px`);
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.getElementById('hist-panel').classList.toggle('active', tab === 'hist');
+    document.getElementById('heat-panel').classList.toggle('active', tab === 'heat');
 }
+
+function resetRanks() {
+    if (!Object.keys(ranks).length) return;
+    if (!confirm('모든 랭크를 초기화할까요? 되돌릴 수 없어요.')) return;
+    ranks = {};
+    saveRanks();
+    refreshAll();
+}
+
+// ───────────────────────────
+// 16. Refresh aggregate views
+// ───────────────────────────
+
+function refreshAll() {
+    renderSongList();
+    renderHistogram();
+    renderHeatmap();
+    renderProgress();
+    renderStatChips();
+}
+
+// ───────────────────────────
+// 17. Init
+// ───────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    // lazy-load 이미지 경로 보정
-    document.querySelectorAll('.lazy-load').forEach(img => {
-        img.src = fixPath(img.getAttribute('data-src'));
+    initData();
+    renderBandSelector();
+    renderFilterPills();
+    renderRankButtons();
+    selectBand('ALL');     // 리스트 + 히스토그램 렌더 포함
+    renderHeatmap();
+    renderProgress();
+    renderStatChips();
+    switchTab('hist');     // 초기 탭 활성화(패널 표시)
+    initPressHandlers();
+
+    document.getElementById('copy-btn').addEventListener('click', copyLinks);
+    document.getElementById('download-btn').addEventListener('click', exportRanking);
+    document.getElementById('reset-btn').addEventListener('click', resetRanks);
+    document.getElementById('popup-cancel').addEventListener('click', closePopup);
+    document.getElementById('popup').addEventListener('click', e => {
+        if (e.target.id === 'popup') closePopup();
     });
+    document.querySelectorAll('.tab-btn').forEach(b =>
+        b.addEventListener('click', () => switchTab(b.dataset.tab)));
 
-    initSortable();
-    updateHeatmap();
-    updateTierZoneVar();
-
-    // tier-wrapper 너비 변화(expanded 토글 등) 감지
-    const tierWrapper = document.getElementById('tier-wrapper');
-    if (tierWrapper && window.ResizeObserver) {
-        new ResizeObserver(updateTierZoneVar).observe(tierWrapper);
-    }
-    window.addEventListener('resize', () => {
-        updateTierZoneVar();
-        updateHeatmap(); // 화면 크기 변경 시 히트맵 열 수도 재계산
-    });
-
-    // YouTube IFrame API가 script.js 로드 전에 이미 준비된 경우 직접 초기화
-    // (모바일에서 타이밍 역전 방지)
-    if (window.YT && window.YT.Player) {
-        initYouTubePlayer();
-    }
+    // 이미 YT API가 준비된 경우 직접 초기화 (타이밍 역전 방지)
+    if (window.YT && window.YT.Player) initYouTubePlayer();
 });

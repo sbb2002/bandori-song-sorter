@@ -1,0 +1,9 @@
+{
+  "name": "bandori-song-sorter",
+  "version": "2.0.0",
+  "description": "BanG Dream! 곡 단위 소팅 웹앱 — 순수 로직 단위 테스트",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}

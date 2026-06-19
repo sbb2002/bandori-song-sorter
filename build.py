@@ -1,40 +1,62 @@
 import yaml
 import os
+import json
 from jinja2 import Environment, FileSystemLoader
 
+
 def build():
+    """data/*.yaml(앨범 단위)를 곡 단위로 평탄화하여 index.html을 생성한다.
+
+    - 앨범의 tracks를 곡 리스트로 펼친다. 중복 제거는 클라이언트(core.js)가 담당.
+    - 밴드 순서는 파일명 정렬 기준 첫 등장 순서를 따른다.
+    - window.SONG_DATA = { bands: [...], songsByBand: {band: [{title,url,album,img}]} }
+    """
     yaml_dir = "data"
     template_dir = "templates"
-    output_dir = "." 
+    output_dir = "."
 
-    albums_by_band = {}
-    
     if not os.path.exists(yaml_dir):
         print(f"Error: {yaml_dir} 폴더를 찾을 수 없습니다.")
         return
 
-    for filename in os.listdir(yaml_dir):
-        if filename.endswith('.yaml'):
-            yaml_path = os.path.join(yaml_dir, filename)
-            with open(yaml_path, 'r', encoding='utf-8') as f:
-                content = yaml.safe_load(f)
-                if not content: continue
-                
-                album_list = content if isinstance(content, list) else [content]
-                
-                for album in album_list:
-                    band_name = album.get('band', 'Others')
-                    if band_name not in albums_by_band:
-                        albums_by_band[band_name] = []
-                    
-                    if 'img_url' in album:
-                        album['img_url'] = album['img_url'].replace('\\', '/')
-                        
-                    albums_by_band[band_name].append(album)
+    bands = []                 # 첫 등장 순서 보존
+    songs_by_band = {}
 
-    if not albums_by_band:
-        print("Error: YAML 파일에서 앨범 데이터를 찾을 수 없습니다.")
+    for filename in sorted(os.listdir(yaml_dir)):
+        if not filename.endswith('.yaml'):
+            continue
+
+        yaml_path = os.path.join(yaml_dir, filename)
+        with open(yaml_path, 'r', encoding='utf-8') as f:
+            content = yaml.safe_load(f)
+        if not content:
+            continue
+
+        album_list = content if isinstance(content, list) else [content]
+
+        for album in album_list:
+            band = album.get('band', 'Others')
+            album_title = album.get('album_title', '')
+            img_url = (album.get('img_url') or '').replace('\\', '/')
+
+            if band not in songs_by_band:
+                songs_by_band[band] = []
+                bands.append(band)
+
+            for track in (album.get('tracks') or []):
+                songs_by_band[band].append({
+                    'band':  band,
+                    'title': track.get('name', ''),
+                    'url':   track.get('url') or '',
+                    'album': album_title,
+                    'img':   img_url,
+                })
+
+    if not bands:
+        print("Error: YAML 파일에서 곡 데이터를 찾을 수 없습니다.")
         return
+
+    song_data = {'bands': bands, 'songsByBand': songs_by_band}
 
     env = Environment(loader=FileSystemLoader(template_dir))
     try:
@@ -44,20 +66,27 @@ def build():
         return
 
     static_paths = {
-        "css": "./static/css/style.css",
-        "js": "./static/js/script.js"
+        "css":  "./static/css/style.css",
+        "core": "./static/js/core.js",
+        "js":   "./static/js/script.js",
     }
 
+    # <script> 안에 안전하게 주입: '<'만 이스케이프해도 </script> 브레이크아웃 방지.
+    # (구조적 JSON에는 '<'가 없고 문자열 값 내부에서만 등장 → 유효 JSON 유지)
+    song_data_json = json.dumps(song_data, ensure_ascii=False).replace('<', '\\u003c')
+
     rendered_html = template.render(
-        albums_by_band=albums_by_band,
-        static_paths=static_paths
+        song_data_json=song_data_json,
+        static_paths=static_paths,
     )
 
     output_path = os.path.join(output_dir, 'index.html')
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(rendered_html)
 
-    print(f"✅ Build Success: index.html이 생성되었습니다.")
+    total = sum(len(v) for v in songs_by_band.values())
+    print(f"[OK] Build Success: index.html 생성 완료 (밴드 {len(bands)}개, 곡 {total}개)")
+
 
 if __name__ == "__main__":
     build()

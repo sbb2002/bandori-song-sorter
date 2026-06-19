@@ -1,1161 +1,666 @@
 /* ===========================
-   BanG Dream! Album Sorter
-   style.css
-   
-   구조:
-   1. CSS Variables
-   2. Base
-   3. [공통] Layout
-   4. [공통] Tier Sidebar & Table
-   5. [공통] Tier Items
-   6. [공통] Control Panel
-   7. [공통] Preview Display
-   8. [공통] Band Navigation
-   9. [공통] Album Bank
-   10. [공통] Heatmap
-   11. [공통] Video Panel
-   12. [공통] Disclaimer
-   13. [공통] Save Button
-   14. [공통] Export / Capture
-   15. [공통] Animations
-   16. [공통] 환경별 전용 요소 기본 숨김
-   17. [PC 전용]
-   18. [모바일 전용]
-=========================== */
+   BanG Dream! Song Sorter — style.css
 
+   1. Variables / Base
+   2. Header (진행률)
+   3. App Layout (grid)
+   4. A. Band Selector
+   5. B. Song List (+ 필터칩, 프레스 피드백)
+   6. C. YouTube
+   7. D/E. Right Panel (히스토그램 / 히트맵)
+   8. Bottom Bar
+   9. Rank Popup (modal)
+   10. Disclaimer / Capture
+   11. 반응형 (≤1023px)
+=========================== */
 
 /* ===========================
-   1. CSS Variables
+   1. Variables / Base
 =========================== */
-
 :root {
-  --bg:      #0d0d0d;
-  --card-bg: #1a1a1a;
-  --txt:     #eeeeee;
-  --pink:    #ff99aa;
-  --border:  #333333;
+  --bg: #0e0e14;
+  --surface: #16161f;
+  --surface2: #1e1e2a;
+  --border: #2a2a3a;
+  --text: #e8e8f0;
+  --text-sub: #7a7a9a;
+  --accent: #c084fc;
+  --header-h: 52px;
+
+  --tier-1: #ff6b9d;
+  --tier-2: #ff9f6b;
+  --tier-3: #ffd06b;
+  --tier-4: #6bcfff;
+  --tier-5: #9d9dbd;
 }
 
-
-/* ===========================
-   2. Base
-=========================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Pretendard', -apple-system, sans-serif;
   background: var(--bg);
-  color: var(--txt);
-  margin: 0;
-  display: flex;
-  overflow: hidden;
-  height: 100vh;
-  padding-bottom: 0;
-}
-
-
-/* ===========================
-   3. [공통] Layout
-=========================== */
-
-.main-container {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-}
-
-.control-panel {
-  flex: 1;
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ===========================
+   2. Header
+=========================== */
+header {
+  display: flex;
+  align-items: center;
   gap: 12px;
-  padding: 15px;
-  background: var(--bg);
-  overflow-y: auto;
-}
-
-
-/* ===========================
-   4. [공통] Tier Sidebar & Table
-=========================== */
-
-#tier-wrapper {
-  background: #ffffff;
+  padding: 0 20px;
+  height: var(--header-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.tier-table {
-  border: none;
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-}
-
-.tier-row {
-  display: flex;
-  border-bottom: 1px solid #eee;
-  flex: 1;
-}
-
-.tier-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  font-weight: 900;
-  flex-shrink: 0;
-}
-
-.drop-zone {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px;
-  align-content: flex-start;
-  overflow-y: auto;
-}
-
-.drop-zone::-webkit-scrollbar {
-  width: 6px;
-}
-
-.drop-zone::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 999px;
-}
-
-.disclaimer {
-  padding: 16px;
-  color: #555;
-  font-size: 0.65rem;
-  line-height: 1.6;
-  background: #f9f9f9;
-  border-top: 1px solid #eee;
-}
-
-.disclaimer p {
-  margin: 0 0 6px 0;
-}
-
-.disclaimer p:last-child {
-  margin-bottom: 0;
-}
-
-
-/* ===========================
-   5. [공통] Tier Items
-=========================== */
-
-.tier-item {
-  position: relative;
-  cursor: grab;
-}
-
-.tier-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.del-btn {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #ff4444;
-  color: #fff;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 2px solid #fff;
   z-index: 10;
 }
-
-/* Drop zone 내부 아이템 공통 오버라이드 */
-.drop-zone .tier-item,
-.drop-zone .bank-item.tier-item {
-  padding-bottom: 0 !important;
-  aspect-ratio: 1 / 1;   /* 티어 zone 안에서도 정사각형 유지 */
-  border-radius: 10px;
-  box-shadow: none;
-  transform: none;
-}
-
-.drop-zone .tier-item img,
-.drop-zone .bank-item.tier-item img {
-  position: relative !important;
-  inset: auto !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.drop-zone .tier-item .del-btn,
-.drop-zone .bank-item.tier-item .del-btn {
-  top: 2px;
-  right: 2px;
-  width: 16px;
-  height: 16px;
-  font-size: 10px;
-}
-
-
-/* ===========================
-   6. [공통] Control Panel
-=========================== */
-
-#tier-wrapper.expanded ~ .control-panel {
-  display: none;
-}
-
-
-/* ===========================
-   7. [공통] Preview Display
-=========================== */
-
-#preview-display {
-  background: var(--card-bg);
-  padding: 18px;
-  border-radius: 14px;
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  border: 1px solid var(--border);
-}
-
-/* LP Disc / Cover */
-.preview-cover {
-  position: relative;
-  width: 110px;
-  min-width: 110px;
-  height: 110px;
-}
-
-.lp-disc {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 255, 255, 0.12),
-    rgba(255, 255, 255, 0.04) 38%,
-    rgba(0, 0, 0, 0.2) 55%,
-    rgba(0, 0, 0, 0.5) 100%
-  );
-  box-shadow:
-    inset 0 0 0 4px  rgba(255, 255, 255, 0.05),
-    inset 0 0 0 10px rgba(255, 255, 255, 0.02);
-}
-
-.lp-disc::before {
-  content: '';
-  position: absolute;
-  inset: 22%;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.25);
-}
-
-.lp-disc::after {
-  content: '';
-  position: absolute;
-  inset: 44%;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.lp-disc.playing {
-  animation: spin 2.5s linear infinite;
-}
-
-#p-img {
-  position: relative;
-  width: 110px;
-  height: 110px;
-  object-fit: cover;
-  border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-  z-index: 2;
-}
-
-/* Preview Body */
-.preview-body {
-  display: flex;
-  flex: 1;
-  gap: 16px;
-  min-width: 0;
-}
-
-.preview-info {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  min-width: 0;
-}
-
-.preview-info .preview-title {
-  font-size: 1rem;
+.logo-emoji { font-size: 1.2rem; }
+header h1 {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 1.1rem;
   font-weight: 800;
-  margin-bottom: 8px;
-  color: #fff;
+  background: linear-gradient(135deg, #c084fc, #ff6b9d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.02em;
 }
-
-#t-info {
-  font-size: 13px;
-  color: #ccc;
+.header-progress {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--text-sub);
+}
+.progress-bar {
+  width: 120px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
   overflow: hidden;
 }
-
-/* Track List */
-.track-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  padding-right: 4px;
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #c084fc, #ff6b9d);
+  border-radius: 2px;
+  transition: width 0.4s ease;
 }
-
-.track-list::-webkit-scrollbar { width: 8px; }
-
-.track-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-}
-
-.track-item {
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.track-item.playable {
-  color: #fff;
-  cursor: pointer;
-}
-
-.track-item.playable:hover {
-  background: rgba(255, 153, 170, 0.2);
-  color: var(--pink);
-}
-
-.track-item.disabled {
-  color: #777;
-  cursor: default;
-  background: rgba(255, 255, 255, 0.02);
-}
-
 
 /* ===========================
-   8. [공통] Band Navigation
+   3. App Layout
 =========================== */
-
-.band-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 6px;
+.app {
+  display: grid;
+  grid-template-columns: 56px 1fr 280px;
+  grid-template-rows: 1fr auto;
+  flex: 1 1 auto;
+  min-height: calc(100vh - var(--header-h));
+  overflow: hidden;
 }
+.band-selector { grid-column: 1; grid-row: 1; }
+.center        { grid-column: 2; grid-row: 1; }
+.right-panel   { grid-column: 3; grid-row: 1; }
+.bottom-bar    { grid-column: 1 / 4; grid-row: 2; }
 
+/* ===========================
+   4. A. Band Selector
+=========================== */
+.band-selector {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 6px;
+  overflow-y: auto;
+}
 .band-btn {
-  background: #252525;
-  color: #888;
-  border: 1px solid var(--border);
-  padding: 4px;
-  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: var(--surface2);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  transition: all 0.15s;
+  flex-shrink: 0;
+  overflow: hidden;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
 }
-
-.band-btn.active {
-  background: var(--pink);
-  color: #000;
-  font-weight: bold;
-}
-
+.band-btn:hover { border-color: var(--accent); color: var(--text); }
+.band-btn.active { border-color: var(--tier-1); background: rgba(255,107,157,0.14); }
+.band-btn.all { font-size: 0.6rem; }
+.band-btn.all.active { border-color: var(--accent); color: var(--accent); background: rgba(192,132,252,0.14); }
 .band-btn-icon {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   display: block;
 }
-
+.band-divider { width: 26px; height: 1px; background: var(--border); flex-shrink: 0; }
 
 /* ===========================
-   9. [공통] Album Bank
+   5. B. Song List
 =========================== */
-
-.bank-container {
-  background: var(--card-bg);
-  border-radius: 14px;
-  padding: 14px;
-  flex: 1;
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;   /* flex 자식이 부모를 밀어내지 않도록 */
+.center {
+  display: grid;
+  grid-template-rows: 1fr 220px;
   overflow: hidden;
 }
-
-.band-content {
-  display: none;
+.song-list-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.song-list-header {
+  display: flex;
+  align-items: center;
   gap: 10px;
-  grid-auto-rows: auto;
-  overflow-y: auto;
-  overflow-x: hidden; /* 가로 스크롤 원천 차단 */
-  min-width: 0;
+  padding: 8px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
 }
-
-.band-content.active {
-  display: grid;
-}
-
-.bank-item {
-  position: relative;
-  cursor: pointer;
-  overflow: hidden;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.01);
-  /* aspect-ratio로 항상 정사각형 유지 (padding-bottom trick 대체) */
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  min-width: 0;
-}
-
-.bank-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
-}
-
-.bank-item img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 14px;
-}
-
-
-/* ===========================
-   10. [공통] Heatmap
-=========================== */
-
-.heatmap-card {
-  background: rgba(28, 28, 28, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 16px;
-  margin-top: 10px;
-}
-
-.heatmap-title {
-  font-size: 0.92rem;
+.band-label {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 0.85rem;
   font-weight: 700;
-  margin-bottom: 10px;
-  letter-spacing: 0.08em;
-  color: var(--pink);
-  text-transform: uppercase;
+  color: var(--tier-1);
 }
-
-.heatmap-container {
+.filter-pills {
   display: flex;
-  flex-direction: column;
   gap: 4px;
-  /* overflow-x 제거: JS가 열 수를 정확히 주입하므로 가로 스크롤 불필요 */
-  overflow-x: hidden;
-  min-width: 0;
+  margin-left: auto;
+  flex-wrap: wrap;
 }
-
-.heatmap-row {
-  display: grid;
-  gap: 4px;
-  align-items: center;
-  /* grid-template-columns는 JS의 --heatmap-cols 변수로 주입 (항상 1행 보장) */
-  grid-template-columns: var(--heatmap-cols, auto);
-  min-width: 0;
-}
-
-.heatmap-head {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 6px;
-}
-
-.heatmap-tier-label {
-  min-height: 36px;
-  min-width: 0;        /* 그리드 셀 축소 허용 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  padding: 4px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  transition: background-color 0.3s ease;
-  overflow: hidden;    /* 내용 넘침 방지 */
-}
-
-.heatmap-cell {
-  min-height: 36px;
-  min-width: 0;        /* 그리드 셀 축소 허용 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  background-color: #ffffff;
-  color: transparent;
-  overflow: hidden;
-}
-
-.heatmap-band-icon {
-  /* 셀 폭에 맞게 아이콘을 유동 축소, 최대 32px */
-  width: min(100%, 32px);
-  height: min(100%, 32px);
-  object-fit: contain;
-  flex-shrink: 1;
-}
-
-
-/* ===========================
-   11. [공통] Video Panel
-=========================== */
-
-.video-panel {
-  background: var(--card-bg);
+.pill {
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 600;
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
+  background: transparent;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.pill:hover { color: var(--text); }
+.pill.active { font-weight: 700; }
+.copy-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-sub);
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all 0.12s;
+}
+.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.song-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.song-empty {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--text-sub);
+  font-size: 0.8rem;
+}
+.song-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(42,42,58,0.5);
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+.song-item:hover { background: var(--surface2); }
+.song-item.ranked { border-left-color: var(--row-tier, transparent); }
+
+/* 롱프레스 진행 피드백 (좌→우 채움) */
+.song-item.pressing::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: calc(var(--lp, 0) * 100%);
+  background: rgba(192,132,252,0.16);
+  pointer-events: none;
+}
+.song-num {
+  font-size: 0.65rem;
+  color: var(--text-sub);
+  width: 24px;
+  text-align: right;
   flex-shrink: 0;
 }
-
-.video-panel .video-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--pink);
-}
-
-#youtube-player {
-  width: 100%;
-  border-radius: 14px;
+.song-title {
+  font-size: 0.8rem;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
   overflow: hidden;
-  background: #000;
+  text-overflow: ellipsis;
 }
-
-#youtube-player iframe {
-  width: 100%;
-  height: 100%;
+.song-item.ranked .song-title { color: var(--text); }
+.song-item:not(.ranked) .song-title { color: var(--text-sub); }
+.song-band-tag {
+  font-size: 0.6rem;
+  color: var(--text-sub);
+  background: var(--surface2);
+  padding: 1px 7px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-.video-placeholder {
-  color: #bbb;
+.song-noyt { font-size: 0.7rem; color: var(--border); flex-shrink: 0; }
+.rank-badge {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 18px;
+  font-size: 0.7rem;
 }
-
+.rb-1 { background: rgba(255,107,157,0.2); border: 1px solid var(--tier-1); }
+.rb-2 { background: rgba(255,159,107,0.2); border: 1px solid var(--tier-2); }
+.rb-3 { background: rgba(255,208,107,0.2); border: 1px solid var(--tier-3); }
+.rb-4 { background: rgba(107,207,255,0.2); border: 1px solid var(--tier-4); }
+.rb-5 { background: rgba(157,157,189,0.2); border: 1px solid var(--tier-5); }
+.rb-empty { background: var(--surface2); border: 1px dashed var(--border); }
 
 /* ===========================
-   12. [공통] Disclaimer
+   6. C. YouTube
 =========================== */
-
-.disclaimer {
-  padding: 16px;
-  color: #555;
-  font-size: 0.65rem;
-  line-height: 1.6;
-  background: #f9f9f9;
-  border-top: 1px solid #eee;
+.youtube-panel {
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  overflow: hidden;
 }
-
-.disclaimer p {
-  margin: 0 0 6px 0;
+.yt-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: #000;
 }
-
-.disclaimer p:last-child {
-  margin-bottom: 0;
+#youtube-player, #youtube-player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
 }
-
+.yt-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-sub);
+  background: #000;
+  z-index: 2;
+}
+.yt-placeholder[hidden] { display: none; }
+.yt-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+.yt-label { font-size: 0.75rem; }
+.yt-hint { font-size: 0.65rem; color: var(--border); }
+.yt-now-playing {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.85);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.yt-now-playing[hidden] { display: none; }
+.yt-now-playing.muted { color: var(--text-sub); }
+.yt-now-playing #yt-song-name { overflow: hidden; text-overflow: ellipsis; }
+.yt-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tier-1); animation: pulse 1.5s infinite; flex-shrink: 0; }
+.yt-now-playing.muted .yt-dot { animation: none; background: var(--text-sub); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* ===========================
-   13. [공통] Save Button
+   7. D/E. Right Panel
 =========================== */
-
-.btn-save {
-  display: none;
+.right-panel {
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-
-.btn-save-fixed {
-  display: block;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 16px;
-  background: var(--pink);
-  color: #000;
+.panel-tab {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tab-btn {
+  flex: 1;
+  padding: 9px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  background: transparent;
   border: none;
-  font-weight: bold;
-  font-size: 1rem;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
-  z-index: 200;
-  box-sizing: border-box;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.12s;
+  letter-spacing: 0.03em;
 }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
+.histogram-panel, .heatmap-panel {
+  padding: 14px;
+  flex: 1;
+  overflow-y: auto;
+}
+.heatmap-panel { display: none; }
+.heatmap-panel.active { display: block; }
+.histogram-panel { display: none; }
+.histogram-panel.active { display: block; }
+
+.hist-title, .hm-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-sub);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hist-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.hist-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+.hist-bar-bg {
+  flex: 1;
+  height: 18px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.hist-bar {
+  height: 100%;
+  border-radius: 4px;
+  min-width: 2px;
+  transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.hist-count { font-size: 0.65rem; color: var(--text-sub); width: 18px; text-align: right; flex-shrink: 0; }
+
+.hm-grid { display: grid; grid-template-columns: 36px repeat(5, 1fr); gap: 3px; }
+.hm-head {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-sub);
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hm-band {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  color: var(--text-sub);
+  overflow: hidden;
+}
+.hm-band-icon { width: 22px; height: 22px; object-fit: contain; }
+.hm-cell {
+  height: 22px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.58rem;
+  font-weight: 700;
+  background: var(--surface2);
+  transition: background 0.3s ease;
+}
 
 /* ===========================
-   14. [공통] Export / Capture
+   8. Bottom Bar
 =========================== */
-
-#heatmap-capture {
-  display: none;
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
 }
-
-.capturing #heatmap-capture {
-  display: block;
+.stat-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.68rem;
+  color: var(--text);
 }
-
-.capturing #export-capture-area {
-  overflow: visible !important;
-  height: auto !important;
+.stat-chip-muted { color: var(--text-sub); }
+.stat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.bottom-actions { margin-left: auto; display: flex; gap: 8px; }
+.btn-download, .btn-reset {
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+  border: 1px solid var(--border);
 }
-
-/* 캡처 중: tier-table, tier-row, drop-zone 잘림 방지 */
-.capturing .tier-table {
-  height: auto !important;
-  overflow: visible !important;
-}
-
-.capturing .tier-row {
-  min-height: unset !important;
-  height: auto !important;
-  overflow: visible !important;
-}
-
-.capturing .drop-zone {
-  overflow: visible !important;
-  max-height: none !important;
-  height: auto !important;
-}
-
-.capturing .del-btn {
-  display: none !important;
-}
-
+.btn-download { background: var(--surface2); color: var(--text); }
+.btn-download:hover { border-color: var(--accent); color: var(--accent); }
+.btn-reset { background: transparent; color: var(--text-sub); }
+.btn-reset:hover { border-color: #ff6b6b; color: #ff6b6b; }
 
 /* ===========================
-   15. [공통] Animations
+   9. Rank Popup (modal)
 =========================== */
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
 }
-
+.popup-overlay[hidden] { display: none; }
+.popup-overlay.open { opacity: 1; pointer-events: auto; }
+.popup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  width: min(340px, 92vw);
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.popup-overlay.open .popup { transform: translateY(0) scale(1); }
+.popup-band { font-size: 0.72rem; color: var(--text-sub); margin-bottom: 4px; }
+.popup-title {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  word-break: break-word;
+}
+.rank-buttons { display: flex; gap: 6px; }
+.rank-btn {
+  flex: 1;
+  padding: 10px 4px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+.rank-btn:hover { transform: translateY(-2px); border-color: var(--text-sub); }
+.rank-btn.active { border-color: var(--accent); background: rgba(192,132,252,0.16); }
+.rk-icon { font-size: 1.2rem; }
+.rk-label { font-size: 0.58rem; font-weight: 700; font-family: 'M PLUS Rounded 1c', sans-serif; }
+.popup-cancel {
+  margin-top: 14px;
+  width: 100%;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-sub);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.popup-cancel:hover { background: var(--surface2); }
 
 /* ===========================
-   16. [공통] 환경별 전용 요소 기본 숨김
-   - 모바일 전용 요소: 기본 display:none → 모바일 미디어 쿼리에서 활성화
-   - PC 전용 요소:    기본 display:none → PC 미디어 쿼리에서 활성화
+   10. Disclaimer / Capture
 =========================== */
-
-/* 모바일 전용 — 기본 숨김 */
-#tier-header,
-#tier-label-bar,
-.tier-label-chip,
-#toggle-btn,
-.disclaimer-mobile {
-  display: none;
+.disclaimer {
+  flex-shrink: 0;
+  padding: 12px 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  color: #55556a;
+  font-size: 0.6rem;
+  line-height: 1.6;
 }
+.disclaimer p { margin: 0 0 4px 0; }
+.disclaimer p:last-child { margin-bottom: 0; }
 
-/* PC 전용 — 기본 숨김 */
-.disclaimer-pc {
-  display: none;
+/* Download 캡처용 오프스크린 (레이아웃 유지, 화면 밖) */
+#capture-area {
+  position: fixed;
+  left: -99999px;
+  top: 0;
+  pointer-events: none;
 }
-
-/*
- * #tier-popup-overlay, #tier-popup, .tier-popup-btn 은
- * JS가 동적으로 display를 제어하므로 CSS 기본 숨김 대신
- * PC 미디어 쿼리에서 display:none 으로 명시 처리함 (아래 17번 섹션 참고)
- */
-
 
 /* ===========================
-   17. [PC 전용] ≥ 1024px
+   11. 반응형 (≤1023px)
 =========================== */
-
-@media (min-width: 1024px) {
-
-  /* Layout */
-  .main-container {
-    padding-bottom: 80px;
-  }
-
-  /* Tier Wrapper */
-  #tier-wrapper {
-    width: 550px;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  #tier-wrapper.expanded {
-    width: 100vw;
-  }
-
-  /* Tier label 크기 */
-  .tier-label {
-    width: 80px;
-    font-size: 1.2rem;
-  }
-
-  /* Drop zone — 아이템이 늘어나면 행이 자동 확장, 겹침 없음 */
-  .drop-zone {
-    /* max-height 제거: 내용물 기준으로 높이 자동 결정 */
-    overflow-y: visible;
-    overflow-x: hidden;
-  }
-
-  #tier-wrapper:not(.expanded) .drop-zone {
-    display: flex;
-  }
-
-  /*
-   * Tier item 크기: 사이드바(550px) - 티어라벨(80px) - 패딩/갭 내에서
-   * 한 행에 약 6개씩 들어가도록 vw 클램프 적용.
-   * calc((550px - 80px - 8px*2 - 6px*5) / 6) ≈ 67px
-   * 화면이 좁아져도 최소 44px, 최대 80px
-   */
-  .tier-item {
-    width: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px);
-    height: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px);
-  }
-
-  .drop-zone .tier-item,
-  .drop-zone .bank-item.tier-item {
-    width: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px) !important;
-    height: clamp(44px, calc((var(--tier-zone-w, 470px) - 6px * 5) / 6), 80px) !important;
-  }
-
-  /* Tier row 높이: 아이템 1줄 + 여유, 2줄 이상이면 자동 늘어남 */
-  .tier-row {
-    min-height: 80px;
-  }
-
-  /* Export capture area */
-  #export-capture-area {
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  /* Preview */
-  #preview-display {
-    min-height: 320px;
-  }
-
-  #t-info {
-    min-height: 240px;
-  }
-
-  /* Track list */
-  .track-list {
-    max-height: 240px;
-  }
-
-  /* Video panel */
-  .video-panel {
-    min-height: 200px;
-    width: 420px;
-    max-width: 45vw;
-  }
-
-  #youtube-player {
-    min-height: 120px;
-  }
-
-  .video-placeholder {
-    min-height: 240px;
-  }
-
-  /* Album bank */
-  .bank-container {
-    min-height: 240px;
-  }
-
-  /* auto-fill + 1fr: 컨테이너 너비에 따라 열 수·크기가 자동 결정 */
-  .band-content {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    overflow-x: hidden;
-  }
-
-  /* aspect-ratio로 정사각형 유지 — 미디어 쿼리 내에서는 공통 선언 보강만 */
-  .bank-item {
-    width: 100%;
-    height: auto; /* aspect-ratio가 높이 결정 */
-  }
-
-  /* Heatmap — grid-template-columns는 JS --heatmap-cols 변수로 주입 */
-  /* PC: 티어 라벨열 폭을 48px로 고정, 나머지는 CSS 변수 처리 */
-
-  /* Disclaimer: PC는 tier-wrapper 하단 */
-  .disclaimer-pc { display: block; }
-
-  /* 모바일 팝업 — PC에서는 JS 동작 자체가 없으나 혹시 렌더링되지 않도록 명시 숨김 */
-  #tier-popup-overlay,
-  #tier-popup,
-  .tier-popup-btn {
-    display: none !important;
-  }
-}
-
-
-/* ===========================
-   17. [모바일 전용] ≤ 1023px
-=========================== */
-
 @media (max-width: 1023px) {
+  body { overflow-x: hidden; }
 
-  /* Base */
-  body {
-    overflow: auto;
-    height: auto;
-  }
-
-  /* Layout: 세로 스택 */
-  .main-container {
+  .app {
+    display: flex;
     flex-direction: column;
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 64px;
-    padding-top: 40px;
-  }
-
-  /* Tier Wrapper */
-  #tier-wrapper {
-    width: 100% !important;
-    height: auto;
-    flex-direction: column;
+    min-height: auto;
     overflow: visible;
-    z-index: auto;
-    transition: none;
-    background: transparent;
   }
 
-  /* 티어 헤더: 상단 고정 라벨 바 */
-  #tier-header {
-    display: flex;
-    align-items: center;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  #tier-label-bar {
-    display: flex;
-    flex: 1;
+  /* A: 밴드 레일 → 상단 가로 스크롤 */
+  .band-selector {
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
     overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
   }
+  .band-divider { width: 1px; height: 24px; }
 
-  #tier-label-bar::-webkit-scrollbar { display: none; }
-
-  .tier-label-chip {
-    min-width: 40px;
-    height: 40px;
+  /* CENTER: 리스트 + 유튜브 세로 */
+  .center {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 0.8rem;
-    color: #000;
-    flex-shrink: 0;
-    border-right: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  /* 모바일 토글 버튼 */
-  #toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: static;
-    transform: none;
-    width: 44px;
-    height: 40px;
-    border-radius: 0;
-    border-left: 1px solid #ddd;
-    background: var(--pink);
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-
-  /* 티어 드롭존 영역: 기본 숨김, expanded 시 표시 */
-  #export-capture-area {
-    display: none;
-  }
-
-  #tier-wrapper.expanded #export-capture-area {
-    display: block;
-  }
-
-  /* Tier table */
-  .tier-table {
-    width: 100%;
-  }
-
-  .tier-row {
-    min-height: 52px;
-  }
-
-  .tier-label {
-    width: 48px;
-    font-size: 0.85rem;
-  }
-
-  .drop-zone {
-    display: flex !important;
-    /* max-height 고정값 제거 → 아이템 수에 따라 자동 확장, 겹침 없음 */
-    overflow-y: visible;
-    overflow-x: hidden;
-  }
-
-  /* Tier item 크기: 모바일 사이드바 전체폭(100vw) - 라벨(48px) - 패딩(16px) 내에서
-   * 한 행에 약 5개씩. clamp로 최소 36px, 최대 56px 제한 */
-  .tier-item {
-    width: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px);
-    height: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px);
-  }
-
-  .drop-zone .tier-item,
-  .drop-zone .bank-item.tier-item {
-    width: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px) !important;
-    height: clamp(36px, calc((100vw - 48px - 16px - 6px * 4) / 5), 56px) !important;
-  }
-
-  /* Control Panel */
-  .control-panel {
-    width: 100%;
-    box-sizing: border-box;
-    overflow-y: visible;
-    padding: 12px;
-    gap: 12px;
-  }
-
-  /* Preview: 세로 스택 */
-  #preview-display {
-    flex-direction: column;
-    min-height: auto;
-  }
-
-  .preview-body {
     flex-direction: column;
   }
+  .youtube-panel { order: -1; } /* 모바일은 유튜브를 리스트 위에 */
+  .yt-stage { height: 200px; flex: none; }
+  .song-list-panel { border-bottom: none; }
+  .song-list { max-height: 60vh; }
 
-  #t-info {
-    overflow: visible;
-    min-height: auto;
+  /* 우측 패널 → 하단 전체폭 */
+  .right-panel {
+    border-left: none;
+    border-top: 1px solid var(--border);
   }
+  .histogram-panel, .heatmap-panel { max-height: none; }
+  .hm-grid { grid-template-columns: 40px repeat(5, 1fr); }
+  .hm-cell, .hm-head { height: 26px; font-size: 0.62rem; }
 
-  .track-list {
-    max-height: 180px;
-    overflow-y: auto;
-  }
-
-  /* Video panel */
-  .video-panel {
-    width: 100%;
-    max-width: 100%;
-    min-height: auto;
-  }
-
-  #youtube-player {
-    min-height: 200px;
-    height: 200px;
-  }
-
-  /* Album bank */
-  .bank-container {
-    min-height: 200px;
-  }
-
-  /* auto-fill + 1fr: 최소 72px, 화면 폭에 따라 자동으로 열 수 결정 */
-  .band-content {
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-    overflow-x: hidden;
-  }
-
-  /* aspect-ratio로 정사각형 유지 */
-  .bank-item {
-    width: 100%;
-    height: auto; /* aspect-ratio가 높이 결정 */
-  }
-
-  /* 모바일 롱프레스 시각 피드백 */
-  .bank-item {
-    -webkit-touch-callout: none;
-    user-select: none;
-    --lp-progress: 0;
-    background-origin: border-box;
-  }
-
-  .bank-item::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 18px;
-    background: conic-gradient(
-      from -90deg,
-      var(--pink) calc(var(--lp-progress, 0) * 360deg),
-      rgba(255, 255, 255, 0.15) calc(var(--lp-progress, 0) * 360deg)
-    );
-    z-index: 3;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-  }
-
-  .bank-item.long-pressing::before {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    border-radius: 12px;
-    background: #000;
-    z-index: 4;
-    pointer-events: none;
-  }
-
-  .bank-item.long-pressing::after {
-    opacity: 1;
-  }
-
-  .bank-item img {
-    z-index: 5;
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-  }
-
-  /* 모바일 팝업 (말풍선) */
-  #tier-popup-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 300;
-    background: transparent;
-  }
-
-  #tier-popup {
-    position: absolute;
-    z-index: 301;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 12px 14px;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-    max-width: 260px;
-  }
-
-  #tier-popup::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: #fff;
-    border-bottom: none;
-    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));
-  }
-
-  #tier-popup.popup-below::after {
-    bottom: auto;
-    top: -10px;
-    border-top: none;
-    border-bottom: 6px solid #fff;
-    border-top-color: transparent;
-  }
-
-  .tier-popup-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 900;
-    font-size: 0.8rem;
-    color: #000;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-  }
-
-  .tier-popup-btn:active {
-    transform: scale(0.92);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Heatmap */
-  .heatmap-card {
-    margin-top: 0;
-    margin-bottom: 8px;
-  }
-
-  .heatmap-row {
-    /* 모바일: JS --heatmap-cols 변수 그대로 사용, gap만 좁힘 */
-    gap: 2px;
-  }
-
-  .heatmap-tier-label,
-  .heatmap-cell {
-    min-height: 24px;
-    padding: 2px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-  }
-
-  /* Disclaimer: 모바일은 control-panel 최하단 */
-  .disclaimer-mobile {
-    display: block;
-    background: #1a1a1a;
-    color: #555;
-    font-size: 0.65rem;
-    border-top: 1px solid #333;
-    margin-bottom: 64px;
-  }
+  /* 하단 바 */
+  .bottom-bar { position: sticky; bottom: 0; z-index: 20; }
+  .bottom-actions { width: 100%; }
+  .bottom-actions button { flex: 1; }
 }

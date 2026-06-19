@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BanG Dream! Song Sorter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0e0e14;
+    --surface: #16161f;
+    --surface2: #1e1e2a;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-sub: #7a7a9a;
+    --accent: #c084fc;
+
+    --tier-1: #ff6b9d;
+    --tier-2: #ff9f6b;
+    --tier-3: #ffd06b;
+    --tier-4: #6bcfff;
+    --tier-5: #9d9dbd;
+
+    --popipa: #ff6b9d;
+    --afterglow: #ff9f6b;
+    --pasupare: #c084fc;
+    --roselia: #6b9dff;
+    --haneoka: #6bcfff;
+    --mygo: #ffd06b;
+    --ave: #ff6bca;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  header h1 {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #c084fc, #ff6b9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.02em;
+  }
+  .header-progress {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.75rem;
+    color: var(--text-sub);
+  }
+  .progress-bar {
+    width: 120px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 34%;
+    background: linear-gradient(90deg, #c084fc, #ff6b9d);
+    border-radius: 2px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .app {
+    display: grid;
+    grid-template-columns: 56px 1fr 280px;
+    grid-template-rows: 1fr auto;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── A: BAND SELECTOR ── */
+  .band-selector {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    gap: 4px;
+    overflow-y: auto;
+    grid-row: 1 / 2;
+  }
+  .band-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: var(--surface2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-sub);
+    transition: all 0.15s;
+    position: relative;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+  }
+  .band-btn:hover { border-color: var(--accent); color: var(--text); }
+  .band-btn.active {
+    border-color: var(--popipa);
+    color: var(--popipa);
+    background: rgba(255,107,157,0.12);
+  }
+  .band-btn.all { border-color: var(--border); color: var(--text-sub); font-size: 0.55rem; }
+  .band-btn.all.active { border-color: var(--accent); color: var(--accent); background: rgba(192,132,252,0.12); }
+  .band-divider { width: 28px; height: 1px; background: var(--border); margin: 4px 0; }
+
+  /* ── CENTER AREA ── */
+  .center {
+    display: grid;
+    grid-template-rows: 1fr 180px;
+    overflow: hidden;
+    grid-row: 1 / 2;
+  }
+
+  /* ── B: SONG LIST ── */
+  .song-list-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .song-list-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .band-label {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--popipa);
+  }
+  .filter-pills {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .pill {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .pill.active-tier-1 { border-color: var(--tier-1); color: var(--tier-1); background: rgba(255,107,157,0.1); }
+  .pill.active-tier-2 { border-color: var(--tier-2); color: var(--tier-2); background: rgba(255,159,107,0.1); }
+  .copy-btn {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-sub);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.12s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .song-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+  .song-item {
+    display: flex;
+    align-items: center;
+    padding: 7px 14px;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+  }
+  .song-item:hover { background: var(--surface2); }
+  .song-item.ranked { }
+  .song-num {
+    font-size: 0.65rem;
+    color: var(--text-sub);
+    width: 20px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .song-title {
+    font-size: 0.8rem;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .song-item.ranked .song-title { color: var(--text); }
+  .song-item:not(.ranked) .song-title { color: var(--text-sub); }
+  .rank-badge {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+  }
+  .rb-1 { background: rgba(255,107,157,0.2); color: var(--tier-1); border: 1px solid var(--tier-1); }
+  .rb-2 { background: rgba(255,159,107,0.2); color: var(--tier-2); border: 1px solid var(--tier-2); }
+  .rb-3 { background: rgba(255,208,107,0.2); color: var(--tier-3); border: 1px solid var(--tier-3); }
+  .rb-4 { background: rgba(107,207,255,0.2); color: var(--tier-4); border: 1px solid var(--tier-4); }
+  .rb-5 { background: rgba(157,157,189,0.2); color: var(--tier-5); border: 1px solid var(--tier-5); }
+  .rb-empty { background: var(--surface2); border: 1px dashed var(--border); }
+
+  /* ── C: YOUTUBE ── */
+  .youtube-panel {
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .yt-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-sub);
+  }
+  .yt-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+  .yt-label { font-size: 0.72rem; }
+  .yt-now-playing {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 8px 12px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .yt-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tier-1); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── RIGHT PANEL (D+E) ── */
+  .right-panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    grid-row: 1 / 2;
+  }
+  .panel-tab {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.12s;
+    letter-spacing: 0.04em;
+  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── D: HISTOGRAM ── */
+  .histogram-panel {
+    padding: 14px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .hist-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hist-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .hist-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+  }
+  .hist-bar-bg {
+    flex: 1;
+    height: 18px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hist-bar {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(0,0,0,0.6);
+    transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .hb-1 { background: var(--tier-1); }
+  .hb-2 { background: var(--tier-2); }
+  .hb-3 { background: var(--tier-3); }
+  .hb-4 { background: var(--tier-4); }
+  .hb-5 { background: var(--tier-5); }
+  .hist-count {
+    font-size: 0.65rem;
+    color: var(--text-sub);
+    width: 16px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── E: HEATMAP ── */
+  .heatmap-panel {
+    padding: 14px;
+    flex: 1;
+    overflow-y: auto;
+    display: none;
+  }
+  .heatmap-panel.active { display: block; }
+  .hm-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .hm-grid {
+    display: grid;
+    grid-template-columns: 52px repeat(5, 1fr);
+    gap: 3px;
+  }
+  .hm-head {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-sub);
+    padding: 2px 0;
+  }
+  .hm-band {
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    padding-right: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hm-cell {
+    height: 20px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: rgba(0,0,0,0.5);
+  }
+  .hm-0 { background: var(--surface2); color: var(--border); }
+  .hm-1 { background: rgba(255,107,157,0.2); color: var(--tier-1); }
+  .hm-2 { background: rgba(255,107,157,0.45); color: #fff; }
+  .hm-3 { background: rgba(255,107,157,0.75); color: #fff; }
+  .hm-4 { background: var(--tier-1); color: #fff; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.68rem;
+    color: var(--text-sub);
+  }
+  .stat-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .bottom-actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn-download {
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.12s;
+  }
+  .btn-download:hover { border-color: var(--text-sub); }
+  .btn-reset {
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .btn-reset:hover { border-color: #ff6b6b; color: #ff6b6b; }
+
+  /* ── RANK POPUP ── */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .popup-overlay.open { opacity: 1; pointer-events: all; }
+  .popup {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    width: 300px;
+    transform: translateY(12px) scale(0.97);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .popup-overlay.open .popup { transform: translateY(0) scale(1); }
+  .popup-song {
+    font-size: 0.78rem;
+    color: var(--text-sub);
+    margin-bottom: 4px;
+  }
+  .popup-title {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .rank-buttons {
+    display: flex;
+    gap: 6px;
+  }
+  .rank-btn {
+    flex: 1;
+    padding: 10px 4px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s;
+  }
+  .rank-btn:hover { transform: translateY(-2px); }
+  .rank-btn.rb-active-1 { border-color: var(--tier-1); background: rgba(255,107,157,0.15); }
+  .rank-btn.rb-active-2 { border-color: var(--tier-2); background: rgba(255,159,107,0.15); }
+  .rk-icon { font-size: 1.1rem; }
+  .rk-label { font-size: 0.55rem; font-weight: 700; font-family: 'M PLUS Rounded 1c', sans-serif; }
+  .r1 .rk-label { color: var(--tier-1); }
+  .r2 .rk-label { color: var(--tier-2); }
+  .r3 .rk-label { color: var(--tier-3); }
+  .r4 .rk-label { color: var(--tier-4); }
+  .r5 .rk-label { color: var(--tier-5); }
+  .popup-cancel {
+    margin-top: 12px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .popup-cancel:hover { background: var(--surface2); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <span style="font-size:1.2rem">🎸</span>
+  <h1>BanG Dream! Song Sorter</h1>
+  <div class="header-progress">
+    <span>34 / 98곡 평가됨</span>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+</header>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- A: BAND SELECTOR -->
+  <div class="band-selector">
+    <button class="band-btn all active" onclick="selectBand(this, 'ALL', '#c084fc')">ALL</button>
+    <div class="band-divider"></div>
+    <button class="band-btn" onclick="selectBand(this, 'PoPiPa', '#ff6b9d')" style="font-size:0.5rem">PoPi<br>Pa</button>
+    <button class="band-btn" onclick="selectBand(this, 'Afterglow', '#ff9f6b')" style="font-size:0.5rem">After<br>glow</button>
+    <button class="band-btn" onclick="selectBand(this, 'Pastel*Palettes', '#c084fc')" style="font-size:0.48rem">Pastel<br>Pal.</button>
+    <button class="band-btn" onclick="selectBand(this, 'Roselia', '#6b9dff')" style="font-size:0.52rem">Rose<br>lia</button>
+    <button class="band-btn" onclick="selectBand(this, 'Hello, Happy World!', '#ffd06b')" style="font-size:0.48rem">Hello<br>HW!</button>
+    <div class="band-divider"></div>
+    <button class="band-btn" onclick="selectBand(this, 'Morfonica', '#6bcfff')" style="font-size:0.48rem">Morfo<br>nica</button>
+    <button class="band-btn" onclick="selectBand(this, 'RAISE A SUILEN', '#ff6bca')" style="font-size:0.48rem">R·A·S</button>
+    <div class="band-divider"></div>
+    <button class="band-btn" onclick="selectBand(this, 'MyGO!!!!!', '#ffd06b')" style="font-size:0.5rem">MyGO<br>!!!!!</button>
+    <button class="band-btn" onclick="selectBand(this, 'Ave Mujica', '#ff6bca')" style="font-size:0.48rem">Ave<br>Mujica</button>
+    <button class="band-btn" onclick="selectBand(this, 'CRYCHIC', '#9d9dbd')" style="font-size:0.48rem">CRY<br>CHIC</button>
+    <button class="band-btn" onclick="selectBand(this, 'Haneoka Girls', '#6bcfff')" style="font-size:0.48rem">Hane<br>oka</button>
+    <button class="band-btn" onclick="selectBand(this, 'Tsukinomori Girls', '#6b9dff')" style="font-size:0.48rem">Tsuki<br>nomo</button>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- B: SONG LIST -->
+    <div class="song-list-panel">
+      <div class="song-list-header">
+        <span class="band-label" id="band-label">전체 밴드</span>
+        <div class="filter-pills">
+          <button class="pill active-tier-1" onclick="toggleFilter(this,'1')">최애</button>
+          <button class="pill" onclick="toggleFilter(this,'2')">차애</button>
+          <button class="pill" onclick="toggleFilter(this,'3')">호</button>
+          <button class="pill" onclick="toggleFilter(this,'4')">중간</button>
+          <button class="pill" onclick="toggleFilter(this,'5')">불호</button>
+          <button class="pill" onclick="toggleFilter(this,'0')">미평가</button>
+        </div>
+        <button class="copy-btn" onclick="copyLinks()">
+          <span>🔗</span> 링크 복사
+        </button>
+      </div>
+      <div class="song-list" id="song-list">
+        <!-- dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- C: YOUTUBE -->
+    <div class="youtube-panel">
+      <div class="yt-placeholder" id="yt-placeholder">
+        <div class="yt-icon">▶</div>
+        <div class="yt-label">곡을 클릭하면 여기서 재생돼요</div>
+      </div>
+      <div class="yt-now-playing" id="yt-now-playing" style="display:none">
+        <div class="yt-dot"></div>
+        <span id="yt-song-name">Shuwarin☆Dreaming</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL: D + E -->
+  <div class="right-panel">
+    <div class="panel-tab">
+      <button class="tab-btn active" onclick="switchTab(this,'hist')">히스토그램</button>
+      <button class="tab-btn" onclick="switchTab(this,'heat')">히트맵</button>
+    </div>
+
+    <!-- D: HISTOGRAM -->
+    <div class="histogram-panel" id="hist-panel">
+      <div class="hist-title" id="hist-band-name">PoPiPa 랭크 분포</div>
+      <div class="hist-row">
+        <span class="hist-label" style="color:var(--tier-1)">최애</span>
+        <div class="hist-bar-bg"><div class="hist-bar hb-1" style="width:60%">6</div></div>
+        <span class="hist-count">6</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-label" style="color:var(--tier-2)">차애</span>
+        <div class="hist-bar-bg"><div class="hist-bar hb-2" style="width:40%">4</div></div>
+        <span class="hist-count">4</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-label" style="color:var(--tier-3)">호</span>
+        <div class="hist-bar-bg"><div class="hist-bar hb-3" style="width:20%">2</div></div>
+        <span class="hist-count">2</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-label" style="color:var(--tier-4)">중간</span>
+        <div class="hist-bar-bg"><div class="hist-bar hb-4" style="width:10%">1</div></div>
+        <span class="hist-count">1</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-label" style="color:var(--tier-5)">불호</span>
+        <div class="hist-bar-bg"><div class="hist-bar hb-5" style="width:5%"></div></div>
+        <span class="hist-count">0</span>
+      </div>
+    </div>
+
+    <!-- E: HEATMAP -->
+    <div class="heatmap-panel" id="heat-panel">
+      <div class="hm-title">전체 밴드 히트맵</div>
+      <div class="hm-grid" id="heatmap-grid">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="stat-chip"><div class="stat-dot" style="background:var(--tier-1)"></div>최애 8곡</div>
+    <div class="stat-chip"><div class="stat-dot" style="background:var(--tier-2)"></div>차애 12곡</div>
+    <div class="stat-chip"><div class="stat-dot" style="background:var(--tier-3)"></div>호 14곡</div>
+    <div class="stat-chip" style="color:var(--text-sub)">미평가 64곡</div>
+    <div class="bottom-actions">
+      <button class="btn-reset">초기화</button>
+      <button class="btn-download">⬇ Download</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RANK POPUP -->
+<div class="popup-overlay" id="popup" onclick="closePopup(event)">
+  <div class="popup">
+    <div class="popup-song" id="popup-band">PoPiPa</div>
+    <div class="popup-title" id="popup-song">Shuwarin☆Dreaming</div>
+    <div class="rank-buttons">
+      <button class="rank-btn r1" onclick="setRank(1)">
+        <span class="rk-icon">💖</span>
+        <span class="rk-label">최애</span>
+      </button>
+      <button class="rank-btn r2" onclick="setRank(2)">
+        <span class="rk-icon">💕</span>
+        <span class="rk-label">차애</span>
+      </button>
+      <button class="rank-btn r3" onclick="setRank(3)">
+        <span class="rk-icon">👍</span>
+        <span class="rk-label">호</span>
+      </button>
+      <button class="rank-btn r4" onclick="setRank(4)">
+        <span class="rk-icon">😐</span>
+        <span class="rk-label">중간</span>
+      </button>
+      <button class="rank-btn r5" onclick="setRank(5)">
+        <span class="rk-icon">👎</span>
+        <span class="rk-label">불호</span>
+      </button>
+    </div>
+    <button class="popup-cancel" onclick="closePopup()">취소</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const SONGS = [
+  { id:1, band:'PoPiPa', title:'Shuwarin☆Dreaming', yt:'https://youtu.be/abc001', rank:1 },
+  { id:2, band:'PoPiPa', title:'Yes! BanG_Dream!', yt:'https://youtu.be/abc002', rank:2 },
+  { id:3, band:'PoPiPa', title:'Poppin\' on!', yt:'https://youtu.be/abc003', rank:1 },
+  { id:4, band:'PoPiPa', title:'キラキラdaydream', yt:'https://youtu.be/abc004', rank:3 },
+  { id:5, band:'PoPiPa', title:'夢みるよりもっとサイコー!', yt:'https://youtu.be/abc005', rank:null },
+  { id:6, band:'PoPiPa', title:'ときめきエクスペリエンス!', yt:'https://youtu.be/abc006', rank:2 },
+  { id:7, band:'PoPiPa', title:'バンドやろうぜ!', yt:'https://youtu.be/abc007', rank:null },
+  { id:8, band:'PoPiPa', title:'前へススメ!', yt:'https://youtu.be/abc008', rank:4 },
+  { id:9, band:'Afterglow', title:'DAYS OF DASH', yt:'https://youtu.be/abc009', rank:1 },
+  { id:10, band:'Afterglow', title:'大切なFirst note', yt:'https://youtu.be/abc010', rank:2 },
+  { id:11, band:'Afterglow', title:'わたしの一番かわいいところ', yt:'https://youtu.be/abc011', rank:null },
+  { id:12, band:'Afterglow', title:'ブルーアーカイブ', yt:'https://youtu.be/abc012', rank:3 },
+  { id:13, band:'Roselia', title:'BLACK SHOUT', yt:'https://youtu.be/abc013', rank:1 },
+  { id:14, band:'Roselia', title:'Re:birth day', yt:'https://youtu.be/abc014', rank:1 },
+  { id:15, band:'Roselia', title:'Ludwig van Afterburn', yt:'https://youtu.be/abc015', rank:2 },
+  { id:16, band:'MyGO!!!!!', title:'栞', yt:'https://youtu.be/abc016', rank:1 },
+  { id:17, band:'MyGO!!!!!', title:'迷星叫', yt:'https://youtu.be/abc017', rank:1 },
+  { id:18, band:'MyGO!!!!!', title:'壱雫空', yt:'https://youtu.be/abc018', rank:2 },
+  { id:19, band:'Ave Mujica', title:'Über uns', yt:'https://youtu.be/abc019', rank:null },
+  { id:20, band:'Ave Mujica', title:'SORROW', yt:'https://youtu.be/abc020', rank:1 },
+];
+
+const TIER_LABELS = { 1:'최애', 2:'차애', 3:'호', 4:'중간', 5:'불호' };
+const TIER_ICONS  = { 1:'💖', 2:'💕', 3:'👍', 4:'😐', 5:'👎' };
+const BANDS = ['PoPiPa','Afterglow','Pastel*Palettes','Roselia','Hello, Happy World!',
+               'Morfonica','RAISE A SUILEN','MyGO!!!!!','Ave Mujica','CRYCHIC','Haneoka Girls','Tsukinomori Girls'];
+
+let currentBand = 'ALL';
+let activeFilters = new Set(['1']); // 최애 필터 기본 활성
+let selectedSongId = null;
+
+// ── RENDER SONG LIST ──
+function renderSongs() {
+  const list = document.getElementById('song-list');
+  let songs = currentBand === 'ALL' ? SONGS : SONGS.filter(s => s.band === currentBand);
+  if (activeFilters.size > 0) {
+    songs = songs.filter(s => {
+      if (activeFilters.has('0')) return s.rank === null;
+      return activeFilters.has(String(s.rank));
+    });
+  }
+  list.innerHTML = songs.map((s, i) => `
+    <div class="song-item ${s.rank ? 'ranked' : ''}"
+         onclick="playSong(${s.id})"
+         oncontextmenu="openPopup(event,${s.id})"
+         onmousedown="startLongPress(event,${s.id})"
+         onmouseup="clearLongPress()"
+         onmouseleave="clearLongPress()">
+      <span class="song-num">${i+1}</span>
+      <span class="song-title">${s.title}</span>
+      <span class="rank-badge ${s.rank ? 'rb-'+s.rank : 'rb-empty'}">
+        ${s.rank ? TIER_ICONS[s.rank] : ''}
+      </span>
+    </div>
+  `).join('');
+}
+
+// ── BAND SELECT ──
+function selectBand(el, band, color) {
+  document.querySelectorAll('.band-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderColor = '';
+    b.style.color = '';
+    b.style.background = '';
+  });
+  el.classList.add('active');
+  el.style.borderColor = color;
+  el.style.color = color;
+  el.style.background = color + '22';
+  currentBand = band;
+  document.getElementById('band-label').textContent = band === 'ALL' ? '전체 밴드' : band;
+  document.getElementById('hist-band-name').textContent = band === 'ALL' ? '전체 랭크 분포' : band + ' 랭크 분포';
+  renderSongs();
+}
+
+// ── FILTER ──
+function toggleFilter(el, tier) {
+  const cls = ['active-tier-1','active-tier-2','active-tier-1','active-tier-4','active-tier-5','active-tier-1'];
+  if (activeFilters.has(tier)) {
+    activeFilters.delete(tier);
+    el.className = 'pill';
+  } else {
+    activeFilters.add(tier);
+    const tierColors = { '1':'active-tier-1','2':'active-tier-2','3':'','4':'','5':'','0':'' };
+    el.className = 'pill ' + (tierColors[tier] || '');
+    if (!tierColors[tier]) { el.style.borderColor='var(--text-sub)'; el.style.color='var(--text)'; }
+  }
+  renderSongs();
+}
+
+// ── PLAY ──
+function playSong(id) {
+  const song = SONGS.find(s => s.id === id);
+  document.getElementById('yt-placeholder').style.display = 'none';
+  document.getElementById('yt-now-playing').style.display = 'flex';
+  document.getElementById('yt-song-name').textContent = song.title;
+}
+
+// ── LONG PRESS ──
+let longPressTimer = null;
+function startLongPress(e, id) {
+  if (e.button !== 0) return;
+  longPressTimer = setTimeout(() => openPopup(null, id), 500);
+}
+function clearLongPress() { clearTimeout(longPressTimer); }
+
+// ── POPUP ──
+function openPopup(e, id) {
+  if (e) e.preventDefault();
+  clearLongPress();
+  const song = SONGS.find(s => s.id === id);
+  selectedSongId = id;
+  document.getElementById('popup-band').textContent = song.band;
+  document.getElementById('popup-song').textContent = song.title;
+  document.querySelectorAll('.rank-btn').forEach(b => b.className = b.className.replace(/rb-active-\d/g,'').trim());
+  if (song.rank) {
+    document.querySelectorAll('.rank-btn')[song.rank-1].classList.add('rb-active-'+song.rank);
+  }
+  document.getElementById('popup').classList.add('open');
+}
+function closePopup(e) {
+  if (!e || e.target === document.getElementById('popup') || e.target.classList.contains('popup-cancel')) {
+    document.getElementById('popup').classList.remove('open');
+    selectedSongId = null;
+  }
+}
+function setRank(rank) {
+  if (selectedSongId === null) return;
+  const song = SONGS.find(s => s.id === selectedSongId);
+  song.rank = rank;
+  document.getElementById('popup').classList.remove('open');
+  selectedSongId = null;
+  renderSongs();
+  updateStats();
+}
+
+// ── COPY LINKS ──
+function copyLinks() {
+  let songs = currentBand === 'ALL' ? SONGS : SONGS.filter(s => s.band === currentBand);
+  if (activeFilters.size > 0) {
+    songs = songs.filter(s => activeFilters.has(String(s.rank)));
+  }
+  const links = songs.filter(s => s.yt).map(s => s.yt).join('\n\n');
+  navigator.clipboard.writeText(links).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ 복사됨';
+    setTimeout(() => { btn.innerHTML = '<span>🔗</span> 링크 복사'; }, 1500);
+  });
+}
+
+// ── STATS ──
+function updateStats() {
+  const counts = {1:0,2:0,3:0,4:0,5:0,null:0};
+  SONGS.forEach(s => counts[s.rank === null ? null : s.rank]++);
+}
+
+// ── TAB SWITCH ──
+function switchTab(el, tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('hist-panel').style.display = tab === 'hist' ? 'block' : 'none';
+  document.getElementById('heat-panel').style.display = tab === 'heat' ? 'block' : 'none';
+  document.getElementById('heat-panel').className = tab === 'heat' ? 'heatmap-panel active' : 'heatmap-panel';
+}
+
+// ── HEATMAP ──
+function renderHeatmap() {
+  const grid = document.getElementById('heatmap-grid');
+  const headers = ['', '최애','차애','호','중간','불호'];
+  let html = headers.map(h => `<div class="hm-head">${h}</div>`).join('');
+  BANDS.forEach(band => {
+    const songs = SONGS.filter(s => s.band === band);
+    html += `<div class="hm-band">${band.replace('*Palettes','*Pal.').replace('Hello, Happy World!','HHW!').replace('RAISE A SUILEN','R·A·S').replace('Haneoka Girls','Haneoka').replace('Tsuginomori Girls','Tsuginomori')}</div>`;
+    for (let t = 1; t <= 5; t++) {
+      const cnt = songs.filter(s => s.rank === t).length;
+      const intensity = cnt === 0 ? 0 : cnt <= 1 ? 1 : cnt <= 3 ? 2 : cnt <= 5 ? 3 : 4;
+      html += `<div class="hm-cell hm-${intensity}">${cnt || ''}</div>`;
+    }
+  });
+  grid.innerHTML = html;
+}
+
+// ── INIT ──
+renderSongs();
+renderHeatmap();
+</script>
+</body>
+</html>
