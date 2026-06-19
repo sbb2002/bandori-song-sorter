@@ -646,16 +646,30 @@ function fallbackCopy(text, done) {
 
 /** Download: 전 밴드 히스토그램 + 히트맵을 오프스크린에 합성 후 PNG 캡처 */
 function exportRanking() {
+    if (!window.domtoimage) {
+        alert('이미지 라이브러리 로드 실패. 잠시 후 다시 시도해 주세요.');
+        return;
+    }
     const area = document.getElementById('capture-area');
     area.innerHTML = '';
     area.appendChild(buildCaptureDOM());
 
     const node = area.firstChild;
-    if (!window.domtoimage) {
-        alert('이미지 라이브러리 로드 실패. 잠시 후 다시 시도해 주세요.');
-        return;
-    }
-    domtoimage.toPng(node, { bgcolor: '#0e0e14', width: node.offsetWidth, height: node.offsetHeight })
+    const imgs = Array.from(node.querySelectorAll('img'));
+    const loads = imgs.map(img =>
+        img.complete ? Promise.resolve() :
+        new Promise(r => { img.onload = r; img.onerror = r; })
+    );
+
+    const scale = 2;
+    Promise.all(loads).then(() =>
+        domtoimage.toPng(node, {
+            bgcolor: '#0e0e14',
+            width: node.offsetWidth * scale,
+            height: node.offsetHeight * scale,
+            style: { transform: `scale(${scale})`, transformOrigin: 'top left' },
+        })
+    )
         .then(dataUrl => {
             const link = document.createElement('a');
             link.download = `bandori-ranking-${Date.now()}.png`;
