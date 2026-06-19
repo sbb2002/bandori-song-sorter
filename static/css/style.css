@@ -162,7 +162,7 @@ header h1 {
 =========================== */
 .center {
   display: grid;
-  grid-template-rows: 1fr 220px;
+  grid-template-columns: 1fr 1.5fr;
   overflow: hidden;
 }
 .song-list-panel {
