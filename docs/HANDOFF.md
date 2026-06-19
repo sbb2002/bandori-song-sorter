@@ -44,3 +44,44 @@
 - 원본 보존: `backup/main-before-redesign` 브랜치.
 - 빌드/테스트: `python build.py` / `npm test`(=`node --test`).
 - 데이터 수정 시 `data/*.yaml` 편집 후 `python build.py` 재실행.
+
+---
+
+# 세션 2 (2026-06-20) — UI 개편 및 버그 수정
+
+## 완료된 작업
+
+### PC UI
+- 유튜브 패널 위치: 곡 리스트 하단 → **우측** (`.center`: `grid-template-rows` → `grid-template-columns: 1fr 1.5fr`)
+- `body`/`.app` `height: 100vh` 고정 → **페이지 전체 스크롤 제거** (모바일은 `height: auto` 유지)
+- 하단 바에 **진행률 프로그레스 바** 추가 (`#bp-fill`, `#bp-pct`)
+- 랭크 팝업 **키보드 단축키**: `1`~`5` 티어 설정(토글), `Esc` 취소
+
+### 모바일 UI
+- 롱터치 애니메이션: `requestAnimationFrame` + `--lp` → **CSS transition** (`right: 100%→0`, 350ms)으로 교체 (GPU 가속)
+- `touch-action: pan-y` → **`touch-action: none`**, `pointermove`에서 `list.scrollTop -= dy`로 수동 스크롤 구현
+- `setPointerCapture`로 리스트 밖 드래그 시에도 이벤트 보장
+- `pointercancel` 핸들러 제거 (네이티브 롱프레스 간섭 차단)
+- `* { -webkit-tap-highlight-color: transparent }` — **탭 하이라이트(파란 박스) 제거**
+
+### 기능 추가
+- **밴드 셀렉터 순서 고정** (`BAND_ORDER` 배열, 미포함 밴드는 뒤에 추가)
+- **다운로드 밴드 사진**: 최애→차애→호→불호 낮음 순 베스트 밴드 자동 선택, `assets/(band)/band.png` 삽입 (하단 그라디언트 블러)
+- **다운로드 화질 개선**: 이미지 완전 로드 후 캡처 (`Promise.all` + `onload`), `scale: 2` 적용
+- `assets/*/band.png`, `band.webp` 전 밴드 추가
+- `backup/main-20260620` 백업 브랜치 생성
+
+## 다음 세션에서 할 작업
+
+### 1. 컨버터 수정 (`tools/converter.py`)
+- `data/(밴드).yaml` ↔ `(밴드).csv` 상호 변환 도구
+- yaml 구조 변경 여부 확인 후 csv 변환 로직 동기화
+
+### 2. YouTube RSS 신곡 자동 등록
+- BanG Dream Official 유튜브 채널 RSS 구독
+- 신곡 감지 시 곡명·링크·출시일자를 yaml/csv에 자동 등록 후 푸시
+- 기존 곡에 출시일자 등 메타데이터 추가 → 1번 컨버터와 병행 필요
+
+### 3. README.md 재작성
+- **사용자 관점**으로 전면 재작성 (현재는 개발자 관점)
+- 웹페이지 조작법, 결과물(링크·히트맵·다운로드) 공유 방법, 키보드 단축키 안내 포함
