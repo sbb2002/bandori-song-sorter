@@ -838,6 +838,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('popup').addEventListener('click', e => {
         if (e.target.id === 'popup') closePopup();
     });
+
+    document.addEventListener('keydown', e => {
+        const popup = document.getElementById('popup');
+        if (popup.hidden) return;
+        if (e.key === 'Escape') { closePopup(); return; }
+        const tier = parseInt(e.key);
+        if (tier >= 1 && tier <= 5 && popupSong) {
+            const cur = getRank(popupSong);
+            setRank(popupSong, cur === tier ? null : tier);
+            refreshAll();
+            closePopup();
+        }
+    });
     document.querySelectorAll('.tab-btn').forEach(b =>
         b.addEventListener('click', () => switchTab(b.dataset.tab)));
 
