@@ -40,10 +40,10 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Inter', -apple-system, sans-serif;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -106,7 +106,7 @@ header h1 {
   grid-template-columns: 56px 1fr 280px;
   grid-template-rows: 1fr auto;
   flex: 1 1 auto;
-  min-height: calc(100vh - var(--header-h));
+  height: calc(100vh - var(--header-h));
   overflow: hidden;
 }
 .band-selector { grid-column: 1; grid-row: 1; }
@@ -617,12 +617,12 @@ header h1 {
    11. 반응형 (≤1023px)
 =========================== */
 @media (max-width: 1023px) {
-  body { overflow-x: hidden; }
+  body { height: auto; overflow: auto; overflow-x: hidden; }
 
   .app {
     display: flex;
     flex-direction: column;
-    min-height: auto;
+    height: auto;
     overflow: visible;
   }
 
