@@ -34,11 +34,10 @@
 - ✅ `node --test` 16/16 통과 (중복제거·집계·링크 생성)
 - ✅ `python build.py` 성공 (밴드 13, 곡 488→445)
 - ✅ 헤드리스 스크린샷: 데스크톱 / 히스토그램(데이터) / 히트맵 / 랭크 팝업 모달 / 모바일 — 전부 정상 렌더
-- ⚠️ **실브라우저 클릭 확인 보류 (사용자가 직접 검토 후 결과 회신 예정)**:
-  1. **유튜브 실제 재생** — YT IFrame 연동(헤드리스+무네트워크라 미확인)
-  2. **Download PNG 생성** — dom-to-image 캡처(클릭 + CDN 필요)
-  3. **링크 복사** — clipboard(사용자 제스처 + secure context 필요; file://은 fallback 동작)
-  - → `index.html`을 실제 브라우저로 열어 위 3가지를 확인 필요. 사용자가 자세히 검토 예정.
+- ✅ **유튜브 실제 재생** — GitHub Pages 실브라우저(PC·모바일)에서 정상 확인
+- ✅ **Download PNG 생성** — dom-to-image 캡처 정상 동작 확인 (scale:2 화질 개선 포함)
+- ✅ **링크 복사** — clipboard 정상 동작 확인
+- ✅ **모바일 전반** — GitHub Pages에서 PC·모바일 레이아웃 및 롱터치 동작 정상 확인
 
 ## Notes
 - 원본 보존: `backup/main-before-redesign` 브랜치.
