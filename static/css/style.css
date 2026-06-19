@@ -249,7 +249,7 @@ header h1 {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-  touch-action: pan-y;
+  touch-action: none;
 }
 .song-item:hover { background: var(--surface2); }
 .song-item.ranked { border-left-color: var(--row-tier, transparent); }

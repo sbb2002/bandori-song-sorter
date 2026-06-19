@@ -300,6 +300,7 @@ let pressTimer = null;
 let pressRow = null;
 let pressStartX = 0;
 let pressStartY = 0;
+let lastY = 0;
 let longFired = false;
 let moved = false;
 
@@ -320,10 +321,11 @@ function initPressHandlers() {
     list.addEventListener('pointerdown', e => {
         const row = e.target.closest('.song-item');
         if (!row) return;
-        if (e.pointerType === 'mouse' && e.button !== 0) return; // 우클릭은 contextmenu가 처리
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        list.setPointerCapture(e.pointerId);
         pressRow = row;
         pressStartX = e.clientX;
-        pressStartY = e.clientY;
+        pressStartY = lastY = e.clientY;
         longFired = false;
         moved = false;
         startProgress(row);
@@ -336,24 +338,35 @@ function initPressHandlers() {
     });
 
     list.addEventListener('pointermove', e => {
+        const dy = e.clientY - lastY;
+        lastY = e.clientY;
+
+        if (moved) {
+            list.scrollTop -= dy;
+            return;
+        }
         if (!pressRow) return;
         if (Math.abs(e.clientX - pressStartX) > MOVE_TOLERANCE ||
             Math.abs(e.clientY - pressStartY) > MOVE_TOLERANCE) {
             moved = true;
             cancelPress();
+            list.scrollTop -= dy;
         }
     });
 
     list.addEventListener('pointerup', e => {
+        if (moved) { moved = false; return; }
         if (!pressRow) return;
         const row = pressRow;
         const fired = longFired;
-        const mv = moved;
         cancelPress();
-        if (!fired && !mv) playSong(songFromRow(row));
+        if (!fired) playSong(songFromRow(row));
     });
 
-    list.addEventListener('pointerleave', cancelPress);
+    list.addEventListener('pointerleave', e => {
+        moved = false;
+        cancelPress();
+    });
 
     // 데스크톱 우클릭 = 랭크 팝업 (+ 모바일 길게눌러 뜨는 기본 메뉴 차단)
     list.addEventListener('contextmenu', e => {
