@@ -13,6 +13,12 @@ const C = window.BandoriCore;
 
 const STORE_KEY = 'bandori-song-ranks-v1';
 
+const BAND_ORDER = [
+    'poppin_party', 'roselia', 'afterglow', 'pastel_palettes',
+    'hello_happy_world', 'raise_a_suilen', 'morfonica', 'mygo',
+    'ave_mujica', 'mugendai_mutype', 'millsage', 'ikka_dumb_rock'
+];
+
 let dedupedByBand = {};     // band -> 중복 제거된 곡 배열
 let allSongs = [];          // 전 밴드 평탄화(밴드 순서)
 let bands = [];             // 밴드 순서
@@ -136,7 +142,9 @@ function renderBandSelector() {
     divider.className = 'band-divider';
     el.appendChild(divider);
 
-    bands.forEach(b => el.appendChild(makeBandBtn(b, false)));
+    const ordered = BAND_ORDER.filter(b => bands.includes(b));
+    const rest = bands.filter(b => !BAND_ORDER.includes(b));
+    [...ordered, ...rest].forEach(b => el.appendChild(makeBandBtn(b, false)));
 }
 
 function makeBandBtn(band, isAll) {
@@ -357,7 +365,6 @@ function initPressHandlers() {
         if (!fired && !mv) playSong(songFromRow(row));
     });
 
-    list.addEventListener('pointercancel', cancelPress);
     list.addEventListener('pointerleave', cancelPress);
 
     // 데스크톱 우클릭 = 랭크 팝업 (+ 모바일 길게눌러 뜨는 기본 메뉴 차단)
@@ -576,6 +583,8 @@ function renderProgress() {
     document.getElementById('progress-text').textContent = `${ranked} / ${total}곡 평가됨`;
     const pct = total ? (ranked / total * 100) : 0;
     document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('bp-fill').style.width = pct + '%';
+    document.getElementById('bp-pct').textContent = pct.toFixed(1) + '%';
 }
 
 function renderStatChips() {
@@ -657,6 +666,24 @@ function exportRanking() {
         .finally(() => { area.innerHTML = ''; });
 }
 
+function findBestBand() {
+    const matrix = C.computeHeatmap(dedupedByBand, ranks);
+    const scored = bands.map(b => {
+        const counts = matrix[b];
+        const total = C.TIERS.reduce((s, t) => s + counts[t.key], 0);
+        if (total === 0) return null;
+        return { band: b, r1: counts[1]/total, r2: counts[2]/total, r3: counts[3]/total, r5: counts[5]/total };
+    }).filter(Boolean);
+    if (!scored.length) return null;
+    scored.sort((a, b) =>
+        b.r1 !== a.r1 ? b.r1 - a.r1 :
+        b.r2 !== a.r2 ? b.r2 - a.r2 :
+        b.r3 !== a.r3 ? b.r3 - a.r3 :
+        a.r5 - b.r5
+    );
+    return scored[0].band;
+}
+
 function buildCaptureDOM() {
     const matrix = C.computeHeatmap(dedupedByBand, ranks);
     const root = document.createElement('div');
@@ -699,6 +726,21 @@ function buildCaptureDOM() {
         });
         histGrid.appendChild(block);
     });
+
+    const bestBand = findBestBand();
+    if (bestBand) {
+        const photoWrap = document.createElement('div');
+        photoWrap.style.cssText = 'position:relative;overflow:hidden;border-radius:6px;min-height:100px;background:#111;';
+        const img = document.createElement('img');
+        img.src = fixPath('assets/' + bestBand + '/band.png');
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center top;display:block;';
+        photoWrap.appendChild(img);
+        const blur = document.createElement('div');
+        blur.style.cssText = 'position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,transparent,#0e0e14);';
+        photoWrap.appendChild(blur);
+        histGrid.appendChild(photoWrap);
+    }
+
     root.appendChild(histGrid);
 
     // 히트맵
