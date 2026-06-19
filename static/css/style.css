@@ -254,14 +254,19 @@ header h1 {
 .song-item:hover { background: var(--surface2); }
 .song-item.ranked { border-left-color: var(--row-tier, transparent); }
 
-/* 롱프레스 진행 피드백 (좌→우 채움) */
-.song-item.pressing::after {
+/* 롱프레스 진행 피드백 (좌→우 채움, CSS transition) */
+.song-item::after {
   content: '';
   position: absolute;
   left: 0; top: 0; bottom: 0;
-  width: calc(var(--lp, 0) * 100%);
+  right: 100%;
   background: rgba(192,132,252,0.16);
   pointer-events: none;
+  transition: right 0s;
+}
+.song-item.pressing::after {
+  right: 0;
+  transition: right 350ms linear;
 }
 .song-num {
   font-size: 0.65rem;

@@ -302,26 +302,15 @@ let pressStartX = 0;
 let pressStartY = 0;
 let longFired = false;
 let moved = false;
-let rafId = null;
 
 function startProgress(row) {
-    const start = performance.now();
-    row.style.setProperty('--lp', 0);
-    function tick(now) {
-        const p = Math.min((now - start) / LONG_PRESS_MS, 1);
-        row.style.setProperty('--lp', p);
-        if (p < 1) rafId = requestAnimationFrame(tick);
-    }
-    rafId = requestAnimationFrame(tick);
+    void row.offsetWidth; // reflow → ::after가 right:100% 상태에서 transition 시작
+    row.classList.add('pressing');
 }
 
 function cancelPress() {
     if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-    if (pressRow) {
-        pressRow.classList.remove('pressing');
-        pressRow.style.removeProperty('--lp');
-    }
+    if (pressRow) pressRow.classList.remove('pressing');
     pressRow = null;
 }
 
@@ -337,7 +326,6 @@ function initPressHandlers() {
         pressStartY = e.clientY;
         longFired = false;
         moved = false;
-        row.classList.add('pressing');
         startProgress(row);
         pressTimer = setTimeout(() => {
             longFired = true;
