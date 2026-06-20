@@ -196,3 +196,27 @@
 구조 정리와 무관한 데이터 스멜이라 1단계 차단 요인은 아님:
 - 각 밴드 yaml의 `numbering: undefined / album_title: undefined` **더미 앨범** = 다른 앨범 곡의 중복본 + `url:` 빈 트랙. 현재 클라이언트 중복제거(core.js)에 의존. 정리 시 곡 수·중복 변동 → `npm test`로 회귀 확인.
 - `url:` 빈 트랙(앱에서 ♪ 표시·재생 불가) 유지/제거 정책 결정.
+
+---
+
+# 남은 작업 (세션 5 핸드오프)
+
+세션 4 종료(2026-06-20, 커밋 `f6d5ce4`) 시점. 구조 정리 0·1단계는 끝났고, 아래가 열린 항목 전부. 주체·우선순위 순.
+
+## A. 지금 바로 — 사용자 확인
+- **라이브 검증**: https://sbb2002.github.io/bandori-song-sorter/ 에서 1단계 재배치 후 밴드 **아이콘**(셀렉터·히트맵)과 **Download 단체사진**이 정상 표시되는지. Pages 반영에 1~2분. `various_artists`는 단체사진이 원래 없어 폴백 텍스트가 정상(회귀 아님).
+
+## B. 결정 필요 → 주면 에이전트가 처리
+- **`docs/index.html`(옛 v1) 처리**: 구 경로(`assets/<band>/{a,m}NN`) 하드코딩 + `raise_a_suiren` 오타로 1단계 이동에 의해 깨짐(**라이브 아님**, 현 사이트는 루트 `index.html`). → `docs/legacy/`로 아카이브 vs 그냥 방치. 결정만 주면 됨.
+
+## C. 데이터 반영 — 사용자 큐레이션 + 에이전트
+- **rss_inbox 72건 → yaml**: `tools/rss_inbox.csv`에 풀버전 25 + 커버 47이 정렬 대기(일반곡 시간순 → 커버 시간순, 이름 `(Cover)` **유지**). 넣을 곡을 선별해 해당 `data/<band>.yaml`에 추가하되, 곡별 `album_title`·`numbering`·`img_url`을 직접 정해야 함(Topic 음원엔 앨범 정보 없음) → `python build.py`. 추가분은 seen 원장이 재탐지를 막아줌.
+  - 재확인: `python tools/youtube_rss.py --dry`
+
+## D. 선택 정리 (급하지 않음)
+- **jpg → webp 통일**: `assets/albums/raise_a_suilen/a02.jpg`, `assets/albums/various_artists/{chispa,glitter_green}.jpg` 3개. 변환 후 해당 yaml `img_url` 확장자도 함께 수정 + `build.py`. (에셋 규칙은 webp 우선 — `assets/README.md`.)
+- **2단계 데이터 품질**: 위 "2단계" 섹션 참조(`undefined` 더미 앨범·빈 `url:` 트랙). 정리 시 `npm test` 회귀 확인.
+- **자동화**: `youtube_rss.py`를 GitHub Actions 크론으로 → 신곡을 검토용 PR로. 로컬 우선 결정이라 미구현.
+
+## E. 별개 트랙 (구조·데이터와 무관)
+- **모바일 롱터치 이슈**: `docs/comments/comment-02.md` 참고. 삼성인터넷·크롬에서 롱터치 반응성 이슈(히트박스 위치 의심)가 아직 열려 있음.
