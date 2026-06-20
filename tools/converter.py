@@ -2,12 +2,16 @@
 YAML <-> CSV Converter
 Converts between YAML album/track format and flat CSV format.
 
-CSV columns: band, numbering, album_title, img_url, track_number, name, url
+CSV columns: band, numbering, album_title, img_url, track_number, name, url, [extra track fields...]
+
+Extra track-level fields (e.g. release_date) are preserved automatically:
+they appear as additional CSV columns after `url`, and round-trip back into
+the YAML tracks. Empty optional fields are omitted from the YAML so existing
+data is not polluted with blank keys.
 """
 
 import csv
 import sys
-import os
 from pathlib import Path
 
 try:
@@ -18,40 +22,58 @@ except ImportError:
 
 
 # ──────────────────────────────────────────────
+# Schema
+# ──────────────────────────────────────────────
+
+# Album-level columns; every other CSV column belongs to a track.
+ALBUM_FIELDS = ["band", "numbering", "album_title", "img_url"]
+
+# Track columns that always exist and are always written (even when empty).
+# Any other track keys (e.g. release_date) are treated as optional metadata:
+# discovered dynamically, appended after these, and omitted when empty.
+BASE_TRACK_FIELDS = ["track_number", "name", "url"]
+
+
+# ──────────────────────────────────────────────
 # YAML → CSV
 # ──────────────────────────────────────────────
 
 def yaml_to_csv(yaml_path: str, csv_path: str) -> None:
-    """Convert a YAML file to a flat CSV file."""
+    """Convert a YAML file to a flat CSV file.
+
+    Track columns are discovered dynamically: the base columns
+    (track_number, name, url) come first, then any extra track keys
+    (e.g. release_date) in first-seen order, so new metadata is never dropped.
+    """
     with open(yaml_path, "r", encoding="utf-8") as f:
         albums = yaml.safe_load(f)
 
     if not isinstance(albums, list):
         raise ValueError("YAML root must be a list of album objects.")
 
-    fieldnames = ["band", "numbering", "album_title", "img_url", "track_number", "name", "url"]
+    # Discover extra track fields (anything beyond the base set), first-seen order.
+    extra_track_fields: list[str] = []
+    for album in albums:
+        for track in (album.get("tracks") or []):
+            for key in track:
+                if key not in BASE_TRACK_FIELDS and key not in extra_track_fields:
+                    extra_track_fields.append(key)
+
+    track_fields = BASE_TRACK_FIELDS + extra_track_fields
+    fieldnames = ALBUM_FIELDS + track_fields
 
     with open(csv_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
 
         for album in albums:
-            band        = album.get("band", "")
-            numbering   = album.get("numbering", "")
-            album_title = album.get("album_title", "")
-            img_url     = album.get("img_url", "")
-            tracks      = album.get("tracks", [])
-
-            for track in tracks:
-                writer.writerow({
-                    "band":         band,
-                    "numbering":    numbering,
-                    "album_title":  album_title,
-                    "img_url":      img_url,
-                    "track_number": track.get("track_number", ""),
-                    "name":         track.get("name", ""),
-                    "url":          track.get("url", ""),
-                })
+            album_cells = {k: album.get(k, "") for k in ALBUM_FIELDS}
+            for track in (album.get("tracks") or []):
+                row = dict(album_cells)
+                for field in track_fields:
+                    value = track.get(field, "")
+                    row[field] = "" if value is None else value
+                writer.writerow(row)
 
     print(f"[yaml→csv] Done: {csv_path}")
 
@@ -63,64 +85,60 @@ def yaml_to_csv(yaml_path: str, csv_path: str) -> None:
 def csv_to_yaml(csv_path: str, yaml_path: str) -> None:
     """Convert a flat CSV file back to the nested YAML format."""
 
-    # Columns that belong to the album level (not tracks)
-    ALBUM_FIELDS = {"band", "numbering", "album_title", "img_url"}
+    album_key_fields = set(ALBUM_FIELDS)
 
     albums: list[dict] = []
-    album_index: dict[tuple, int] = {}  # (band, numbering, album_title, img_url) → index in albums
+    album_index: dict[tuple, int] = {}  # album identity → index in albums
 
     with open(csv_path, "r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
-        # Determine which columns are extra (not album-level) — these all go into tracks
         all_columns = reader.fieldnames or []
-        track_fields = [c for c in all_columns if c not in ALBUM_FIELDS]
+        # Every non-album column is a track field (base + any extras like release_date).
+        track_fields = [c for c in all_columns if c not in album_key_fields]
 
         for row in reader:
-            key = (
-                row.get("band", ""),
-                row.get("numbering", ""),
-                row.get("album_title", ""),
-                row.get("img_url", ""),
-            )
+            key = tuple(row.get(k, "") for k in ALBUM_FIELDS)
 
             if key not in album_index:
                 album_index[key] = len(albums)
                 albums.append({
-                    "band":        row.get("band", ""),
-                    "numbering":   row.get("numbering", ""),
-                    "album_title": row.get("album_title", ""),
-                    "img_url":     row.get("img_url", ""),
-                    "tracks":      [],
+                    **{k: row.get(k, "") for k in ALBUM_FIELDS},
+                    "tracks": [],
                 })
 
-            # All non-album columns go into the track entry (including any extras)
             track_entry = {field: row.get(field, "") for field in track_fields}
             albums[album_index[key]]["tracks"].append(track_entry)
 
-    # Custom YAML dumper to match the original style
+    # ----- Custom YAML dumper to match the original style -----
     class QuotedStr(str):
         pass
 
     def quoted_str_representer(dumper, data):
         return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="'")
 
-    # Fields that should always be single-quoted
-    QUOTED_TRACK_FIELDS = {"track_number", "name"}
+    # Always single-quote these so values stay strings
+    # (e.g. dates like '2026-06-20', leading-zero track numbers like '01').
     QUOTED_ALBUM_FIELDS = {"band", "numbering", "album_title"}
+    QUOTED_TRACK_FIELDS = {"track_number", "name", "release_date"}
 
-    def album_to_ordereddict(album, extra_track_fields: list[str]):
+    # Required track fields are always emitted; optional ones are dropped when empty
+    # so existing tracks aren't littered with blank metadata keys.
+    required_track_fields = set(BASE_TRACK_FIELDS)
+
+    def build_track(track):
+        entry = {}
+        for field in track_fields:
+            value = track.get(field, "")
+            if field not in required_track_fields and (value is None or value == ""):
+                continue  # don't pollute tracks with empty optional metadata
+            entry[field] = QuotedStr(value) if field in QUOTED_TRACK_FIELDS else value
+        return entry
+
+    def album_to_ordereddict(album):
         """Return a plain dict that preserves key order for yaml.dump."""
         result = {}
-        for k in ["band", "numbering", "album_title", "img_url"]:
+        for k in ALBUM_FIELDS:
             result[k] = QuotedStr(album[k]) if k in QUOTED_ALBUM_FIELDS else album[k]
-
-        def build_track(t):
-            entry = {}
-            for field in track_fields:
-                val = t.get(field, "")
-                entry[field] = QuotedStr(val) if field in QUOTED_TRACK_FIELDS else val
-            return entry
-
         result["tracks"] = [build_track(t) for t in album["tracks"]]
         return result
 
@@ -128,7 +146,7 @@ def csv_to_yaml(csv_path: str, yaml_path: str) -> None:
     dumper.add_representer(QuotedStr, quoted_str_representer)
 
     output = yaml.dump(
-        [album_to_ordereddict(a, track_fields) for a in albums],
+        [album_to_ordereddict(a) for a in albums],
         Dumper=dumper,
         allow_unicode=True,
         default_flow_style=False,
@@ -136,8 +154,8 @@ def csv_to_yaml(csv_path: str, yaml_path: str) -> None:
         indent=2,
     )
 
-    # yaml.dump uses "- " at the same indent as its parent; adjust list items
-    # so top-level list entries are separated by a blank line for readability.
+    # yaml.dump packs list items tightly; insert a blank line between top-level
+    # album entries for readability (matches the hand-authored data style).
     lines = output.splitlines()
     pretty_lines = []
     for i, line in enumerate(lines):
@@ -158,8 +176,8 @@ def csv_to_yaml(csv_path: str, yaml_path: str) -> None:
 def usage():
     print(
         "Usage:\n"
-        "  yaml→csv:  python yaml_csv_converter.py yaml2csv <input.yaml> [output.csv]\n"
-        "  csv→yaml:  python yaml_csv_converter.py csv2yaml <input.csv>  [output.yaml]"
+        "  yaml→csv:  python converter.py yaml2csv <input.yaml> [output.csv]\n"
+        "  csv→yaml:  python converter.py csv2yaml <input.csv>  [output.yaml]"
     )
 
 
@@ -168,7 +186,7 @@ def main():
         usage()
         sys.exit(1)
 
-    mode      = sys.argv[1].lower()
+    mode       = sys.argv[1].lower()
     input_path = sys.argv[2]
 
     if mode == "yaml2csv":
