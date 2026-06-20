@@ -3,3 +3,11 @@ bandori-env/
 raw/
 template.yaml
 restore
+
+# Python
+__pycache__/
+*.pyc
+
+# youtube_rss.py local state (review queue + seen ledger)
+tools/rss_inbox.csv
+tools/rss_seen.json
