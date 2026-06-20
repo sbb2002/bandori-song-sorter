@@ -147,3 +147,47 @@
 - **신곡 반영**: inbox에서 고른 곡을 `data/*.yaml`에 추가 → `python build.py`. 곡별로 `album_title/numbering/img_url`을 직접 정해야 함(Topic 음원엔 앨범 정보 없음). 추가 후엔 seen 원장이 재탐지를 막아줌.
 - **(선택) 자동화**: `youtube_rss.py`를 GitHub Actions 크론으로 → 신곡을 검토용 PR로 올리기(검토 후 푸시). 로컬 우선 결정이라 미구현.
 - **(별개 트랙) UI 미해결**: `docs/comments/comment-02.md` 참고 — 모바일(삼성인터넷·크롬) 롱터치 반응성 이슈가 아직 열려 있음(히트박스 위치 의심). 이번 세션 범위 밖.
+
+---
+
+# 세션 4 (2026-06-20) — 코드베이스 구조 정리
+
+`assets/`·`data/` 등이 규칙 없이 흩어져 있어 점검 후 단계적으로 정리. **0단계 완료**, 1단계는 미수행(아래 필수 과정 기록).
+
+## 확정된 결정 (점검 후 사용자 선택)
+- **에셋 레이아웃 = 종류별**: `assets/icons/` · `assets/bands/` · `assets/albums/<band>/`. (현재는 아이콘만 종류별, 나머지는 밴드별로 혼재)
+- **앨범 커버(aNN/mNN)는 legacy 보존**(삭제 X). 현 v2 곡 단위 UI는 앨범 커버를 화면에 **안 씀**(build.py가 `SONG_DATA.img`로 주입하지만 script.js가 안 읽음). v1(`docs/index.html`) 전용 흔적.
+- `assets/icon/undefined.png` → `_fallback.png`로 개명 예정.
+
+## 0단계 완료 (커밋됨)
+- `data/roselia.csv`·`tools/afterglow.csv` 제거(converter 산출물, `data/*.yaml`이 원본).
+- `.gitignore`: 생성 CSV 일원화(`data/*.csv`, `tools/*.csv`).
+- `assets/README.md` 신규: 종류별 레이아웃·네이밍 규칙·밴드 추가 체크리스트·현재→목표 이전 계획.
+
+## 1단계 (필수) — assets/ 종류별 재배치
+**파일 이동** (가능하면 `git mv`로 이력 보존):
+- `assets/icon/<band>.png` → `assets/icons/<band>.png` (폴더명 단수→복수)
+- `assets/icon/undefined.png` → `assets/icons/_fallback.png`
+- `assets/<band>/band.png` → `assets/bands/<band>.png`
+- `assets/<band>/band.webp` → **삭제**(미사용 — script.js는 png만 씀)
+- `assets/<band>/{a,m}NN.{webp,jpg}` → `assets/albums/<band>/...` (legacy 보존)
+- `assets/etc/*`(various_artists 서브유닛 커버) → `assets/albums/various_artists/...`
+- `assets/<band>/temp.*`(ikka_dumb_rock, millsage) → 삭제하거나 실제 커버로 교체
+- 포맷 통일: jpg(`raise_a_suilen/a02.jpg`, `etc/*.jpg`) → webp 권장
+
+**코드·데이터 동시 수정**(안 하면 라이브 깨짐):
+- `static/js/script.js` 2곳:
+  - `bandIcon()`(≈45행): `'assets/icon/' + band + '.png'` → `'assets/icons/' + band + '.png'` (+ onerror fallback을 `_fallback.png`로)
+  - 다운로드(≈750행): `'assets/' + bestBand + '/band.png'` → `'assets/bands/' + bestBand + '.png'`
+- `data/*.yaml` 전 파일 `img_url`: 새 `assets/albums/<band>/...` 경로로 일괄 수정, `assets/icon/undefined.png` → `assets/icons/_fallback.png`
+- `python build.py` 재실행 → `index.html` 갱신
+- **검증**: 로컬·라이브에서 밴드 아이콘(셀렉터·히트맵)·다운로드 단체사진 정상 표시 확인. 앨범 커버는 v2 미표시라 경로만 안 깨지면 됨.
+
+**주의**:
+- `docs/index.html`(옛 v1)은 `assets/<band>/{a,m}NN` 하드코딩 + `raise_a_suiren` **오타**(실제 suilen)로 이미 일부 깨짐. 재배치하면 더 깨지므로 → `docs/legacy/`로 아카이브하거나 방치(라이브 아님). **결정 필요.**
+- 슬러그에 한글/특수문자 금지(URL 인코딩 이슈). `numbering` 기반 영문 슬러그 권장(예: `1st_one-of-us.webp`).
+
+## 2단계 (별개·선택) — 데이터 품질
+구조 정리와 무관한 데이터 스멜이라 1단계 차단 요인은 아님:
+- 각 밴드 yaml의 `numbering: undefined / album_title: undefined` **더미 앨범** = 다른 앨범 곡의 중복본 + `url:` 빈 트랙. 현재 클라이언트 중복제거(core.js)에 의존. 정리 시 곡 수·중복 변동 → `npm test`로 회귀 확인.
+- `url:` 빈 트랙(앱에서 ♪ 표시·재생 불가) 유지/제거 정책 결정.
