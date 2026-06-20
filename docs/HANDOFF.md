@@ -84,3 +84,40 @@
 ### 3. README.md 재작성
 - **사용자 관점**으로 전면 재작성 (현재는 개발자 관점)
 - 웹페이지 조작법, 결과물(링크·히트맵·다운로드) 공유 방법, 키보드 단축키 안내 포함
+
+---
+
+# 세션 3 (2026-06-20) — 컨버터 / RSS 신곡 탐지기 / README
+
+세션 2의 "다음 세션에서 할 작업" **1·2·3 모두 완료**하고 main에 푸시.
+커밋: `74fdc04`(README) · `9549098`(컨버터) · `b912fea`(RSS 탐지기) · `5d5624f`(README URL fix)
+
+## 완료된 작업
+
+### 1. 컨버터 (`tools/converter.py`)
+- 점검 결과 **yaml 구조는 세션 2에서 안 바뀜** → 기존 CSV 로직 정상(afterglow.csv도 yaml과 일치).
+- 다만 `yaml_to_csv`가 컬럼 하드코딩이라 새 트랙 필드(예: `release_date`)를 **누락**하던 문제 → **동적 컬럼**으로 수정. 빈 옵션필드는 yaml에서 생략, 날짜는 문자열로 인용.
+- 검증: afterglow 라운드트립 **바이트 동일(무회귀)** + release_date 라운드트립 통과.
+
+### 2. RSS 신곡 탐지기 (`tools/youtube_rss.py`, 신규)
+- **방식 전환**: 곡들이 전부 밴드별 **"<Band> - Topic" 채널**(YouTube Music 자동 생성, 음원만 업로드)에서 옴을 확인 → 원래 계획(공식채널 1개 + 수동 배정) 대신 **밴드별 Topic RSS 구독**으로 변경. 밴드 자동 배정 + 곡만 필터 + 출시일이 공짜로 해결.
+- 무료·무API키·무AI·무외부의존(urllib + xml + PyYAML). 13밴드 채널ID는 `BAND_CHANNELS`에 하드코딩. `various_artists`(etc.yaml)는 단일 Topic 없어 제외.
+- 정책: 기존곡(영상ID + 곡명 정규화) · seen 원장으로 신규만. **TV Size/Short/live/instrumental 제외, 풀버전(무태그) + 커버([cover] 태그)만**, 같은 곡 중복 업로드는 곡명 기준 1개(풀버전·최초발매일 우선). `release_date`=영상 게시일.
+- 실행 결과: 신규 후보 **72건**(풀버전 25 + 커버 47)을 `tools/rss_inbox.csv`로 staging.
+- 운영: `--dry`(쓰기X·확인용) / 인자없음(inbox·seen 기록) / `--show`(피드 덤프). 생성물(`rss_inbox.csv`·`rss_seen.json`·`__pycache__`)은 `.gitignore`.
+
+### 3. README (`readme.md`)
+- 사용자 관점 전면 재작성(라이브 링크·5단계 표·단축키·필터·공유·모바일·간결한 개발자 섹션).
+- 라이브 URL이 `sbb2005`(→404)로 잘못 들어가 있던 것 발견 → **`sbb2002`** 로 수정. 저장소 소유자/원격 = `github.com/sbb2002`, 라이브 = https://sbb2002.github.io/bandori-song-sorter/
+
+## ✅ 사용자가 체크할 사항
+- [ ] 라이브 사이트 정상 동작: https://sbb2002.github.io/bandori-song-sorter/ (`index.html` 미변경이라 그대로일 것)
+- [ ] GitHub에서 README 렌더링·링크 확인 (라이브 링크 클릭 시 404 아닌지)
+- [ ] `tools/rss_inbox.csv` 72건 검토 — 실제로 넣을 곡/커버 선별
+- [ ] (선택) 컨버터 동작 확인: `python tools/converter.py yaml2csv data/roselia.yaml` 후 생성 CSV 확인
+- [ ] (선택) `python tools/youtube_rss.py --dry` 실행해 탐지 결과 눈으로 확인
+
+## 남은 작업
+- **신곡 반영**: inbox에서 고른 곡을 `data/*.yaml`에 추가 → `python build.py`. 곡별로 `album_title/numbering/img_url`을 직접 정해야 함(Topic 음원엔 앨범 정보 없음). 추가 후엔 seen 원장이 재탐지를 막아줌.
+- **(선택) 자동화**: `youtube_rss.py`를 GitHub Actions 크론으로 → 신곡을 검토용 PR로 올리기(검토 후 푸시). 로컬 우선 결정이라 미구현.
+- **(별개 트랙) UI 미해결**: `docs/comments/comment-02.md` 참고 — 모바일(삼성인터넷·크롬) 롱터치 반응성 이슈가 아직 열려 있음(히트박스 위치 의심). 이번 세션 범위 밖.
