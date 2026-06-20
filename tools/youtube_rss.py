@@ -272,6 +272,15 @@ def cmd_detect(dry: bool = False) -> None:
         total_new += len(new_here)
         print(f"{band:18} {len(entries):4}  {len(known_names):5}  {len(new_here):3}")
 
+    # Order the whole queue: full original versions first, then covers;
+    # each group oldest -> newest (ties broken by band, then name).
+    inbox_rows.sort(key=lambda r: (
+        r["variant"] != "",
+        r["release_date"] or "9999-99-99",
+        r["band"],
+        r["name"],
+    ))
+
     print("-" * 38)
     print(f"TOTAL NEW CANDIDATES: {total_new}")
 
