@@ -1,7 +1,7 @@
 - band: 'ave_mujica'
   numbering: '1st'
   album_title: 'Completeness'
-  img_url: assets/ave_mujica/a01.webp
+  img_url: assets/albums/ave_mujica/a01.webp
   tracks:
     - track_number: '01'
       name: 'KiLLKiSS'
@@ -28,7 +28,7 @@
 - band: 'ave_mujica'
   numbering: 'Mini'
   album_title: 'Alea jacta est'
-  img_url: assets/ave_mujica/m01.webp
+  img_url: assets/albums/ave_mujica/m01.webp
   tracks:
     - track_number: '01'
       name: '黒のバースデイ'
@@ -52,7 +52,7 @@
 - band: 'ave_mujica'
   numbering: 'Mini'
   album_title: 'ELEMENTS'
-  img_url: assets/ave_mujica/m02.webp
+  img_url: assets/albums/ave_mujica/m02.webp
   tracks:
     - track_number: '01'
       name: 'Symbol I : △'
@@ -73,7 +73,7 @@
 - band: 'ave_mujica'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X01'
       name: 'Sophie'

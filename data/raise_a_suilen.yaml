@@ -1,7 +1,7 @@
 - band: 'raise_a_suilen'
   numbering: '1st'
   album_title: 'ERA'
-  img_url: assets/raise_a_suilen/a01.webp
+  img_url: assets/albums/raise_a_suilen/a01.webp
   tracks:
     - track_number: '01'
       name: 'Invincible Fighter'
@@ -43,7 +43,7 @@
 - band: 'raise_a_suilen'
   numbering: '2nd'
   album_title: 'SAVAGE'
-  img_url: assets/raise_a_suilen/a02.jpg
+  img_url: assets/albums/raise_a_suilen/a02.jpg
   tracks:
     - track_number: '01'
       name: 'V.I.P MONSTER'
@@ -91,7 +91,7 @@
 - band: 'raise_a_suilen'
   numbering: 'Mini'
   album_title: 'THE THIRD（仮）1st ライブ'
-  img_url: assets/raise_a_suilen/m01.webp
+  img_url: assets/albums/raise_a_suilen/m01.webp
   tracks:
     - track_number: '1'
       name: 'That Is How I Roll!'
@@ -133,7 +133,7 @@
 - band: 'raise_a_suilen'
   numbering: 'Mini'
   album_title: 'REVELATION'
-  img_url: assets/raise_a_suilen/m02.webp
+  img_url: assets/albums/raise_a_suilen/m02.webp
   tracks:
     - track_number: '01'
       name: 'Apocalypse'
@@ -154,7 +154,7 @@
 - band: 'raise_a_suilen'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X0'
       name: 'WHAT AN EXPLOSION'

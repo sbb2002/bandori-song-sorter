@@ -42,7 +42,7 @@ function fixPath(path) {
 }
 
 function bandIcon(band) {
-    return fixPath('assets/icon/' + band + '.png');
+    return fixPath('assets/icons/' + band + '.png');
 }
 
 /** snake_case 밴드명 → 가독 라벨 */
@@ -747,7 +747,7 @@ function buildCaptureDOM() {
         const photoWrap = document.createElement('div');
         photoWrap.style.cssText = 'position:relative;overflow:hidden;border-radius:6px;min-height:100px;background:#111;';
         const img = document.createElement('img');
-        img.src = fixPath('assets/' + bestBand + '/band.png');
+        img.src = fixPath('assets/bands/' + bestBand + '.png');
         img.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center top;display:block;';
         photoWrap.appendChild(img);
         const blur = document.createElement('div');

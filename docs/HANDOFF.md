@@ -164,7 +164,12 @@
 - `.gitignore`: 생성 CSV 일원화(`data/*.csv`, `tools/*.csv`).
 - `assets/README.md` 신규: 종류별 레이아웃·네이밍 규칙·밴드 추가 체크리스트·현재→목표 이전 계획.
 
-## 1단계 (필수) — assets/ 종류별 재배치
+## 1단계 (필수) — assets/ 종류별 재배치 — ✅ 완료 (2026-06-20)
+
+**결과**: `git mv` 65 rename(아이콘 14 + 단체사진 12 + 앨범 39) + 15 삭제로 종류별 재배치 완료. `static/js/script.js` 2곳 · 전 `data/*.yaml` `img_url` · `index.html` 재빌드(곡 488) 동시 반영. 무결성 검증 통과 — 고유 `img_url` 40개 전부 추적 파일로 연결, 밴드 아이콘 13개 존재, `index.html`에 구 경로 0개(이전 세션에서 stale했던 빌드를 재빌드로 교정). `various_artists`는 `bands/` 단체사진이 원래 없음(회귀 아님). jpg 3개(`raise_a_suilen/a02` · `various_artists/{chispa,glitter_green}`) 미변환 잔존. `docs/index.html` v1은 구 경로 하드코딩이라 깨짐 → 아카이브 미결. **라이브 아이콘/단체사진 표시는 푸시 후 사용자 확인 필요.**
+
+아래는 원래 계획(기록 보존):
+
 **파일 이동** (가능하면 `git mv`로 이력 보존):
 - `assets/icon/<band>.png` → `assets/icons/<band>.png` (폴더명 단수→복수)
 - `assets/icon/undefined.png` → `assets/icons/_fallback.png`

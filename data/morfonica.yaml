@@ -1,7 +1,7 @@
 - band: 'morfonica'
   numbering: '1st'
   album_title: 'QUINTET'
-  img_url: assets/morfonica/a01.webp
+  img_url: assets/albums/morfonica/a01.webp
   tracks:
     - track_number: 'Disc1-01'
       name: 'Daylight -デイライト-'
@@ -46,7 +46,7 @@
 - band: 'morfonica'
   numbering: '2nd'
   album_title: 'Polyphony'
-  img_url: assets/morfonica/a02.webp
+  img_url: assets/albums/morfonica/a02.webp
   tracks:
     - track_number: '01'
       name: 'Polyphonyscape'
@@ -88,7 +88,7 @@
 - band: 'morfonica'
   numbering: 'Mini'
   album_title: 'forte'
-  img_url: assets/morfonica/m01.webp
+  img_url: assets/albums/morfonica/m01.webp
   tracks:
     - track_number: '01'
       name: 'フレージング ミラージュ'
@@ -109,7 +109,7 @@
 - band: 'morfonica'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X0'
       name: 'Resonant Strings'

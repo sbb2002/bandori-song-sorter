@@ -1,7 +1,7 @@
 - band: 'roselia'
   numbering: '1st'
   album_title: 'Anfang'
-  img_url: assets/roselia/a01.webp
+  img_url: assets/albums/roselia/a01.webp
   tracks:
     - track_number: '01'
       name: 'Neo-Aspect'
@@ -43,7 +43,7 @@
 - band: 'roselia'
   numbering: '2nd'
   album_title: 'Wahl'
-  img_url: assets/roselia/a02.webp
+  img_url: assets/albums/roselia/a02.webp
   tracks:
     - track_number: '01'
       name: 'R'
@@ -85,7 +85,7 @@
 - band: 'roselia'
   numbering: '3rd'
   album_title: 'Für immer'
-  img_url: assets/roselia/a03.webp
+  img_url: assets/albums/roselia/a03.webp
   tracks:
     - track_number: '01'
       name: 'Sage der Rosen'
@@ -127,7 +127,7 @@
 - band: 'roselia'
   numbering: 'Mini'
   album_title: 'ROZEN HORIZON'
-  img_url: assets/roselia/m01.webp
+  img_url: assets/albums/roselia/m01.webp
   tracks:
     - track_number: '01'
       name: 'Sprechchor'
@@ -157,7 +157,7 @@
 - band: 'roselia'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X0'
       name: 'Fear Nothing'

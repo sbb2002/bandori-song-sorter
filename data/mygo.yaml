@@ -1,7 +1,7 @@
 - band: 'mygo'
   numbering: '1st'
   album_title: '迷跡波'
-  img_url: assets/mygo/a01.webp
+  img_url: assets/albums/mygo/a01.webp
   tracks:
     - track_number: '01'
       name: '迷星叫'
@@ -46,7 +46,7 @@
 - band: 'mygo'
   numbering: '2nd'
   album_title: '跡暖空'
-  img_url: assets/mygo/a02.webp
+  img_url: assets/albums/mygo/a02.webp
   tracks:
     - track_number: '01'
       name: '歩拾道'
@@ -88,7 +88,7 @@
 - band: 'mygo'
   numbering: '3rd'
   album_title: '致並跡'
-  img_url: assets/mygo/a03.webp
+  img_url: assets/albums/mygo/a03.webp
   tracks:
     - track_number: '01'
       name: '-'
@@ -124,7 +124,7 @@
 - band: 'mygo'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X0'
       name: '静降想'

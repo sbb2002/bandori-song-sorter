@@ -1,7 +1,7 @@
 - band: 'millsage'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/millsage/temp.jpg
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X01'
       name: '起死開戦'

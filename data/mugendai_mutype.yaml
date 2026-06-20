@@ -1,7 +1,7 @@
 - band: 'mugendai_mutype'
   numbering: '1st'
   album_title: 'プログレス サイン'
-  img_url: assets/mugendai_mutype/a01.webp
+  img_url: assets/albums/mugendai_mutype/a01.webp
   tracks:
     - track_number: '01'
       name: 'アイの夢限'
@@ -52,7 +52,7 @@
 - band: 'mugendai_mutype'
   numbering: 'Mini'
   album_title: 'スタートライン'
-  img_url: assets/mugendai_mutype/m01.webp
+  img_url: assets/albums/mugendai_mutype/m01.webp
   tracks:
     - track_number: '01'
       name: '✞animaるパーティ✞開催中✞'
@@ -73,7 +73,7 @@
 - band: 'mugendai_mutype'
   numbering: 'undefined'
   album_title: 'undefined'
-  img_url: assets/icon/undefined.png
+  img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X01'
       name: "Mutant Mutant"
