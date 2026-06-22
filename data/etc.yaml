@@ -1,7 +1,7 @@
 - band: 'various_artists'
   numbering: 'undefined'
   album_title: 'Glitter*Green'
-  img_url: assets/albums/various_artists/glitter_green.jpg
+  img_url: assets/albums/various_artists/glitter_green.webp
   tracks:
     - track_number: 'X01'
       name: "Don't be afraid!"
@@ -13,7 +13,7 @@
 - band: 'various_artists'
   numbering: 'undefined'
   album_title: 'Chispa'
-  img_url: assets/albums/various_artists/chispa.jpg
+  img_url: assets/albums/various_artists/chispa.webp
   tracks:
     - track_number: 'X01'
       name: "Be shine, shining!"

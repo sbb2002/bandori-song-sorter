@@ -223,6 +223,33 @@ header h1 {
 }
 .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+.song-type-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.type-tab {
+  padding: 3px 16px;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.type-tab:hover { color: var(--text); }
+.type-tab.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
 .song-list {
   flex: 1;
   overflow-y: auto;

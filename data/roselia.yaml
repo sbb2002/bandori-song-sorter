@@ -192,3 +192,45 @@
     - track_number: 'X0'
       name: '悪魔の子'
       url: https://youtu.be/kHdgtPHuya8?si=ML8om9e1KikL-BB4
+
+- band: 'roselia'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-06-25'
+      name: 'Dazzle the Destiny'
+      url: https://youtu.be/NBqwhhtVs9I
+    - track_number: '2025-06-25'
+      name: 'Grateful Melting'
+      url: https://youtu.be/xeBOEvFrWK8
+    - track_number: '2025-06-25'
+      name: 'Second to None'
+      url: https://youtu.be/qqEMtc1NtGk
+    - track_number: '2025-11-18'
+      name: 'Steadfast Spirits'
+      url: https://youtu.be/ppeswfW0mg4
+    - track_number: '2025-11-18'
+      name: '紫炎'
+      url: https://youtu.be/0BsIKL3t76M
+    - track_number: '2026-05-01'
+      name: 'XV'
+      url: https://youtu.be/P9PXzNniuaY
+
+- band: 'roselia'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-10-14'
+      name: 'Reweave (Cover)'
+      url: https://youtu.be/NOIUNyfVnbI
+    - track_number: '2025-10-14'
+      name: 'ヒバナ -Reloaded- (Cover)'
+      url: https://youtu.be/_8_h1aTcH-c
+    - track_number: '2025-10-14'
+      name: 'ファタール (Cover)'
+      url: https://youtu.be/B8Twg8j4a1A
+    - track_number: '2026-03-18'
+      name: 'HONEY (Cover)'
+      url: https://youtu.be/frI2-4pnOrw

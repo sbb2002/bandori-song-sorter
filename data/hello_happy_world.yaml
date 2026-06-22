@@ -183,3 +183,39 @@
     - track_number: 'X0'
       name: '許婚っきゅん (Iinazukkyun)'
       url: https://youtu.be/X9VNpJdPGWE?si=YvFa33WdjzfjF04w
+
+- band: 'hello_happy_world'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-12-25'
+      name: 'スマイリーキャロル'
+      url: https://youtu.be/f5aGrmFiDGc
+
+- band: 'hello_happy_world'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-04-03'
+      name: '上海ハニー (Cover)'
+      url: https://youtu.be/JbEmP03gUnE
+    - track_number: '2025-04-24'
+      name: 'シル・ヴ・プレジデント (Cover)'
+      url: https://youtu.be/pli3-yJjWJM
+    - track_number: '2025-04-24'
+      name: 'ヒャダインのじょーじょーゆーじょー (Cover)'
+      url: https://youtu.be/yfpbW_HnS4Y
+    - track_number: '2025-10-14'
+      name: 'はいよろこんで (Cover)'
+      url: https://youtu.be/BHC1CKcSf50
+    - track_number: '2025-10-14'
+      name: 'シカ色デイズ (Cover)'
+      url: https://youtu.be/KaD3F8riuLE
+    - track_number: '2025-10-14'
+      name: '強風オールバック (Cover)'
+      url: https://youtu.be/EGxEKCHDAFE
+    - track_number: '2025-10-14'
+      name: '最高到達点 (Cover)'
+      url: https://youtu.be/8AwnyCo2FF0

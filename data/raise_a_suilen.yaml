@@ -43,7 +43,7 @@
 - band: 'raise_a_suilen'
   numbering: '2nd'
   album_title: 'SAVAGE'
-  img_url: assets/albums/raise_a_suilen/a02.jpg
+  img_url: assets/albums/raise_a_suilen/a02.webp
   tracks:
     - track_number: '01'
       name: 'V.I.P MONSTER'
@@ -180,3 +180,51 @@
     - track_number: 'X0'
       name: 'WELCOME TO PANDEMONIUM'
       url: https://youtu.be/5sj1cxlpp5U?si=NKvNPEn0rwqzMM1S
+
+- band: 'raise_a_suilen'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-06-10'
+      name: 'HOWLING AMBITION'
+      url: https://youtu.be/XYMoaMqyf6s
+    - track_number: '2025-06-10'
+      name: 'VIVID FIRST TIME'
+      url: https://youtu.be/ckqNhklWz6I
+    - track_number: '2025-11-11'
+      name: "'FIGHT' ADDICT"
+      url: https://youtu.be/gHqSTnDDmJk
+    - track_number: '2025-11-11'
+      name: 'Drown Out the Noise and Push Through the Trash'
+      url: https://youtu.be/EELGtL1U1vw
+    - track_number: '2025-11-11'
+      name: 'FIVE as ONE'
+      url: https://youtu.be/rRo4HYj654A
+
+- band: 'raise_a_suilen'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-04-03'
+      name: '1/3の純情な感情 (Cover)'
+      url: https://youtu.be/GBGMF98_oBs
+    - track_number: '2025-04-03'
+      name: 'ヒトリノ夜 (Cover)'
+      url: https://youtu.be/9zwlVCZ4LRw
+    - track_number: '2025-04-03'
+      name: '激動 (Cover)'
+      url: https://youtu.be/AacM4_SwEPc
+    - track_number: '2025-04-24'
+      name: 'メギツネ (Cover)'
+      url: https://youtu.be/FHdbSnHhlts
+    - track_number: '2025-10-14'
+      name: 'Bling-Bang-Bang-Born (Cover)'
+      url: https://youtu.be/ciUhdk5mxt4
+    - track_number: '2025-10-14'
+      name: '第六感 (Cover)'
+      url: https://youtu.be/cb2c5sJShsQ
+    - track_number: '2026-03-17'
+      name: '革命道中 (Cover)'
+      url: https://youtu.be/xj_PkFdvQ0g

@@ -189,3 +189,36 @@
     - track_number: 'X0'
       name: 'あこがれacross'
       url: https://youtu.be/UbKbTPzYNOI?si=bzbi2CRjmNmBCQCa
+
+- band: 'pastel_palettes'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-04-03'
+      name: '奏（かなで） (Cover)'
+      url: https://youtu.be/7ivdiNcTRmA
+    - track_number: '2025-04-24'
+      name: 'Sparkling Daydream (Cover)'
+      url: https://youtu.be/cWaspJSp51g
+    - track_number: '2025-04-24'
+      name: '春を告げる (Cover)'
+      url: https://youtu.be/Kz_bl2WNEag
+    - track_number: '2025-10-14'
+      name: 'だから、ひとりじゃない (Cover)'
+      url: https://youtu.be/RxB9vL3xGts
+    - track_number: '2025-10-14'
+      name: 'サインはB (Cover)'
+      url: https://youtu.be/pe-Hf4LBNu4
+    - track_number: '2025-10-14'
+      name: '愛包ダンスホール (Cover)'
+      url: https://youtu.be/qvnhTZ8Tt6Y
+    - track_number: '2025-10-14'
+      name: '最上級にかわいいの！ (Cover)'
+      url: https://youtu.be/e8vNIMfYZ5Q
+    - track_number: '2025-11-20'
+      name: '♡桃色片想い♡ (Cover)'
+      url: https://youtu.be/wYKNiQ89D2c
+    - track_number: '2026-03-19'
+      name: '金曜日のおはよう (Cover)'
+      url: https://youtu.be/Yuy49UdKUDk

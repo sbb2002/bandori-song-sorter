@@ -132,3 +132,39 @@
     - track_number: 'X0'
       name: 'esora no clover'
       url: https://youtu.be/fGgKN9_egCM?si=Hz2WlC_qkVS1RGaP
+
+- band: 'morfonica'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-08-26'
+      name: 'Feathered Dreams'
+      url: https://youtu.be/sAnwgtsAzs8
+    - track_number: '2025-08-26'
+      name: 'Portray Empathy'
+      url: https://youtu.be/A-8Ci-YRgjE
+    - track_number: '2025-09-12'
+      name: 'ビューティ・フォー'
+      url: https://youtu.be/5kgdPWEUA7Q
+    - track_number: '2026-05-06'
+      name: '胡蝶翔る星月夜'
+      url: https://youtu.be/GOU_X0KK-jo
+
+- band: 'morfonica'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-10-14'
+      name: 'QUEEN (Cover)'
+      url: https://youtu.be/_FiExtFisto
+    - track_number: '2025-10-14'
+      name: 'again (Cover)'
+      url: https://youtu.be/4Vgb5ZfuGas
+    - track_number: '2025-10-14'
+      name: '輪舞-revolution (Cover)'
+      url: https://youtu.be/RquM6y7cTZU
+    - track_number: '2026-03-15'
+      name: 'メロウ (Cover)'
+      url: https://youtu.be/falfRIZceKw

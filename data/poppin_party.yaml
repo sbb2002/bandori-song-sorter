@@ -318,3 +318,42 @@
     - track_number: 'X16'
       name: 'GLAMOROUS SKY'
       url: 
+
+- band: 'poppin_party'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-12-23'
+      name: 'Drive Your Heart'
+      url: https://youtu.be/3qwN9R7er9Y
+    - track_number: '2025-12-23'
+      name: 'とっておきAnswer'
+      url: https://youtu.be/uOdEmtdzblA
+    - track_number: '2025-12-25'
+      name: 'START!! True dreams'
+      url: https://youtu.be/SQ_-nPf-SNI
+    - track_number: '2026-04-28'
+      name: 'どきどきデエト'
+      url: https://youtu.be/sk7nYFsnLto
+
+- band: 'poppin_party'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-10-14'
+      name: 'ちゅ、多様性。 (Cover)'
+      url: https://youtu.be/DhaNne4oohU
+    - track_number: '2025-10-14'
+      name: 'フィクション (Cover)'
+      url: https://youtu.be/NF-IGTDm138
+    - track_number: '2025-10-14'
+      name: '幾億光年 (Cover)'
+      url: https://youtu.be/CHkferCyEUM
+    - track_number: '2025-10-14'
+      name: '心絵 (Cover)'
+      url: https://youtu.be/9FhNnX_qsV0
+    - track_number: '2025-11-10'
+      name: 'じょいふる (Cover)'
+      url: https://youtu.be/3bnaYpv-DFU

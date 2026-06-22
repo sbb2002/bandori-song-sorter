@@ -14,8 +14,8 @@ const C = window.BandoriCore;
 const STORE_KEY = 'bandori-song-ranks-v1';
 
 const BAND_ORDER = [
-    'poppin_party', 'roselia', 'afterglow', 'pastel_palettes',
-    'hello_happy_world', 'raise_a_suilen', 'morfonica', 'mygo',
+    'poppin_party', 'afterglow', 'pastel_palettes', 'roselia',
+    'hello_happy_world', 'morfonica', 'raise_a_suilen', 'mygo',
     'ave_mujica', 'mugendai_mutype', 'millsage', 'ikka_dumb_rock'
 ];
 
@@ -25,6 +25,7 @@ let bands = [];             // 밴드 순서
 let ranks = loadRanks();    // { songKey: 1..5 }
 
 let currentBand = 'ALL';
+let currentType = 'all';         // 곡 종류 탭: 'all' | 'ori' | 'cover'
 let activeFilters = new Set();   // 0=미평가, 1..5=티어. 비어있으면 전체 표시
 let currentTab = 'hist';
 
@@ -114,9 +115,16 @@ function bandSongs() {
     return currentBand === 'ALL' ? allSongs : (dedupedByBand[currentBand] || []);
 }
 
-/** 리스트 표시용 곡 — 밴드 + 활성 티어 필터 적용 */
+/** 커버곡 판별 — RSS 반영분은 album_title 'Covers' + 곡명에 '(Cover)' 표기 */
+function isCover(song) {
+    return song.album === 'Covers' || /\(cover\)/i.test(song.title);
+}
+
+/** 리스트 표시용 곡 — 밴드 + 곡 종류(ALL/Ori/Cover) + 활성 티어 필터 적용 */
 function viewSongs() {
     let songs = bandSongs();
+    if (currentType === 'ori') songs = songs.filter(s => !isCover(s));
+    else if (currentType === 'cover') songs = songs.filter(isCover);
     if (activeFilters.size > 0) {
         songs = songs.filter(s => {
             const r = getRank(s);
@@ -230,7 +238,7 @@ function renderSongList() {
     if (songs.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'song-empty';
-        empty.textContent = activeFilters.size > 0 ? '해당 조건의 곡이 없어요.' : '곡이 없어요.';
+        empty.textContent = (activeFilters.size > 0 || currentType !== 'all') ? '해당 조건의 곡이 없어요.' : '곡이 없어요.';
         frag.appendChild(empty);
     }
 
@@ -808,6 +816,14 @@ function switchTab(tab) {
     document.getElementById('heat-panel').classList.toggle('active', tab === 'heat');
 }
 
+/** 곡 종류 탭 전환 (ALL/Ori/Cover) */
+function switchType(type) {
+    currentType = type;
+    document.querySelectorAll('.type-tab').forEach(b =>
+        b.classList.toggle('active', b.dataset.type === type));
+    renderSongList();
+}
+
 function resetRanks() {
     if (!Object.keys(ranks).length) return;
     if (!confirm('모든 랭크를 초기화할까요? 되돌릴 수 없어요.')) return;
@@ -866,6 +882,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.querySelectorAll('.tab-btn').forEach(b =>
         b.addEventListener('click', () => switchTab(b.dataset.tab)));
+    document.querySelectorAll('.type-tab').forEach(b =>
+        b.addEventListener('click', () => switchType(b.dataset.type)));
 
     // 이미 YT API가 준비된 경우 직접 초기화 (타이밍 역전 방지)
     if (window.YT && window.YT.Player) initYouTubePlayer();

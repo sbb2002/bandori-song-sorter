@@ -78,3 +78,15 @@
     - track_number: 'X01'
       name: "Mutant Mutant"
       url: https://youtu.be/uab9GICZjy4?si=jY-T1NPsIkhnk0XN
+
+- band: 'mugendai_mutype'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2026-05-12'
+      name: 'やわやわNERD 超FreQuency'
+      url: https://youtu.be/xzkEK0GF7fw
+    - track_number: '2026-05-12'
+      name: '超惑星Xへの旅'
+      url: https://youtu.be/jr_xt37IcRc

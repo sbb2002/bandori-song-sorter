@@ -189,3 +189,30 @@
     - track_number: 'X0'
       name: 'Roki'
       url: https://youtu.be/i-3KO5JZOoA?si=cojTOQ-6NNmt6TqB
+
+- band: 'afterglow'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-04-03'
+      name: 'READY STEADY GO (Cover)'
+      url: https://youtu.be/pSdx__hacYc
+    - track_number: '2025-04-24'
+      name: 'abnormalize (Cover)'
+      url: https://youtu.be/PORDvsXEOjA
+    - track_number: '2025-04-24'
+      name: 'メンタルチェンソー (Cover)'
+      url: https://youtu.be/ujO1ibiy_SQ
+    - track_number: '2025-10-14'
+      name: 'Bunny Girl (Cover)'
+      url: https://youtu.be/9zRb7Kd0mOw
+    - track_number: '2025-10-14'
+      name: 'オレンジ (Cover)'
+      url: https://youtu.be/1xpUhlxXVfQ
+    - track_number: '2025-10-14'
+      name: 'カゲロウデイズ (Cover)'
+      url: https://youtu.be/f2UtT521XMs
+    - track_number: '2026-03-16'
+      name: 'DAY×DAY (Cover)'
+      url: https://youtu.be/kSVcNXz21RY

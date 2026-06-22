@@ -135,3 +135,21 @@
     - track_number: 'X0'
       name: 'Haruhikage (Original)'
       url: https://youtu.be/wRwQUk0Dl30?si=cclWnZtT61Gckp6Z
+
+- band: 'mygo'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-10-14'
+      name: 'だれかの心臓になれたなら (Cover)'
+      url: https://youtu.be/QOGVaoFOeuw
+    - track_number: '2025-10-14'
+      name: '遥か彼方 (Cover)'
+      url: https://youtu.be/rKyU_gxye30
+    - track_number: '2025-10-14'
+      name: '雑踏、僕らの街 (Cover)'
+      url: https://youtu.be/9fH4DBvi5pE
+    - track_number: '2026-03-21'
+      name: '過去を喰らう (Cover)'
+      url: https://youtu.be/ZwDx3We2qL8

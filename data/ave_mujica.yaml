@@ -93,3 +93,18 @@
     - track_number: 'X04'
       name: '顔'
       url: https://youtu.be/cVfQBLdIUXk?si=m_bCIUysUFlIX1vB
+
+- band: 'ave_mujica'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2026-06-16'
+      name: 'The Whole Blue World'
+      url: https://youtu.be/MXUGHb5LDaY
+    - track_number: '2026-06-16'
+      name: 'in your blue eyes'
+      url: https://youtu.be/cL7bRmaWCWQ
+    - track_number: '2026-06-16'
+      name: '素晴らしき世界 でも どこにもない場所'
+      url: https://youtu.be/Kp7T8Ks7jPs
