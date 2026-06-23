@@ -9,19 +9,19 @@
 
 ## 남은 작업
 
-### 0. ux-02: 최애 밴드 스코어링 — 구현 완료 · 푸시 대기
+### 0. ux-02: 최애 밴드 스코어링 — 구현·푸시 완료 · **다른 장치에서 main 머지 대기**
 
 코드 구현·테스트 완료(상세는 [done.md](done.md) 세션 8). 미결 3건은 설계 권장안으로 확정:
 **τ=3.5 고정 / `max(0)` 클램프 + 표시 분리(미평가 `—`·음수 `0.00`) / `toFixed(2)`**. `npm test` 23/23 통과.
+**`feature/ux-02` origin 푸시 완료**(스코어링 커밋 `d58c89a` + 본 handoff 갱신).
 
-#### 남은 것: 푸시 + 다른 장치 머지
-- **이 장치(현재)**: `feature/ux-02` — 스코어링 구현 커밋 완료, **푸시 대기**.
-- **다른 장치(저녁)**: `main` — `docs/comments/ux-02.md` (미push) 대기 중.
-- **순서**:
-  1. (이 장치) `git push origin feature/ux-02`
-  2. (다른 장치) `ux-02.md` 커밋 → `main` push
-  3. (다른 장치) `git fetch && git merge origin/feature/ux-02` → `main`에 합류
-  4. `git push`
+#### 남은 것: 다른 장치에서 main으로 합치기
+- **이 장치(현재)**: `feature/ux-02` — 구현 커밋·푸시 완료. ✅ 여기서 더 할 일 없음.
+- **다른 장치(저녁)에서 `main` 머지**:
+  1. `main`의 `docs/comments/ux-02.md`(미push) 커밋 → `main` push
+  2. `git fetch && git merge origin/feature/ux-02` → `main`에 스코어링 합류
+  3. `git push`
+  - 충돌 가능 지점: `docs/HANDOFF.md`·`docs/done.md`(양쪽에서 수정 시). 코드(`core.js`·`script.js`)는 main 미변경이라 클린 머지 예상.
 
 ---
 
