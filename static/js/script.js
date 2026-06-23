@@ -28,6 +28,7 @@ let currentBand = 'ALL';
 let currentType = 'all';         // 곡 종류 탭: 'all' | 'ori' | 'cover'
 let activeFilters = new Set();   // 0=미평가, 1..5=티어. 비어있으면 전체 표시
 let currentTab = 'hist';
+let nowPlaying = null;           // 현재 재생 중(유튜브 프레임에 뜬) 곡의 songKey, 곡 리스트 강조용
 
 // ───────────────────────────
 // 2. Path / 표시 유틸
@@ -253,7 +254,8 @@ function renderSongList() {
         const showBand = (currentBand === 'ALL');
 
         const row = document.createElement('div');
-        row.className = 'song-item' + (C.isRank(r) ? ' ranked' : '');
+        const playing = nowPlaying && nowPlaying === C.songKey(song.band, song.title);
+        row.className = 'song-item' + (C.isRank(r) ? ' ranked' : '') + (playing ? ' playing' : '');
         row.dataset.band = song.band;
         row.dataset.title = song.title;
         row.dataset.url = song.url || '';
@@ -468,6 +470,8 @@ function playSong(song) {
         showNowPlaying(song.title + ' — 유튜브 링크가 없어요', true);
         return;
     }
+    nowPlaying = C.songKey(song.band, song.title);
+    highlightPlaying();
     document.getElementById('yt-placeholder').hidden = true;
     showNowPlaying(song.title, false);
 
@@ -493,6 +497,18 @@ function showNowPlaying(text, muted) {
     bar.hidden = false;
     bar.classList.toggle('muted', !!muted);
     document.getElementById('yt-song-name').textContent = text;
+}
+
+/** 현재 재생 곡(nowPlaying) 행만 .playing 갱신 — 리스트 재렌더 없이(스크롤 유지). */
+function highlightPlaying() {
+    document.querySelectorAll('#song-list .song-item.playing')
+        .forEach(el => el.classList.remove('playing'));
+    if (!nowPlaying) return;
+    document.querySelectorAll('#song-list .song-item').forEach(row => {
+        if (C.songKey(row.dataset.band, row.dataset.title) === nowPlaying) {
+            row.classList.add('playing');
+        }
+    });
 }
 
 // ───────────────────────────
