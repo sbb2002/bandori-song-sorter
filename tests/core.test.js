@@ -155,6 +155,29 @@ test('TIERS: 티어별 점수 매핑(최애+4 … 불호-4)', () => {
 });
 
 // ───────────────────────────
+// confidence (신뢰도 가중치 w(n))
+// ───────────────────────────
+test('confidence: w(n)=1-exp(-n/τ), 경계·단조 증가', () => {
+  assert.strictEqual(C.confidence(0), 0);          // n=0 → 0
+  assert.strictEqual(C.confidence(-3), 0);         // n<0 → 0
+  // n=τ → 1-e^-1
+  assert.ok(Math.abs(C.confidence(C.SCORE_TAU) - (1 - Math.exp(-1))) < 1e-12);
+  assert.ok(C.confidence(2) < C.confidence(20));   // 표본 클수록 신뢰↑
+  assert.ok(C.confidence(1000) > 0.999 && C.confidence(1000) <= 1);
+  // 커스텀 τ: n=τ면 항상 1-e^-1
+  assert.ok(Math.abs(C.confidence(5, 5) - (1 - Math.exp(-1))) < 1e-12);
+});
+
+test('bandScores: score = max(0,R)·confidence(n)와 일치', () => {
+  const out = C.bandScores(
+    { a: [{ band: 'a', title: 'X' }, { band: 'a', title: 'Y' }, { band: 'a', title: 'Z' }] },
+    { 'a::X': 1, 'a::Y': 1, 'a::Z': 3 }   // raw=(4+4+2)/3>0
+  ).a;
+  assert.ok(out.raw > 0);
+  assert.ok(Math.abs(out.score - out.raw * C.confidence(out.n)) < 1e-12);
+});
+
+// ───────────────────────────
 // bandScores / bestBand (최애 스코어링)
 // ───────────────────────────
 test('bandScores: 가중 평균 R_k = Σ(s_t·c)/n (설계 예시 1.8)', () => {

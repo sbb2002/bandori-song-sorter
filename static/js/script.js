@@ -733,6 +733,25 @@ function buildCaptureDOM() {
         nameRow.appendChild(scoreText);
         block.appendChild(nameRow);
 
+        // 2채널 신뢰도 막대 — 길이=선호도 max(0,R)/4, 투명도=신뢰도 w(n) (설계: docs/HANDOFF.md #3)
+        // 흐린 막대 = 적게 평가해 불확실 / 짧은 막대 = 덜 선호. 점수·1위 선정엔 영향 없음(설명 전용).
+        const pref = (sc && sc.n > 0) ? Math.max(0, sc.raw) / 4 : 0;
+        const barAlpha = (sc && sc.n > 0) ? 0.15 + 0.85 * C.confidence(sc.n) : 0;
+        const confRow = document.createElement('div');
+        confRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:7px;';
+        const track = document.createElement('div');
+        track.style.cssText = 'flex:1;height:14px;background:#1e1e2a;border-radius:3px;overflow:hidden;';
+        const fill = document.createElement('div');
+        fill.style.cssText =
+            `height:100%;width:${pref * 100}%;background:${hexToRgba('#ffd06b', barAlpha)};border-radius:3px;`;
+        track.appendChild(fill);
+        const nText = document.createElement('span');
+        nText.style.cssText = 'font-size:9px;width:38px;text-align:right;color:#7a7a9a;flex-shrink:0;';
+        nText.textContent = (sc && sc.n > 0) ? `${sc.n}/${(dedupedByBand[b] || []).length}` : '';
+        confRow.appendChild(track);
+        confRow.appendChild(nText);
+        block.appendChild(confRow);
+
         C.TIERS.forEach(t => {
             const n = counts[t.key];
             const row = document.createElement('div');
