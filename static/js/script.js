@@ -140,6 +140,14 @@ function viewSongs() {
 // 5. Render: Band selector (A)
 // ───────────────────────────
 
+/** 밴드 나열 순서 = BAND_ORDER 우선 + 나머지(various_artists 등)는 뒤.
+ *  좌측 셀렉터와 Download 결과가 동일 순서를 쓰도록 공유. */
+function bandsInSelectorOrder() {
+    const ordered = BAND_ORDER.filter(b => bands.includes(b));
+    const rest = bands.filter(b => !BAND_ORDER.includes(b));
+    return [...ordered, ...rest];
+}
+
 function renderBandSelector() {
     const el = document.getElementById('band-selector');
     el.innerHTML = '';
@@ -150,9 +158,7 @@ function renderBandSelector() {
     divider.className = 'band-divider';
     el.appendChild(divider);
 
-    const ordered = BAND_ORDER.filter(b => bands.includes(b));
-    const rest = bands.filter(b => !BAND_ORDER.includes(b));
-    [...ordered, ...rest].forEach(b => el.appendChild(makeBandBtn(b, false)));
+    bandsInSelectorOrder().forEach(b => el.appendChild(makeBandBtn(b, false)));
 }
 
 function makeBandBtn(band, isAll) {
@@ -555,8 +561,8 @@ function renderHeatmap() {
         grid.appendChild(h);
     });
 
-    // 밴드 행
-    bands.forEach(b => {
+    // 밴드 행 (좌측 셀렉터와 동일 순서)
+    bandsInSelectorOrder().forEach(b => {
         const bandCell = document.createElement('div');
         bandCell.className = 'hm-band';
         bandCell.title = bandDisplay(b);
@@ -689,9 +695,23 @@ function exportRanking() {
         .finally(() => { area.innerHTML = ''; });
 }
 
-/** 최애(최고 스코어) 밴드 — 산출식은 core.bandScores 참조(docs/comments/ux-02-ex1.md) */
+/** 신뢰도 막대 투명도 — 연속값 대신 3단계 카테고리(유령/희미/불투명).
+ *  투명도는 수치로 안 보이므로 구간화가 직관적. 기준은 w(n)=core.confidence. */
+function confidenceAlpha(n) {
+    const w = C.confidence(n);
+    if (w >= 0.9) return 1.0;   // 불투명: n≳9 (거의 다 평가)
+    if (w >= 0.5) return 0.6;   // 희미: n≳3 (부분 평가)
+    return 0.15;                // 유령: n≤2 (거의 안 평가)
+}
+
+/** 최애(최고 스코어) 밴드 — 산출식은 core.bandScores 참조(docs/comments/ux-02-ex1.md).
+ *  various_artists(여러 아티스트 묶음)는 최애 밴드 개념이 없어 1위 후보에서 제외(score/막대 미표시와 일관). */
 function findBestBand() {
-    return C.bestBand(dedupedByBand, ranks);
+    const candidates = {};
+    Object.keys(dedupedByBand).forEach(b => {
+        if (b !== 'various_artists') candidates[b] = dedupedByBand[b];
+    });
+    return C.bestBand(candidates, ranks);
 }
 
 function buildCaptureDOM() {
@@ -714,43 +734,49 @@ function buildCaptureDOM() {
     // 밴드별 히스토그램 (2열)
     const histGrid = document.createElement('div');
     histGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:22px;';
-    bands.forEach(b => {
+    bandsInSelectorOrder().forEach(b => {
         const counts = matrix[b];
         const max = Math.max(1, ...C.TIERS.map(t => counts[t.key]));
         const block = document.createElement('div');
+        const isVarious = b === 'various_artists';   // 여러 아티스트 묶음 — 최애 스코어 개념 없음
 
-        // 밴드명(좌) + 최애 스코어(우, 미평가는 '—')
+        // 밴드명(좌, 항상 풀네임) + 최애 스코어(우, 미평가는 '—'; various는 생략)
         const nameRow = document.createElement('div');
         nameRow.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;';
         const nameText = document.createElement('span');
-        nameText.style.cssText = 'font-size:12px;font-weight:700;color:#c084fc;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
+        nameText.style.cssText = 'font-size:12px;font-weight:700;color:#c084fc;white-space:nowrap;flex-shrink:0;';
         nameText.textContent = bandDisplay(b);
-        const scoreText = document.createElement('span');
-        scoreText.style.cssText = 'font-size:12px;font-weight:800;color:#ffd06b;flex-shrink:0;';
-        const sc = scores[b];
-        scoreText.textContent = (sc && sc.n > 0) ? sc.score.toFixed(2) : '—';
         nameRow.appendChild(nameText);
-        nameRow.appendChild(scoreText);
+        const sc = scores[b];
+        if (!isVarious) {
+            // 점수(우측) + 바로 오른쪽 회색 (n/곡수)
+            const scoreWrap = document.createElement('span');
+            scoreWrap.style.cssText = 'display:flex;align-items:baseline;gap:4px;flex-shrink:0;';
+            const scoreText = document.createElement('span');
+            scoreText.style.cssText = 'font-size:12px;font-weight:800;color:#ffd06b;';
+            scoreText.textContent = (sc && sc.n > 0) ? sc.score.toFixed(2) : '—';
+            const countText = document.createElement('span');
+            countText.style.cssText = 'font-size:10px;color:#7a7a9a;';
+            countText.textContent = (sc && sc.n > 0) ? `(${sc.n}/${(dedupedByBand[b] || []).length})` : '';
+            scoreWrap.appendChild(scoreText);
+            scoreWrap.appendChild(countText);
+            nameRow.appendChild(scoreWrap);
+        }
         block.appendChild(nameRow);
 
-        // 2채널 신뢰도 막대 — 길이=선호도 max(0,R)/4, 투명도=신뢰도 w(n) (설계: docs/HANDOFF.md #3)
-        // 흐린 막대 = 적게 평가해 불확실 / 짧은 막대 = 덜 선호. 점수·1위 선정엔 영향 없음(설명 전용).
-        const pref = (sc && sc.n > 0) ? Math.max(0, sc.raw) / 4 : 0;
-        const barAlpha = (sc && sc.n > 0) ? 0.15 + 0.85 * C.confidence(sc.n) : 0;
-        const confRow = document.createElement('div');
-        confRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:7px;';
-        const track = document.createElement('div');
-        track.style.cssText = 'flex:1;height:14px;background:#1e1e2a;border-radius:3px;overflow:hidden;';
-        const fill = document.createElement('div');
-        fill.style.cssText =
-            `height:100%;width:${pref * 100}%;background:${hexToRgba('#ffd06b', barAlpha)};border-radius:3px;`;
-        track.appendChild(fill);
-        const nText = document.createElement('span');
-        nText.style.cssText = 'font-size:9px;width:38px;text-align:right;color:#7a7a9a;flex-shrink:0;';
-        nText.textContent = (sc && sc.n > 0) ? `${sc.n}/${(dedupedByBand[b] || []).length}` : '';
-        confRow.appendChild(track);
-        confRow.appendChild(nText);
-        block.appendChild(confRow);
+        // 2채널 신뢰도 막대 — 길이=선호도 max(0,R)/4, 투명도=신뢰도 3단계(유령/희미/불투명) (설계: docs/HANDOFF.md #3)
+        // 흐린 막대 = 적게 평가해 불확실 / 짧은 막대 = 덜 선호. 점수·1위 선정엔 영향 없음(설명 전용). various는 생략.
+        if (!isVarious) {
+            const pref = (sc && sc.n > 0) ? Math.max(0, sc.raw) / 4 : 0;
+            const barAlpha = (sc && sc.n > 0) ? confidenceAlpha(sc.n) : 0;
+            const track = document.createElement('div');
+            track.style.cssText = 'height:4px;background:#1e1e2a;border-radius:2px;overflow:hidden;margin-bottom:7px;';
+            const fill = document.createElement('div');
+            fill.style.cssText =
+                `height:100%;width:${pref * 100}%;background:${hexToRgba('#eaeaf2', barAlpha)};border-radius:2px;`;
+            track.appendChild(fill);
+            block.appendChild(track);
+        }
 
         C.TIERS.forEach(t => {
             const n = counts[t.key];
@@ -800,7 +826,7 @@ function buildCaptureDOM() {
         c.textContent = h;
         hm.appendChild(c);
     });
-    bands.forEach(b => {
+    bandsInSelectorOrder().forEach(b => {
         const nameCell = document.createElement('div');
         nameCell.style.cssText = 'font-size:10px;color:#7a7a9a;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
         nameCell.textContent = bandDisplay(b);
