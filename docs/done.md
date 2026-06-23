@@ -168,3 +168,37 @@
 - 작업 전 백업 브랜치 `backup/main-20260622`(세션5 미커밋 스냅샷 박제).
 - 세션 5(RSS 560곡·docs v1 아카이브·앨범커버 jpg→webp)와 세션 6(ux-01)을 **함께 커밋 후 main 푸시**.
 - `docs/user_manual/`(베타테스트 스크린샷)은 제외(untracked 유지).
+
+---
+
+# 세션 8 — ux-02 최애 밴드 스코어링 구현 (완료 · 푸시 대기)
+
+`docs/comments/ux-02-ex1.md` 설계의 스코어링 공식을 코드로 반영. 미결 3건은 설계 권장안으로 확정.
+
+## 확정한 미결 사항
+- **τ = 3.5 고정**(`SCORE_TAU`). 문서 표와 일치(n=10에서 w≈0.94, 보정 거의 소멸). 동적 평균n 미채택.
+- **0점 클램핑** `max(0, Score)` 적용. 단 **표시에서 미평가(n=0)는 `—`, 평가했으나 음수는 `0.00`** 으로 구분 → "불호 밴드 = 미평가 밴드 동일 취급" 우려를 시각적으로 분리(선정 로직은 둘 다 후보 제외/0점).
+- **표시 포맷 `toFixed(2)`**(예: `1.70`). 정수·백분율 미채택.
+
+## 구현 내용
+- **`static/js/core.js`** — 아키텍처 원칙(순수 로직 → core + 테스트)대로 스코어링을 core에 신설.
+  - `TIERS`에 `score` 필드 추가(최애 +4 · 차애 +3 · 호 +2 · 중간 +1 · 불호 -4).
+  - `SCORE_TAU = 3.5` 상수.
+  - `bandScores(songsByBand, ranks, tau?)` → `{ band: {score, raw, n} }`. R_k=Σ(s_t·c)/n, w=1-exp(-n/τ), Score=max(0, R·w). n=0이면 `{0,0,0}`.
+  - `bestBand(...)` → 최고 score 밴드(n>0만 후보, 동점은 입력 순서 우선). 후보 없으면 null.
+  - 셋 다 export.
+- **`static/js/script.js`**
+  - `findBestBand()` → `C.bestBand(dedupedByBand, ranks)` 위임(기존 r1→r2→r3→r5 사전식 정렬 폐기).
+  - `buildCaptureDOM()` 밴드 헤더를 flex row로 교체(밴드명 좌 / 스코어 우, 미평가 `—`). `C.bandScores`로 표시.
+- **`tests/core.test.js`** — TIER score 매핑 + bandScores(설계 예시 1.8 · n=0 · 클램핑 · 소표본 수축) + bestBand(최고점 · n=0 제외 · null · 동점) **7개 추가**.
+
+## 검증
+- `npm test`: **23/23 통과**(기존 16 + 신규 7). 이 환경 **node v24.13.0 설치 확인됨**(세션 1~6의 "node 미설치"와 달라짐).
+- `node --check` core.js · script.js 구문 정상. **빌드 불필요**(index.html이 `./static/js/*.js`를 `src`로 로드).
+- 라이브 캡처 이미지 렌더는 기존 워크플로대로 **사용자 직접 검수 예정**.
+
+## 참고
+- core.js는 `dedupSongs`의 dedup Map 키 구분자가 **NUL(0x00) 1바이트**(기존부터·HEAD에도 존재)라 git이 binary로 취급 → core.js diff가 라인 단위로 안 보임. 기능 무해(내부 키·미저장), 이번 변경과 무관(미수정).
+
+## 푸시 · 머지 (대기)
+- `feature/ux-02`에 **커밋만 완료, 푸시는 사용자 지시 대기**.

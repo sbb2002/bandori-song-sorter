@@ -689,26 +689,14 @@ function exportRanking() {
         .finally(() => { area.innerHTML = ''; });
 }
 
+/** 최애(최고 스코어) 밴드 — 산출식은 core.bandScores 참조(docs/comments/ux-02-ex1.md) */
 function findBestBand() {
-    const matrix = C.computeHeatmap(dedupedByBand, ranks);
-    const scored = bands.map(b => {
-        const counts = matrix[b];
-        const total = C.TIERS.reduce((s, t) => s + counts[t.key], 0);
-        if (total === 0) return null;
-        return { band: b, r1: counts[1]/total, r2: counts[2]/total, r3: counts[3]/total, r5: counts[5]/total };
-    }).filter(Boolean);
-    if (!scored.length) return null;
-    scored.sort((a, b) =>
-        b.r1 !== a.r1 ? b.r1 - a.r1 :
-        b.r2 !== a.r2 ? b.r2 - a.r2 :
-        b.r3 !== a.r3 ? b.r3 - a.r3 :
-        a.r5 - b.r5
-    );
-    return scored[0].band;
+    return C.bestBand(dedupedByBand, ranks);
 }
 
 function buildCaptureDOM() {
     const matrix = C.computeHeatmap(dedupedByBand, ranks);
+    const scores = C.bandScores(dedupedByBand, ranks);
     const root = document.createElement('div');
     root.style.cssText =
         'width:760px;padding:24px;background:#0e0e14;color:#e8e8f0;font-family:Inter,sans-serif;box-sizing:border-box;';
@@ -731,10 +719,19 @@ function buildCaptureDOM() {
         const max = Math.max(1, ...C.TIERS.map(t => counts[t.key]));
         const block = document.createElement('div');
 
-        const name = document.createElement('div');
-        name.style.cssText = 'font-size:12px;font-weight:700;color:#c084fc;margin-bottom:6px;';
-        name.textContent = bandDisplay(b);
-        block.appendChild(name);
+        // 밴드명(좌) + 최애 스코어(우, 미평가는 '—')
+        const nameRow = document.createElement('div');
+        nameRow.style.cssText = 'display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;';
+        const nameText = document.createElement('span');
+        nameText.style.cssText = 'font-size:12px;font-weight:700;color:#c084fc;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
+        nameText.textContent = bandDisplay(b);
+        const scoreText = document.createElement('span');
+        scoreText.style.cssText = 'font-size:12px;font-weight:800;color:#ffd06b;flex-shrink:0;';
+        const sc = scores[b];
+        scoreText.textContent = (sc && sc.n > 0) ? sc.score.toFixed(2) : '—';
+        nameRow.appendChild(nameText);
+        nameRow.appendChild(scoreText);
+        block.appendChild(nameRow);
 
         C.TIERS.forEach(t => {
             const n = counts[t.key];

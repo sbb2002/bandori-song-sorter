@@ -149,3 +149,73 @@ test('TIERS: 5단계, key 1..5', () => {
   assert.deepStrictEqual(C.TIERS.map(t => t.key), [1, 2, 3, 4, 5]);
   assert.deepStrictEqual(C.TIERS.map(t => t.label), ['최애', '차애', '호', '중간', '불호']);
 });
+
+test('TIERS: 티어별 점수 매핑(최애+4 … 불호-4)', () => {
+  assert.deepStrictEqual(C.TIERS.map(t => t.score), [4, 3, 2, 1, -4]);
+});
+
+// ───────────────────────────
+// bandScores / bestBand (최애 스코어링)
+// ───────────────────────────
+test('bandScores: 가중 평균 R_k = Σ(s_t·c)/n (설계 예시 1.8)', () => {
+  // 10곡: 최애5, 호3, 불호2 → R = (4·5 + 2·3 - 4·2)/10 = 1.8
+  const songs = [];
+  for (let i = 0; i < 10; i++) songs.push({ band: 'a', title: 'S' + i });
+  const ranks = {};
+  for (let i = 0; i < 5; i++) ranks['a::S' + i] = 1;   // 최애
+  for (let i = 5; i < 8; i++) ranks['a::S' + i] = 3;   // 호
+  for (let i = 8; i < 10; i++) ranks['a::S' + i] = 5;  // 불호
+  const out = C.bandScores({ a: songs }, ranks);
+  assert.ok(Math.abs(out.a.raw - 1.8) < 1e-9);
+  assert.strictEqual(out.a.n, 10);
+  const expected = 1.8 * (1 - Math.exp(-10 / C.SCORE_TAU));
+  assert.ok(Math.abs(out.a.score - expected) < 1e-9);
+});
+
+test('bandScores: n=0 밴드는 {score:0, raw:0, n:0}', () => {
+  const out = C.bandScores({ a: [{ band: 'a', title: 'X' }] }, {});
+  assert.deepStrictEqual(out.a, { score: 0, raw: 0, n: 0 });
+});
+
+test('bandScores: 음수 raw는 0으로 클램핑', () => {
+  // 전부 불호 → raw=-4 → score=max(0,…)=0
+  const out = C.bandScores(
+    { a: [{ band: 'a', title: 'X' }, { band: 'a', title: 'Y' }] },
+    { 'a::X': 5, 'a::Y': 5 }
+  );
+  assert.strictEqual(out.a.raw, -4);
+  assert.strictEqual(out.a.score, 0);
+});
+
+test('bandScores: 같은 raw면 표본 큰 쪽이 높은 score (소표본 수축)', () => {
+  const mk = (n) => {
+    const songs = [], ranks = {};
+    for (let i = 0; i < n; i++) { songs.push({ band: 'a', title: 'S' + i }); ranks['a::S' + i] = 1; }
+    return C.bandScores({ a: songs }, ranks).a;
+  };
+  const small = mk(2), big = mk(20);
+  assert.strictEqual(small.raw, 4);
+  assert.strictEqual(big.raw, 4);
+  assert.ok(big.score > small.score);
+  assert.ok(small.score > 0 && big.score <= 4);
+});
+
+test('bestBand: 최고 score 밴드, n=0 제외, 없으면 null', () => {
+  const songsByBand = {
+    a: [{ band: 'a', title: 'A1' }, { band: 'a', title: 'A2' }],  // 최애2 → raw 4
+    b: [{ band: 'b', title: 'B1' }, { band: 'b', title: 'B2' }],  // 호2   → raw 2
+    c: [{ band: 'c', title: 'C1' }],                              // 미평가(n=0)
+  };
+  const ranks = { 'a::A1': 1, 'a::A2': 1, 'b::B1': 3, 'b::B2': 3 };
+  assert.strictEqual(C.bestBand(songsByBand, ranks), 'a');
+  assert.strictEqual(C.bestBand(songsByBand, {}), null);  // 전부 미평가
+});
+
+test('bestBand: 동점은 입력(밴드) 순서 우선', () => {
+  const songsByBand = {
+    x: [{ band: 'x', title: 'X1' }],
+    y: [{ band: 'y', title: 'Y1' }],
+  };
+  const ranks = { 'x::X1': 1, 'y::Y1': 1 };  // 동일 score
+  assert.strictEqual(C.bestBand(songsByBand, ranks), 'x');
+});
