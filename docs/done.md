@@ -290,3 +290,36 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 검증
 - `node --test` **27/27 통과**(기존 25 + `buildShareLinks` 코멘트 케이스 2). `node --check` script.js·core.js 정상. `python build.py` 성공(13밴드·560곡), index.html에 textarea·comment-tip 주입 확인.
 - 사용자 브라우저 확인: 메모 작성·표시·툴팁·링크복사·버그수정·드래그 닫힘방지 전부 정상.
+
+---
+
+# 세션 13 — youtube_rss 자동화 Phase 1 + CI 실검증 (HANDOFF #1 완료 · 머지 · 라이브 푸시)
+
+`tools/youtube_rss.py` 프로토타입을 **GitHub Actions 크론 자동화**로 승격. 13밴드 Topic RSS에서 신곡 탐지 → **곡당 PR**(1곡=1 PR) → 사람이 머지(TP)/닫기(FP) → precision 자동 집계. 앱 런타임과 분리돼 기존 기능 무영향.
+
+## Phase 1 구현 (커밋 1505da7·738452c·e6750f8 · `feature/youtube-rss-autoloader` → main ff)
+- **모드**: `--dry`(기본·미리보기, 쓰기X) / `--propose`(CI 전용·실제 PR+로그) / `--report`(precision 대시보드) / `--audit`(휴리스틱 drop 점검=FN 은신처) / `--show`.
+- **멱등 재계산(seen 영속화 폐기)**: 후보 = 13밴드 RSS − `known_ids`(매 실행 `data/*.yaml`에서 추출) − closed-unmerged PR(거절분). 머지곡은 yaml에 들어가 자동 제외 → `rss_seen.json` 불필요(폐기·.gitignore에서 제거).
+- **곡당 PR + GitHub 상태 = 원장**: 브랜치 `rss/<video_id>`. 승인=머지→yaml 반영, 거절=PR 닫기(봇이 재제안 안 함). 별도 명령·파일 없음.
+- **외과적 yaml 삽입(회귀 차단)**: 전체 재직렬화 금지. 대상 앨범 `tracks:` 끝에 4-space 블록만 삽입 → diff=추가 줄만. 모든 삽입은 `yaml.safe_load` 재파싱 통과해야 PR 생성.
+- **길이필터**(2차 FP컷) + `variant_tag` 보강(movie/anime ver·edit·medley·remix·nightcore).
+- **로깅**: `tools/rss_events.jsonl`(append-only·git추적·앱 미포함) — 매 실행 전 RSS 판정 기록. `--report`가 `gh pr list`와 **video_id로 조인** → precision=TP/(TP+FP), 사유별 drop, feed health.
+- **포맷 감시**(파싱 레이어만): 여러 밴드 동시 0건=하드 알람(이슈 자동생성, 동일 이슈 중복 X). 단일 밴드 0건/신곡 0건은 정상(알람 X). fetch 실패는 연속 retry>3 때만.
+- **워크플로 `.github/workflows/rss.yml`**: `schedule: '0 19 * * *'`(=04:00 KST) + `workflow_dispatch`. 권한 contents/pull-requests/issues:write. 3rd-party 액션 없이 러너 기본 `gh` CLI + `pip install pyyaml`. `python tools/youtube_rss.py --propose` 명시 호출(bare 오실행 방지).
+
+## CI 실검증 (workflow_dispatch 2회 · 2026-06-24)
+- **선결**: 크론/dispatch는 워크플로가 **기본 브랜치(main)에 있어야** 작동 → feature 브랜치를 main에 ff 머지·푸시 후 검증.
+- ⚠️ **필수 리포 설정(안 켜면 PR 자동생성 불가)**: 1차 실행은 PR 생성 실패 — `GraphQL: GitHub Actions is not permitted to create or approve pull requests`. **Settings → Actions → General → Workflow permissions → "Allow GitHub Actions to create and approve pull requests" 체크** 필요. 켠 뒤 2차에서 정상.
+- **인수기준 4/4 통과**: ① PR #1 생성(mugendai_mutype `これはぼくたちの生存のあらすじ`, 2026-06-21, full, New Singles append) ② `rss_events.jsonl` 커밋(`b650b5d`, staged 1 / TN 151 = known_id 107·known_name 34·variant 10) ③ 포맷 이상 이슈 0 ④ `--report` pending 1.
+- **첫 곡 승인(TP) + 라이브**: 실제 6/21 발매 신곡 확인 → PR #1 **스쿼시 머지**(`0ba70f7`) → `--report` **TP 1 / precision 1.000 (1/1)**(탐지→PR→머지→집계 end-to-end 검증). `python build.py`로 곡 **560→561**, index.html 1줄 diff 커밋·푸시(`774a3ce`) = 게이트2 라이브 반영.
+
+## 알려진 한계 · 낮은 우선순위 후속
+- ⚠️ **CI에서 길이 스크랩 막힘**: 로컬 `--dry`는 235s를 긁는데 CI는 `length_s=null`(YouTube가 데이터센터 IP에 consent wall). → **CI에선 길이필터(2차 FP컷)가 비활성**, `variant_tag`만 작동. FP 정밀도 보강 시 oEmbed/대체경로 검토(HANDOFF #1 데이터 품질의 길이 점검과 로직 공유 가능).
+- `tools/rss_seen.json`: 폐기된 프로토타입 산출물이 untracked로 잔존(설계상 불필요). 삭제 가능.
+- 출력 "Opened N PR(s)" 카운터는 실패 시에도 staged 수를 찍음(1차 실패 때도 "Opened 1 PR(s)") — 실제 성공과 무관한 표시 버그.
+
+## auto-merge 정책 (Phase 2 — 후속, 미도입)
+- 지금은 **수동 게이트로 시작**: 사람의 머지/거절이 곧 TP/FP 라벨링 = precision 측정 기구. auto-merge로 시작하면 FP가 관측 안 돼 precision이 항상 100%로 보여 측정 불가(self-defeating).
+- 신곡 ≈ 50곡/년 ≈ 주 1클릭. 무-FP 30~50건 누적 후 고신뢰 티어(variant 정상·길이 정상·임계 비근접)만 auto-merge 검토(precision 현재 1/1에서 시작).
+- 🔁 PR이 번거로우면 사용자 결정으로 자동-우선(Actions가 main 직접 push) 전환 가능 — 그 순간부터 precision 측정 중단 감수. FN(놓친 신곡)은 거의 없을 전망 → deferred FN 수동등록 툴 우선순위 낮음.
+- **Phase 1.5(옵션)**: main에 data 머지 시 build+deploy 자동 워크플로 → 수동 `build.py` 잡일 제거(개발 안정화 후).
