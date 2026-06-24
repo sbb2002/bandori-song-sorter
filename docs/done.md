@@ -249,3 +249,23 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 
 ## 검증
 - 사용자 브라우저 확인 "문제없이 잘됨". 빌드 불필요(index.html이 `./static/js/*.js`·css 외부 참조). 순수 추가, 기존 로직 무수정.
+
+---
+
+# 세션 11 — ux-02.md #6 / HANDOFF #1: 밴드 셀렉터 진행률 링 (완료·커밋, 푸시 대기)
+
+셀렉터 아이콘 둘레를 **밴드 평가율(ranked/total)** 로 채우는 링. 색 게이트 **0~30% Red / 31~69% Yellow / 70%~ Green**.
+
+## 구현
+- **`static/js/script.js`**: `applyBandRing(ring, band)` = `C.countRanked(dedupedByBand[band], ranks)`로 pct 계산 → `--ring-pct` + 색 버킷 클래스(`low/mid/high`). `updateBandRings()`는 셀렉터 재생성 없이(아이콘 리로드 방지) 링만 갱신 → `refreshAll()`에 연결(팝업·키보드·리셋 등 모든 랭크 변경 경로가 수렴 → 실시간 반영). `makeBandBtn`은 밴드 버튼에만 링 삽입(**ALL 제외** — 전체 진행률은 헤더·하단 바가 담당), 아이콘 로드 실패 시 `img`만 교체해 링 보존.
+- **`static/css/style.css`**: 링 스타일.
+
+## conic → SVG 전환 (계단현상)
+- **1차 conic-gradient + radial mask**(`e83c36f`): 가운데 투명 마스크로 아이콘 둘레만 링. 곡선 경계의 **하드 스톱이 AA가 안 돼 작은 링(3px)에서 계단현상**. 안쪽 1px 페더로 완화했으나 한계. → **`feature/ux-02-ring-conic` 브랜치에 백업**.
+- **2차 SVG stroke 채택**(`1e9913c`): `<circle pathLength="100">` 트랙+채움 2원. `stroke-dasharray:100` + `stroke-dashoffset=calc(100-pct)`로 **pct가 곧 채움 길이**, `rotate(-90deg)`로 12시 시작·시계방향. 둘레가 벡터로 그려져 **항상 서브픽셀 AA → 계단현상 제거**. 애니메이션은 `stroke-dashoffset`(길이) 네이티브 보간이라 **`@property` 불필요**(conic 때보다 호환성↑). `applyBandRing`/`updateBandRings` 로직은 **무변경**(SVG도 `style.setProperty`·`classList` 동작). 사용자 브라우저 확인 "만족".
+
+## 참고
+- ⚠️ **70% Green은 링 색상일 뿐, "70% 이상만 최애 표시" 하드게이트는 미도입**(현 최애는 스코어링 수축으로만 선정 — 별도 결정 사안, HANDOFF에 잔존).
+- (부수) `exportRanking` 실패 시 원인을 **`console.error`로 로깅**하도록 `.catch` 보강. 작업 중 사용자가 본 'Download 실패'는 **페이지를 `file://`로 직접 열어** 이미지 인라인용 XHR이 CORS(origin null)로 차단된 것 — **http(localhost)/https(Pages)에선 정상**, 코드 버그 아님(사용자 환경 실수로 종결).
+- **검증**: `node --test` **25/25 통과**(`core.js` 무수정). 빌드 불필요(외부 `static/*` 참조).
+- **푸시 대기**: `feature/ux-02`에 커밋만, 푸시는 사용자 지시 대기.
