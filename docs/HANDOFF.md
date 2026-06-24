@@ -3,7 +3,7 @@
 해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
 (참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
 
-마지막 갱신: #1 youtube_rss 자동화 **설계 확정**(곡당 PR·멱등 재계산·로깅·포맷감시) — Phase 1 착수 대기, 브랜치 `feature/youtube-rss-autoloader` (2026-06-24)
+마지막 갱신: #1 youtube_rss 자동화 **Phase 1 구현 완료**(곡당 PR·멱등 재계산·길이필터·로깅·포맷감시) — CI 실검증(`workflow_dispatch` 1회) 대기, 브랜치 `feature/youtube-rss-autoloader` (2026-06-24)
 
 > **ux-02.md 1·2·3·6·7번 완료**: 1·2(히트맵 셀렉터순 / 최애 스코어링) 세션 8·9, **7(재생 중 곡 강조) 세션 10**, **6(밴드 셀렉터 진행률 링) 세션 11**(SVG stroke 채택, conic은 `feature/ux-02-ring-conic` 백업), **3(티어 팝업 코멘트 + 링크복사 동반) 세션 12**(코멘트는 별도 키 `bandori-song-comments-v1`). 상세는 [done.md](done.md). 옵션 A(랭크순)는 `feature/ux-02-opt-a` 백업.
 > 아래는 남은 4건을 **구현 난이도 낮고 기존 기능을 덜 해치는 순**으로 유지.
@@ -25,8 +25,14 @@
 
 > ⚠️ **진행률 링(완료, 세션 11)에서 보류된 열린 결정**: 70% Green은 **링 색상일 뿐**이고, "70% 이상만 최애밴드 표시 자격" **하드게이트는 미도입**. 현 최애밴드는 스코어링 수축(`w(n)`)으로만 선정. 게이트 도입 여부는 별도 결정 사안으로 남김(ux-02.md #2 "최애밴드 표시 자격 조건"과 연결).
 
-### 1. 자동화 — youtube_rss GitHub Actions (설계 확정 · Phase 1 착수 대기) — 난이도 중 · 리스크 낮음
+### 1. 자동화 — youtube_rss GitHub Actions (Phase 1 구현 완료 · CI 실검증 대기) — 난이도 중 · 리스크 낮음
 `tools/youtube_rss.py`(프로토타입 존재)를 Actions 크론으로 → 신곡을 **곡당 PR**로 올림. 앱 런타임과 분리돼 기존 기능 무영향. 작업 브랜치 **`feature/youtube-rss-autoloader`**.
+
+**✅ Phase 1 구현 현황 (2026-06-24)** — 아래 설계대로 구현·검증 완료. 변경 파일: `tools/youtube_rss.py`(전면 리팩터), `.github/workflows/rss.yml`(신규), `.gitignore`(`rss_seen.json` 제거).
+- 모드: `--dry`(기본·미리보기, 쓰기 없음) / `--propose`(CI 전용·실제 PR·로그) / `--report` / `--audit` / `--show`.
+- 검증: insert_track 라운드트립 6/6(기존 append·앨범부재 생성·어포스트로피/콜론/따옴표/일본어, 기존 곡 보존+1곡 증가), 라이브 `--dry`에서 실제 신곡 1건 정탐(mugendai_mutype, 235s, verify OK), `build.py`·`npm test`(27) 회귀 통과, 모든 삽입은 `yaml.safe_load` 재파싱 검증 통과해야 PR 생성.
+- ⚠️ **남은 1건**: `--propose`(브랜치 push·`gh pr create`·로그 main push)는 로컬에서 안전 검증 불가 → 워크플로 푸시 후 **Actions `Run workflow`(`workflow_dispatch`) 1회로 실환경 검증** 필요. (위 신곡 1건이 첫 PR 후보가 됨.)
+- ℹ️ 워크플로는 `python tools/youtube_rss.py --propose` 호출(설계의 bare 호출 대신 명시 플래그 — bare/로컬 오실행 시 PR 생성 막기 위함).
 
 **스케줄/실행**: `schedule: '0 19 * * *'`(UTC = 04:00 KST · 정각 보장 X·지연 무관) + `workflow_dispatch`(수동 재실행 버튼). public repo라 Actions 분 사실상 무제한(13밴드 RSS ~1분).
 
@@ -79,7 +85,7 @@
 - 의존성: stdlib + `pip install pyyaml` 1개.
 - 검증: Python 테스트 관례 없음 → `--dry`로 로컬 확인 + 변경 후 `python build.py`·`npm test`(JS 27건) 회귀 확인.
 
-**Phase 구성**: **Phase 1**(곡당 PR + 길이필터 + 로깅 `--report`/`--audit` + 포맷 health/이슈) → **Phase 1.5**(build+deploy 자동) → **Phase 2**(precision 실측 후 고신뢰 auto-merge). FN 수동툴 = deferred.
+**Phase 구성**: **Phase 1 ✅ 구현완료**(곡당 PR + 길이필터 + 로깅 `--report`/`--audit` + 포맷 health/이슈; CI 실검증 대기) → **Phase 1.5**(build+deploy 자동) → **Phase 2**(precision 실측 후 고신뢰 auto-merge). FN 수동툴 = deferred.
 
 ### 2. 데이터 품질 검수 (사용자 직접 진행 예정) — 난이도 중(수작업) · 리스크 중(회귀)
 각 밴드 yaml의 `numbering/album_title: 'undefined'` **더미 앨범**(다른 앨범 곡의 중복본 + `url:` 빈 트랙) + 각 곡 `url`이 **올바른 영상·풀버전(Full-size)** 인지 검수.

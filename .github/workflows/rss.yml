@@ -1,0 +1,45 @@
+name: RSS new-song detector
+
+# 매일 04:00 KST(=19:00 UTC) 1회 + 수동 실행 버튼.
+# 정각 보장 안 됨(Actions 스케줄 지연 정상) — 실행만 되면 됨.
+on:
+  schedule:
+    - cron: '0 19 * * *'
+  workflow_dispatch: {}
+
+# 곡당 PR 생성(브랜치 push) + 이벤트 로그 push + 포맷 이상 시 이슈.
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+# 동시 실행 방지(스케줄과 수동이 겹쳐도 직렬화).
+concurrency:
+  group: rss-detector
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # origin/main에서 곡당 브랜치를 분기하려면 전체 ref 필요
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install deps
+        run: pip install pyyaml    # 유일한 외부 의존성(나머지는 stdlib + gh)
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # gh CLI는 러너 기본 제공. 3rd-party 액션 없이 GITHUB_TOKEN으로 PR/이슈 처리.
+      - name: Detect & propose new songs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/youtube_rss.py --propose
