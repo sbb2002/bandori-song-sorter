@@ -3,7 +3,7 @@
 해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
 (참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
 
-마지막 갱신: ux-02.md #3(티어 팝업 Comment 란) 완료·커밋 후 남은 4건 재번호 (2026-06-24)
+마지막 갱신: #1 youtube_rss 자동화 **설계 확정**(곡당 PR·멱등 재계산·로깅·포맷감시) — Phase 1 착수 대기, 브랜치 `feature/youtube-rss-autoloader` (2026-06-24)
 
 > **ux-02.md 1·2·3·6·7번 완료**: 1·2(히트맵 셀렉터순 / 최애 스코어링) 세션 8·9, **7(재생 중 곡 강조) 세션 10**, **6(밴드 셀렉터 진행률 링) 세션 11**(SVG stroke 채택, conic은 `feature/ux-02-ring-conic` 백업), **3(티어 팝업 코멘트 + 링크복사 동반) 세션 12**(코멘트는 별도 키 `bandori-song-comments-v1`). 상세는 [done.md](done.md). 옵션 A(랭크순)는 `feature/ux-02-opt-a` 백업.
 > 아래는 남은 4건을 **구현 난이도 낮고 기존 기능을 덜 해치는 순**으로 유지.
@@ -25,16 +25,61 @@
 
 > ⚠️ **진행률 링(완료, 세션 11)에서 보류된 열린 결정**: 70% Green은 **링 색상일 뿐**이고, "70% 이상만 최애밴드 표시 자격" **하드게이트는 미도입**. 현 최애밴드는 스코어링 수축(`w(n)`)으로만 선정. 게이트 도입 여부는 별도 결정 사안으로 남김(ux-02.md #2 "최애밴드 표시 자격 조건"과 연결).
 
-### 1. 자동화 — youtube_rss GitHub Actions 크론 (미구현) — 난이도 중 · 리스크 낮음
-`tools/youtube_rss.py`를 GitHub Actions 크론으로 → 신곡을 **검토용 PR**로 올리기. 앱 런타임과 분리돼 기존 기능 무영향.
-- **사용자 방침**: Actions 한도 확인 후 문제없으면 **매일 AM 04:00(KST) 1회**. 크론이 뽑은 후보가 *진짜 신곡/풀버전인지* 판별(false positive)이 과제 — 검증 아이디어 필요.
-  - 참고: 이 repo는 **public이라 Actions 분 무료·사실상 무제한**(매일 13밴드 RSS는 ~1분). cron은 UTC 기준이라 04:00 KST = `0 19 * * *`. GitHub 스케줄은 정각 보장 안 됨(고부하 시 수십 분 지연).
-- 현재 판별(이미 구현): 영상ID(`known_ids`+`rss_seen.json`) · 정규화 곡명(`norm_name`, 괄호·구두점 제거) · `variant_tag`(TV Size/Short/live/instrumental 제외) 3중 + 곡명당 1개 collapse + inbox 검토 게이트.
-- **추천(미구현)**:
-  - **제시=PR**: Actions가 신곡을 yaml에 append한 단일 브랜치+PR 자동생성 → 사람이 diff·링크·길이 보고 머지/기각. 검증이 PR 리뷰로 흡수(자동 반영 금지).
-  - **상태 영속화**: `rss_seen.json`이 현재 `.gitignore` → Actions는 매 실행 깨끗한 체크아웃이라 seen 없음 → 같은 후보 매일 재생성. seen(+사람이 기각한 `ignore` 목록)을 **git 추적으로 전환**해야 "한 번 기각=재제시 안 함" 성립.
-  - **풀버전 신뢰도**: youtube_rss에 영상 길이(watch `lengthSeconds`) 추가 → `variant_tag`가 못 거른 짧은 버전을 길이로 2차 필터, 후보 표에 길이 표기. `variant_tag`에 `movie/anime ver·edit·medley` 패턴 보강.
-  - ※ 데이터품질 툴(#2)과 oEmbed·길이 스크랩 로직 공유 가능 → 공통 유틸로 묶기.
+### 1. 자동화 — youtube_rss GitHub Actions (설계 확정 · Phase 1 착수 대기) — 난이도 중 · 리스크 낮음
+`tools/youtube_rss.py`(프로토타입 존재)를 Actions 크론으로 → 신곡을 **곡당 PR**로 올림. 앱 런타임과 분리돼 기존 기능 무영향. 작업 브랜치 **`feature/youtube-rss-autoloader`**.
+
+**스케줄/실행**: `schedule: '0 19 * * *'`(UTC = 04:00 KST · 정각 보장 X·지연 무관) + `workflow_dispatch`(수동 재실행 버튼). public repo라 Actions 분 사실상 무제한(13밴드 RSS ~1분).
+
+**핵심 설계 — 멱등 재계산 (seen 영속화 폐기)**
+- 후보 = 13밴드 Topic RSS − `known_ids`(data/*.yaml에서 매 실행 추출) − closed-unmerged PR(=거절분).
+- 머지된 곡은 yaml에 들어가 `known_ids`가 자동 제외. ⇒ `rss_seen.json` **불필요(폐기, `.gitignore`에서도 제거)**, `ignore` 파일도 **불필요**.
+
+**곡당 PR + GitHub 상태 = 원장** (사람 동선 최소화)
+- **1곡 = 1 PR**, 브랜치 `rss/<video_id>`.
+- **승인(TP)** = PR 머지 → yaml 반영, 이후 `known_ids`가 제외.
+- **거절(FP)** = PR **닫기, 끝**. 봇이 매 실행 시 video_id로 closed-unmerged PR 조회 → 재제시 안 함. (별도 명령·파일 X.)
+- **편집** = GitHub에서 PR 직접 수정 후 머지(선택). 봇의 앨범 배치 오류는 **앱 무해**(표시 그룹만 다름) → 정확한 재분류는 #2로 미뤄도 됨 ⇒ 대부분 "그냥 머지".
+
+**yaml append (회귀 차단)**
+- **전체 재직렬화 금지**(560곡 재포맷·따옴표/멀티라인 손상 위험). **외과적 텍스트 삽입**: 대상 앨범 블록 탐색 → 그 `tracks:` 끝에 4-space track 블록만 삽입. 비커버→`numbering:'Single'`, 커버→`numbering:'Cover'`, 없으면 새 앨범 블록 추가. ⇒ diff = 추가 줄만.
+- track 형식: `track_number`=발매일, `name`=피드 제목, `url`=`https://youtu.be/<id>`.
+
+**2-게이트 구조 (data ≠ 라이브)**
+- `index.html`은 git 커밋된 정적 파일(Pages가 서빙). data 변경은 **`python build.py` → index.html 커밋**해야 라이브 반영.
+- 게이트1 = PR 머지(data), 게이트2 = build+commit(라이브). FP는 두 관문을 다 통과해야 앱 도달.
+- **Phase 1.5(옵션)**: main에 data 머지 시 build+deploy 자동 워크플로 → 수동 build 잡일 제거(개발 안정화 후 도입).
+
+**auto-merge 전환 정책 — 수동 게이트로 시작하는 이유 (중요)**
+- ⚠️ **auto-merge로 시작하면 안 됨**: 모든 후보가 머지되어 **FP가 한 번도 관측 안 됨** → precision이 항상 100%로 보여 **측정 자체가 불가(self-defeating)**. **사람의 머지/거절이 곧 TP/FP 라벨링** = precision 데이터 수집 기구. auto-merge로 모은 로그로는 auto-merge 가부를 판단할 수 없음.
+- 신곡 ≈ **50곡/년 ≈ 주 1클릭**. 연속 **무-FP 30건(소프트 ON)~50건(안심)** 누적 후 → **고신뢰 티어**(`variant==""` + 길이 정상범위 + 임계 비근접)만 auto-merge 전환. 모니터링 유지·FP 뜨면 즉시 OFF·가역 전제.
+- 근거(Rule of Three): 무-FP n건 → FP율 95% 상한 ≈ 3/n. 30→~10%, 50→~6%, 100→~3%, 300→~1%(과함·수년 소요). N=20(~15%)이 현실 바닥.
+- 🔁 **자동-우선 탈출구(사용자 결정)**: gate-first는 *측정을 위한* 권장안일 뿐 강제 아님. **PR 요구가 과해 번거로우면 언제든 자동-우선(Actions가 main에 직접 push)으로 전환 가능** — 단 그 순간부터 precision 측정은 중단됨을 감수. 사용자 예상상 **FN은 거의 발생 안 함** → deferred FN 툴 우선순위 낮음.
+
+**로깅/모니터링 (tools/ 전용, git 추적 · 앱 미포함)**
+- `tools/rss_events.jsonl`(append-only): 매 실행 모든 RSS 아이템 판정 = `{ts, band, video_id, title, published, length_s, decision: staged|dropped, drop_reason, pr}`.
+- `--report`: PR 상태(`gh pr list`)와 join → **precision = TP/(TP+FP)**, 태그 카운트, 사유별 drop, feed health 요약. = 사용자 대시보드.
+- 태그: **TP**=staged→merged, **FP**=staged→closed, **TN**=dropped(곡 아님/기존/변종), **FN**=**자동 검출 불가**(봇이 신곡인 줄 알았으면 안 버림) → 사후 감사 대상. recall은 측정 불가.
+- `--audit`: 휴리스틱 drop(`variant`·`length_short`)만 출력 → **FN이 숨는 곳** 주기 점검(known_id/known_name drop은 FN 아님·안전).
+- **[deferred] FN 수동 등록+로깅 툴(`--add` 류) = 나중 별도 논의.** FN은 사용자 불편으로 즉시 체감 → 곡 수동 추가 + 그 사건을 FN으로 로그에 남겨 통계 정직성 유지. 희박하나 대비 툴 필요(Phase 1 범위 밖).
+
+**정밀도(FP↓) — 길이필터 Phase 1 포함**
+- watch 페이지 `lengthSeconds` 스크랩 → `variant_tag`가 못 거른 짧은 버전을 길이로 2차 컷 + PR 표에 길이 표기.
+- `variant_tag` 패턴 보강: `movie/anime ver·edit·medley·remix·nightcore`.
+- Topic 채널은 Art Track(곡)만 → FP 주 원천은 "길이 줄인 버전" 하나 → 길이필터가 직격. (#2 데이터품질과 길이/oEmbed 로직 공유.)
+
+**포맷 변경 감시 (파싱 레이어만 · 오탐 억제)**
+- **레이어 분리**: 알람은 *파싱 레이어*(fetch 실패 / XML 예외 / 유효 videoId+title entry **0개**)만. *스테이징 레이어*(entry는 정상인데 변종·기존곡 필터로 **신곡 0개**)는 **정상 = 알람 X**. (이 혼동이 가짜 알람의 원인이었음.)
+- **하드 알람**(이슈 자동생성, 동일 이슈 열려있으면 재생성 X): **여러 밴드가 동시에** 파싱 0건 = 전역 포맷 변경 신호.
+- **소프트 로그**: 단일 밴드만 0/실패(채널 개명·삭제 가능) → 2회 연속 지속 시 하드로 승격.
+- **fetch 실패**: 일시적 503/타임아웃 흡수 위해 **연속 retry > 3회**일 때만 알람.
+- 🔔 **유지보수자/다른 세션 주의 — 포맷 변경 대응 절차**: 사용자가 이 알람/이슈를 목격하면 → **진상파악(피드 원문 ↔ 파서 비교) → 파서 수정 → 사용자가 Actions "Run workflow"(`workflow_dispatch`)로 수동 재실행.** 복구 경로 = 파서 패치 후 수동 트리거.
+
+**워크플로 구현 메모**
+- 3rd-party 액션 없이 러너 기본 **`gh` CLI**(공급망 표면 최소화). 권한 `contents:write`·`pull-requests:write`·`issues:write`(기본 `GITHUB_TOKEN`).
+- 의존성: stdlib + `pip install pyyaml` 1개.
+- 검증: Python 테스트 관례 없음 → `--dry`로 로컬 확인 + 변경 후 `python build.py`·`npm test`(JS 27건) 회귀 확인.
+
+**Phase 구성**: **Phase 1**(곡당 PR + 길이필터 + 로깅 `--report`/`--audit` + 포맷 health/이슈) → **Phase 1.5**(build+deploy 자동) → **Phase 2**(precision 실측 후 고신뢰 auto-merge). FN 수동툴 = deferred.
 
 ### 2. 데이터 품질 검수 (사용자 직접 진행 예정) — 난이도 중(수작업) · 리스크 중(회귀)
 각 밴드 yaml의 `numbering/album_title: 'undefined'` **더미 앨범**(다른 앨범 곡의 중복본 + `url:` 빈 트랙) + 각 곡 `url`이 **올바른 영상·풀버전(Full-size)** 인지 검수.
