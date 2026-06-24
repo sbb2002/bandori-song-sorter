@@ -12,6 +12,7 @@ const C = window.BandoriCore;
 // ───────────────────────────
 
 const STORE_KEY = 'bandori-song-ranks-v1';
+const COMMENTS_KEY = 'bandori-song-comments-v1';   // 코멘트는 ranks와 별도 저장(스키마 무영향)
 
 const BAND_ORDER = [
     'poppin_party', 'afterglow', 'pastel_palettes', 'roselia',
@@ -23,6 +24,7 @@ let dedupedByBand = {};     // band -> 중복 제거된 곡 배열
 let allSongs = [];          // 전 밴드 평탄화(밴드 순서)
 let bands = [];             // 밴드 순서
 let ranks = loadRanks();    // { songKey: 1..5 }
+let comments = loadComments();  // { songKey: '메모 텍스트' }
 
 let currentBand = 'ALL';
 let currentType = 'all';         // 곡 종류 탭: 'all' | 'ori' | 'cover'
@@ -94,6 +96,33 @@ function setRank(song, tier) {
         ranks[key] = tier;
     }
     saveRanks();
+}
+
+function loadComments() {
+    try {
+        return JSON.parse(localStorage.getItem(COMMENTS_KEY)) || {};
+    } catch (_) {
+        return {};
+    }
+}
+
+function saveComments() {
+    try {
+        localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+    } catch (_) { /* 사생활 모드 등 — 저장 실패는 무시 */ }
+}
+
+function getComment(song) {
+    return comments[C.songKey(song.band, song.title)] || '';
+}
+
+/** 코멘트 저장 — 공백뿐이면 키 삭제(빈 코멘트 미보존). 티어와 무관하게 저장됨. */
+function setComment(song, text) {
+    const key = C.songKey(song.band, song.title);
+    const v = (text == null ? '' : String(text)).trim();
+    if (v) comments[key] = v;
+    else delete comments[key];
+    saveComments();
 }
 
 // ───────────────────────────
@@ -290,6 +319,7 @@ function renderFilterPills() {
 
 function renderSongList() {
     const list = document.getElementById('song-list');
+    hideCommentTip();   // 행이 새로 그려지면 기존 툴팁 앵커가 무효
     const songs = viewSongs();
     const frag = document.createDocumentFragment();
 
@@ -335,6 +365,19 @@ function renderSongList() {
             noyt.title = '유튜브 링크 없음';
             noyt.textContent = '♪';
             row.appendChild(noyt);
+        }
+
+        // 코멘트: 호버/탭 툴팁용으로 행에 보존(티어 무관). 뱃지는 티어 확정 + 코멘트 있을 때만.
+        const comment = getComment(song);
+        if (comment) {
+            row.dataset.comment = comment;
+            if (C.isRank(r)) {
+                const cbadge = document.createElement('span');
+                cbadge.className = 'comment-badge';
+                cbadge.title = '메모 보기';
+                cbadge.textContent = '💬';
+                row.appendChild(cbadge);
+            }
         }
 
         const badge = document.createElement('span');
@@ -386,6 +429,12 @@ function initPressHandlers() {
     const list = document.getElementById('song-list');
 
     list.addEventListener('pointerdown', e => {
+        const cbadge = e.target.closest('.comment-badge');
+        if (cbadge) {
+            // 말풍선 탭 → 메모 토글. 재생/팝업·스크롤 진입 안 함(캡처 미설정).
+            toggleCommentTip(cbadge.closest('.song-item'));
+            return;
+        }
         const row = e.target.closest('.song-item');
         if (!row) return;
         if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -443,6 +492,76 @@ function initPressHandlers() {
         cancelPress();
         openPopup(songFromRow(row));
     });
+
+    // 스크롤하면 고정 위치 툴팁이 어긋나므로 숨김
+    list.addEventListener('scroll', hideCommentTip, { passive: true });
+
+    // 호버 지원 기기(데스크톱)만 — 행에 마우스 올리면 메모 툴팁. 터치는 말풍선 탭으로.
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+        list.addEventListener('mouseover', e => {
+            if (tipPinned) return;
+            const row = e.target.closest('.song-item');
+            if (!row || row === tipRow) return;
+            const c = commentForRow(row);
+            if (c) showCommentTip(row, c, false);
+            else hideCommentTip();
+        });
+        list.addEventListener('mouseout', e => {
+            if (tipPinned) return;
+            const row = e.target.closest('.song-item');
+            if (!row) return;
+            // 같은 행 내부로의 이동이면 유지
+            if (e.relatedTarget && row.contains(e.relatedTarget)) return;
+            hideCommentTip();
+        });
+    }
+}
+
+// ───────────────────────────
+// 8b. 코멘트 툴팁 (호버=데스크톱 / 탭=모바일) — 리스트 overflow 밖(body) 고정 배치
+// ───────────────────────────
+
+let tipRow = null;       // 현재 툴팁이 가리키는 행(없으면 null)
+let tipPinned = false;   // true=탭으로 고정(호버로 사라지지 않음)
+
+function commentForRow(row) {
+    return (row && row.dataset.comment) || '';
+}
+
+/** 행 위쪽(공간 없으면 아래)·뷰포트 안에 클램프해 툴팁 표시. */
+function showCommentTip(row, text, pinned) {
+    const tip = document.getElementById('comment-tip');
+    if (!tip) return;
+    tip.textContent = text;
+    tip.hidden = false;
+    tip.style.visibility = 'hidden';     // 크기 측정용 선표시
+    const anchor = row.querySelector('.comment-badge') || row;
+    const ar = anchor.getBoundingClientRect();
+    const tr = tip.getBoundingClientRect();
+    let left = ar.left + ar.width / 2 - tr.width / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - tr.width - 8));
+    let top = ar.top - tr.height - 8;
+    if (top < 8) top = ar.bottom + 8;    // 위 공간 부족하면 아래로
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.visibility = '';
+    tipRow = row;
+    tipPinned = !!pinned;
+}
+
+function hideCommentTip() {
+    const tip = document.getElementById('comment-tip');
+    if (tip) tip.hidden = true;
+    tipRow = null;
+    tipPinned = false;
+}
+
+/** 말풍선 탭: 같은 행이 이미 고정돼 있으면 닫고, 아니면 고정 표시. */
+function toggleCommentTip(row) {
+    const c = commentForRow(row);
+    if (!c) { hideCommentTip(); return; }
+    if (tipPinned && tipRow === row) hideCommentTip();
+    else showCommentTip(row, c, true);
 }
 
 // ───────────────────────────
@@ -461,15 +580,8 @@ function renderRankButtons() {
         btn.dataset.tier = t.key;
         btn.innerHTML =
             `<span class="rk-icon">${t.icon}</span><span class="rk-label" style="color:${t.color}">${t.label}</span>`;
-        btn.addEventListener('click', () => {
-            if (popupSong) {
-                const cur = getRank(popupSong);
-                // 같은 티어 다시 누르면 해제(토글), 아니면 설정
-                setRank(popupSong, cur === t.key ? null : t.key);
-                refreshAll();
-            }
-            closePopup();
-        });
+        // 같은 티어 다시 누르면 해제(토글), 아니면 설정 — applyTier가 메모 커밋까지 처리
+        btn.addEventListener('click', () => applyTier(t.key));
         wrap.appendChild(btn);
     });
 }
@@ -482,16 +594,46 @@ function openPopup(song) {
     document.querySelectorAll('.rank-btn').forEach(b => {
         b.classList.toggle('active', Number(b.dataset.tier) === cur);
     });
+    const ta = document.getElementById('popup-comment');
+    if (ta) ta.value = getComment(song);
     const popup = document.getElementById('popup');
     popup.hidden = false;
     requestAnimationFrame(() => popup.classList.add('open'));
 }
 
+/** 팝업의 메모 textarea → comments 저장. 닫힘·티어선택 시 호출(티어 없어도 메모 보존).
+ *  실제로 값이 바뀌었으면 true 반환(호출부가 리스트 갱신 여부 판단). */
+function commitComment() {
+    if (!popupSong) return false;
+    const ta = document.getElementById('popup-comment');
+    if (!ta) return false;
+    const before = getComment(popupSong);
+    const after = ta.value.trim();
+    if (before === after) return false;
+    setComment(popupSong, after);
+    return true;
+}
+
+/** 티어 적용(토글) 공통 경로 — 메모 먼저 커밋해 리스트 뱃지에 즉시 반영. */
+function applyTier(tier) {
+    if (popupSong) {
+        commitComment();
+        const cur = getRank(popupSong);
+        setRank(popupSong, cur === tier ? null : tier);
+        refreshAll();
+    }
+    closePopup();
+}
+
 function closePopup() {
+    // 취소/Esc/오버레이로 닫아도 메모는 저장. 변경됐으면 리스트(뱃지·툴팁)도 즉시 갱신.
+    // (티어 경로는 applyTier가 이미 커밋·refreshAll → 여기선 false 반환되어 중복 렌더 없음)
+    const commentChanged = popupSong ? commitComment() : false;
     const popup = document.getElementById('popup');
     popup.classList.remove('open');
     popupSong = null;
     setTimeout(() => { popup.hidden = true; }, 200);
+    if (commentChanged) renderSongList();
 }
 
 // ───────────────────────────
@@ -694,7 +836,7 @@ function renderStatChips() {
 // ───────────────────────────
 
 function copyLinks() {
-    const text = C.buildShareLinks(viewSongs());
+    const text = C.buildShareLinks(viewSongs(), comments);
     const btn = document.getElementById('copy-btn');
     const done = (ok) => {
         const orig = btn.innerHTML;
@@ -978,26 +1120,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('download-btn').addEventListener('click', exportRanking);
     document.getElementById('reset-btn').addEventListener('click', resetRanks);
     document.getElementById('popup-cancel').addEventListener('click', closePopup);
-    document.getElementById('popup').addEventListener('click', e => {
-        if (e.target.id === 'popup') closePopup();
+
+    // 바깥(배경) 눌러 닫기 — 누른 지점과 뗀 지점이 '둘 다' 오버레이일 때만 닫는다.
+    // 텍스트 선택 드래그가 팝업 밖에서 릴리스돼도(또는 그 반대) 닫히지 않게 함.
+    const popupOverlay = document.getElementById('popup');
+    let pressedOnOverlay = false;
+    popupOverlay.addEventListener('pointerdown', e => {
+        pressedOnOverlay = (e.target === popupOverlay);
+    });
+    popupOverlay.addEventListener('pointerup', e => {
+        if (pressedOnOverlay && e.target === popupOverlay) closePopup();
+        pressedOnOverlay = false;
     });
 
     document.addEventListener('keydown', e => {
         const popup = document.getElementById('popup');
         if (popup.hidden) return;
         if (e.key === 'Escape') { closePopup(); return; }
+        // 메모 입력 중엔 숫자키 티어 단축키 비활성(메모에 숫자 입력 허용)
+        if (e.target && e.target.id === 'popup-comment') return;
         const tier = parseInt(e.key);
-        if (tier >= 1 && tier <= 5 && popupSong) {
-            const cur = getRank(popupSong);
-            setRank(popupSong, cur === tier ? null : tier);
-            refreshAll();
-            closePopup();
-        }
+        if (tier >= 1 && tier <= 5 && popupSong) applyTier(tier);
     });
     document.querySelectorAll('.tab-btn').forEach(b =>
         b.addEventListener('click', () => switchTab(b.dataset.tab)));
     document.querySelectorAll('.type-tab').forEach(b =>
         b.addEventListener('click', () => switchType(b.dataset.type)));
+
+    // 말풍선/툴팁 밖을 누르면 고정 툴팁 닫기. 리사이즈 시에도 위치 어긋나니 숨김.
+    document.addEventListener('pointerdown', e => {
+        if (e.target.closest('.comment-badge') || e.target.closest('#comment-tip')) return;
+        hideCommentTip();
+    }, true);
+    window.addEventListener('resize', hideCommentTip);
 
     // 이미 YT API가 준비된 경우 직접 초기화 (타이밍 역전 방지)
     if (window.YT && window.YT.Player) initYouTubePlayer();

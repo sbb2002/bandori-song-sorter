@@ -114,9 +114,14 @@
         <div class="popup-band" id="popup-band"></div>
         <div class="popup-title" id="popup-title"></div>
         <div class="rank-buttons" id="rank-buttons"></div>
+        <textarea class="popup-comment" id="popup-comment" rows="2" maxlength="200"
+                  placeholder="메모 (선택 · 자동 저장)"></textarea>
         <button class="popup-cancel" id="popup-cancel" type="button">취소</button>
     </div>
 </div>
+
+<!-- 곡 코멘트 툴팁 (호버/탭 시 표시 · 리스트 overflow 밖에 띄움) -->
+<div id="comment-tip" role="tooltip" hidden></div>
 
 <!-- ============================ DOWNLOAD 캡처용 오프스크린 ============================ -->
 <div id="capture-area" aria-hidden="true"></div>

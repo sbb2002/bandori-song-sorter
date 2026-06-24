@@ -141,6 +141,24 @@ test('buildShareLinks: 유효 링크 없으면 빈 문자열', () => {
   assert.strictEqual(C.buildShareLinks([]), '');
 });
 
+test('buildShareLinks: 코멘트 있으면 URL 다음 줄에 추가(곡 사이 빈 줄)', () => {
+  const songs = [
+    { band: 'a', title: 'A', url: YT1 },
+    { band: 'a', title: 'B', url: YT2 },   // 코멘트 없음 → URL만
+  ];
+  const comments = { 'a::A': '최고의 곡' };
+  assert.strictEqual(
+    C.buildShareLinks(songs, comments),
+    YT1 + '\n최고의 곡' + '\n\n' + YT2
+  );
+});
+
+test('buildShareLinks: 코멘트 공백/없음은 URL만, comments 인자 생략도 하위호환', () => {
+  const songs = [{ band: 'a', title: 'A', url: YT1 }, { band: 'a', title: 'B', url: YT2 }];
+  assert.strictEqual(C.buildShareLinks(songs, { 'a::A': '   ' }), YT1 + '\n\n' + YT2); // 공백뿐 → 제외
+  assert.strictEqual(C.buildShareLinks(songs), YT1 + '\n\n' + YT2);                    // 인자 생략
+});
+
 // ───────────────────────────
 // TIERS 무결성
 // ───────────────────────────
