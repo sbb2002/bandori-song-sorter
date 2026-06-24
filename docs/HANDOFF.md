@@ -40,7 +40,10 @@
 
 **완료**(커밋 b765cc0→1379d88): malformed 곡명 3 · wrong-url 7(B, 어쿠스틱5 포함, oEmbed로 정답 확정) · 커버 4 → Covers 이동(공식명+업로드일) · 음원우선 정리(mygo 静降想 MV삭제 / morfonica 2 음원교체 / ave_mujica 顔 MV교체).
 
-**진행 중**: `tools/c2_placement.csv`(untracked, 42행) = undefined 유일본. 사용자가 `album_FILL`(수록 앨범/싱글)·`name_FILL`(공식명) 채우면 → surgical 이동 실행 예정. (`type=english` 2건 별개곡 유지.)
+**진행 중**: `tools/c2_placement.csv`(42행) = undefined 유일본. **로컬 untracked**(`.gitignore: tools/*.csv` 관례 — 추적 안 함, 이 PC에 보존). 사용자가 다른 세션에서 채울 예정 → 그 세션이 로컬 파일을 직접 읽어 실행. 분실 시 재생성: `verify_links.analyze(load_tracks())['undef_unique']`(빈url 제외) + `verify_cache.json`의 oembed title → 컬럼 `band,video_id,type,current_name,official_title,album_FILL,name_FILL`.
+- **CSV 작성 규약**: `album_FILL`=대상 앨범 제목(album_title). 기존 앨범 제목 정확히 매칭하면 합치고, 없는 제목이면 새 앨범 블록 생성, 빈칸이면 그 행 skip. `name_FILL`=최종 곡명(공식 채널명; 빈칸이면 current_name 유지). `type=english` 2건은 별개곡 유지. track_number는 사용자 미기입(실행 시 자동 부여, 끝에 append).
+- **실행 시 주의**: 대상 앨범을 **(band, album_title)로 매칭**해야 함(numbering 중복 존재: Mini×2 등). `youtube_rss.insert_track`은 numbering 기준 매칭이므로 album_title 매칭 변형이 필요. 새 앨범 생성 시 numbering 추정(스튜디오→1st.., 싱글→Single, 미니→Mini) 또는 사용자 확인.
+- **앨범 없는 밴드 주의**: afterglow·mygo엔 `New Singles` 없음; ikka_dumb_rock·millsage·various_artists는 정규앨범 자체가 없음(various는 서브유닛 앨범 Glitter*Green/Chispa/Sumimi만) → CSV의 album_FILL대로 신설.
 
 **남은 undefined 정리**:
 - **C1 중복본 24**: undefined가 정규앨범과 **동일 video_id**(완전 동일 영상) → 안전 삭제(손실0), 목록 확인 후 일괄.
