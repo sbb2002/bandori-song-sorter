@@ -269,3 +269,24 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 - (부수) `exportRanking` 실패 시 원인을 **`console.error`로 로깅**하도록 `.catch` 보강. 작업 중 사용자가 본 'Download 실패'는 **페이지를 `file://`로 직접 열어** 이미지 인라인용 XHR이 CORS(origin null)로 차단된 것 — **http(localhost)/https(Pages)에선 정상**, 코드 버그 아님(사용자 환경 실수로 종결).
 - **검증**: `node --test` **25/25 통과**(`core.js` 무수정). 빌드 불필요(외부 `static/*` 참조).
 - **푸시 대기**: `feature/ux-02`에 커밋만, 푸시는 사용자 지시 대기.
+
+---
+
+# 세션 12 — ux-02.md #3 / HANDOFF #1: 티어 팝업 Comment 란 (완료·푸시)
+
+티어 팝업에 곡 **메모(코멘트)** 입력 → 곡 리스트에 말풍선 뱃지·툴팁. + 사용자 추가요청: **링크복사 시 코멘트 동반**.
+
+## 구현
+- **저장(가장 안전한 선택)**: `ranks`는 **무변경**, 별도 키 `bandori-song-comments-v1`(`{songKey: '메모'}`)에 보관 → `core.js` 스키마·집계 로직 전부 무영향. `loadComments/saveComments/getComment/setComment`(공백뿐이면 키 삭제 → 빈 메모 미보존).
+- **`templates/index_template.html`**: 팝업에 `#popup-comment` textarea(maxlength 200, placeholder "메모 (선택 · 자동 저장)") + body에 `#comment-tip` 플로팅 툴팁. `build.py`로 index.html 재생성.
+- **팝업 흐름**: `openPopup`이 기존 메모를 textarea에 로드. `commitComment()`는 **모든 닫기 액션(티어 선택·취소·Esc·오버레이)** 에서 저장 → 티어 없이 메모만 입력해도 보존. `applyTier()`로 티어 토글+메모 커밋+`refreshAll` 일원화. 메모 입력 중(`#popup-comment` 포커스) 숫자키 티어 단축키 비활성(메모에 숫자 허용).
+- **말풍선 뱃지·툴팁**: `renderSongList`에서 코멘트는 행 `dataset.comment`로 항상 보존, **뱃지(💬)는 티어 확정+코멘트 있을 때만** 티어뱃지 옆 생성(요구사항대로 미확정 시 뱃지 X). 표시는 **호버(데스크톱, `(hover:hover)` 미디어쿼리 게이트) / 말풍선 탭(모바일)**. 툴팁은 리스트 `overflow` 클리핑 회피 위해 **body에 `position:fixed`**, JS가 앵커 위/아래·뷰포트 클램프로 위치. 스크롤·리사이즈·재렌더·바깥 탭 시 숨김. 말풍선 탭은 press 핸들러 최상단에서 가로채 재생/팝업 진입 차단.
+- **링크복사(추가요청)**: `core.js buildShareLinks(songs, comments)`로 확장 — 코멘트 있으면 `URL\n코멘트`, 곡 사이 빈 줄. `comments` 인자 생략 시 기존 동작(하위호환). `copyLinks`가 `comments` 전달.
+
+## 사용자 피드백 반영 (2건, 푸시 전)
+1. **버그 — 메모만 수정 후 취소로 닫으면 메인 화면 미갱신**: 원인 = 취소/Esc/오버레이 닫기 경로가 `commitComment`(localStorage 저장)는 하지만 `renderSongList`를 안 불러 행 `dataset.comment`가 옛 값(팝업 재오픈 시엔 localStorage서 읽어 최신값 → 증상 일치). 해결 = `commitComment()`가 **실제 변경 여부 반환**, `closePopup()`이 변경됐을 때만 `renderSongList()`(코멘트는 리스트에만 영향 → `refreshAll` 대신 경량). 티어 경로는 `applyTier`가 이미 커밋·refresh → `closePopup`에선 "변경 없음" 판정되어 중복 렌더 없음.
+2. **UX — 메모 텍스트 드래그 선택 중 팝업 밖에서 마우스 릴리스 시 팝업 닫힘**: 원인 = 오버레이 닫기가 `click` 이벤트인데, `click`은 mousedown·mouseup의 **공통 조상**에 발생 → 텍스트박스(안)에서 시작해 오버레이(밖)서 떼면 공통 조상=오버레이라 닫힘. 해결 = `click` 대신 **`pointerdown`+`pointerup`이 둘 다 오버레이일 때만 닫기**(모달 표준 관용구). 텍스트 시작→밖 릴리스, 반대(밖 시작→안 릴리스) 모두 보호. 롱프레스로 팝업 여는 순간은 리스트가 포인터 capture 중이라 자동 닫힘 없음(이중 안전).
+
+## 검증
+- `node --test` **27/27 통과**(기존 25 + `buildShareLinks` 코멘트 케이스 2). `node --check` script.js·core.js 정상. `python build.py` 성공(13밴드·560곡), index.html에 textarea·comment-tip 주입 확인.
+- 사용자 브라우저 확인: 메모 작성·표시·툴팁·링크복사·버그수정·드래그 닫힘방지 전부 정상.
