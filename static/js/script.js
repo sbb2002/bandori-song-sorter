@@ -172,16 +172,47 @@ function makeBandBtn(band, isAll) {
     if (isAll) {
         btn.textContent = 'ALL';
     } else {
+        const ring = document.createElement('span');
+        ring.className = 'band-ring';
+        btn.appendChild(ring);
+
         const img = document.createElement('img');
         img.src = bandIcon(band);
         img.alt = bandDisplay(band);
         img.className = 'band-btn-icon';
-        img.onerror = () => { btn.textContent = bandDisplay(band).slice(0, 4); };
+        // 아이콘 로드 실패 시: img만 교체(링 span은 보존)
+        img.onerror = () => {
+            img.remove();
+            const txt = document.createElement('span');
+            txt.className = 'band-btn-fallback';
+            txt.textContent = bandDisplay(band).slice(0, 4);
+            btn.appendChild(txt);
+        };
         btn.appendChild(img);
+
+        applyBandRing(ring, band);
     }
 
     btn.addEventListener('click', () => selectBand(band));
     return btn;
+}
+
+/** 밴드 진행률 링 갱신: 평가율(ranked/total)을 채움 비율·색 버킷에 반영.
+ *  0~30% Red(low) / 31~69% Yellow(mid) / 70%~ Green(high). */
+function applyBandRing(ring, band) {
+    const { ranked, total } = C.countRanked(dedupedByBand[band] || [], ranks);
+    const pct = total ? (ranked / total * 100) : 0;
+    ring.style.setProperty('--ring-pct', pct.toFixed(1));
+    ring.classList.remove('low', 'mid', 'high');
+    ring.classList.add(pct >= 70 ? 'high' : pct >= 31 ? 'mid' : 'low');
+}
+
+/** 셀렉터를 다시 그리지 않고(아이콘 리로드 방지) 링만 갱신 — 랭크 변경 시 호출. */
+function updateBandRings() {
+    document.querySelectorAll('#band-selector .band-ring').forEach(ring => {
+        const band = ring.parentElement.dataset.band;
+        if (band) applyBandRing(ring, band);
+    });
 }
 
 function selectBand(band) {
@@ -707,7 +738,11 @@ function exportRanking() {
             link.href = dataUrl;
             link.click();
         })
-        .catch(() => alert('이미지 생성에 실패했어요.'))
+        .catch((e) => {
+            // file:// 로 열면 이미지 인라인용 XHR이 CORS로 차단됨 → http(s)에서만 동작
+            console.error('[download] 이미지 생성 실패:', e);
+            alert('이미지 생성에 실패했어요.');
+        })
         .finally(() => { area.innerHTML = ''; });
 }
 
@@ -900,6 +935,7 @@ function refreshAll() {
     renderHeatmap();
     renderProgress();
     renderStatChips();
+    updateBandRings();
 }
 
 // ───────────────────────────

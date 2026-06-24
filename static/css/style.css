@@ -128,6 +128,7 @@ header h1 {
   overflow-y: auto;
 }
 .band-btn {
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -149,12 +150,43 @@ header h1 {
 .band-btn.active { border-color: var(--tier-1); background: rgba(255,107,157,0.14); }
 .band-btn.all { font-size: 0.6rem; }
 .band-btn.all.active { border-color: var(--accent); color: var(--accent); background: rgba(192,132,252,0.14); }
+.band-btn-icon, .band-btn-fallback {
+  position: relative;
+  z-index: 1;
+}
 .band-btn-icon {
   width: 30px;
   height: 30px;
   object-fit: contain;
   display: block;
 }
+
+/* 진행률 링 — 아이콘 둘레를 평가율(밴드 평가곡/전체곡)로 채움.
+   0~30% Red / 31~69% Yellow / 70%~ Green. conic-gradient + 링 마스크(가운데 투명). */
+@property --ring-pct {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+.band-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--ring-color, transparent) calc(var(--ring-pct, 0) * 1%),
+    var(--ring-track) 0
+  );
+  /* 안쪽 경계를 1px 페더로 — 하드 스톱은 곡선에서 AA가 안 돼 계단현상이 생김 */
+  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+          mask: radial-gradient(closest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+  pointer-events: none;
+  transition: --ring-pct 0.4s ease;
+  --ring-track: rgba(255,255,255,0.08);
+}
+.band-ring.low  { --ring-color: #ff5a6a; }
+.band-ring.mid  { --ring-color: #ffcf5c; }
+.band-ring.high { --ring-color: #46d39a; }
+
 .band-divider { width: 26px; height: 1px; background: var(--border); flex-shrink: 0; }
 
 /* ===========================
