@@ -31,8 +31,12 @@
 **✅ Phase 1 구현 현황 (2026-06-24)** — 아래 설계대로 구현·검증 완료. 변경 파일: `tools/youtube_rss.py`(전면 리팩터), `.github/workflows/rss.yml`(신규), `.gitignore`(`rss_seen.json` 제거).
 - 모드: `--dry`(기본·미리보기, 쓰기 없음) / `--propose`(CI 전용·실제 PR·로그) / `--report` / `--audit` / `--show`.
 - 검증: insert_track 라운드트립 6/6(기존 append·앨범부재 생성·어포스트로피/콜론/따옴표/일본어, 기존 곡 보존+1곡 증가), 라이브 `--dry`에서 실제 신곡 1건 정탐(mugendai_mutype, 235s, verify OK), `build.py`·`npm test`(27) 회귀 통과, 모든 삽입은 `yaml.safe_load` 재파싱 검증 통과해야 PR 생성.
-- ⚠️ **남은 1건**: `--propose`(브랜치 push·`gh pr create`·로그 main push)는 로컬에서 안전 검증 불가 → 워크플로 푸시 후 **Actions `Run workflow`(`workflow_dispatch`) 1회로 실환경 검증** 필요. (위 신곡 1건이 첫 PR 후보가 됨.)
+- ⚠️ **남은 1건 — CI 실검증(다음 세션 예정)**: `--propose`(브랜치 push·`gh pr create`·로그 main push)는 로컬에서 안전 검증 불가.
+  - **선결조건**: 크론(`schedule`)은 워크플로 파일이 **기본 브랜치(main)에 있어야** 작동. 현재는 `feature/youtube-rss-autoloader`에만 있음 → **검증 전 main 머지(또는 PR 머지) 필요**. (수동 `workflow_dispatch`도 main 기준 정의를 사용.)
+  - **검증 절차**: main 머지 → Actions → "RSS new-song detector" → **Run workflow**(`workflow_dispatch`) 1회.
+  - **정상 기대 결과(acceptance)**: ① PR 1건 생성(mugendai_mutype `これはぼくたちの生存のあらすじ`, 235s, Single append) ② `tools/rss_events.jsonl` 커밋 생성(`staged` 1건 + 나머지 RSS의 `dropped` 시드 — 대부분 `known_id`) ③ 포맷 이상 이슈 **안 뜸** ④ 직후 `--report`가 `pending: 1`. 그 PR을 머지=`TP 1`/닫으면=`FP 1`로 precision 집계 시작.
 - ℹ️ 워크플로는 `python tools/youtube_rss.py --propose` 호출(설계의 bare 호출 대신 명시 플래그 — bare/로컬 오실행 시 PR 생성 막기 위함).
+- ℹ️ 로컬 `--dry`/`--report`/`--audit`는 **아무것도 쓰지 않음** → 로그는 `--propose`(CI)에서만 생성. 그래서 CI 첫 실행 전 `--report`가 전부 0/`N/A`인 건 **정상**.
 
 **스케줄/실행**: `schedule: '0 19 * * *'`(UTC = 04:00 KST · 정각 보장 X·지연 무관) + `workflow_dispatch`(수동 재실행 버튼). public repo라 Actions 분 사실상 무제한(13밴드 RSS ~1분).
 
