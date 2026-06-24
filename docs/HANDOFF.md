@@ -3,7 +3,7 @@
 해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
 (참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
 
-마지막 갱신: #1 youtube_rss 자동화 **CI 실검증 완료**(탐지→곡당 PR→머지→precision 집계 end-to-end 정상, 첫 신곡 1건 머지·라이브 반영) → [done.md](done.md) 세션 13 이관. 남은 3건. (2026-06-24)
+마지막 갱신: #1 데이터 품질 검수 **진행 중** — `tools/verify_links.py` triage 도구 제작 + 결함 다수 정리(branch `feature/song-validator`, main 미머지). 곡수 561→557. 상세 아래 #1. (2026-06-25)
 
 > **ux-02.md 1·2·3·6·7번 + youtube_rss 자동화 완료**. 상세는 [done.md](done.md). 옵션 A(랭크순)는 `feature/ux-02-opt-a` 백업, 진행률 링 conic 시안은 `feature/ux-02-ring-conic` 백업.
 > 아래는 남은 3건을 **구현 난이도 낮고 기존 기능을 덜 해치는 순**으로 유지.
@@ -26,11 +26,28 @@
 
 > ℹ️ **youtube_rss 자동화 운영 메모(완료된 기능의 낮은 우선순위 후속)**: ① CI에선 길이 스크랩이 막혀(`length_s=null`, 데이터센터 IP consent wall) **길이필터 비활성·`variant_tag`만 작동** → 아래 #1 데이터 품질의 oEmbed/길이 로직과 공유해 보강 가능. ② `tools/rss_seen.json`(폐기 프로토타입 산출물) untracked 잔존 → 삭제 가능. ③ Phase 2(고신뢰 auto-merge)·Phase 1.5(build+deploy 자동)는 precision 축적 후 검토. 상세는 done.md 세션 13.
 
-### 1. 데이터 품질 검수 (사용자 직접 진행 예정) — 난이도 중(수작업) · 리스크 중(회귀)
-각 밴드 yaml의 `numbering/album_title: 'undefined'` **더미 앨범**(다른 앨범 곡의 중복본 + `url:` 빈 트랙) + 각 곡 `url`이 **올바른 영상·풀버전(Full-size)** 인지 검수.
-- **사용자 방침**: 현재로선 곡을 하나씩 열어 *맞는 곡인지·풀버전인지* 손수 검증할 계획. 검수 자동화/툴은 아이디어 미정이라 고민 중.
-- 정리 시 곡 수·중복 변동 → `npm test`로 회귀 확인 필요. `url:` 빈 트랙(앱에서 ♪ 표시·재생 불가) 유지/제거 정책 결정 필요.
-- **추천 툴(미구현) `tools/verify_links.py`**: 전 yaml `url`을 **oEmbed(무API키, `youtube.com/oembed`)** 로 점검 → ① 404/401=삭제·비공개(1순위) ② oEmbed가 준 실제 영상 제목 ↔ yaml 곡명 대조(매핑오류 의심) ③ watch 페이지 `lengthSeconds` 스크랩→짧으면 TV Size/Short 의심(=풀버전 판별) ④ 빈 `url`·중복 `video_id` 리스트업. **출력=의심 항목만 표** → 561곡 전수 대신 플래그분만 집중 검수. (youtube_rss의 길이/oEmbed 로직과 공유 가능.)
+### 1. 데이터 품질 검수 — **진행 중** (branch `feature/song-validator`, main 미머지) · 곡수 561→557
+**도구 완성**: `tools/verify_links.py` (읽기전용 triage, data 무변경). youtube_rss의 video_id/norm_name/길이/oEmbed 로직 import(중복정의 없음). **로컬 전용**(L2 길이 스크랩은 CI consent wall로 막힘).
+- Layer0(오프라인): A 빈url · B url오류(같은 video_id를 다른 곡명이 가리킴) · C undefined분류(redundant/unique/empty) · D 앨범중복(정상) · E 동명-다른영상.
+- L1 `--oembed`: 죽은링크(404/비공개)+제목대조. L2 `--length`: 풀버전/TV Size. `--all`/`--json`. 캐시 `tools/verify_cache.json`(untracked).
+
+**확립된 규칙**(데이터 정리 기준):
+1. **소스 우선순위 음원(Topic) > MV > 라이브.** 라이브는 사용자가 직접 추가. 같은 곡 중복 시 더 우선되는 소스만 남김.
+2. **곡명 = 공식 유튜브 채널 표기.** 영문음차(romaji) 지양. 미반영분 다수 존재(전체 정규화는 별도 패스 가능).
+3. **동명이곡은 모두 유지**(원곡 vs 타곡 커버, JP vs English Ver. 등). 앱은 `band::title`로 식별·`normalizeTitle`이 `(Cover)`/`(English)` 안 지우므로 title만 다르면 별개. ⚠️ title 완전 동일하면 충돌→반드시 구분 저장.
+4. **album_title은 화면 미표시**(`isCover=album==='Covers' || /\(cover\)/i.test(title)`에만 사용, script.js:149). 정밀 album_title은 현재 기능영향 0, 미래 "수록 앨범 메타데이터" 기능용.
+5. 신곡 검수 워크플로우: 자동 PR 우선, 결함 시에만 CSV(`--digest` 미구현)+알림. (memory `rss_review_workflow`)
+
+**완료**(커밋 b765cc0→1379d88): malformed 곡명 3 · wrong-url 7(B, 어쿠스틱5 포함, oEmbed로 정답 확정) · 커버 4 → Covers 이동(공식명+업로드일) · 음원우선 정리(mygo 静降想 MV삭제 / morfonica 2 음원교체 / ave_mujica 顔 MV교체).
+
+**진행 중**: `tools/c2_placement.csv`(untracked, 42행) = undefined 유일본. 사용자가 `album_FILL`(수록 앨범/싱글)·`name_FILL`(공식명) 채우면 → surgical 이동 실행 예정. (`type=english` 2건 별개곡 유지.)
+
+**남은 undefined 정리**:
+- **C1 중복본 24**: undefined가 정규앨범과 **동일 video_id**(완전 동일 영상) → 안전 삭제(손실0), 목록 확인 후 일괄.
+- **빈 url 13**(undefined) + **mygo `致並跡` `-` 3**(3rd앨범 미입력 슬롯): url 보강 vs 행 제거 결정.
+- TV Size여도 옛 곡은 그 길이로만 나온 경우 있음 → 무조건 제거 금지(예: afterglow `Part of the Life` 유지).
+
+⚠️ **곡수 변동(561→557, 추가 정리 시 계속 변동)** → JS 카운트 테스트 갱신 필요(이 장치 node 없음 → 다른 장치 `npm test`). `tools/rss_seen.json` 폐기 잔재도 정리 가능.
 
 ### 2. 진행도 Save/Load (ux-02.md #4) — 난이도 중~높 · 리스크 높음 · 후순위
 내 진행상황을 **json으로 백업/공유**. Load 시 즉시 로딩 아니라 **Mine/Others 선택**(Mine=내 것 즉시 로드, Others=타인 것 로드 대화창). 내 진행은 항상 백업. 공유는 디씨 등 커뮤니티 첨부 상정.
