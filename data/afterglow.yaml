@@ -186,9 +186,6 @@
     - track_number: 'X0'
       name: 'Choco Typhooooon!!'
       url: 
-    - track_number: 'X0'
-      name: 'Roki'
-      url: https://youtu.be/i-3KO5JZOoA?si=cojTOQ-6NNmt6TqB
 
 - band: 'afterglow'
   numbering: 'Cover'
@@ -216,3 +213,6 @@
     - track_number: '2026-03-16'
       name: 'DAY×DAY (Cover)'
       url: https://youtu.be/kSVcNXz21RY
+    - track_number: '2025-02-27'
+      name: 'ロキ (Cover)'
+      url: https://youtu.be/i-3KO5JZOoA

@@ -312,9 +312,6 @@
     - track_number: 'X14'
       name: 'Chu Chueen!'
       url: https://youtu.be/5j2a4m1OQsg?si=HDtO13Z2ocNQrqZM
-    - track_number: 'X15'
-      name: 'MATSURI BAYASHI'
-      url: https://youtu.be/Gpkg81TpkSA?si=pojuXvPrSTjSCiXF
     - track_number: 'X16'
       name: 'GLAMOROUS SKY'
       url: 
@@ -357,3 +354,6 @@
     - track_number: '2025-11-10'
       name: 'じょいふる (Cover)'
       url: https://youtu.be/3bnaYpv-DFU
+    - track_number: '2026-03-14'
+      name: 'MATSURI BAYASHI (Cover)'
+      url: https://youtu.be/Gpkg81TpkSA

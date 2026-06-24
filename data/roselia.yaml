@@ -189,9 +189,6 @@
     - track_number: 'X0'
       name: 'Guren no Yumiya'
       url: 
-    - track_number: 'X0'
-      name: '悪魔の子'
-      url: https://youtu.be/kHdgtPHuya8?si=ML8om9e1KikL-BB4
 
 - band: 'roselia'
   numbering: 'Single'
@@ -234,3 +231,6 @@
     - track_number: '2026-03-18'
       name: 'HONEY (Cover)'
       url: https://youtu.be/frI2-4pnOrw
+    - track_number: '2025-10-14'
+      name: '悪魔の子 (Cover)'
+      url: https://youtu.be/kHdgtPHuya8
