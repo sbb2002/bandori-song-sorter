@@ -172,8 +172,7 @@ function makeBandBtn(band, isAll) {
     if (isAll) {
         btn.textContent = 'ALL';
     } else {
-        const ring = document.createElement('span');
-        ring.className = 'band-ring';
+        const ring = makeRingSvg();
         btn.appendChild(ring);
 
         const img = document.createElement('img');
@@ -195,6 +194,27 @@ function makeBandBtn(band, isAll) {
 
     btn.addEventListener('click', () => selectBand(band));
     return btn;
+}
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** 진행률 링 SVG(트랙 원 + 채움 원). 벡터 stroke라 둘레가 항상 AA → 계단현상 없음.
+ *  채움량(--ring-pct)·색 버킷은 applyBandRing이 설정. pathLength=100이라 pct가 곧 길이. */
+function makeRingSvg() {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'band-ring');
+    svg.setAttribute('viewBox', '0 0 36 36');
+    svg.setAttribute('aria-hidden', 'true');
+    ['ring-track', 'ring-fill'].forEach(cls => {
+        const c = document.createElementNS(SVG_NS, 'circle');
+        c.setAttribute('class', cls);
+        c.setAttribute('cx', '18');
+        c.setAttribute('cy', '18');
+        c.setAttribute('r', '16');
+        if (cls === 'ring-fill') c.setAttribute('pathLength', '100');
+        svg.appendChild(c);
+    });
+    return svg;
 }
 
 /** 밴드 진행률 링 갱신: 평가율(ranked/total)을 채움 비율·색 버킷에 반영.

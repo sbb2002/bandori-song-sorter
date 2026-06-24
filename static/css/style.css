@@ -162,30 +162,32 @@ header h1 {
 }
 
 /* 진행률 링 — 아이콘 둘레를 평가율(밴드 평가곡/전체곡)로 채움.
-   0~30% Red / 31~69% Yellow / 70%~ Green. conic-gradient + 링 마스크(가운데 투명). */
-@property --ring-pct {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
+   0~30% Red / 31~69% Yellow / 70%~ Green. SVG stroke 링 → 벡터 AA(계단현상 없음). */
 .band-ring {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    var(--ring-color, transparent) calc(var(--ring-pct, 0) * 1%),
-    var(--ring-track) 0
-  );
-  /* 안쪽 경계를 1px 페더로 — 하드 스톱은 곡선에서 AA가 안 돼 계단현상이 생김 */
-  -webkit-mask: radial-gradient(closest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
-          mask: radial-gradient(closest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  transition: --ring-pct 0.4s ease;
-  --ring-track: rgba(255,255,255,0.08);
 }
-.band-ring.low  { --ring-color: #ff5a6a; }
-.band-ring.mid  { --ring-color: #ffcf5c; }
-.band-ring.high { --ring-color: #46d39a; }
+.band-ring circle {
+  fill: none;
+  stroke-width: 3;
+}
+.ring-track { stroke: rgba(255,255,255,0.08); }
+.ring-fill {
+  stroke: var(--ring-color, transparent);
+  stroke-linecap: butt;
+  stroke-dasharray: 100;                              /* pathLength=100 정규화 → pct가 곧 길이 */
+  stroke-dashoffset: calc(100 - var(--ring-pct, 0)); /* pct만큼만 채움 */
+  transform: rotate(-90deg);                          /* 12시 시작·시계방향 */
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: stroke-dashoffset 0.4s ease;            /* 길이 속성이라 @property 없이 네이티브 보간 */
+}
+.band-ring.low  .ring-fill { --ring-color: #ff5a6a; }
+.band-ring.mid  .ring-fill { --ring-color: #ffcf5c; }
+.band-ring.high .ring-fill { --ring-color: #46d39a; }
 
 .band-divider { width: 26px; height: 1px; background: var(--border); flex-shrink: 0; }
 
