@@ -3,7 +3,9 @@
 해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
 (참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
 
-마지막 갱신: **[idea/260625.md](idea/260625.md) 검토 완료 → 채택 3건 본 문서 이관, 자동 장르추출 등은 반려(idea/260625.md '## 반려사항').** 메타패널은 곡 단위가 아닌 **'밴드 중심'**으로 방향 확정(밴드소개 + 밴드 워드클라우드). 워드클라우드는 밴드별 조회수 TOP10 가사(사용자 직접 제공)로 제작하되 **원문 미보관**. 미추가 곡은 YouTube Data API 백필(반자동). (2026-06-25)
+마지막 갱신: **HANDOFF 1 진행중** — Data API 조회수→밴드별 TOP10 + 가사 템플릿(`assets/lyrics/`) 완료, 백필 후보 도출 완료(신규 165 = 오리지널 30 / 커버 135 · namedup 402). 남은 건 **오리지널 30개 데이터 추가**(1-a) 등. 도구: `tools/youtube_api.py`·`band_top10.py`·`backfill.py`. (2026-06-25)
+
+> 이전 갱신: idea/260625.md 검토 완료 → 채택 3건 이관, 자동 장르추출 등 반려. 메타패널 '밴드 중심' 전환(밴드소개 + 밴드 워드클라우드), 워드클라우드는 밴드별 조회수 TOP10 가사(사용자 직접 제공·원문 미보관).
 
 > **ux-02.md 1·2·3·6·7번 + youtube_rss 자동화 + 데이터 정합성 검수 완료**. 상세는 [done.md](done.md). 옵션 A(랭크순)는 `feature/ux-02-opt-a` 백업, 진행률 링 conic 시안은 `feature/ux-02-ring-conic` 백업.
 
@@ -13,7 +15,7 @@
 
 | 순 | 작업 | 난이도 | 비고 |
 |----|------|--------|------|
-| 1 | YouTube Data API 도입 — 조회수 수집 + 미추가 곡 백필 | 중 | 키 1개로 1·2·3 공통 기반. 무료 쿼터 |
+| 1 | YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 | 중 | 🔄 조회수/백필 완료 · **오리지널 30 추가 남음** |
 | 2 | 밴드 메타패널(우패널 3번째 탭): 밴드소개 + 밴드 워드클라우드 | 중 | 1의 조회수 TOP10 + 사용자 제공 가사 필요 |
 | 3 | (후속) 곡 가사 의미공간 2D 클러스터 | 중~높 | 2의 가사 재활용 · 가사 확보 후 채택 판단 |
 | — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(진행 덮어쓰기) |
@@ -23,13 +25,24 @@
 
 ---
 
-### 1. YouTube Data API 도입 — 조회수 수집 + 미추가 곡 백필 (new_idea #3)
-키: `.env`의 `YOUTUBE_API_KEY`. youtube_rss의 'no API key' 원칙(RSS 자동수집)과 **별개** — 일회성/저빈도 조회 전용.
-- **조회수 수집**: `videos.list?part=statistics` → viewCount. 50개 배치라 10개 밴드 ~500곡 ≈ **10 units**(무료 10k/day). 밴드별 내림차순 → **TOP10** 산출(2번 재료).
-- **백필(미추가 곡)**: 각 밴드 `<Band> - Topic` 채널 uploads 전체를 Data API로 수집(RSS ~15개 윈도우 한계 극복) → 기존 known video_id와 비교 → **누락 후보** 도출.
-  - **반자동**: 자동 머지 안 함. 후보 목록(곡명/url/채널) 제시 → 사람 확인 → 머지. 채널=밴드라 배정 자동, Topic이라 음원만(노이즈 적음).
-  - **A(Topic 백필) 우선.** 그래도 빠지는 '유튜브 한정 커버'는 B(공식채널 バンドリちゃんねる☆ 수집)인데 노이즈·밴드배정 난점 → **후순위**. A 결과량 보고 B 착수 판단.
-  - 대상: 곡 10개↑ **10개 밴드**(poppin/roselia/raise/afterglow/hello/pastel/morfonica/mygo/ave_mujica/mugendai). various_artists·ikka_dumb_rock·millsage(4/1/1곡)는 제외.
+### 1. YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 (new_idea #3) — 🔄 진행중
+키: `.env`의 `YOUTUBE_API_KEY`(stdlib 파싱 — `tools/youtube_api.py`의 `load_env_key`). `.gitignore`에 `.env` 포함. youtube_rss의 'no API key'(CI RSS)와 **별개** — 일회성/저빈도 조회 전용. `backfill.py`는 출력 전용·멱등이라 재실행 안전.
+
+**✅ 완료**
+- `tools/youtube_api.py` — Data API v3 stdlib 클라이언트: `load_env_key` / `fetch_view_counts`(videos.list) / `fetch_uploads`(channels+playlistItems 페이징).
+- `tools/band_top10.py` — 재생가능 트랙 조회수 → 밴드별 TOP10. 커버 제외(`--no-cover`), 같은 video_id dedup(roselia LOUDER 중복 방어).
+  → **10개 밴드 TOP10 확정**, `assets/lyrics/<band>.md` 가사 템플릿 생성(gitignore·원문 비커밋). 조회수 443/443 수신.
+- `tools/backfill.py` — Topic 업로드 전체 vs known(id/name) 비교 → 누락 후보 **출력만**(데이터 미변경). variant/known_name 필터는 youtube_rss와 동일.
+  → 결과: **신규 165 = 오리지널 30 + 커버 135 · namedup 402**.
+    · 오리지널 30(스팟체크로 진짜 누락 확인): roselia 14, raise_a_suilen 7, poppin_party 5, morfonica 2, afterglow 1, ave_mujica 1. **2022년 정규앨범 곡 포함**(roselia Our Carol/Swear, raise DEAD HEAT BEAT) — RSS로 못 잡던 것.
+    · namedup 402 = 음원우선 정책으로 데이터가 Topic 외 영상(MV 등)을 url로 씀 → **신곡 아님**(url 품질 영역).
+
+**⬜ 남은 것**
+- **(1-a) 오리지널 30개 데이터 추가** ← 다음 작업. `python tools/backfill.py`로 후보 재산출(멱등) → `insert_track` 기반 추가 스크립트(dry-run → loss-0 검증 → `--apply`). 오리지널은 New Singles(numbering=`Single`/album=`New Singles`), track_number=published, img=FALLBACK_IMG.
+  - ⚠️ poppin `(Popipa Acoustic Ver.)`·`(Poppin'Party Ver.)`·`Yes! BanG Dream! (Acoustic Ver.)` 등 **편곡/버전곡은 취사선택**(같은 곡 다른 편곡).
+- **(1-b) 커버 135개**: Covers 카탈로그 확장(numbering=`Cover`/album=`Covers`). 양 많아 **별도 배치로 보류**(사용자 보류 동의 대기). 이게 new_idea #3의 'A(Topic 백필)'에 해당. 그래도 빠지는 '유튜브 한정 커버'는 B(공식채널 バンドリちゃんねる☆ 수집)인데 노이즈·밴드배정 난점 → 후순위.
+- **(1-c) namedup 402**: url을 Topic 음원으로 교체하는 url 품질 개선 — 별도·후순위.
+- 대상 밴드: Topic 채널 보유 12밴드. various_artists(Topic 없음)·ikka_dumb_rock·millsage(업로드 1개)는 사실상 제외.
 
 ### 2. 밴드 메타패널 + 밴드 워드클라우드 (new_idea #1, '밴드 중심'으로 전환)
 위치: **우패널 3번째 탭** `[밴드 정보 | 히스토그램 | 히트맵]`. **그리드 미변경**(리스크 최소). 곡 클릭 시 밴드정보 탭 자동 활성화. 가독성 나쁘면 롤백 → 원안(유튜브 프레임 가로분할).
@@ -38,6 +51,7 @@
 - **밴드 워드클라우드**: 밴드별 조회수 TOP10 곡 가사 → 키워드 빈도 → 밴드 개성/테마 시각화.
   - **가사는 사용자가 직접 복붙 제공**(크롤링 안 함 → 수집 저작권 회피). **원문 미보관** — 빌드타임에 키워드/빈도 json만 산출하고 원문 삭제.
   - 처리 2안(착수 시 택1): ① 한국어 번안 가사 제공, ② 일어 원문 명사 추출 → 한국어 번역 후 렌더. 형태소 분석(fugashi 등)·렌더 라이브러리(wordcloud2.js 등)는 착수 시 결정.
+- **현재 상태**: 1번에서 `assets/lyrics/<band>.md` 가사 템플릿(10밴드 TOP10) 생성 완료 → **사용자가 가사 채우는 중**. 채워지면 형태소→빈도 json(원문 삭제)→렌더 착수. mygo `春日影`는 2버전이 들어있으나 가사 동일하니 1개만 채울 것.
 
 ### 3. (후속) 곡 가사 의미공간 2D 클러스터 (new_idea #2 대안)
 2번 TOP10 가사를 **재활용** → 가사 임베딩(다국어 문장 임베딩) 2D 투영(UMAP/PCA) 산점도. **오디오/BPM 불필요**.
