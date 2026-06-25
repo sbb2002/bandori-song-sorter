@@ -1,6 +1,6 @@
 - band: 'millsage'
-  numbering: 'undefined'
-  album_title: 'undefined'
+  numbering: 'Single'
+  album_title: 'New Singles'
   img_url: assets/icons/_fallback.png
   tracks:
     - track_number: 'X01'

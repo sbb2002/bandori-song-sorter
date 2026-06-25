@@ -323,3 +323,46 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 - 신곡 ≈ 50곡/년 ≈ 주 1클릭. 무-FP 30~50건 누적 후 고신뢰 티어(variant 정상·길이 정상·임계 비근접)만 auto-merge 검토(precision 현재 1/1에서 시작).
 - 🔁 PR이 번거로우면 사용자 결정으로 자동-우선(Actions가 main 직접 push) 전환 가능 — 그 순간부터 precision 측정 중단 감수. FN(놓친 신곡)은 거의 없을 전망 → deferred FN 수동등록 툴 우선순위 낮음.
 - **Phase 1.5(옵션)**: main에 data 머지 시 build+deploy 자동 워크플로 → 수동 `build.py` 잡일 제거(개발 안정화 후).
+
+---
+
+# 세션 14 — 데이터 정합성 검수 #1 완결 (C2 배치·C1 삭제·빈url 처리·곡명 정규화 불필요 확인 · 머지)
+
+`undefined` 더미앨범과 빈url을 전량 해소하여 **전곡 재생가능** 달성. HANDOFF #1(데이터 품질 검수) 종료.
+
+## 도구 (전부 텍스트 기반 = YAML 포맷·따옴표 보존, dry-run 기본 + `--apply`, 적용 후 재파싱·손실0 검증 내장)
+- `tools/verify_links.py` — 읽기전용 triage(data 무변경). L0 오프라인(A빈url·B url오류·C undefined분류·D앨범중복·E동명다른영상) / L1 `--oembed`(죽은링크·제목대조) / L2 `--length`. 캐시 `verify_cache.json`(재생성 가능, `.gitignore` 등재). **로컬 전용**(L2 길이 스크랩은 CI consent wall로 막힘).
+- `tools/execute_placement.py` — C2 배치 실행기(`c2_placement.csv` 입력).
+- `tools/delete_redundant.py` — C1 redundant 삭제(undef 블록 *범위 내에서만* 제거 → 정규앨범 보존, 빈 undef 블록 드롭).
+- `tools/resolve_empty.py` — 빈url 정리(ENRICH 매핑은 New Singles 보강, 나머지 제거, 빈 undef 드롭).
+- youtube_rss의 video_id/norm_name/oEmbed/insert_track 재사용(중복정의 없음).
+
+## 확립된 규칙(데이터 정리 기준 — 이후 신곡 검수에도 적용)
+1. **소스 우선순위 음원(Topic) > MV > 라이브.** 같은 곡 중복 시 더 우선 소스만 남김.
+2. **곡명 = 공식 유튜브 채널 표기.** romaji 음차 지양. (→ 아래 "곡명 정규화 불필요 확인" 참조.)
+3. **동명이곡은 모두 유지**(원곡 vs 커버, JP vs English 등). 앱은 `band::title`로 식별. ⚠️ title 완전 동일 시 충돌→구분 저장.
+4. **album_title은 화면 미표시**(script.js:149 `isCover` 판정에만 사용). 정밀 album은 기능영향 0, 미래 메타데이터용.
+5. 신곡 검수: 자동 PR 우선, 결함 시에만 CSV+알림. (memory `rss_review_workflow`)
+
+## 작업 내역
+- **선행 완료**(커밋 b765cc0→1379d88): malformed 곡명 3 · wrong-url 7(B, oEmbed로 정답 확정) · 커버 4→Covers 이동 · 음원우선 정리(mygo 静降想 MV삭제 / morfonica 2 음원교체 / ave_mujica 顔 MV교체).
+- **C2 유일본 40 배치 + 중복 MV 2 삭제**(`execute_placement.py`, 커밋 67c140b): undefined 더미 36 → 각 밴드 `New Singles`(numbering `Single`; 없는 밴드 afterglow·mygo·ikka·millsage 블록 신설, img `_fallback.png`). various_artists 4는 서브유닛 앨범(Glitter\*Green/Chispa/Sumimi) `numbering:undefined`만 결함 → de-undef(이동 아님). 사용자 romaji→공식명 7 반영(예 `Haruhikage (Original)`→`春日影`, 정규 `春日影 (MyGO!!!!! ver.)`와 별개 유지). 삭제(음원우선·손실0): mugendai `Mutant Mutant`(MV) · poppin `DOKI DOKI DATE`(MV).
+- **C1 redundant 24 삭제**(`delete_redundant.py`): undefined가 정규앨범과 동일 video_id → 손실0 검증 후 일괄 제거. 빈 undef 블록(ave_mujica·pastel_palettes) 드롭. 곡수 555→531.
+- **빈url 16 처리**(`resolve_empty.py`, 정책 "보강 후 잔여 제거"). **보강 2**: RAS `WHAT AN EXPLOSION`/`RUNAWAY STAR`(15th single, 2026-06-10 발매 — 데이터 입력 당시 미발매라 빈url이었음. WebSearch + oEmbed `RAISE A SUILEN - Topic` 검증) → New Singles(track_number=발매일). **제거 14**: mygo `致並跡 -`×3(3rd앨범 빈슬롯) + afterglow `IGNITE GLOW`(음원중복·손실0) + 보강실패 10(GLAMOROUS SKY·紅蓮の弓矢·Take it easy 등 — 게임곡/커버라 YouTube 공식 음원 없음, 게임플레이 영상은 rule 1·2 위반이라 미채택). 잔존 빈 undef 블록(afterglow·hello·morfonica·mygo·poppin·raise·roselia + ikka·millsage·mugendai) 전량 드롭. 곡수 531→517.
+
+## 곡명 정규화(rule 2) 불필요 확인
+원래 "romaji 음차가 다수 잔존"이라는 가정의 후속 패스였으나 **불필요**로 결론:
+- 일본어 미포함 곡명 212곡을 실사 → **거의 전부 공식 영어 제목**(poppin `Time Lapse`·`Dreamers Go!`, afterglow `Crow Song`·`Butter-Fly` 등). BanG Dream은 영문 제목을 공식으로 쓰는 곡이 많아 정규화 대상 아님.
+- 실제 romaji 음차였던 곡(`Haruhikage`·`Kapoon`·`Mabushii` 등)은 **C2 배치 시 교정 또는 빈url 제거 시 함께 소멸**.
+- 잔여 애매건(`TARINAI`·`SENSENFUKOKU`)도 공식이 로마자로 표기 → 손댈 이유 없음.
+- 기능영향 0(곡명은 화면표시·검색용, romaji여도 앱 정상). → **후속 패스 폐기.**
+
+## 최종 상태 / 검증
+- **곡수 561→517 · video_id 보유 517/517(전곡 재생가능) · undefined 더미 블록 0 · 빈url 0 · B/C1/C2 모두 0.**
+- `python build.py` 성공(밴드 13, 곡 517) → index.html 재생성.
+- ⚠️ JS 카운트 테스트는 실재하지 않음(core.test.js는 합성 fixture만 단언) → 곡수 변동 시 갱신 불필요.
+- 잔존(untracked): `c2_placement.csv`(40행, 추적가능). `verify_cache.json`은 재생성 가능이라 `.gitignore` 등재.
+
+## 커밋 · 머지
+- 커밋 `67c140b`(20 files, +848 −313) → `feature/song-validator` 푸시. 이후 main 머지.
+- `tools/rss_seen.json` 폐기 잔재 삭제는 별건(미진행, HANDOFF에 잔존).

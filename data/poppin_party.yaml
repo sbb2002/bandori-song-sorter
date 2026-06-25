@@ -32,10 +32,10 @@
       url: https://youtu.be/yQ0ebf3C1zM?si=uHDo9Zpbb-M7mEPY
     - track_number: 'Disc1-10'
       name: 'ティアドロップス ～Popipa Acoustic Ver.～'
-      url: https://youtu.be/lOE3DB6Ur4A?si=_0tFAcKEJlkicIR4
+      url: https://youtu.be/Eq0Mo7Ca02I
     - track_number: 'Disc1-11'
       name: '走り始めたばかりのキミに ～Popipa Acoustic Ver.～'
-      url: https://youtu.be/pBKo-SAbtcM?si=Gd69DzIvNQVbrsxB
+      url: https://youtu.be/Fk2WVFkiIJ4
     - track_number: 'Disc2-01'
       name: 'Time Lapse'
       url: https://youtu.be/ap3LhZJvbiw?si=YGl6KMcbppgOw80i
@@ -62,13 +62,13 @@
       url: https://youtu.be/94djfHnNylA?si=d1AjtbIYIZhUYwe8
     - track_number: 'Disc2-09'
       name: 'Yes! BanG_Dream! ～Popipa Acoustic Ver.～'
-      url: https://youtu.be/tBSpLDIqbHc?si=jwOedCiP5_4EaWn2
+      url: https://youtu.be/bRidp4u2MhQ
     - track_number: 'Disc2-10'
       name: '夏空 SUN! SUN! SEVEN! ～Popipa Acoustic Ver.～'
-      url: https://youtu.be/AwmICsVBWLU?si=UQDIGF1gzJruwhza
+      url: https://youtu.be/nhiQ2haGFE8
     - track_number: 'Disc2-11'
       name: 'STAR BEAT!～ホシノコドウ～ ～Popipa Acoustic Ver.～'
-      url: https://youtu.be/RtKwXh18gkc?si=vvcdbL8jWvKAK09M
+      url: https://youtu.be/kj5orLd_XnA
 
 - band: 'poppin_party'
   numbering: '2nd'
@@ -250,7 +250,7 @@
       name: '青春 To Be Continued'
       url: https://youtu.be/inyz9fpWPT0?si=a7KDOCAE96bIsGn8
     - track_number: '02'
-      name: 'Future Place(BanG Dream!)|Future Place'
+      name: 'Future Place'
       url: https://youtu.be/JonvwJvZFv4?si=Qs2UTBurw9WRBKfe
     - track_number: '03'
       name: '大好き！'
@@ -264,60 +264,6 @@
     - track_number: '06'
       name: 'RiNG A BELL'
       url: https://youtu.be/ai76D_byMgk?si=37GbwCOcOU4ZoUN9
-
-- band: 'poppin_party'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X01'
-      name: 'DOKI DOKI DATE'
-      url: https://youtu.be/45LUJTzHyek?si=-fQT4IAKqXX6hhJQ
-    - track_number: 'X02'
-      name: 'Game Changer'
-      url: https://youtu.be/X7NS0u628lw?si=A7my0UGNVpA3eytt
-    - track_number: 'X03'
-      name: 'Freedom'
-      url: https://youtu.be/oy6OCnr9eAg?si=OaC2MpIL7qOLHm56
-    - track_number: 'X04'
-      name: 'NO GIRL NO CRY'
-      url: https://youtu.be/D1ONxAWcbGE?si=h0HIVf-gIEm8apcU
-    - track_number: 'X05'
-      name: 'Dokidoki SING OUT!'
-      url: https://youtu.be/Y-tnOBf-byo?si=Mxmc_b_CwzSbhqVh
-    - track_number: 'X06'
-      name: 'Hanazono Denki Guitar!!!'
-      url: https://youtu.be/Fb6Vxj--Fq4?si=rPetL5o0kJDEaECx
-    - track_number: 'X07'
-      name: 'Chocolate no Teion Recipe'
-      url: https://youtu.be/pbDiKPBuTsc?si=7itu7mzdjB0SfVDB
-    - track_number: 'X08'
-      name: 'Tooi Ongaku ~Heartbeat~'
-      url: https://youtu.be/jTSPnt5kts0?si=yCNC73uluwyjF8DU
-    - track_number: 'X09'
-      name: 'Su-Suki Nanka Janai!'
-      url: https://youtu.be/vdYlI5BnvPk?si=sNW7xED_6pJxCDwd
-    - track_number: 'X10'
-      name: '世界中の青空をあつめて'
-      url: https://youtu.be/OuCaAYkV2d8?si=GdPiCq8tld2keDgb
-    - track_number: 'X11'
-      name: 'Kirakiraboshi ~Beginning Stage Ver.~'
-      url: 
-    - track_number: 'X12'
-      name: '勇気Limit！'
-      url: https://youtu.be/HNpDj7g9Fd0?si=GfW8rUlVAbCIGSIQ
-    - track_number: 'X13'
-      name: 'ほな！'
-      url: https://youtu.be/hDgXSuDV51A?si=VmqCC9AwFBZta19Z
-    - track_number: 'X14'
-      name: 'Chu Chueen!'
-      url: https://youtu.be/5j2a4m1OQsg?si=HDtO13Z2ocNQrqZM
-    - track_number: 'X15'
-      name: 'MATSURI BAYASHI'
-      url: https://youtu.be/Gpkg81TpkSA?si=pojuXvPrSTjSCiXF
-    - track_number: 'X16'
-      name: 'GLAMOROUS SKY'
-      url: 
 
 - band: 'poppin_party'
   numbering: 'Single'
@@ -336,6 +282,39 @@
     - track_number: '2026-04-28'
       name: 'どきどきデエト'
       url: https://youtu.be/sk7nYFsnLto
+    - track_number: 'X07'
+      name: 'チョコレイトの低音レシピ'
+      url: https://youtu.be/pbDiKPBuTsc?si=7itu7mzdjB0SfVDB
+    - track_number: 'X14'
+      name: 'Chu Chueen!'
+      url: https://youtu.be/5j2a4m1OQsg?si=HDtO13Z2ocNQrqZM
+    - track_number: 'X05'
+      name: 'どきどきSING OUT!'
+      url: https://youtu.be/Y-tnOBf-byo?si=Mxmc_b_CwzSbhqVh
+    - track_number: 'X03'
+      name: 'Freedom'
+      url: https://youtu.be/oy6OCnr9eAg?si=OaC2MpIL7qOLHm56
+    - track_number: 'X02'
+      name: 'Game Changer'
+      url: https://youtu.be/X7NS0u628lw?si=A7my0UGNVpA3eytt
+    - track_number: 'X06'
+      name: '花園電気ギター！！！'
+      url: https://youtu.be/Fb6Vxj--Fq4?si=rPetL5o0kJDEaECx
+    - track_number: 'X09'
+      name: 'す、好きなんかじゃない！'
+      url: https://youtu.be/vdYlI5BnvPk?si=sNW7xED_6pJxCDwd
+    - track_number: 'X08'
+      name: '遠い音楽 ～ハートビート～'
+      url: https://youtu.be/jTSPnt5kts0?si=yCNC73uluwyjF8DU
+    - track_number: 'X13'
+      name: 'ほな！'
+      url: https://youtu.be/hDgXSuDV51A?si=VmqCC9AwFBZta19Z
+    - track_number: 'X10'
+      name: '世界中の青空をあつめて'
+      url: https://youtu.be/OuCaAYkV2d8?si=GdPiCq8tld2keDgb
+    - track_number: 'X12'
+      name: '勇気Limit！'
+      url: https://youtu.be/HNpDj7g9Fd0?si=GfW8rUlVAbCIGSIQ
 
 - band: 'poppin_party'
   numbering: 'Cover'
@@ -357,3 +336,6 @@
     - track_number: '2025-11-10'
       name: 'じょいふる (Cover)'
       url: https://youtu.be/3bnaYpv-DFU
+    - track_number: '2026-03-14'
+      name: 'MATSURI BAYASHI (Cover)'
+      url: https://youtu.be/Gpkg81TpkSA

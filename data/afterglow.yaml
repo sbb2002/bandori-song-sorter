@@ -26,7 +26,7 @@
       url: https://youtu.be/erY4I7Irk0E?si=uS6vUsClF4Dgbyf6
     - track_number: '08'
       name: 'Sasanqua'
-      url: https://youtu.be/erY4I7Irk0E?si=uS6vUsClF4Dgbyf6
+      url: https://youtu.be/WlxWzf5jjsI
     - track_number: '09'
       name: 'RED RED RED'
       url: https://youtu.be/PEUtqZ_lQ4w?si=Y_iceu81WKgeGJ6F
@@ -73,7 +73,7 @@
       name: '独創収差'
       url: https://youtu.be/8rQjShGMPYs?si=Uyj3jhLPcX4-XvXs
     - track_number: 'Disc1-11'
-      name: '極彩色(BanG Dream!)|極彩色'
+      name: '極彩色'
       url: https://youtu.be/YvpL2A3FZk4?si=rYbukf4NN7-ej-I0
     - track_number: 'Disc1-12'
       name: 'サクラゼンセン'
@@ -155,42 +155,6 @@
       url: https://youtu.be/m6jnZ8qDw-E?si=aF4h33-Mr9J-u3uR
 
 - band: 'afterglow'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X0'
-      name: 'Made My Day'
-      url: https://youtu.be/YfS7jNzytUs?si=Muy5IxMOPtlnoi-M
-    - track_number: 'X0'
-      name: 'IGNITE GLOW'
-      url: 
-    - track_number: 'X0'
-      name: 'Punchline Halloween!!!'
-      url: https://youtu.be/9o7t80l3ycg?si=yJLPCwlRLkkpNqZq
-    - track_number: 'X0'
-      name: 'Sansan'
-      url: https://youtu.be/WnTBaFVyDyM?si=GqZSmHegFpexVzDO
-    - track_number: 'X0'
-      name: 'Sakura Zensen'
-      url: https://youtu.be/RJ98HN9hl6I?si=ovz4OPAIrd_kAZKp
-    - track_number: 'X0'
-      name: 'Start as Usual'
-      url: https://youtu.be/sWjSEnBR4qE?si=H7MiBvao-JK3EHpA
-    - track_number: 'X0'
-      name: 'Part of the Life'
-      url: https://youtu.be/O3ZcEs4b-uw?si=RI9q0sW-2kTv-WOW
-    - track_number: 'X0'
-      name: '証は赫く'
-      url: 
-    - track_number: 'X0'
-      name: 'Choco Typhooooon!!'
-      url: 
-    - track_number: 'X0'
-      name: 'Roki'
-      url: https://youtu.be/i-3KO5JZOoA?si=cojTOQ-6NNmt6TqB
-
-- band: 'afterglow'
   numbering: 'Cover'
   album_title: 'Covers'
   img_url: assets/icons/_fallback.png
@@ -216,3 +180,18 @@
     - track_number: '2026-03-16'
       name: 'DAY×DAY (Cover)'
       url: https://youtu.be/kSVcNXz21RY
+    - track_number: '2025-02-27'
+      name: 'ロキ (Cover)'
+      url: https://youtu.be/i-3KO5JZOoA
+
+- band: 'afterglow'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: 'X0'
+      name: 'Part of the Life'
+      url: https://youtu.be/O3ZcEs4b-uw?si=RI9q0sW-2kTv-WOW
+    - track_number: 'X0'
+      name: 'Punchline Halloween!!!'
+      url: https://youtu.be/9o7t80l3ycg?si=yJLPCwlRLkkpNqZq
