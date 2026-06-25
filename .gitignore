@@ -20,3 +20,6 @@ tools/verify_cache.json
 
 # Copyrighted content
 assets/lyrics/
+
+# Secrets
+.env
