@@ -9,8 +9,11 @@ __pycache__/
 *.pyc
 
 # Generated CSVs — data/*.yaml이 원본. converter 산출물·RSS inbox 모두 추적 안 함.
-data/*.csv
-tools/*.csv
+# data/*.csv
+# tools/*.csv
 
 # tools/rss_events.jsonl(이벤트 로그)은 git 추적 대상 — ignore하지 않음.
 # (멱등 재계산으로 seen 원장 폐기 → rss_seen.json은 더 이상 쓰지 않음.)
+
+# Regeneratable network cache files
+tools/verify_cache.json

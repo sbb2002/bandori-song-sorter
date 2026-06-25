@@ -90,9 +90,6 @@
   album_title: '致並跡'
   img_url: assets/albums/mygo/a03.webp
   tracks:
-    - track_number: '01'
-      name: '-'
-      url: 
     - track_number: '02'
       name: '残痕字'
       url: https://youtu.be/lfDO7bvUtn8?si=vY4bvoMZU1L_1na_
@@ -108,30 +105,12 @@
     - track_number: '06'
       name: '静降想'
       url: https://youtu.be/OdVHJhdFYOo?si=1fPM377UHbJVo4FQ
-    - track_number: '07'
-      name: '-'
-      url: 
-    - track_number: '08'
-      name: '-'
-      url: 
     - track_number: '09'
       name: '聿日箋秋'
       url: https://youtu.be/dKPye_tGXFM?si=dmsvI-CX97F_VPnc
     - track_number: '10'
       name: '往欄印'
       url: https://youtu.be/ypcMuQhWdZA?si=5O3OYIJF7_J4CRvz
-
-- band: 'mygo'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X0'
-      name: 'Ningen ni Naritai Uta'
-      url: 
-    - track_number: 'X0'
-      name: 'Haruhikage (Original)'
-      url: https://youtu.be/wRwQUk0Dl30?si=cclWnZtT61Gckp6Z
 
 - band: 'mygo'
   numbering: 'Cover'
@@ -150,3 +129,12 @@
     - track_number: '2026-03-21'
       name: '過去を喰らう (Cover)'
       url: https://youtu.be/ZwDx3We2qL8
+
+- band: 'mygo'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: 'X0'
+      name: '春日影'
+      url: https://youtu.be/wRwQUk0Dl30?si=cclWnZtT61Gckp6Z

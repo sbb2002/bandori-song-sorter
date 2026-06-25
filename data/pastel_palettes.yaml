@@ -155,42 +155,6 @@
       url: https://youtu.be/yKkCyuTOi8Q?si=_oei93Jx5ehLhTok
 
 - band: 'pastel_palettes'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X0'
-      name: 'Radiate Warriors'
-      url: https://youtu.be/dS-SUwftzmM?si=LReM_ItoEKuqU9gX
-    - track_number: 'X0'
-      name: 'ReReReエボリューションず☆'
-      url: https://youtu.be/4XSLFAmgO34?si=ZSaZmLCXI_oB2-bz
-    - track_number: 'X0'
-      name: 'Everyday flower'
-      url: https://youtu.be/zEHPkLXcX1I?si=nRzgY1yunp-4bg1S
-    - track_number: 'X0'
-      name: 'ドラマチック！アライブ'
-      url: https://youtu.be/ppjwpt0H2o4?si=uAzFP4w2ekvrs_E3
-    - track_number: 'X0'
-      name: 'ホワイト ノスタルジア'
-      url: https://youtu.be/oN98BBBIOnw?si=3DU5q_tAUzvVNihC
-    - track_number: 'X0'
-      name: 'トリドリ＊パレット'
-      url: https://youtu.be/bhbqZAY_TEk?si=Hwso4Nyd7ZOVpRVr
-    - track_number: 'X0'
-      name: 'フレっとパレットFight Song!!'
-      url: https://youtu.be/ZvK22__1ECE?si=7HdgW1t_Z_XReiS7
-    - track_number: 'X0'
-      name: 'デイオフ・ラフ・ラブ・サンクス'
-      url: https://youtu.be/M4asKbF6F18?si=jRcnngN3Evr2DJvZ
-    - track_number: 'X0'
-      name: 'パッパレ☆人生！バーン万歳！'
-      url: https://youtu.be/AqU8cxKLmN0?si=93SAPOl0FhI3jZUa
-    - track_number: 'X0'
-      name: 'あこがれacross'
-      url: https://youtu.be/UbKbTPzYNOI?si=bzbi2CRjmNmBCQCa
-
-- band: 'pastel_palettes'
   numbering: 'Cover'
   album_title: 'Covers'
   img_url: assets/icons/_fallback.png

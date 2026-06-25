@@ -71,15 +71,6 @@
       url: https://youtu.be/vS2MCoSUEVs?si=WjLCbkRQ04p1OkMd
 
 - band: 'mugendai_mutype'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X01'
-      name: "Mutant Mutant"
-      url: https://youtu.be/uab9GICZjy4?si=jY-T1NPsIkhnk0XN
-
-- band: 'mugendai_mutype'
   numbering: 'Single'
   album_title: 'New Singles'
   img_url: assets/icons/_fallback.png

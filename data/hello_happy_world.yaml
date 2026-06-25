@@ -155,33 +155,6 @@
       url: https://youtu.be/5Bz8TBMardI?si=dQIwi4bkghxECUTo
 
 - band: 'hello_happy_world'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X0'
-      name: 'Nice to Meet You!'
-      url: https://youtu.be/ByAniAhEdhk?si=vC9_EkbNgGz4XqM0
-    - track_number: 'X0'
-      name: 'YAPPY! SCHOOL CARNIVAL☆彡'
-      url: https://youtu.be/xNA7DZfdstI?si=Wx2Yk5rodUgjcdXZ
-    - track_number: 'X0'
-      name: 'うぃーきゃん☆フレフレっ！'
-      url: https://youtu.be/VJDcALjsZ80?si=1Zcf4J77CgxMVJzE
-    - track_number: 'X0'
-      name: 'Egao, mi~kketa!'
-      url: https://youtu.be/Gvey12GFPwU?si=50tnOS0DnaYt-4PT
-    - track_number: 'X0'
-      name: 'Kapoon tto Gokuraku☆Yuutopia!'
-      url: 
-    - track_number: 'X0'
-      name: 'Mabushii Nee☆ Sono Egao!'
-      url: 
-    - track_number: 'X0'
-      name: 'ふぁいぶスマイル◯オールインっ！'
-      url: https://youtu.be/fTgVisxMdOQ?si=6fa0IuQSDIIZ4c8G
-
-- band: 'hello_happy_world'
   numbering: 'Single'
   album_title: 'New Singles'
   img_url: assets/icons/_fallback.png
@@ -189,6 +162,9 @@
     - track_number: '2025-12-25'
       name: 'スマイリーキャロル'
       url: https://youtu.be/f5aGrmFiDGc
+    - track_number: 'X0'
+      name: 'えがお、み〜っけた！'
+      url: https://youtu.be/Gvey12GFPwU?si=50tnOS0DnaYt-4PT
 
 - band: 'hello_happy_world'
   numbering: 'Cover'

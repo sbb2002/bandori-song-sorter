@@ -107,27 +107,6 @@
       url: https://youtu.be/RDhZVoPqL8k?si=VeD4hXJzOGdbUSDZ
 
 - band: 'morfonica'
-  numbering: 'undefined'
-  album_title: 'undefined'
-  img_url: assets/icons/_fallback.png
-  tracks:
-    - track_number: 'X0'
-      name: 'Resonant Strings'
-      url: https://youtu.be/zpHPneTujSA?si=9qQDP2Utvxb5fS9U
-    - track_number: 'X0'
-      name: 'Color of Us'
-      url: https://youtu.be/x9I1W3Aigrc?si=ljAa5Apx2kWhmXhH
-    - track_number: 'X0'
-      name: 'Painting New Dawn'
-      url: 
-    - track_number: 'X0'
-      name: 'Shining Leaves'
-      url: https://youtu.be/HkruyxEhOPI?si=xNIv922mB5_l7bOV
-    - track_number: 'X0'
-      name: 'Merry Merry Thanks!!'
-      url: https://youtu.be/j3W3NHurJnk?si=qN4_VfkArNnHOTNa
-
-- band: 'morfonica'
   numbering: 'Single'
   album_title: 'New Singles'
   img_url: assets/icons/_fallback.png
@@ -144,6 +123,15 @@
     - track_number: '2026-05-06'
       name: '胡蝶翔る星月夜'
       url: https://youtu.be/GOU_X0KK-jo
+    - track_number: 'X0'
+      name: 'Color of Us'
+      url: https://youtu.be/x9I1W3Aigrc?si=ljAa5Apx2kWhmXhH
+    - track_number: 'X0'
+      name: 'Resonant Strings'
+      url: https://youtu.be/zpHPneTujSA?si=9qQDP2Utvxb5fS9U
+    - track_number: 'X0'
+      name: 'Shining Leaves'
+      url: https://youtu.be/HkruyxEhOPI?si=xNIv922mB5_l7bOV
 
 - band: 'morfonica'
   numbering: 'Cover'
