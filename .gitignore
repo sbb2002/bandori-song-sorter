@@ -17,3 +17,6 @@ __pycache__/
 
 # Regeneratable network cache files
 tools/verify_cache.json
+
+# Copyrighted content
+assets/lyrics/
