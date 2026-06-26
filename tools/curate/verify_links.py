@@ -27,14 +27,14 @@ youtube_rss.py의 video_id / norm_name / fetch_length_seconds / http_get 를 재
 ⚠️ 로컬(가정 IP)에서 실행하세요. Layer 2 길이 스크랩은 데이터센터 IP(GitHub Actions)에선
    consent wall로 막힙니다(youtube_rss와 정반대 — 그래서 이 검수는 CI가 아닌 로컬 전용).
 
-캐시: tools/verify_cache.json (oembed/length 결과). 재실행 시 네트워크를 다시 치지 않음.
+캐시: tools/curate/verify_cache.json (oembed/length 결과). 재실행 시 네트워크를 다시 치지 않음.
 
 사용법
-  python tools/verify_links.py                 # Layer 0 (오프라인)
-  python tools/verify_links.py --oembed        # + 죽은 링크/제목 대조
-  python tools/verify_links.py --length        # + 풀버전 판별
-  python tools/verify_links.py --all           # 전부
-  python tools/verify_links.py --all --json tools/verify_report.json
+  python tools/curate/verify_links.py                 # Layer 0 (오프라인)
+  python tools/curate/verify_links.py --oembed        # + 죽은 링크/제목 대조
+  python tools/curate/verify_links.py --length        # + 풀버전 판별
+  python tools/curate/verify_links.py --all           # 전부
+  python tools/curate/verify_links.py --all --json tools/curate/verify_report.json
 """
 
 import sys
@@ -52,8 +52,8 @@ except ImportError:
     print("PyYAML이 필요합니다: pip install pyyaml")
     sys.exit(1)
 
-# 파싱 규칙은 youtube_rss와 공유(중복 정의 금지).
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+# 파싱 규칙은 youtube_rss와 공유(중복 정의 금지). youtube_rss 는 tools/collect/ 에 있음.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "collect"))
 from youtube_rss import video_id, norm_name, fetch_length_seconds, UA, MIN_LENGTH_S
 
 try:
@@ -61,9 +61,9 @@ try:
 except Exception:
     pass
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]   # tools/curate/<file> → repo root
 DATA_DIR = ROOT / "data"
-CACHE_PATH = ROOT / "tools" / "verify_cache.json"
+CACHE_PATH = ROOT / "tools" / "curate" / "verify_cache.json"
 
 UNDEF = "undefined"
 

@@ -12,11 +12,12 @@ __pycache__/
 # data/*.csv
 # tools/*.csv
 
-# tools/rss_events.jsonl(이벤트 로그)은 git 추적 대상 — ignore하지 않음.
+# tools/collect/rss_events.jsonl(이벤트 로그)은 git 추적 대상 — ignore하지 않음.
 # (멱등 재계산으로 seen 원장 폐기 → rss_seen.json은 더 이상 쓰지 않음.)
 
 # Regeneratable network cache files
-tools/verify_cache.json
+tools/curate/verify_cache.json
+tools/curate/plb_cache.json
 
 # Copyrighted content
 assets/lyrics/

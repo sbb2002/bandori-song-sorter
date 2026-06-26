@@ -3,7 +3,7 @@
 해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
 (참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
 
-마지막 갱신: **HANDOFF 1 진행중** — Data API 조회수→밴드별 TOP10 + 가사 템플릿(`assets/lyrics/`) 완료, 백필 후보 도출 완료(신규 165 = 오리지널 30 / 커버 135 · namedup 402). 남은 건 **오리지널 30개 데이터 추가**(1-a) 등. 도구: `tools/youtube_api.py`·`band_top10.py`·`backfill.py`. (2026-06-25)
+마지막 갱신: **HANDOFF 1 진행중** — Data API 조회수→밴드별 TOP10 + 가사 템플릿(`assets/lyrics/`) 완료, 백필 후보 도출 완료(신규 165 = 오리지널 30 / 커버 135 · namedup 402). 남은 건 **오리지널 30개 데이터 추가**(1-a) 등. 도구: `tools/collect/youtube_api.py`·`band_top10.py`·`backfill.py`. (2026-06-25)
 
 > 이전 갱신: idea/260625.md 검토 완료 → 채택 3건 이관, 자동 장르추출 등 반려. 메타패널 '밴드 중심' 전환(밴드소개 + 밴드 워드클라우드), 워드클라우드는 밴드별 조회수 TOP10 가사(사용자 직접 제공·원문 미보관).
 
@@ -26,19 +26,19 @@
 ---
 
 ### 1. YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 (new_idea #3) — 🔄 진행중
-키: `.env`의 `YOUTUBE_API_KEY`(stdlib 파싱 — `tools/youtube_api.py`의 `load_env_key`). `.gitignore`에 `.env` 포함. youtube_rss의 'no API key'(CI RSS)와 **별개** — 일회성/저빈도 조회 전용. `backfill.py`는 출력 전용·멱등이라 재실행 안전.
+키: `.env`의 `YOUTUBE_API_KEY`(stdlib 파싱 — `tools/collect/youtube_api.py`의 `load_env_key`). `.gitignore`에 `.env` 포함. youtube_rss의 'no API key'(CI RSS)와 **별개** — 일회성/저빈도 조회 전용. `backfill.py`는 출력 전용·멱등이라 재실행 안전.
 
 **✅ 완료**
-- `tools/youtube_api.py` — Data API v3 stdlib 클라이언트: `load_env_key` / `fetch_view_counts`(videos.list) / `fetch_uploads`(channels+playlistItems 페이징).
-- `tools/band_top10.py` — 재생가능 트랙 조회수 → 밴드별 TOP10. 커버 제외(`--no-cover`), 같은 video_id dedup(roselia LOUDER 중복 방어).
+- `tools/collect/youtube_api.py` — Data API v3 stdlib 클라이언트: `load_env_key` / `fetch_view_counts`(videos.list) / `fetch_uploads`(channels+playlistItems 페이징).
+- `tools/collect/band_top10.py` — 재생가능 트랙 조회수 → 밴드별 TOP10. 커버 제외(`--no-cover`), 같은 video_id dedup(roselia LOUDER 중복 방어).
   → **10개 밴드 TOP10 확정**, `assets/lyrics/<band>.md` 가사 템플릿 생성(gitignore·원문 비커밋). 조회수 443/443 수신.
-- `tools/backfill.py` — Topic 업로드 전체 vs known(id/name) 비교 → 누락 후보 **출력만**(데이터 미변경). variant/known_name 필터는 youtube_rss와 동일.
+- `tools/collect/backfill.py` — Topic 업로드 전체 vs known(id/name) 비교 → 누락 후보 **출력만**(데이터 미변경). variant/known_name 필터는 youtube_rss와 동일.
   → 결과: **신규 165 = 오리지널 30 + 커버 135 · namedup 402**.
     · 오리지널 30(스팟체크로 진짜 누락 확인): roselia 14, raise_a_suilen 7, poppin_party 5, morfonica 2, afterglow 1, ave_mujica 1. **2022년 정규앨범 곡 포함**(roselia Our Carol/Swear, raise DEAD HEAT BEAT) — RSS로 못 잡던 것.
     · namedup 402 = 음원우선 정책으로 데이터가 Topic 외 영상(MV 등)을 url로 씀 → **신곡 아님**(url 품질 영역).
 
 **⬜ 남은 것**
-- **(1-a) 오리지널 30개 데이터 추가** ← 다음 작업. `python tools/backfill.py`로 후보 재산출(멱등) → `insert_track` 기반 추가 스크립트(dry-run → loss-0 검증 → `--apply`). 오리지널은 New Singles(numbering=`Single`/album=`New Singles`), track_number=published, img=FALLBACK_IMG.
+- **(1-a) 오리지널 30개 데이터 추가** ← 다음 작업. `python tools/collect/backfill.py`로 후보 재산출(멱등) → `insert_track` 기반 추가 스크립트(dry-run → loss-0 검증 → `--apply`). 오리지널은 New Singles(numbering=`Single`/album=`New Singles`), track_number=published, img=FALLBACK_IMG.
   - ⚠️ poppin `(Popipa Acoustic Ver.)`·`(Poppin'Party Ver.)`·`Yes! BanG Dream! (Acoustic Ver.)` 등 **편곡/버전곡은 취사선택**(같은 곡 다른 편곡).
 - **(1-b) 커버 135개**: Covers 카탈로그 확장(numbering=`Cover`/album=`Covers`). 양 많아 **별도 배치로 보류**(사용자 보류 동의 대기). 이게 new_idea #3의 'A(Topic 백필)'에 해당. 그래도 빠지는 '유튜브 한정 커버'는 B(공식채널 バンドリちゃんねる☆ 수집)인데 노이즈·밴드배정 난점 → 후순위.
 - **(1-c) namedup 402**: url을 Topic 음원으로 교체하는 url 품질 개선 — 별도·후순위.

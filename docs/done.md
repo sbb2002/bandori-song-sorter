@@ -366,3 +366,32 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 커밋 · 머지
 - 커밋 `67c140b`(20 files, +848 −313) → `feature/song-validator` 푸시. 이후 main 머지.
 - `tools/rss_seen.json` 폐기 잔재 삭제는 별건(미진행, HANDOFF에 잔존).
+
+---
+
+# 세션 15 — urgent: 재생불가(지역락) 7곡 URL 교체 + tools/ 목적별 재편 (완료)
+
+`docs/urgent.md` 대응. 일부 곡 선택 시 유튜브 iframe에 **'동영상을 재생할 수 없음. 동영상을 볼 수 없습니다.'**가 뜨는데 url 자체는 살아 있는 케이스 파악·수정. urgent.md 규약대로 처리 후 이관.
+
+## 원인 진단 (재생불가 = 지역락 7곡, 그 외 0)
+일반 메시지라 원인을 따로 가려야 해서 **두 독립 신호 교차검증**:
+- **Data API**(`status,contentDetails`, 500 고유 vid): 삭제/비공개(미응답) **0** · 임베드차단(`embeddable=false`) **0** · 비공개 privacy **0** · **KR 지역차단 7**.
+- **한국 IP `watch` playabilityStatus 500곡 전수**(`hl=ko&gl=KR`): `OK` 493 / `UNPLAYABLE` 7, 스크랩 실패 0(누락 구멍 없음).
+- 양 신호의 video_id 7개 **완전 일치**. 7곡 모두 `blocked` 249개국(KR 포함) = 사실상 일본 전용 공식 업로드 → 한국 재생불가. iframe "재생불가" 4원인(삭제·임베드차단·연령제한·지역차단) 전부 커버, 지역차단만 검출.
+
+## 처리 내역
+- **탐지기 신규**: `tools/curate/check_embeddable.py` — Data API + KR playabilityStatus 합산 분류(plb), `fix_url.csv` 산출. 캐시 `tools/curate/plb_cache.json`(.gitignore 등재).
+- CSV 산출: `[song_name, current_url, modified_url, plb]`. 사용자가 **대체 url 7개 입력**(공란 0 = 삭제 0, **교체 7**).
+- **적용 전 새 url 7개 검증**: 전부 한국에서 `watch=OK`·`embeddable=True`·KR미차단, 제목 일치 확인.
+- **적용기 신규**: `tools/curate/apply_fix_url.py` — current_url의 vid로 매칭해 url 줄만 텍스트 교체(포맷·따옴표 보존, 재직렬화 금지). loss 검증(매칭 1:1 · 재파싱 · old제거/new존재 · 곡수). dry-run → `--apply`.
+- 교체 7곡: afterglow `Sasanqua` · ave_mujica `The Whole Blue World`/`in your blue eyes`/`素晴らしき世界 でも どこにもない場所` · poppin_party 3× `~Popipa Acoustic Ver.~`(Yes! BanG_Dream!/夏空 SUN! SUN! SEVEN!/走り始めたばかりのキミに). 변경 파일 3개, url 7줄(+7 −7).
+- `python build.py` 성공(밴드 13, 곡 **517 불변**) → index.html 재생성. old vid **0**, new vid **7/7** 반영 확인. (곡수 불변이라 JS 카운트 테스트 무관.)
+
+## tools/ 목적별 재편 (작업 중 요청)
+- `tools/collect/`(수집: youtube_rss·youtube_api·backfill·band_top10·rss_events.jsonl) / `tools/curate/`(검수·수정: verify_links·delete_redundant·resolve_empty·execute_placement·check_embeddable·apply_fix_url + csv/cache) / `tools/convert/`(converter).
+- 한 단계 깊어져 깨지는 참조 일괄 수정: cross-folder `sys.path`(curate→collect), `ROOT=parents[2]`, 하드코딩 `tools/<file>` 경로, **CI `rss.yml`**(`python tools/collect/youtube_rss.py`), `.gitignore`(캐시 경로), HANDOFF·docstring 실행경로.
+- 검증: 10개 스크립트 import 스모크(ROOT→repo root OK) + 오프라인 dry-run(verify_links/delete_redundant/resolve_empty exit 0) + converter 왕복. **git rename 인식(이력 보존)**, 옛 경로 잔존참조 0.
+
+## 최종 상태
+- **전곡 한국 재생가능**(지역락 7곡 → 임베드 가능 대체 url로 교체 완료). 곡수 517 유지.
+- 커밋 미진행(사용자 확인 대기).

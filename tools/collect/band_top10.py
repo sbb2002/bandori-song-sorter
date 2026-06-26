@@ -6,8 +6,8 @@ data/*.yaml 의 재생가능 트랙 video_id 를 YouTube Data API(videos.list, p
 붙여넣기 템플릿) 생성. assets/lyrics/ 는 .gitignore 처리됨(원문 비커밋).
 
 대상: 곡 10개 이상인 10개 밴드. various_artists/ikka_dumb_rock/millsage 제외.
-  python tools/band_top10.py             # 조회수 조회 + TOP10 출력 + 템플릿 생성
-  python tools/band_top10.py --no-write  # 템플릿 미생성(콘솔만)
+  python tools/collect/band_top10.py             # 조회수 조회 + TOP10 출력 + 템플릿 생성
+  python tools/collect/band_top10.py --no-write  # 템플릿 미생성(콘솔만)
 """
 import sys
 from pathlib import Path
@@ -27,7 +27,7 @@ try:
 except Exception:
     pass
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]   # tools/collect/<file> → repo root
 DATA = ROOT / "data"
 LYRICS_DIR = ROOT / "assets" / "lyrics"
 TOP_N = 10

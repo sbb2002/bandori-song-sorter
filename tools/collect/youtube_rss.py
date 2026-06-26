@@ -22,7 +22,7 @@ Design (see docs/HANDOFF.md #1 for the full rationale)
   human close = reject (FP). GitHub PR state *is* the ledger.
 * yaml is edited surgically (additive text insertion only — never re-serialized)
   so existing quoting/formatting of 560 songs is untouched.
-* Every decision is logged to tools/rss_events.jsonl (git-tracked, append-only,
+* Every decision is logged to tools/collect/rss_events.jsonl (git-tracked, append-only,
   deduped per (video_id, decision)). `--report` joins it with live PR state for
   precision = TP/(TP+FP); `--audit` lists heuristic drops (where FN can hide).
 * Format-change watch is parsing-layer only: fetch failure / XML error / zero
@@ -31,12 +31,12 @@ Design (see docs/HANDOFF.md #1 for the full rationale)
 
 Modes
 -----
-  python tools/youtube_rss.py            preview (= --dry; safe, no writes)
-  python tools/youtube_rss.py --dry      detect & preview insertions, no writes
-  python tools/youtube_rss.py --propose  CI: open per-song PRs, log, push log (real)
-  python tools/youtube_rss.py --report    precision dashboard (events + PR state)
-  python tools/youtube_rss.py --audit     heuristic drops only (FN review)
-  python tools/youtube_rss.py --show      dump latest feed entries per band
+  python tools/collect/youtube_rss.py            preview (= --dry; safe, no writes)
+  python tools/collect/youtube_rss.py --dry      detect & preview insertions, no writes
+  python tools/collect/youtube_rss.py --propose  CI: open per-song PRs, log, push log (real)
+  python tools/collect/youtube_rss.py --report    precision dashboard (events + PR state)
+  python tools/collect/youtube_rss.py --audit     heuristic drops only (FN review)
+  python tools/collect/youtube_rss.py --show      dump latest feed entries per band
 """
 
 import sys
@@ -65,9 +65,9 @@ except Exception:
     pass
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]   # tools/collect/<file> → repo root
 DATA_DIR = ROOT / "data"
-EVENTS_LOG = ROOT / "tools" / "rss_events.jsonl"
+EVENTS_LOG = ROOT / "tools" / "collect" / "rss_events.jsonl"
 
 FEED_URL = "https://www.youtube.com/feeds/videos.xml?channel_id={}"
 WATCH_PAGE = "https://www.youtube.com/watch?v={}"
@@ -760,7 +760,7 @@ def cmd_report():
     print(f"\nanomaly events: {len(anomalies)}")
     for r in anomalies[-5:]:
         print(f"  {r.get('ts','?')[:19]} {r.get('band')} {r.get('kind')}")
-    print("\nFN(놓친 신곡)은 자동 검출 불가 → 'python tools/youtube_rss.py --audit'로 휴리스틱 drop 점검.")
+    print("\nFN(놓친 신곡)은 자동 검출 불가 → 'python tools/collect/youtube_rss.py --audit'로 휴리스틱 drop 점검.")
 
 
 def cmd_audit():

@@ -1,7 +1,7 @@
 """
 C2 placement 실행기 (HANDOFF #1) — undefined 유일본을 정규/서브유닛 앨범으로 배치.
 
-입력: tools/c2_placement.csv  (band,video_id,type,current_name,official_title,album_FILL,name_FILL)
+입력: tools/curate/c2_placement.csv  (band,video_id,type,current_name,official_title,album_FILL,name_FILL)
 동작(행별, album_FILL 비어있으면 skip):
   · 소스 트랙을 (band, video_id)로 undef 블록에서 찾는다.
   · 최종 곡명 = name_FILL(있으면) 아니면 current_name.
@@ -16,8 +16,8 @@ YAML은 youtube_rss의 텍스트 삽입(포맷·따옴표 보존, 순수 추가/
 ruamel/안전덤프는 비표준 혼합 들여쓰기를 못 살려 diff가 폭발하므로 쓰지 않는다.
 
 기본은 dry-run(미기록). 실제 기록은 --apply.
-  python tools/execute_placement.py            # 계획 출력 + 검증(미기록)
-  python tools/execute_placement.py --apply     # 데이터 기록
+  python tools/curate/execute_placement.py            # 계획 출력 + 검증(미기록)
+  python tools/curate/execute_placement.py --apply     # 데이터 기록
 """
 import sys
 import csv
@@ -29,11 +29,12 @@ try:
 except ImportError:
     print("PyYAML 필요: pip install pyyaml"); sys.exit(1)
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]   # tools/curate/<file> → repo root
 DATA = ROOT / "data"
-CSV_PATH = ROOT / "tools" / "c2_placement.csv"
+CSV_PATH = ROOT / "tools" / "curate" / "c2_placement.csv"
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+# youtube_rss 는 tools/collect/ 에 있음(공유 모듈).
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "collect"))
 from youtube_rss import insert_track, video_id, yaml_squote  # 텍스트 헬퍼 재사용
 
 try:
