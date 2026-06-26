@@ -42,4 +42,4 @@ jobs:
       - name: Detect & propose new songs
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python tools/youtube_rss.py --propose
+        run: python tools/collect/youtube_rss.py --propose

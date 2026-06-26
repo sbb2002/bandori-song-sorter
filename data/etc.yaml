@@ -5,10 +5,10 @@
   tracks:
     - track_number: 'X01'
       name: "Don't be afraid!"
-      url: https://youtu.be/hPnvMOyGgzc?si=Vxzj1NBGCg3b3L45
+      url: https://youtu.be/hPnvMOyGgzc
     - track_number: 'X02'
       name: "Glee! Glee! Glee!"
-      url: https://youtu.be/8ciuJN6xTIo?si=yRqOz81J7SB7O7hO
+      url: https://youtu.be/8ciuJN6xTIo
 
 - band: 'various_artists'
   numbering: 'Single'
@@ -17,7 +17,7 @@
   tracks:
     - track_number: 'X01'
       name: "Be shine, shining!"
-      url: https://youtu.be/tv1Pf0FE6iw?si=dr5B9ftRqfyOY18S
+      url: https://youtu.be/tv1Pf0FE6iw
 
 - band: 'various_artists'
   numbering: 'Single'
@@ -26,4 +26,4 @@
   tracks:
     - track_number: 'X01'
       name: "Here, the world"
-      url: https://youtu.be/LuwRRghPD1A?si=sN-EFlTN-T0DIXow
+      url: https://youtu.be/LuwRRghPD1A

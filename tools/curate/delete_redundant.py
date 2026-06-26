@@ -14,8 +14,8 @@ C1 redundant 삭제기 (HANDOFF #1) — undefined 더미앨범 중 '정규앨범
 하나라도 실패하면 중단(미기록).
 
 YAML은 텍스트 단위 제거(포맷·따옴표 보존). 기본 dry-run, 기록은 --apply.
-  python tools/delete_redundant.py
-  python tools/delete_redundant.py --apply
+  python tools/curate/delete_redundant.py
+  python tools/curate/delete_redundant.py --apply
 """
 import sys
 from pathlib import Path
@@ -26,10 +26,12 @@ try:
 except ImportError:
     print("PyYAML 필요: pip install pyyaml"); sys.exit(1)
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]   # tools/curate/<file> → repo root
 DATA = ROOT / "data"
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))                    # 같은 폴더: verify_links, execute_placement
+sys.path.insert(0, str(HERE.parent / "collect"))  # 공유 모듈: youtube_rss
 import verify_links as v
 from youtube_rss import video_id
 from execute_placement import split_text, join_text, remove_track_by_vid, _unq
