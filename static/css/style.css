@@ -499,7 +499,7 @@ header h1 {
 }
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-.histogram-panel, .heatmap-panel {
+.histogram-panel, .heatmap-panel, .bandinfo-panel {
   padding: 14px;
   flex: 1;
   overflow-y: auto;
@@ -508,8 +508,10 @@ header h1 {
 .heatmap-panel.active { display: block; }
 .histogram-panel { display: none; }
 .histogram-panel.active { display: block; }
+.bandinfo-panel { display: none; }
+.bandinfo-panel.active { display: flex; flex-direction: column; }
 
-.hist-title, .hm-title {
+.hist-title, .hm-title, .bi-title {
   font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-sub);
@@ -517,6 +519,37 @@ header h1 {
   text-transform: uppercase;
   margin-bottom: 12px;
 }
+
+/* 밴드 워드클라우드 (F) */
+.bi-title { margin-bottom: 4px; }
+.bi-sub {
+  font-size: 0.62rem;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+}
+.wordcloud-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 240px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+#wordcloud-canvas { display: block; width: 100%; height: 100%; }
+.wc-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 18px;
+  font-size: 0.7rem;
+  color: var(--text-sub);
+}
+/* hidden 속성이 author display:flex를 덮도록 — 클라우드 렌더 시 빈 메시지 숨김 */
+.wc-empty[hidden] { display: none; }
 .hist-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
 .hist-label {
   font-size: 0.65rem;

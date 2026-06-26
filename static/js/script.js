@@ -274,6 +274,7 @@ function selectBand(band) {
         (band === 'ALL' ? '전체' : bandDisplay(band)) + ' 랭크 분포';
     renderSongList();
     renderHistogram();
+    if (currentTab === 'band') renderWordcloud();
 }
 
 // ───────────────────────────
@@ -1061,6 +1062,89 @@ function buildCaptureDOM() {
 }
 
 // ───────────────────────────
+// 14.5 Band wordcloud (F)
+// ───────────────────────────
+
+const WC_PALETTE = ['#c084fc', '#ff6b9d', '#ff9f6b', '#ffd06b', '#6bcfff', '#cfd0ea'];
+
+/** currentBand 키워드 목록(ALL=전체 병합). 표시텍스트(ko‖jp) 기준 병합·빈도순. */
+function wordcloudList(band) {
+    const data = window.WORDCLOUD_DATA || {};
+    let src = [], songCount = 0;
+    if (band === 'ALL') {
+        for (const b in data) src = src.concat(data[b].keywords || []);
+    } else if (data[band]) {
+        src = data[band].keywords || [];
+        songCount = data[band].song_count || 0;
+    }
+    const merged = new Map();           // 표시텍스트 → weight 합(心·気→마음 등 중복 통합)
+    src.forEach(k => {
+        const text = ((k.ko || k.jp) || '').trim();
+        if (text) merged.set(text, (merged.get(text) || 0) + (k.weight || 1));
+    });
+    const list = [...merged.entries()].sort((a, b) => b[1] - a[1]);
+    return { list, songCount };
+}
+
+/** currentBand 워드클라우드 렌더. 패널이 보일 때만 동작(숨김 시 캔버스 크기 0). */
+function renderWordcloud() {
+    const wrap = document.getElementById('wordcloud-wrap');
+    const canvas = document.getElementById('wordcloud-canvas');
+    const empty = document.getElementById('wc-empty');
+    if (!wrap || !canvas) return;
+
+    document.getElementById('bi-band-name').textContent =
+        (currentBand === 'ALL' ? '전체' : bandDisplay(currentBand)) + ' 워드클라우드';
+
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    if (w === 0 || h === 0) return;     // 숨김 상태 → 탭 전환 시 재호출됨
+    canvas.width = w; canvas.height = h;
+
+    const { list, songCount } = wordcloudList(currentBand);
+    const subEl = document.getElementById('bi-sub');
+
+    if (!window.WordCloud || list.length === 0) {
+        canvas.getContext('2d').clearRect(0, 0, w, h);
+        empty.hidden = false;
+        subEl.textContent = '';
+        return;
+    }
+    empty.hidden = true;
+    subEl.textContent = (currentBand === 'ALL')
+        ? `전 밴드 키워드 ${list.length}개 병합`
+        : `조회수 TOP10 가사 ${songCount}곡 · 키워드 ${list.length}개`;
+
+    // 상위 60개만(좁은 패널 가독성) + 후렴 반복 완화를 위해 sqrt로 폰트 압축
+    const top = list.slice(0, 60);
+    const sq = v => Math.sqrt(v);
+    const maxW = sq(top[0][1]), minW = sq(top[top.length - 1][1]);
+    const span = Math.max(1e-6, maxW - minW);
+    const FMIN = Math.max(12, Math.round(h / 18)), FMAX = Math.round(h / 5);
+    const items = top.map(([text, wt]) => {
+        const t = (sq(wt) - minW) / span;          // 0..1
+        return [text, Math.round(FMIN + t * (FMAX - FMIN))];
+    });
+
+    window.WordCloud(canvas, {
+        list: items,
+        weightFactor: 1,                            // size = 위에서 계산한 폰트 px
+        fontFamily: "'M PLUS Rounded 1c', 'Inter', sans-serif",
+        fontWeight: '700',
+        color: word => {
+            let hsh = 0;
+            for (let i = 0; i < word.length; i++) hsh = (hsh * 31 + word.charCodeAt(i)) | 0;
+            return WC_PALETTE[Math.abs(hsh) % WC_PALETTE.length];
+        },
+        backgroundColor: 'transparent',
+        rotateRatio: 0,                             // 한글 가독성 — 가로 고정
+        gridSize: Math.max(4, Math.round(w / 64)),
+        drawOutOfBound: false,
+        shrinkToFit: true,
+        clearCanvas: true,
+    });
+}
+
+// ───────────────────────────
 // 15. Tabs / Reset
 // ───────────────────────────
 
@@ -1069,6 +1153,8 @@ function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.getElementById('hist-panel').classList.toggle('active', tab === 'hist');
     document.getElementById('heat-panel').classList.toggle('active', tab === 'heat');
+    document.getElementById('band-panel').classList.toggle('active', tab === 'band');
+    if (tab === 'band') renderWordcloud();
 }
 
 /** 곡 종류 탭 전환 (ALL/Ori/Cover) */
@@ -1153,6 +1239,13 @@ document.addEventListener('DOMContentLoaded', () => {
         hideCommentTip();
     }, true);
     window.addEventListener('resize', hideCommentTip);
+    // 워드클라우드는 캔버스 픽셀 기준이라 리사이즈 시 재렌더(밴드 탭 활성 시)
+    let wcResizeTimer = null;
+    window.addEventListener('resize', () => {
+        if (currentTab !== 'band') return;
+        clearTimeout(wcResizeTimer);
+        wcResizeTimer = setTimeout(renderWordcloud, 180);
+    });
 
     // 이미 YT API가 준비된 경우 직접 초기화 (타이밍 역전 방지)
     if (window.YT && window.YT.Player) initYouTubePlayer();

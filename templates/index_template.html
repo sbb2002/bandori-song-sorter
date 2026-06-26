@@ -7,6 +7,8 @@
 
     <!-- 곡 데이터 (build.py 주입) -->
     <script>window.SONG_DATA = {{ song_data_json | safe }};</script>
+    <!-- 밴드 워드클라우드 키워드 (build.py 주입 · wordcloud/<band>.yaml) -->
+    <script>window.WORDCLOUD_DATA = {{ wordcloud_data_json | safe }};</script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,6 +79,7 @@
         <div class="panel-tab">
             <button class="tab-btn active" type="button" data-tab="hist">히스토그램</button>
             <button class="tab-btn" type="button" data-tab="heat">히트맵</button>
+            <button class="tab-btn" type="button" data-tab="band">밴드 정보</button>
         </div>
 
         <!-- D: HISTOGRAM (JS 렌더) -->
@@ -89,6 +92,16 @@
         <div class="heatmap-panel" id="heat-panel">
             <div class="hm-title">전체 밴드 히트맵</div>
             <div class="hm-grid" id="heatmap-grid"></div>
+        </div>
+
+        <!-- F: BAND INFO — 워드클라우드 (JS 렌더) -->
+        <div class="bandinfo-panel" id="band-panel">
+            <div class="bi-title" id="bi-band-name">밴드 워드클라우드</div>
+            <div class="bi-sub" id="bi-sub"></div>
+            <div class="wordcloud-wrap" id="wordcloud-wrap">
+                <canvas id="wordcloud-canvas"></canvas>
+                <div class="wc-empty" id="wc-empty" hidden>이 밴드의 가사 키워드가 아직 없어요.</div>
+            </div>
         </div>
     </aside>
 
@@ -135,6 +148,8 @@
 
 <!-- ============================ SCRIPTS ============================ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<!-- 워드클라우드 렌더 라이브러리 (벤더링) -->
+<script src="./static/js/wordcloud2.min.js"></script>
 <!-- 순수 로직 (build.py 주입) -->
 <script src="{{ static_paths.core }}"></script>
 <!-- 앱 로직 (build.py 주입) -->
