@@ -1,0 +1,88 @@
+# 자동 생성 — 일본어 가사 명사 빈도(커버 제외). 가사 원문은 미보관.
+# ko: 한글 번안 정렬 추정 → 기계번역(주석 표시) → 빈칸 순. 직접 수정·덮어쓰세요.
+# weight: 원문 등장 빈도(후렴 반복 포함, 렌더에서 압축 가능).
+band: afterglow
+generated: '2026-06-27'
+song_count: 7
+keywords:
+- {jp: 魂, ko: 영혼, weight: 12}
+- {jp: 空, ko: 하늘, weight: 9}
+- {jp: 手, ko: 손, weight: 8}
+- {jp: 場所, ko: 장소, weight: 8}
+- {jp: 通り, ko: 평소, weight: 7}
+- {jp: 背中, ko: 등, weight: 6}
+- {jp: 心, ko: 마음, weight: 6}
+- {jp: 気, ko: 마음, weight: 5}  # 기계번역 초안
+- {jp: 自分, ko: 자신, weight: 5}
+- {jp: 気持ち, ko: 기분, weight: 5}
+- {jp: 姿, ko: 모습, weight: 5}
+- {jp: 絶対, ko: 절대, weight: 5} # 기계번역 초안
+- {jp: 夢, ko: 꿈, weight: 4}
+- {jp: 目, ko: 눈, weight: 4}
+- {jp: バイ, ko: 바이바이, weight: 4}
+- {jp: 絆, ko: 인연, weight: 4}
+- {jp: 夕焼け, ko: 석양, weight: 4}
+- {jp: メッセージ, ko: 메세지, weight: 4}
+- {jp: 不思議, ko: 불가사의, weight: 3}
+- {jp: 狂騒, ko: 카프리치오, weight: 3}
+- {jp: 曲, ko: 카프리치오, weight: 3}
+- {jp: カプリッチオ, ko: 카프리치오, weight: 3}
+- {jp: フラ, ko: 훌라, weight: 3} # 기계번역 초안
+- {jp: 日々, ko: 나날, weight: 3}
+- {jp: 言葉, ko: 말, weight: 3}
+- {jp: メンバー, ko: 회원, weight: 3} # 기계번역 초안
+- {jp: 声, ko: 목소리, weight: 3}
+- {jp: 紺碧, ko: 청색, weight: 3} # 기계번역 초안
+- {jp: 壁, ko: 벽, weight: 3}
+- {jp: 夜空, ko: 밤하늘, weight: 3}
+- {jp: 星, ko: 별, weight: 3}
+- {jp: 側, ko: 곁, weight: 3}
+- {jp: 未来, ko: 미래, weight: 3}
+- {jp: 人, ko: 사람, weight: 3}
+- {jp: 歌, ko: 노래, weight: 3}
+- {jp: チャンス, ko: 위기, weight: 3}
+- {jp: 其々, ko: 각자, weight: 3}
+- {jp: ミステリー, ko: 위험, weight: 2}
+- {jp: 鬼気, ko: 귀기, weight: 2}
+- {jp: エトセトラ, ko: 귀기, weight: 2}
+- {jp: 鬱, ko: 구분, weight: 2}
+- {jp: 吊り橋, ko: 이론, weight: 2}
+- {jp: 理論, ko: 이론, weight: 2}
+- {jp: アドレナリン, ko: 아드레날린, weight: 2}
+- {jp: 愉快, ko: 소, weight: 2}
+- {jp: 暗闇, ko: 어둠, weight: 2}
+- {jp: 点, ko: 백점짜리, weight: 2}
+- {jp: 夏, ko: 여름, weight: 2}
+- {jp: 頃, ko: 시절, weight: 2}
+- {jp: 呪い, ko: 저주, weight: 2}
+- {jp: メロディー, ko: 멜로디, weight: 2}
+- {jp: 夕日, ko: 석양, weight: 2}
+- {jp: 胸, ko: 가슴, weight: 2}
+- {jp: 後悔, ko: 후회, weight: 2}
+- {jp: 山茶花, ko: 산다, weight: 2}
+- {jp: オオ, ko: 오오, weight: 2} # 기계번역 초안
+- {jp: 運命, ko: 운명, weight: 2}
+- {jp: 偽り, ko: 거짓, weight: 2}
+- {jp: 格好, ko: 거짓, weight: 2}
+- {jp: 答え, ko: 대답, weight: 2}
+- {jp: 景色, ko: 풍경, weight: 2}
+- {jp: 世界, ko: 세계, weight: 2}
+- {jp: 関係, ko: 높이, weight: 2}
+- {jp: 事実, ko: 중요, weight: 2}
+- {jp: 欠け, ko: 부족, weight: 2} # 기계번역 초안
+- {jp: 輝き, ko: 반짝임, weight: 2}
+- {jp: 探し, ko: 밤하늘, weight: 2}
+- {jp: 方法, ko: 방법, weight: 2}
+- {jp: 音, ko: 소리, weight: 2}
+- {jp: 存在, ko: 존재, weight: 2}
+- {jp: 感情, ko: 감정, weight: 2}
+- {jp: 戦場, ko: 전장, weight: 2}
+- {jp: ピンチ, ko: 위기, weight: 2}
+- {jp: 先, ko: 앞, weight: 2}
+- {jp: 身体, ko: 충동, weight: 2}
+- {jp: 衝動, ko: 충동, weight: 2}
+- {jp: 思い, ko: 마음, weight: 2}
+- {jp: 夕影, ko: 석양, weight: 2} # 기계번역 초안
+- {jp: 波間, ko: 파도, weight: 2}
+- {jp: 理由, ko: 이유, weight: 2}
+- {jp: 希望, ko: 희망, weight: 2}

@@ -1,0 +1,88 @@
+# 자동 생성 — 일본어 가사 명사 빈도(커버 제외). 가사 원문은 미보관.
+# ko: 한글 번안 정렬 추정 → 기계번역(주석 표시) → 빈칸 순. 직접 수정·덮어쓰세요.
+# weight: 원문 등장 빈도(후렴 반복 포함, 렌더에서 압축 가능).
+band: poppin_party
+generated: '2026-06-27'
+song_count: 9
+keywords:
+- {jp: 夢, ko: 꿈, weight: 27}
+- {jp: 歌, ko: 노래, weight: 26}
+- {jp: 未来, ko: 미래, weight: 17}
+- {jp: 空, ko: 하늘, weight: 12}
+- {jp: 心, ko: 마음, weight: 10}
+- {jp: 皆, ko: 모두, weight: 9}
+- {jp: 手, ko: 손, weight: 8}
+- {jp: メロディー, ko: 멜로디, weight: 8}
+- {jp: 場所, ko: 장소, weight: 7}
+- {jp: 明日, ko: 내일, weight: 7}
+- {jp: 前, ko: 앞, weight: 6}
+- {jp: 音, ko: 소리, weight: 6}
+- {jp: 約束, ko: 약속, weight: 6}
+- {jp: 絆, ko: 인연, weight: 6}
+- {jp: 世界, ko: 세계, weight: 6}
+- {jp: 本当, ko: 사실, weight: 5}
+- {jp: 星, ko: 별, weight: 5}
+- {jp: 永遠, ko: 영원, weight: 5}
+- {jp: 思い出, ko: 추억, weight: 5}
+- {jp: キズナミュージック, ko: 뮤직, weight: 5}
+- {jp: 思い, ko: 마음, weight: 5}
+- {jp: 雨上がり, ko: 비, weight: 5}
+- {jp: 二人, ko: 약속, weight: 5}
+- {jp: 気持ち, ko: 기분, weight: 4}
+- {jp: 自分, ko: 자신, weight: 4}
+- {jp: 奇跡, ko: 기적, weight: 4}
+- {jp: 涙, ko: 눈물, weight: 4}
+- {jp: 毎日, ko: 매일, weight: 4}
+- {jp: 精, ko: 정, weight: 4}  # 기계번역 초안
+- {jp: 一杯, ko: 한잔, weight: 4} # 기계번역 초안
+- {jp: 勇気, ko: 용기, weight: 4}
+- {jp: 目, ko: 눈, weight: 4}
+- {jp: 日々, ko: 나날, weight: 4}
+- {jp: 太陽, ko: 태양, weight: 4}
+- {jp: 答え, ko: 대답, weight: 4}
+- {jp: 向こう, ko: 너머, weight: 3}
+- {jp: 声, ko: 목소리, weight: 3}
+- {jp: 道, ko: 길, weight: 3}
+- {jp: 始まり, ko: 시작, weight: 3}
+- {jp: 光, ko: 빛, weight: 3}
+- {jp: 物語, ko: 이야기, weight: 3}
+- {jp: 希望, ko: 희망, weight: 3}
+- {jp: 傘, ko: 우산, weight: 3}
+- {jp: 虹, ko: 무지개, weight: 3}
+- {jp: 七色, ko: 빛깔, weight: 3}
+- {jp: 瞬間, ko: 순간, weight: 3}
+- {jp: 言葉, ko: 말, weight: 3}
+- {jp: 秒, ko: 초, weight: 3} # 기계번역 초안
+- {jp: 今日, ko: 오늘, weight: 3}
+- {jp: 人, ko: 사람, weight: 3}
+- {jp: 輪, ko: 고리, weight: 3}
+- {jp: 過去, ko: 과거, weight: 2}
+- {jp: 続き, ko: 다음, weight: 2}
+- {jp: 運命, ko: 운명, weight: 2}
+- {jp: 扉, ko: 문, weight: 2}
+- {jp: 胸, ko: 가슴, weight: 2}
+- {jp: 先, ko: 앞, weight: 2}
+- {jp: 憧れ, ko: 동경, weight: 2}
+- {jp: 一人, ko: 혼자, weight: 2}
+- {jp: 一生, ko: 평생, weight: 2}
+- {jp: 叫び, ko: 외침, weight: 2} # 기계번역 초안
+- {jp: 幕, ko: 막, weight: 2}
+- {jp: 情熱, ko: 정열, weight: 2}
+- {jp: 重, ko: 이중, weight: 2}
+- {jp: 出来立て, ko: 완성, weight: 2} # 기계번역 초안
+- {jp: 耳, ko: 귀, weight: 2}
+- {jp: ときめき, ko: 미지수, weight: 2}
+- {jp: 帰り道, ko: 돌아가는 길, weight: 2} # 기계번역 초안
+- {jp: 愛, ko: 사랑, weight: 2}
+- {jp: 旅, ko: 여행, weight: 2}
+- {jp: ステージ, ko: 스테이지, weight: 2}
+- {jp: 退屈, ko: 지루한, weight: 2} # 기계번역 초안
+- {jp: バイ, ko: 바이바이, weight: 2}
+- {jp: 近く, ko: 가까이, weight: 2}
+- {jp: 遠く, ko: 멀리, weight: 2} # 기계번역 초안
+- {jp: 力, ko: 힘, weight: 2}
+- {jp: 諦め, ko: 포기, weight: 2}
+- {jp: 顔, ko: 얼굴, weight: 2}
+- {jp: 雲, ko: 구름, weight: 2}
+- {jp: 通り雨, ko: 소나기, weight: 2}
+- {jp: 模様, ko: 날씨, weight: 2}

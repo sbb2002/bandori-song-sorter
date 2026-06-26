@@ -1,0 +1,181 @@
+# 자동 생성 — 일본어 가사 명사 빈도(커버 제외). 가사 원문은 미보관.
+# ko: 한글 번안 정렬 추정 → 기계번역(주석 표시) → 빈칸 순. 직접 수정·덮어쓰세요.
+# weight: 원문 등장 빈도(후렴 반복 포함, 렌더에서 압축 가능).
+band: mugendai_mutype
+generated: '2026-06-27'
+song_count: 10
+keywords:
+- {jp: 青春, ko: 청춘, weight: 28}
+- {jp: 夢, ko: 꿈, weight: 27}
+- {jp: 世界, ko: 세계, weight: 20}
+- {jp: ニュー, ko: 뉴, weight: 17}
+- {jp: 回, ko: 시간, weight: 15}  # 기계번역 초안
+- {jp: ライフ, ko: 라이, weight: 13}
+- {jp: 声, ko: 목소리, weight: 12}
+- {jp: タイプ, ko: 뉴, weight: 12}
+- {jp: イズ, ko: 라이, weight: 11}
+- {jp: 絶対, ko: 절대, weight: 9} # 기계번역 초안
+- {jp: 人類, ko: 인류, weight: 8}
+- {jp: 風, ko: 바람, weight: 7}
+- {jp: 目, ko: 눈, weight: 7}
+- {jp: 音, ko: 소리, weight: 7}
+- {jp: モリ, ko: 쇼모쇼모, weight: 7}
+- {jp: 仕様, ko: 쇼모쇼모, weight: 7}
+- {jp: モブ, ko: 엑스트라, weight: 6}
+- {jp: 歌, ko: 노래, weight: 6}
+- {jp: 現実, ko: 현실, weight: 6}
+- {jp: 日陰, ko: 아싸, weight: 6}
+- {jp: 未来, ko: 미래, weight: 6}
+- {jp: 人生, ko: 인생, weight: 6}
+- {jp: 手, ko: 손, weight: 5}
+- {jp: 言葉, ko: 말, weight: 5}
+- {jp: 今日, ko: 오늘, weight: 5}
+- {jp: 場所, ko: 장소, weight: 5}
+- {jp: 以上, ko: 다이브, weight: 5}
+- {jp: 音楽, ko: 음악, weight: 4}
+- {jp: 海, ko: 바다, weight: 4}
+- {jp: 宇宙, ko: 우주, weight: 4}
+- {jp: ワールド, ko: 와아르도와이, weight: 4}
+- {jp: 空, ko: 하늘, weight: 4}
+- {jp: 期待, ko: 기대, weight: 4}
+- {jp: 自分, ko: 자신, weight: 4}
+- {jp: 数, ko: 미지수, weight: 4}
+- {jp: 運命, ko: 운명, weight: 4}
+- {jp: 瞬間, ko: 순간, weight: 4}
+- {jp: 感, ko: 위화감, weight: 4}
+- {jp: 夜中, ko: 유원지, weight: 4}
+- {jp: 遊園, ko: 유원지, weight: 4}
+- {jp: 地, ko: 유원지, weight: 4}
+- {jp: 主役, ko: 주역, weight: 4}
+- {jp: 後, ko: 나중, weight: 4}
+- {jp: 複雑, ko: 복잡한, weight: 4} # 기계번역 초안
+- {jp: 星, ko: 별, weight: 4}
+- {jp: 選手, ko: 선수, weight: 4}
+- {jp: ミュージック, ko: 뮤짓쿠, weight: 4}
+- {jp: 塵, ko: 쓰레기통, weight: 4}
+- {jp: バイ, ko: 바이바이, weight: 4}
+- {jp: 回転, ko: 뮤, weight: 4}
+- {jp: 時間, ko: 시간, weight: 4}
+- {jp: 日進, ko: 폴리리듬, weight: 3}
+- {jp: 月歩, ko: 폴리리듬, weight: 3}
+- {jp: ポリ, ko: 폴리리듬, weight: 3}
+- {jp: リズム, ko: 폴리리듬, weight: 3}
+- {jp: 心, ko: 마음, weight: 3}
+- {jp: 気, ko: 마음, weight: 3} # 기계번역 초안
+- {jp: 先, ko: 앞, weight: 3}
+- {jp: 気持ち, ko: 기분, weight: 3}
+- {jp: 青, ko: 청춘, weight: 3}
+- {jp: 全て, ko: 모두, weight: 3} # 기계번역 초안
+- {jp: アニメ, ko: 애니, weight: 3}
+- {jp: 革命, ko: 혁명, weight: 3}
+- {jp: 隅っこ, ko: 구석, weight: 3}
+- {jp: 一切, ko: 무시, weight: 3}
+- {jp: 本当, ko: 사실, weight: 3}
+- {jp: ストーリー, ko: 스토리, weight: 3}
+- {jp: 振り, ko: 관심, weight: 3}
+- {jp: 息, ko: 숨, weight: 3}
+- {jp: 感情, ko: 감정, weight: 3}
+- {jp: ステレオタイプ, ko: 스테레오, weight: 3}
+- {jp: リメーク, ko: 스테레오, weight: 3}
+- {jp: バーチャル, ko: 버츄얼, weight: 3}
+- {jp: フィクション, ko: 리얼리티, weight: 3}
+- {jp: 理想, ko: 이상, weight: 3}
+- {jp: 心臓, ko: 심장, weight: 3}
+- {jp: ノック, ko: 노크, weight: 3}
+- {jp: 倍, ko: 배, weight: 3}
+- {jp: 有限, ko: 유한, weight: 3}
+- {jp: 理解, ko: 이해, weight: 3}
+- {jp: ミュータント, ko: 이해, weight: 3}
+- {jp: ダイブ, ko: 다이브, weight: 3}
+- {jp: 次元, ko: 차원, weight: 3}
+- {jp: 物差し, ko: 물병, weight: 2} # 기계번역 초안
+- {jp: 一人, ko: 혼자, weight: 2}
+- {jp: 無理, ko: 무리, weight: 2}
+- {jp: 旅路, ko: 여행길, weight: 2}
+- {jp: 熱, ko: 열기, weight: 2}
+- {jp: 火, ko: 불, weight: 2}
+- {jp: 価値, ko: 가치, weight: 2} # 기계번역 초안
+- {jp: 馬鹿, ko: 바보, weight: 2}
+- {jp: 自由, ko: 자유, weight: 2}
+- {jp: 教室, ko: 교실, weight: 2}
+- {jp: 机, ko: 책상, weight: 2}
+- {jp: 身, ko: 몸, weight: 2}
+- {jp: 妄想, ko: 망상, weight: 2}
+- {jp: ハル, ko: 청춘, weight: 2}
+- {jp: 普通, ko: 보통, weight: 2} # 기계번역 초안
+- {jp: 奴, ko: 녀석, weight: 2} # 기계번역 초안
+- {jp: 無, ko: 무, weight: 2}
+- {jp: 最強, ko: 최강, weight: 2}
+- {jp: パワー, ko: 무, weight: 2}
+- {jp: 魔法, ko: 마법, weight: 2}
+- {jp: 虜, ko: 포로, weight: 2}
+- {jp: 魅惑, ko: 매혹, weight: 2}
+- {jp: 侵略, ko: 침략, weight: 2}
+- {jp: 高笑い, ko: 웃음소리, weight: 2}
+- {jp: 天, ko: 웃음소리, weight: 2}
+- {jp: マインド, ko: 객기, weight: 2}
+- {jp: 景色, ko: 풍경, weight: 2}
+- {jp: 不安, ko: 불안, weight: 2}
+- {jp: 肯定, ko: 긍정, weight: 2} # 기계번역 초안
+- {jp: 無視, ko: 무시, weight: 2}
+- {jp: 舞台, ko: 무대, weight: 2}
+- {jp: 日々, ko: 나날, weight: 2}
+- {jp: 只, ko: 只, weight: 2} # 기계번역 초안
+- {jp: 中心, ko: 중심, weight: 2}
+- {jp: 刹那, ko: 찰나, weight: 2}
+- {jp: 滑稽, ko: 미끄럼, weight: 2} # 기계번역 초안
+- {jp: 生存, ko: 줄거리, weight: 2}
+- {jp: 粗筋, ko: 줄거리, weight: 2}
+- {jp: 条理, ko: 조리, weight: 2}
+- {jp: 物語, ko: 이야기, weight: 2}
+- {jp: 足, ko: 다리, weight: 2}
+- {jp: 実存, ko: 카테고리, weight: 2}
+- {jp: カテゴリー, ko: 카테고리, weight: 2}
+- {jp: 鈍色, ko: 둔한 색, weight: 2} # 기계번역 초안
+- {jp: 子, ko: 아이, weight: 2}
+- {jp: フィフティー, ko: 피프티, weight: 2} # 기계번역 초안
+- {jp: 話, ko: 이야기, weight: 2} # 기계번역 초안
+- {jp: 無限, ko: 무한대, weight: 2}
+- {jp: 大, ko: 무한대, weight: 2}
+- {jp: 安定, ko: 안정, weight: 2}
+- {jp: 完成, ko: 완성, weight: 2}
+- {jp: 解像, ko: 해상도, weight: 2}
+- {jp: 仮想, ko: 가상, weight: 2}
+- {jp: ノンフィクション, ko: 논, weight: 2}
+- {jp: 全部, ko: 모두, weight: 2} # 기계번역 초안
+- {jp: オルターナティブ, ko: 얼터너티브에, weight: 2}
+- {jp: カテゴライズ, ko: 카테고라이즈, weight: 2}
+- {jp: フリー, ko: 프리스타일, weight: 2}
+- {jp: スタイル, ko: 프리스타일, weight: 2}
+- {jp: 時代, ko: 시대, weight: 2}
+- {jp: 希望, ko: 희망, weight: 2}
+- {jp: 前代, ko: 전대, weight: 2}
+- {jp: 未聞, ko: 전대, weight: 2}
+- {jp: 問題, ko: 전대, weight: 2}
+- {jp: 新進, ko: 신진, weight: 2}
+- {jp: 気鋭, ko: 신진, weight: 2}
+- {jp: 宣誓, ko: 선서, weight: 2}
+- {jp: ハート, ko: 하트, weight: 2}
+- {jp: 痛み, ko: 아픔, weight: 2}
+- {jp: 焦り, ko: 초조, weight: 2}
+- {jp: 焦燥, ko: 초조, weight: 2}
+- {jp: 向こう, ko: 너머, weight: 2}
+- {jp: 思い, ko: 마음, weight: 2}
+- {jp: 勿体, ko: 몸, weight: 2} # 기계번역 초안
+- {jp: 夜, ko: 밤, weight: 2}
+- {jp: 嘘, ko: 거짓말, weight: 2}
+- {jp: 偽物, ko: 가짜, weight: 2}
+- {jp: 興味, ko: 관심, weight: 2}
+- {jp: リアリティー, ko: 리얼리티, weight: 2}
+- {jp: 見掛け, ko: 껍데기, weight: 2}
+- {jp: 中身, ko: 실속, weight: 2}
+- {jp: 不在, ko: 실속, weight: 2}
+- {jp: 嫉妬, ko: 실속, weight: 2}
+- {jp: 葛藤, ko: 갈등, weight: 2}
+- {jp: 後悔, ko: 후회, weight: 2}
+- {jp: 違和, ko: 위화감, weight: 2}
+- {jp: 正体, ko: 정체, weight: 2}
+- {jp: 嫌い, ko: 싫어, weight: 2} # 기계번역 초안
+- {jp: ワイド, ko: 와아르도와이, weight: 2}
+- {jp: 正面, ko: 정면, weight: 2}
+- {jp: 登場, ko: 등장, weight: 2} # 기계번역 초안
