@@ -21,12 +21,12 @@ keywords:
 - {jp: 本気, ko: 진심, weight: 4}
 - {jp: 夢, ko: 꿈, weight: 4}
 - {jp: 音楽, ko: 음악, weight: 4}
-- {jp: 輝き, ko: 반짝임, weight: 4}
+- {jp: 輝き, ko: 빛나는, weight: 4}  # 기계번역 초안
 - {jp: 自身, ko: 자신, weight: 4}
 - {jp: 魂, ko: 영혼, weight: 4}
 - {jp: 婆, ko: 할멈, weight: 4}
 - {jp: 勝利, ko: 승리, weight: 4}
-- {jp: 間, ko: 사이, weight: 3}  # 기계번역 초안
+- {jp: 間, ko: 사이, weight: 3} # 기계번역 초안
 - {jp: 宙, ko: 허공, weight: 3}
 - {jp: 此の世, ko: 규칙, weight: 3}
 - {jp: 声, ko: 목소리, weight: 3}
@@ -56,10 +56,10 @@ keywords:
 - {jp: 希望, ko: 희망, weight: 2}
 - {jp: ぶす, ko: 부스, weight: 2} # 음차
 - {jp: 勝負, ko: 승부, weight: 2}
-- {jp: 後, ko: 나중, weight: 2}
+- {jp: 後, ko: 후, weight: 2} # 기계번역 초안
 - {jp: 油断, ko: 방심, weight: 2}
 - {jp: 真実, ko: 진실, weight: 2}
-- {jp: 怖じ気, ko: 무서운, weight: 2} # 기계번역 초안
+- {jp: 怖じ気, ko: 두려움, weight: 2} # 기계번역 초안
 - {jp: 忠誠, ko: 충성, weight: 2}
 - {jp: 制覇, ko: 제패, weight: 2}
 - {jp: バイタリティー, ko: 바이탈리티, weight: 2}
@@ -70,7 +70,7 @@ keywords:
 - {jp: 方程, ko: 방정식, weight: 2}
 - {jp: 式, ko: 방정식, weight: 2}
 - {jp: 通過, ko: 통과, weight: 2}
-- {jp: 点, ko: 백점짜리, weight: 2}
+- {jp: 点, ko: 포인트, weight: 2} # 기계번역 초안
 - {jp: 真夏, ko: 기세, weight: 2}
 - {jp: 時代, ko: 시대, weight: 2}
 - {jp: 言葉, ko: 말, weight: 2}
@@ -83,16 +83,16 @@ keywords:
 - {jp: 報い, ko: 인과응보, weight: 2}
 - {jp: 馬鹿, ko: 바보, weight: 2}
 - {jp: 相手, ko: 상대, weight: 2}
-- {jp: 必要, ko: 필요, weight: 2}
+- {jp: 必要, ko: 필요, weight: 2} # 기계번역 초안
 - {jp: 有無, ko: 이의, weight: 2}
 - {jp: ステージ, ko: 스테이지, weight: 2}
 - {jp: 最高, ko: 최고, weight: 2}
-- {jp: 愉快, ko: 소, weight: 2}
+- {jp: 愉快, ko: 광, weight: 2}
 - {jp: 光, ko: 빛, weight: 2}
 - {jp: 全て, ko: 모두, weight: 2} # 기계번역 초안
 - {jp: 産声, ko: 울음, weight: 2}
-- {jp: チート, ko: 치트급, weight: 2}
-- {jp: アビリティー, ko: 아비리티, weight: 2} # 음차
+- {jp: チート, ko: 치토, weight: 2} # 음차
+- {jp: アビリティー, ko: 어빌리티, weight: 2}
 - {jp: 死, ko: 죽음, weight: 2} # 기계번역 초안
 - {jp: 物狂い, ko: 미친, weight: 2} # 기계번역 초안
 - {jp: 正解, ko: 정답, weight: 2}

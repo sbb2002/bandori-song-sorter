@@ -6,24 +6,24 @@ generated: '2026-06-27'
 song_count: 6
 keywords:
 - {jp: 夢, ko: 꿈, weight: 9}
-- {jp: 満開, ko: 백점짜리, weight: 8}
+- {jp: 満開, ko: 만개, weight: 8}  # 기계번역 초안
 - {jp: 声, ko: 목소리, weight: 7}
 - {jp: 笑顔, ko: 얼굴, weight: 7}
 - {jp: 心, ko: 마음, weight: 7}
-- {jp: 飛び切り, ko: 특별, weight: 6}
+- {jp: 飛び切り, ko: 뛰다, weight: 6} # 기계번역 초안
 - {jp: 女の子, ko: 여자, weight: 6}
 - {jp: 真っ盛り, ko: 여자, weight: 6}
-- {jp: 点, ko: 백점짜리, weight: 6}
+- {jp: 点, ko: 포인트, weight: 6} # 기계번역 초안
 - {jp: 今日, ko: 오늘, weight: 6}
 - {jp: 明日, ko: 내일, weight: 6}
 - {jp: 幕, ko: 막, weight: 6}
 - {jp: 気持ち, ko: 기분, weight: 6}
-- {jp: ドント, ko: 돈토, weight: 6}  # 음차
+- {jp: ドント, ko: 돈토, weight: 6} # 음차
 - {jp: コーイ, ko: 코이, weight: 6} # 음차
 - {jp: 努力, ko: 노력, weight: 4}
 - {jp: 涙, ko: 눈물, weight: 4}
-- {jp: 輝き, ko: 반짝임, weight: 4}
-- {jp: 思い, ko: 마음, weight: 4}
+- {jp: 輝き, ko: 빛나는, weight: 4} # 기계번역 초안
+- {jp: 思い, ko: 생각, weight: 4} # 기계번역 초안
 - {jp: 愛, ko: 사랑, weight: 4}
 - {jp: 全国, ko: 전국, weight: 4}
 - {jp: 毎日, ko: 매일, weight: 3}
@@ -48,10 +48,10 @@ keywords:
 - {jp: カスタマイズ, ko: 커스터마이즈, weight: 2}
 - {jp: 秘密, ko: 비밀, weight: 2}
 - {jp: 理想, ko: 이상, weight: 2}
-- {jp: 本当, ko: 사실, weight: 2}
+- {jp: 本当, ko: 진짜, weight: 2} # 기계번역 초안
 - {jp: 太陽, ko: 태양, weight: 2}
 - {jp: 感謝, ko: 감사, weight: 2}
-- {jp: 煌めき, ko: 파팟, weight: 2}
+- {jp: 煌めき, ko: 반짝임, weight: 2} # 기계번역 초안
 - {jp: カワイ, ko: 카와이, weight: 2} # 음차
 - {jp: 歌, ko: 노래, weight: 2}
 - {jp: 一途, ko: 줄, weight: 2}
@@ -77,8 +77,8 @@ keywords:
 - {jp: 道, ko: 길, weight: 2}
 - {jp: サイダー, ko: 사이다, weight: 2}
 - {jp: 時間, ko: 시간, weight: 2}
-- {jp: 氷, ko: 얼음, weight: 2}
-- {jp: ダイヤ, ko: 다이야, weight: 2} # 음차
+- {jp: 氷, ko: 다이아, weight: 2}
+- {jp: ダイヤ, ko: 다이아, weight: 2}
 - {jp: 泡, ko: 거품, weight: 2}
 - {jp: 摩訶, ko: 마야, weight: 2} # 기계번역 초안
 - {jp: Ｖ, ko: 사인, weight: 2}

@@ -20,30 +20,30 @@ keywords:
 - {jp: 約束, ko: 약속, weight: 6}
 - {jp: 絆, ko: 인연, weight: 6}
 - {jp: 世界, ko: 세계, weight: 6}
-- {jp: 本当, ko: 사실, weight: 5}
+- {jp: 本当, ko: 진짜, weight: 5}  # 기계번역 초안
 - {jp: 星, ko: 별, weight: 5}
 - {jp: 永遠, ko: 영원, weight: 5}
 - {jp: 思い出, ko: 추억, weight: 5}
 - {jp: キズナミュージック, ko: 키즈나뮤직, weight: 5}
-- {jp: 思い, ko: 마음, weight: 5}
+- {jp: 思い, ko: 생각, weight: 5} # 기계번역 초안
 - {jp: 雨上がり, ko: 비, weight: 5}
-- {jp: 二人, ko: 약속, weight: 5}
+- {jp: 二人, ko: 두 사람, weight: 5} # 기계번역 초안
 - {jp: 気持ち, ko: 기분, weight: 4}
 - {jp: 自分, ko: 자신, weight: 4}
 - {jp: 奇跡, ko: 기적, weight: 4}
 - {jp: 涙, ko: 눈물, weight: 4}
 - {jp: 毎日, ko: 매일, weight: 4}
-- {jp: 精, ko: 정, weight: 4}  # 기계번역 초안
+- {jp: 精, ko: 정, weight: 4} # 기계번역 초안
 - {jp: 一杯, ko: 한잔, weight: 4} # 기계번역 초안
 - {jp: 勇気, ko: 용기, weight: 4}
 - {jp: 目, ko: 눈, weight: 4}
 - {jp: 日々, ko: 나날, weight: 4}
 - {jp: 太陽, ko: 태양, weight: 4}
 - {jp: 答え, ko: 대답, weight: 4}
-- {jp: 向こう, ko: 너머, weight: 3}
+- {jp: 向こう, ko: 저기, weight: 3} # 기계번역 초안
 - {jp: 声, ko: 목소리, weight: 3}
 - {jp: 道, ko: 길, weight: 3}
-- {jp: 始まり, ko: 시작, weight: 3}
+- {jp: 始まり, ko: 시작, weight: 3} # 기계번역 초안
 - {jp: 光, ko: 빛, weight: 3}
 - {jp: 物語, ko: 이야기, weight: 3}
 - {jp: 希望, ko: 희망, weight: 3}

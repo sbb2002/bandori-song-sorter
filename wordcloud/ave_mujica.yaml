@@ -6,7 +6,7 @@ generated: '2026-06-27'
 song_count: 10
 keywords:
 - {jp: アップ, ko: 업, weight: 16}
-- {jp: 本当, ko: 사실, weight: 10}
+- {jp: 本当, ko: 진짜, weight: 10}  # 기계번역 초안
 - {jp: 世界, ko: 세계, weight: 8}
 - {jp: 人, ko: 사람, weight: 7}
 - {jp: 心, ko: 마음, weight: 7}
@@ -16,7 +16,7 @@ keywords:
 - {jp: ヤダ, ko: 싫어, weight: 5}
 - {jp: 影, ko: 그림자, weight: 4}
 - {jp: 星, ko: 별, weight: 4}
-- {jp: 全て, ko: 모두, weight: 4}  # 기계번역 초안
+- {jp: 全て, ko: 모두, weight: 4} # 기계번역 초안
 - {jp: 果て, ko: 내면, weight: 4}
 - {jp: 光, ko: 빛, weight: 4}
 - {jp: 嘘, ko: 거짓말, weight: 4}
@@ -33,7 +33,7 @@ keywords:
 - {jp: 獅子, ko: 사자, weight: 3}
 - {jp: 熊, ko: 코끼리, weight: 3}
 - {jp: クラッカー, ko: 쿠랏카, weight: 3} # 음차
-- {jp: 首謀, ko: 크래커, weight: 3}
+- {jp: 首謀, ko: 주모자, weight: 3}
 - {jp: 炎, ko: 불길, weight: 3}
 - {jp: 唯一, ko: 유일무이, weight: 3}
 - {jp: ロザリオ, ko: 로사리오, weight: 3}
@@ -47,9 +47,9 @@ keywords:
 - {jp: ソラ, ko: 소라, weight: 2} # 음차
 - {jp: 歴史, ko: 역사, weight: 2}
 - {jp: 道化, ko: 광대, weight: 2} # 기계번역 초안
-- {jp: 羅, ko: 라, weight: 2}
-- {jp: 乱, ko: 라, weight: 2}
-- {jp: 裸, ko: 라, weight: 2}
+- {jp: 羅, ko: 라, weight: 2} # 기계번역 초안
+- {jp: 乱, ko: 혼란, weight: 2} # 기계번역 초안
+- {jp: 裸, ko: 알몸, weight: 2} # 기계번역 초안
 - {jp: 嵐, ko: 폭풍, weight: 2} # 기계번역 초안
 - {jp: 奇跡, ko: 기적, weight: 2}
 - {jp: 日常, ko: 일상, weight: 2}
@@ -75,7 +75,7 @@ keywords:
 - {jp: 芒, ko: 팔망성, weight: 2}
 - {jp: 笑い, ko: 웃음, weight: 2} # 기계번역 초안
 - {jp: 絵画, ko: 회화, weight: 2} # 기계번역 초안
-- {jp: 天, ko: 웃음소리, weight: 2}
+- {jp: 天, ko: 하늘, weight: 2} # 기계번역 초안
 - {jp: 過ち, ko: 유일, weight: 2}
 - {jp: 皆, ko: 모두, weight: 2}
 - {jp: 残酷, ko: 잔혹, weight: 2}

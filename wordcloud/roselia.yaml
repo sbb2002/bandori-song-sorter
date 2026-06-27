@@ -6,9 +6,9 @@ generated: '2026-06-27'
 song_count: 10
 keywords:
 - {jp: 音, ko: 소리, weight: 10}
-- {jp: 思い, ko: 마음, weight: 10}
+- {jp: 思い, ko: 생각, weight: 10}  # 기계번역 초안
 - {jp: 未来, ko: 미래, weight: 10}
-- {jp: 全て, ko: 모두, weight: 10}  # 기계번역 초안
+- {jp: 全て, ko: 모두, weight: 10} # 기계번역 초안
 - {jp: 声, ko: 목소리, weight: 9}
 - {jp: 先, ko: 앞, weight: 8}
 - {jp: 世界, ko: 세계, weight: 8}
@@ -28,7 +28,7 @@ keywords:
 - {jp: 明日, ko: 내일, weight: 4}
 - {jp: 祈り, ko: 기도, weight: 4}
 - {jp: 歌, ko: 노래, weight: 4}
-- {jp: 天, ko: 웃음소리, weight: 4}
+- {jp: 天, ko: 하늘, weight: 4} # 기계번역 초안
 - {jp: 熱, ko: 열기, weight: 4}
 - {jp: 道, ko: 길, weight: 4}
 - {jp: 瞳, ko: 눈동자, weight: 4}
@@ -38,7 +38,7 @@ keywords:
 - {jp: 涙, ko: 눈물, weight: 4}
 - {jp: 存在, ko: 존재, weight: 4}
 - {jp: 手, ko: 손, weight: 3}
-- {jp: 輝き, ko: 반짝임, weight: 3}
+- {jp: 輝き, ko: 빛나는, weight: 3} # 기계번역 초안
 - {jp: 約束, ko: 약속, weight: 3}
 - {jp: 側, ko: 곁, weight: 3}
 - {jp: 姿, ko: 모습, weight: 3}
@@ -48,7 +48,7 @@ keywords:
 - {jp: 幸せ, ko: 행복, weight: 3}
 - {jp: 場所, ko: 장소, weight: 3}
 - {jp: 覚悟, ko: 각오, weight: 3}
-- {jp: 意志, ko: 의지, weight: 3}
+- {jp: 意志, ko: 의지, weight: 3} # 기계번역 초안
 - {jp: 闇, ko: 어둠, weight: 3}
 - {jp: 影, ko: 그림자, weight: 3}
 - {jp: 永劫, ko: '', weight: 3} # 번역 필요
@@ -82,13 +82,13 @@ keywords:
 - {jp: 本物, ko: 진짜, weight: 2} # 기계번역 초안
 - {jp: 産声, ko: 울음, weight: 2}
 - {jp: 其々, ko: 각자, weight: 2}
-- {jp: ダイヤ, ko: 다이야, weight: 2} # 음차
+- {jp: ダイヤ, ko: 다이아, weight: 2}
 - {jp: 自ら, ko: 신념, weight: 2}
 - {jp: 妥協, ko: 타협, weight: 2}
 - {jp: 正解, ko: 정답, weight: 2}
 - {jp: 仲間, ko: 동료, weight: 2}
 - {jp: 迷い, ko: 망설임, weight: 2} # 기계번역 초안
-- {jp: 後, ko: 나중, weight: 2}
+- {jp: 後, ko: 후, weight: 2} # 기계번역 초안
 - {jp: 意味, ko: 의미, weight: 2}
 - {jp: 火, ko: 불, weight: 2}
 - {jp: 音色, ko: 음색, weight: 2}
@@ -106,7 +106,7 @@ keywords:
 - {jp: 扉, ko: 문, weight: 2}
 - {jp: 自身, ko: 자신, weight: 2}
 - {jp: 調べ, ko: 조사, weight: 2} # 기계번역 초안
-- {jp: 笑み, ko: 미소, weight: 2}
+- {jp: 笑み, ko: 미소, weight: 2} # 기계번역 초안
 - {jp: 茨, ko: 가시밭길, weight: 2}
 - {jp: 歌声, ko: 노랫소리, weight: 2}
 - {jp: 黎明, ko: 여명, weight: 2}

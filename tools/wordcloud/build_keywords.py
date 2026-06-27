@@ -43,6 +43,8 @@ _KANA_ONLY = re.compile(r"^[぀-ゟ゠-ヿ・]+$")
 _HAS_JP = re.compile(r"[぀-ゟ゠-ヿ㐀-鿿々]")
 # 가나전용 토큰의 align값이 음차와 이만큼도 안 닮으면 오정렬로 보고 음차로 대체.
 _PHON_SIM = 0.5
+# align(Dice 단어정렬) 채택 최소 신뢰도. 낮으면 N:1 오정렬↑, 높이면 직역(MT)↑.
+_ALIGN_MIN = 0.45
 
 # 수동 교정 사전(최우선·멱등). 영어 외래어는 일본식 음차 대신 한국 표준표기,
 # align 통계가 크게 빗나간 항목(jp와 무관한 매핑)을 바로잡는다. 재생성에도 유지됨.
@@ -213,7 +215,7 @@ def build_alignment(all_pairs: list[tuple[set[str], str]]) -> dict[str, str]:
             dice = 2 * c / (jp_cnt[j] + ko_cnt[k])
             if dice > best_score:
                 best_k, best_score = k, dice
-        if best_k and best_score >= 0.30:  # 신뢰도 임계
+        if best_k and best_score >= _ALIGN_MIN:  # 신뢰도 임계(낮으면 N:1 오정렬↑)
             table[j] = best_k
     return table
 

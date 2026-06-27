@@ -19,7 +19,7 @@ keywords:
 - {jp: ボイス, ko: 보이스, weight: 5}
 - {jp: 皆, ko: 모두, weight: 5}
 - {jp: 一人, ko: 혼자, weight: 5}
-- {jp: 今宵, ko: 타임, weight: 4}
+- {jp: 今宵, ko: 지금 연, weight: 4} # 기계번역 초안
 - {jp: セッ, ko: 셋, weight: 4} # 음차
 - {jp: シャンデリア, ko: 샹들리에, weight: 4}
 - {jp: 馳走, ko: 진수성찬, weight: 4}
@@ -29,7 +29,7 @@ keywords:
 - {jp: 禁止, ko: 금지, weight: 4}
 - {jp: 派手, ko: 화려한, weight: 4} # 기계번역 초안
 - {jp: フリーダム, ko: 프리덤, weight: 4}
-- {jp: 実, ko: 쾌, weight: 4}
+- {jp: 実, ko: 제, weight: 4}
 - {jp: ときめき, ko: 토키메키, weight: 4} # 음차
 - {jp: ドゥビドゥバッポー, ko: 두비두밧포, weight: 4} # 음차
 - {jp: ホワッツ, ko: 호왓츠, weight: 4} # 음차
@@ -39,7 +39,7 @@ keywords:
 - {jp: 手, ko: 손, weight: 4}
 - {jp: 色, ko: 색, weight: 4}
 - {jp: ジャン, ko: 쟝, weight: 4}
-- {jp: 掛け替え, ko: 모두, weight: 4}
+- {jp: 掛け替え, ko: 교체, weight: 4} # 기계번역 초안
 - {jp: 場所, ko: 장소, weight: 4}
 - {jp: 音楽, ko: 음악, weight: 4}
 - {jp: 空, ko: 하늘, weight: 3}
@@ -58,16 +58,16 @@ keywords:
 - {jp: トゥナイト, ko: 투나잇, weight: 2}
 - {jp: 姿, ko: 모습, weight: 2}
 - {jp: ニヒル, ko: 니히루, weight: 2} # 음차
-- {jp: レッツ, ko: 렛츠, weight: 2} # 음차
-- {jp: シャウト, ko: 샤우트, weight: 2}
-- {jp: パーリー, ko: 파리, weight: 2} # 음차
+- {jp: レッツ, ko: 렛츠, weight: 2}
+- {jp: シャウト, ko: 샤우토, weight: 2} # 음차
+- {jp: パーリー, ko: 파티, weight: 2}
 - {jp: タイム, ko: 타임, weight: 2}
 - {jp: 台詞, ko: 대사, weight: 2}
 - {jp: 獲物, ko: 먹잇감, weight: 2}
 - {jp: エレガント, ko: 엘레강트, weight: 2}
 - {jp: 参上, ko: 엘레강트, weight: 2}
 - {jp: 暗夜, ko: 동료, weight: 2}
-- {jp: 味方, ko: 동료, weight: 2}
+- {jp: 味方, ko: 아군, weight: 2} # 기계번역 초안
 - {jp: ウエー, ko: 웨이, weight: 2}
 - {jp: ウエーティング, ko: 우에틴구, weight: 2} # 음차
 - {jp: キャスティング, ko: 캐스팅, weight: 2}
@@ -89,7 +89,7 @@ keywords:
 - {jp: アンサー, ko: 안사, weight: 2} # 음차
 - {jp: クエスチョン, ko: 퀘스쳔, weight: 2}
 - {jp: 未知, ko: 미지수, weight: 2}
-- {jp: 数, ko: 미지수, weight: 2}
+- {jp: 数, ko: 수, weight: 2} # 기계번역 초안
 - {jp: 先回り, ko: 미지수, weight: 2}
 - {jp: ミラージュ, ko: 미라주, weight: 2}
 - {jp: 用心, ko: 미라주, weight: 2}
@@ -103,13 +103,13 @@ keywords:
 - {jp: 煙, ko: 안개, weight: 2}
 - {jp: ドロロン, ko: 도로론, weight: 2} # 음차
 - {jp: ドゥビッドゥバッ, ko: 두비두바, weight: 2}
-- {jp: 左手, ko: 왼손, weight: 2}
+- {jp: 左手, ko: 오른손, weight: 2}
 - {jp: ラピカ, ko: 라피카, weight: 2} # 음차
 - {jp: 輪, ko: 고리, weight: 2}
 - {jp: 顔, ko: 얼굴, weight: 2}
 - {jp: フェスティバル, ko: 페스티벌, weight: 2}
 - {jp: フワドキ, ko: 후와도키, weight: 2} # 음차
-- {jp: 体, ko: 몸, weight: 2}
+- {jp: 体, ko: 몸, weight: 2} # 기계번역 초안
 - {jp: 毎日, ko: 매일, weight: 2}
 - {jp: 蝶々, ko: 리본, weight: 2}
 - {jp: 結び, ko: 리본, weight: 2}

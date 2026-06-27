@@ -14,17 +14,17 @@ keywords:
 - {jp: 空, ko: 하늘, weight: 8}
 - {jp: 心, ko: 마음, weight: 8}
 - {jp: 最後, ko: 마지막, weight: 8}
-- {jp: 思い, ko: 마음, weight: 7}
+- {jp: 思い, ko: 생각, weight: 7}  # 기계번역 초안
 - {jp: 奇跡, ko: 기적, weight: 7}
 - {jp: 夜, ko: 밤, weight: 6}
 - {jp: 願い, ko: 소원, weight: 6}
 - {jp: 涙, ko: 눈물, weight: 6}
-- {jp: 輝き, ko: 반짝임, weight: 6}
+- {jp: 輝き, ko: 빛나는, weight: 6} # 기계번역 초안
 - {jp: 未来, ko: 미래, weight: 6}
 - {jp: 世界, ko: 세계, weight: 6}
 - {jp: 道, ko: 길, weight: 5}
 - {jp: 風, ko: 바람, weight: 5}
-- {jp: 一緒, ko: 함께, weight: 5}  # 기계번역 초안
+- {jp: 一緒, ko: 함께, weight: 5} # 기계번역 초안
 - {jp: 勇気, ko: 용기, weight: 5}
 - {jp: 形木, ko: 모양, weight: 4}
 - {jp: 樣, ko: 모양, weight: 4}
@@ -62,7 +62,7 @@ keywords:
 - {jp: ぽつ, ko: 포츠, weight: 2} # 음차
 - {jp: 不安, ko: 불안, weight: 2}
 - {jp: 太陽, ko: 태양, weight: 2}
-- {jp: 本当, ko: 사실, weight: 2}
+- {jp: 本当, ko: 진짜, weight: 2} # 기계번역 초안
 - {jp: 夜明け, ko: 새벽, weight: 2}
 - {jp: 現実, ko: 현실, weight: 2}
 - {jp: 予感, ko: 예감, weight: 2}
@@ -71,16 +71,16 @@ keywords:
 - {jp: 過去, ko: 과거, weight: 2}
 - {jp: 瞬間, ko: 순간, weight: 2}
 - {jp: 想像, ko: 상상, weight: 2}
-- {jp: 向こう, ko: 너머, weight: 2}
+- {jp: 向こう, ko: 저기, weight: 2} # 기계번역 초안
 - {jp: 言い訳, ko: 변명, weight: 2}
 - {jp: 羽根, ko: 날개, weight: 2}
-- {jp: 始まり, ko: 시작, weight: 2}
+- {jp: 始まり, ko: 시작, weight: 2} # 기계번역 초안
 - {jp: 気持ち, ko: 기분, weight: 2}
 - {jp: バトン, ko: 바톤, weight: 2} # 음차
 - {jp: 青空, ko: 푸른 하늘, weight: 2} # 기계번역 초안
 - {jp: 朝, ko: 아침, weight: 2}
 - {jp: 笑顔, ko: 얼굴, weight: 2}
-- {jp: 掛け替え, ko: 모두, weight: 2}
+- {jp: 掛け替え, ko: 교체, weight: 2} # 기계번역 초안
 - {jp: 苦しみ, ko: 괴로움, weight: 2}
 - {jp: 呼吸, ko: 호흡, weight: 2} # 기계번역 초안
 - {jp: 重なり合い, ko: 중첩, weight: 2} # 기계번역 초안
@@ -97,7 +97,7 @@ keywords:
 - {jp: 時間, ko: 시간, weight: 2}
 - {jp: 蕾, ko: 꽃봉오리, weight: 2}
 - {jp: 痛み, ko: 아픔, weight: 2}
-- {jp: 元, ko: 곁, weight: 2}
+- {jp: 元, ko: 원래, weight: 2} # 기계번역 초안
 - {jp: 炎, ko: 불길, weight: 2}
 - {jp: 欠片, ko: 조각, weight: 2}
 - {jp: 覚悟, ko: 각오, weight: 2}
