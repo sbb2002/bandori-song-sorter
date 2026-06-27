@@ -1067,23 +1067,50 @@ function buildCaptureDOM() {
 
 const WC_PALETTE = ['#c084fc', '#ff6b9d', '#ff9f6b', '#ffd06b', '#6bcfff', '#cfd0ea'];
 
-/** currentBand 키워드 목록(ALL=전체 병합). 표시텍스트(ko‖jp) 기준 병합·빈도순. */
+/** 한 밴드 키워드를 표시텍스트(ko‖jp)로 병합 → Map(text → weight 합). 心·気→마음 통합. */
+function mergeBandKeywords(keywords) {
+    const m = new Map();
+    (keywords || []).forEach(k => {
+        const text = ((k.ko || k.jp) || '').trim();
+        if (text) m.set(text, (m.get(text) || 0) + (k.weight || 1));
+    });
+    return m;
+}
+
+/** 표시텍스트별 문서빈도(등장 밴드 수). TF-IDF 차별성용 — 1회 계산 후 캐시. */
+let _wcDocFreq = null;
+function wordcloudDocFreq(data) {
+    if (_wcDocFreq) return _wcDocFreq;
+    const df = new Map();
+    for (const b in data) {
+        for (const text of mergeBandKeywords(data[b].keywords).keys())
+            df.set(text, (df.get(text) || 0) + 1);
+    }
+    _wcDocFreq = df;
+    return df;
+}
+
+/** currentBand 키워드 목록.
+ *  ALL    = 전 밴드 원빈도 합산(뱅드림 IP 공유 정서).
+ *  밴드별 = TF-IDF 차별성(IP 공통어 누르고 밴드 고유어 부각). */
 function wordcloudList(band) {
     const data = window.WORDCLOUD_DATA || {};
-    let src = [], songCount = 0;
     if (band === 'ALL') {
-        for (const b in data) src = src.concat(data[b].keywords || []);
-    } else if (data[band]) {
-        src = data[band].keywords || [];
-        songCount = data[band].song_count || 0;
+        const merged = new Map();
+        for (const b in data)
+            for (const [t, w] of mergeBandKeywords(data[b].keywords))
+                merged.set(t, (merged.get(t) || 0) + w);
+        return { list: [...merged.entries()].sort((a, b) => b[1] - a[1]), songCount: 0 };
     }
-    const merged = new Map();           // 표시텍스트 → weight 합(心·気→마음 등 중복 통합)
-    src.forEach(k => {
-        const text = ((k.ko || k.jp) || '').trim();
-        if (text) merged.set(text, (merged.get(text) || 0) + (k.weight || 1));
-    });
-    const list = [...merged.entries()].sort((a, b) => b[1] - a[1]);
-    return { list, songCount };
+    if (!data[band]) return { list: [], songCount: 0 };
+
+    const df = wordcloudDocFreq(data);
+    const N = Object.keys(data).length;
+    const merged = mergeBandKeywords(data[band].keywords);
+    const list = [...merged.entries()]
+        .map(([t, w]) => [t, w * (Math.log((N + 1) / ((df.get(t) || 1) + 1)) + 1)])
+        .sort((a, b) => b[1] - a[1]);
+    return { list, songCount: data[band].song_count || 0 };
 }
 
 /** currentBand 워드클라우드 렌더. 패널이 보일 때만 동작(숨김 시 캔버스 크기 0). */

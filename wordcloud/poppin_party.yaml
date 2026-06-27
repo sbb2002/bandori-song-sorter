@@ -24,7 +24,7 @@ keywords:
 - {jp: 星, ko: 별, weight: 5}
 - {jp: 永遠, ko: 영원, weight: 5}
 - {jp: 思い出, ko: 추억, weight: 5}
-- {jp: キズナミュージック, ko: 뮤직, weight: 5}
+- {jp: キズナミュージック, ko: 키즈나뮤직, weight: 5}
 - {jp: 思い, ko: 마음, weight: 5}
 - {jp: 雨上がり, ko: 비, weight: 5}
 - {jp: 二人, ko: 약속, weight: 5}
@@ -71,7 +71,7 @@ keywords:
 - {jp: 重, ko: 이중, weight: 2}
 - {jp: 出来立て, ko: 완성, weight: 2} # 기계번역 초안
 - {jp: 耳, ko: 귀, weight: 2}
-- {jp: ときめき, ko: 미지수, weight: 2}
+- {jp: ときめき, ko: 토키메키, weight: 2} # 음차
 - {jp: 帰り道, ko: 돌아가는 길, weight: 2} # 기계번역 초안
 - {jp: 愛, ko: 사랑, weight: 2}
 - {jp: 旅, ko: 여행, weight: 2}

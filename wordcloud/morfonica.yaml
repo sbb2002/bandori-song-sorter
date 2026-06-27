@@ -7,14 +7,13 @@ song_count: 10
 keywords:
 - {jp: 夢, ko: 꿈, weight: 14}
 - {jp: 手, ko: 손, weight: 11}
-- {jp: ビューティー, ko: 티, weight: 10}
+- {jp: ビューティー, ko: 뷰티, weight: 10}
 - {jp: 光, ko: 빛, weight: 9}
 - {jp: 運命, ko: 운명, weight: 9}
 - {jp: 景色, ko: 풍경, weight: 9}
 - {jp: 空, ko: 하늘, weight: 8}
 - {jp: 心, ko: 마음, weight: 8}
 - {jp: 最後, ko: 마지막, weight: 8}
-- {jp: フォー, ko: 티, weight: 8}
 - {jp: 思い, ko: 마음, weight: 7}
 - {jp: 奇跡, ko: 기적, weight: 7}
 - {jp: 夜, ko: 밤, weight: 6}
@@ -54,14 +53,13 @@ keywords:
 - {jp: 物語, ko: 이야기, weight: 3}
 - {jp: 旋律, ko: 선율, weight: 3}
 - {jp: 遠く, ko: 멀리, weight: 3} # 기계번역 초안
-- {jp: メリーゴーランド, ko: 메리 골랜드, weight: 3} # 기계번역 초안
+- {jp: メリーゴーランド, ko: 메리고라운드, weight: 3}
 - {jp: 明日, ko: 내일, weight: 3}
 - {jp: 約束, ko: 약속, weight: 3}
-- {jp: ユー, ko: 티, weight: 3}
 - {jp: 限り, ko: 한, weight: 3}
 - {jp: 決意, ko: 결의, weight: 3}
 - {jp: 源, ko: 근원, weight: 3}
-- {jp: ぽつ, ko: 푹신, weight: 2} # 기계번역 초안
+- {jp: ぽつ, ko: 포츠, weight: 2} # 음차
 - {jp: 不安, ko: 불안, weight: 2}
 - {jp: 太陽, ko: 태양, weight: 2}
 - {jp: 本当, ko: 사실, weight: 2}
@@ -78,7 +76,7 @@ keywords:
 - {jp: 羽根, ko: 날개, weight: 2}
 - {jp: 始まり, ko: 시작, weight: 2}
 - {jp: 気持ち, ko: 기분, weight: 2}
-- {jp: バトン, ko: 턴, weight: 2}
+- {jp: バトン, ko: 바톤, weight: 2} # 음차
 - {jp: 青空, ko: 푸른 하늘, weight: 2} # 기계번역 초안
 - {jp: 朝, ko: 아침, weight: 2}
 - {jp: 笑顔, ko: 얼굴, weight: 2}
@@ -95,7 +93,6 @@ keywords:
 - {jp: 駄目, ko: 쓸모없는, weight: 2} # 기계번역 초안
 - {jp: 息, ko: 숨, weight: 2}
 - {jp: 私, ko: 나, weight: 2} # 기계번역 초안
-- {jp: フォーミー, ko: 미, weight: 2}
 - {jp: 翼, ko: 날개, weight: 2}
 - {jp: 時間, ko: 시간, weight: 2}
 - {jp: 蕾, ko: 꽃봉오리, weight: 2}

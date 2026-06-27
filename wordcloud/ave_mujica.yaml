@@ -11,12 +11,12 @@ keywords:
 - {jp: 人, ko: 사람, weight: 7}
 - {jp: 心, ko: 마음, weight: 7}
 - {jp: 時代, ko: 시대, weight: 6}
-- {jp: 記憶, ko: 과오, weight: 6}
+- {jp: 記憶, ko: 유일, weight: 6}
 - {jp: 闇, ko: 어둠, weight: 5}
-- {jp: ヤダ, ko: 야다, weight: 5}  # 기계번역 초안
+- {jp: ヤダ, ko: 싫어, weight: 5}
 - {jp: 影, ko: 그림자, weight: 4}
 - {jp: 星, ko: 별, weight: 4}
-- {jp: 全て, ko: 모두, weight: 4} # 기계번역 초안
+- {jp: 全て, ko: 모두, weight: 4}  # 기계번역 초안
 - {jp: 果て, ko: 내면, weight: 4}
 - {jp: 光, ko: 빛, weight: 4}
 - {jp: 嘘, ko: 거짓말, weight: 4}
@@ -28,23 +28,23 @@ keywords:
 - {jp: 胸, ko: 가슴, weight: 3}
 - {jp: 夜, ko: 밤, weight: 3}
 - {jp: 明日, ko: 내일, weight: 3}
-- {jp: 赤, ko: 코끼리, weight: 3}
+- {jp: 赤, ko: 빨강, weight: 3}
 - {jp: 象, ko: 코끼리, weight: 3}
-- {jp: 獅子, ko: 코끼리, weight: 3}
+- {jp: 獅子, ko: 사자, weight: 3}
 - {jp: 熊, ko: 코끼리, weight: 3}
-- {jp: クラッカー, ko: 주모자, weight: 3}
-- {jp: 首謀, ko: 주모자, weight: 3}
+- {jp: クラッカー, ko: 쿠랏카, weight: 3} # 음차
+- {jp: 首謀, ko: 크래커, weight: 3}
 - {jp: 炎, ko: 불길, weight: 3}
 - {jp: 唯一, ko: 유일무이, weight: 3}
 - {jp: ロザリオ, ko: 로사리오, weight: 3}
-- {jp: 孤高, ko: 과오, weight: 3}
+- {jp: 孤高, ko: 유일, weight: 3}
 - {jp: 神, ko: 신, weight: 3}
 - {jp: 勝者, ko: 승자, weight: 3} # 기계번역 초안
 - {jp: 音, ko: 소리, weight: 2}
 - {jp: 命, ko: 생명, weight: 2}
 - {jp: 手, ko: 손, weight: 2}
 - {jp: 惑星, ko: 행성, weight: 2}
-- {jp: ソラ, ko: 솔라, weight: 2} # 기계번역 초안
+- {jp: ソラ, ko: 소라, weight: 2} # 음차
 - {jp: 歴史, ko: 역사, weight: 2}
 - {jp: 道化, ko: 광대, weight: 2} # 기계번역 초안
 - {jp: 羅, ko: 라, weight: 2}
@@ -76,7 +76,7 @@ keywords:
 - {jp: 笑い, ko: 웃음, weight: 2} # 기계번역 초안
 - {jp: 絵画, ko: 회화, weight: 2} # 기계번역 초안
 - {jp: 天, ko: 웃음소리, weight: 2}
-- {jp: 過ち, ko: 과오, weight: 2}
+- {jp: 過ち, ko: 유일, weight: 2}
 - {jp: 皆, ko: 모두, weight: 2}
 - {jp: 残酷, ko: 잔혹, weight: 2}
 - {jp: 美, ko: 잔혹, weight: 2}

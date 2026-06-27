@@ -51,7 +51,7 @@ keywords:
 - {jp: 意志, ko: 의지, weight: 3}
 - {jp: 闇, ko: 어둠, weight: 3}
 - {jp: 影, ko: 그림자, weight: 3}
-- {jp: 永劫, ko: 永劫, weight: 3} # 기계번역 초안
+- {jp: 永劫, ko: '', weight: 3} # 번역 필요
 - {jp: 色, ko: 색, weight: 3}
 - {jp: 花, ko: 꽃, weight: 3}
 - {jp: 自由, ko: 자유, weight: 3}
@@ -82,7 +82,7 @@ keywords:
 - {jp: 本物, ko: 진짜, weight: 2} # 기계번역 초안
 - {jp: 産声, ko: 울음, weight: 2}
 - {jp: 其々, ko: 각자, weight: 2}
-- {jp: ダイヤ, ko: 다이아, weight: 2}
+- {jp: ダイヤ, ko: 다이야, weight: 2} # 음차
 - {jp: 自ら, ko: 신념, weight: 2}
 - {jp: 妥協, ko: 타협, weight: 2}
 - {jp: 正解, ko: 정답, weight: 2}

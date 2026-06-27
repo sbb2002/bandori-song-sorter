@@ -8,44 +8,40 @@ keywords:
 - {jp: 世界, ko: 세계, weight: 12}
 - {jp: スマイル, ko: 스마일, weight: 10}
 - {jp: 笑顔, ko: 얼굴, weight: 9}
-- {jp: カイ, ko: 제, weight: 8}
+- {jp: カイ, ko: 카이, weight: 8}  # 음차
 - {jp: ルン, ko: 루, weight: 8}
-- {jp: ハイ, ko: 텐, weight: 6}
-- {jp: ファントム, ko: 시프, weight: 6}
+- {jp: ハイ, ko: 하이, weight: 6} # 음차
+- {jp: ファントム, ko: 팬텀, weight: 6}
 - {jp: シーフ, ko: 시프, weight: 6}
 - {jp: ラッキー, ko: 럭키, weight: 6}
 - {jp: 声, ko: 목소리, weight: 5}
-- {jp: テンション, ko: 텐, weight: 5}
+- {jp: テンション, ko: 텐숀, weight: 5} # 음차
 - {jp: ボイス, ko: 보이스, weight: 5}
 - {jp: 皆, ko: 모두, weight: 5}
 - {jp: 一人, ko: 혼자, weight: 5}
 - {jp: 今宵, ko: 타임, weight: 4}
-- {jp: セッ, ko: 셋, weight: 4}  # 기계번역 초안
+- {jp: セッ, ko: 셋, weight: 4} # 음차
 - {jp: シャンデリア, ko: 샹들리에, weight: 4}
 - {jp: 馳走, ko: 진수성찬, weight: 4}
 - {jp: ドレス, ko: 드레스, weight: 4}
-- {jp: アーガー, ko: 드레스, weight: 4}
-- {jp: 瞬き, ko: 텐, weight: 4}
-- {jp: 禁止, ko: 텐, weight: 4}
+- {jp: アーガー, ko: 아가, weight: 4} # 음차
+- {jp: 瞬き, ko: 깜빡임, weight: 4}
+- {jp: 禁止, ko: 금지, weight: 4}
 - {jp: 派手, ko: 화려한, weight: 4} # 기계번역 초안
 - {jp: フリーダム, ko: 프리덤, weight: 4}
-- {jp: ソウ, ko: 제, weight: 4}
-- {jp: メイ, ko: 제, weight: 4}
-- {jp: 実, ko: 제, weight: 4}
-- {jp: ときめき, ko: 미지수, weight: 4}
-- {jp: ドゥビドゥバッポー, ko: 풋, weight: 4}
-- {jp: ホワッツ, ko: 호와츠, weight: 4} # 기계번역 초안
+- {jp: 実, ko: 쾌, weight: 4}
+- {jp: ときめき, ko: 토키메키, weight: 4} # 음차
+- {jp: ドゥビドゥバッポー, ko: 두비두밧포, weight: 4} # 음차
+- {jp: ホワッツ, ko: 호왓츠, weight: 4} # 음차
 - {jp: グッド, ko: 굿바이, weight: 4}
 - {jp: バイ, ko: 바이바이, weight: 4}
 - {jp: グンナーイ, ko: 굿바이, weight: 4}
 - {jp: 手, ko: 손, weight: 4}
 - {jp: 色, ko: 색, weight: 4}
 - {jp: ジャン, ko: 쟝, weight: 4}
-- {jp: ラン, ko: 란, weight: 4}
 - {jp: 掛け替え, ko: 모두, weight: 4}
 - {jp: 場所, ko: 장소, weight: 4}
 - {jp: 音楽, ko: 음악, weight: 4}
-- {jp: ケン, ko: 켄, weight: 4} # 기계번역 초안
 - {jp: 空, ko: 하늘, weight: 3}
 - {jp: 絆, ko: 인연, weight: 3}
 - {jp: 心, ko: 마음, weight: 3}
@@ -55,16 +51,16 @@ keywords:
 - {jp: 夢, ko: 꿈, weight: 3}
 - {jp: ハート, ko: 하트, weight: 3}
 - {jp: 力, ko: 힘, weight: 3}
-- {jp: マーチング, ko: 행진곡, weight: 3}
+- {jp: マーチング, ko: 마친구, weight: 3} # 음차
 - {jp: 法被, ko: 월드, weight: 3}
 - {jp: ハロー, ko: 헬로, weight: 3}
 - {jp: 月, ko: 달, weight: 2}
 - {jp: トゥナイト, ko: 투나잇, weight: 2}
 - {jp: 姿, ko: 모습, weight: 2}
-- {jp: ニヒル, ko: 렛츠, weight: 2}
-- {jp: レッツ, ko: 렛츠, weight: 2}
-- {jp: シャウト, ko: 렛츠, weight: 2}
-- {jp: パーリー, ko: 타임, weight: 2}
+- {jp: ニヒル, ko: 니히루, weight: 2} # 음차
+- {jp: レッツ, ko: 렛츠, weight: 2} # 음차
+- {jp: シャウト, ko: 샤우트, weight: 2}
+- {jp: パーリー, ko: 파리, weight: 2} # 음차
 - {jp: タイム, ko: 타임, weight: 2}
 - {jp: 台詞, ko: 대사, weight: 2}
 - {jp: 獲物, ko: 먹잇감, weight: 2}
@@ -73,12 +69,12 @@ keywords:
 - {jp: 暗夜, ko: 동료, weight: 2}
 - {jp: 味方, ko: 동료, weight: 2}
 - {jp: ウエー, ko: 웨이, weight: 2}
-- {jp: ウエーティング, ko: 웨이, weight: 2}
+- {jp: ウエーティング, ko: 우에틴구, weight: 2} # 음차
 - {jp: キャスティング, ko: 캐스팅, weight: 2}
 - {jp: スポットライト, ko: 스포트라이트, weight: 2}
 - {jp: 独り占め, ko: 독점, weight: 2}
-- {jp: ハーン, ko: 독점, weight: 2}
-- {jp: ナーイ, ko: 나이, weight: 2} # 기계번역 초안
+- {jp: ハーン, ko: 한, weight: 2} # 음차
+- {jp: ナーイ, ko: 나이, weight: 2} # 음차
 - {jp: 企み, ko: 계획, weight: 2}
 - {jp: 通用, ko: 통용, weight: 2}
 - {jp: 高潮, ko: 팡파레, weight: 2}
@@ -86,11 +82,11 @@ keywords:
 - {jp: 怪盗, ko: 괴도, weight: 2}
 - {jp: 上, ko: 빵, weight: 2}
 - {jp: 下, ko: 아래, weight: 2}
-- {jp: ファイティング, ko: 파이, weight: 2}
+- {jp: ファイティング, ko: 파이틴구, weight: 2} # 음차
 - {jp: 通せん坊, ko: 통통한, weight: 2} # 기계번역 초안
 - {jp: 隠れん坊, ko: 숨바꼭질, weight: 2}
 - {jp: 間, ko: 사이, weight: 2} # 기계번역 초안
-- {jp: アンサー, ko: 퀘스쳔, weight: 2}
+- {jp: アンサー, ko: 안사, weight: 2} # 음차
 - {jp: クエスチョン, ko: 퀘스쳔, weight: 2}
 - {jp: 未知, ko: 미지수, weight: 2}
 - {jp: 数, ko: 미지수, weight: 2}
@@ -98,23 +94,21 @@ keywords:
 - {jp: ミラージュ, ko: 미라주, weight: 2}
 - {jp: 用心, ko: 미라주, weight: 2}
 - {jp: 無茶, ko: 억지, weight: 2}
-- {jp: オンステージ, ko: 억지, weight: 2}
-- {jp: 合, ko: 부, weight: 2}
-- {jp: 対, ko: 부, weight: 2}
+- {jp: オンステージ, ko: 온스테지, weight: 2} # 음차
 - {jp: 覚悟, ko: 각오, weight: 2}
-- {jp: イッ, ko: 각오, weight: 2}
+- {jp: イッ, ko: 잇, weight: 2} # 음차
 - {jp: 態度, ko: 태도, weight: 2}
 - {jp: 正体, ko: 정체, weight: 2}
 - {jp: 華麗, ko: 화려한, weight: 2} # 기계번역 초안
 - {jp: 煙, ko: 안개, weight: 2}
-- {jp: ドロロン, ko: 안개, weight: 2}
+- {jp: ドロロン, ko: 도로론, weight: 2} # 음차
 - {jp: ドゥビッドゥバッ, ko: 두비두바, weight: 2}
 - {jp: 左手, ko: 왼손, weight: 2}
-- {jp: ラピカ, ko: 라피카, weight: 2} # 기계번역 초안
+- {jp: ラピカ, ko: 라피카, weight: 2} # 음차
 - {jp: 輪, ko: 고리, weight: 2}
 - {jp: 顔, ko: 얼굴, weight: 2}
 - {jp: フェスティバル, ko: 페스티벌, weight: 2}
-- {jp: フワドキ, ko: 후와도키, weight: 2} # 기계번역 초안
+- {jp: フワドキ, ko: 후와도키, weight: 2} # 음차
 - {jp: 体, ko: 몸, weight: 2}
 - {jp: 毎日, ko: 매일, weight: 2}
 - {jp: 蝶々, ko: 리본, weight: 2}
@@ -125,11 +119,11 @@ keywords:
 - {jp: 回, ko: 시간, weight: 2} # 기계번역 초안
 - {jp: 全部, ko: 모두, weight: 2} # 기계번역 초안
 - {jp: スイッチ, ko: 스위치, weight: 2}
-- {jp: オン, ko: 스위치, weight: 2}
+- {jp: オン, ko: 온, weight: 2} # 음차
 - {jp: 回復, ko: 회복, weight: 2}
 - {jp: 一生, ko: 평생, weight: 2}
 - {jp: 掴み, ko: 잡다, weight: 2} # 기계번역 초안
-- {jp: チャレンジ, ko: 행진곡, weight: 2}
+- {jp: チャレンジ, ko: 챠렌지, weight: 2} # 음차
 - {jp: 歩, ko: 걸음, weight: 2}
 - {jp: 有りの侭, ko: 있는 떡, weight: 2} # 기계번역 초안
 - {jp: 側, ko: 곁, weight: 2}
@@ -137,6 +131,6 @@ keywords:
 - {jp: 喜び, ko: 기쁨, weight: 2}
 - {jp: 勿体, ko: 몸, weight: 2} # 기계번역 초안
 - {jp: 欠け, ko: 부족, weight: 2} # 기계번역 초안
-- {jp: セイ, ko: 세이, weight: 2} # 기계번역 초안
+- {jp: セイ, ko: 세이, weight: 2} # 음차
 - {jp: 金, ko: 금, weight: 2} # 기계번역 초안
-- {jp: チェキラッ, ko: 체키랏, weight: 2} # 기계번역 초안
+- {jp: チェキラッ, ko: 쳬키랏, weight: 2} # 음차

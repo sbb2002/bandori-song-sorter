@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import collections
 import datetime as _dt
+import difflib
 import re
 import sys
 from pathlib import Path
@@ -34,6 +35,71 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fugashi  # noqa: E402
 from kiwipiepy import Kiwi  # noqa: E402
 from lyrics_parser import parse_band, Song  # noqa: E402
+from kana2ko import kana2ko, CHO, JUNG, JONG  # noqa: E402
+
+# 가나전용(가타카나/히라가나/장음/중점) 토큰 — 보컬리제·외래어 음차 후보.
+_KANA_ONLY = re.compile(r"^[぀-ゟ゠-ヿ・]+$")
+# 한국어 결과에 일본어(가나/한자)가 남았는지 — MT 실패(永劫→永劫 등) 감지용.
+_HAS_JP = re.compile(r"[぀-ゟ゠-ヿ㐀-鿿々]")
+# 가나전용 토큰의 align값이 음차와 이만큼도 안 닮으면 오정렬로 보고 음차로 대체.
+_PHON_SIM = 0.5
+
+# 수동 교정 사전(최우선·멱등). 영어 외래어는 일본식 음차 대신 한국 표준표기,
+# align 통계가 크게 빗나간 항목(jp와 무관한 매핑)을 바로잡는다. 재생성에도 유지됨.
+OVERRIDE = {
+    # 영어 외래어 → 한국 표준 외래어 표기
+    "チャンス": "찬스", "メリーゴーランド": "메리고라운드", "アブラカタブラ": "아브라카타브라",
+    "ライフ": "라이프", "タイプ": "타입", "ワールド": "월드", "ワイド": "와이드",
+    "ビューティー": "뷰티", "シーフ": "시프", "ファントム": "팬텀",
+    "ミュージック": "뮤직", "キズナミュージック": "키즈나뮤직",
+    "アップ": "업", "ヤダ": "싫어",
+    # align 대형 오정렬 교정(jp와 무관·여러 jp가 한 ko로 N:1 붕괴)
+    "縁": "인연", "婆": "할멈", "仕様": "사양", "以上": "이상", "回転": "회전",
+    "赤": "빨강", "象": "코끼리", "獅子": "사자", "瞬き": "깜빡임", "禁止": "금지",
+}
+
+
+def _jamo(s: str) -> list[str]:
+    """한글 음절열을 초성·중성·종성 자모 시퀀스로 분해(유사도 비교용)."""
+    out: list[str] = []
+    for ch in s:
+        o = ord(ch)
+        if 0xAC00 <= o <= 0xD7A3:
+            b = o - 0xAC00
+            out.append(CHO[b // 588])
+            out.append(JUNG[(b % 588) // 28])
+            t = b % 28
+            if t:
+                out.append(JONG[t])
+        else:
+            out.append(ch)
+    return out
+
+
+def _phon_similar(a: str, b: str) -> float:
+    """두 한글 표기의 자모 시퀀스 유사도(0~1)."""
+    return difflib.SequenceMatcher(None, _jamo(a), _jamo(b)).ratio()
+
+
+def resolve_ko(jp: str, align: dict[str, str], translate):
+    """jp 명사 → (ko, 출처). OVERRIDE→align→음차→MT→빈칸. 가나전용은 align 오정렬을 음차로 교정."""
+    if jp in OVERRIDE:
+        return OVERRIDE[jp], "align"        # 수동 교정(외래어 표준표기·대형 오정렬)
+    is_kana = bool(_KANA_ONLY.match(jp))
+    if jp in align:
+        if is_kana:
+            phon = kana2ko(jp)
+            # align값이 음차와 딴판이거나 음차의 부분조각처럼 너무 짧으면 음차로 교체
+            if _phon_similar(align[jp], phon) < _PHON_SIM or len(align[jp]) < 0.6 * len(phon):
+                return phon, "kana"
+        return align[jp], "align"
+    if is_kana:
+        return kana2ko(jp), "kana"          # 보컬리제·의성어 → 음차
+    if translate:
+        ko = translate(jp)
+        if ko and not _HAS_JP.search(ko):   # MT에 일본어 잔존 시 거부 → 빈칸
+            return ko, "mt"
+    return "", "none"
 
 LYRICS_DIR = Path("assets/lyrics")
 OUT_DIR = Path("wordcloud")
@@ -46,6 +112,10 @@ STOPWORDS = {
     "そう", "よう", "ふう", "みたい", "やつ", "とき", "ところ", "もの", "こと",
     "侭", "儘", "まま", "やつ", "筈", "訳", "故", "由", "旨", "序で",
     "ん", "の", "さ", "ーー", "・",
+    "取り", "通り",                       # 동사연용·형식명사("~취함"·"~대로") — 테마성 무
+    # 보컬리제·기능어 단편(분해 오류·의미불명 — 사용자 검수 2026-06-27)
+    "ケン", "ソウ", "メイ", "ラン", "ワン", "ココ", "イズ", "モリ",
+    "フォー", "ユー", "ミー", "フォーミー", "合", "対",
 }
 # pos1/pos2 화이트리스트
 _KEEP_POS2 = {"普通名詞", "固有名詞"}
@@ -187,7 +257,8 @@ def write_yaml(band: str, freq: collections.Counter, ko_map: dict[str, tuple[str
         m = CommentedMap([("jp", jp), ("ko", ko), ("weight", weight)])
         m.fa.set_flow_style()
         seq.append(m)
-        note = {"align": None, "mt": "기계번역 초안", "none": "번역 필요"}[src]
+        note = {"align": None, "kana": "음차", "mt": "기계번역 초안",
+                "none": "번역 필요"}[src]
         if note:
             seq.yaml_add_eol_comment(note, i)
 
@@ -269,18 +340,13 @@ def main(argv=None):
         kept = [jp for jp, c in freq.items() if c >= args.min_weight]
         ko_map: dict[str, tuple[str, str]] = {}
         for jp in kept:                   # min_weight 이상만 번역(MT 호출 절감)
-            if jp in align:
-                ko_map[jp] = (align[jp], "align")
-            elif translate:
-                ko = translate(jp)
-                ko_map[jp] = (ko, "mt") if ko else ("", "none")
-            else:
-                ko_map[jp] = ("", "none")
+            ko_map[jp] = resolve_ko(jp, align, translate)
         out = write_yaml(band, freq, ko_map, band_used[band], args.min_weight)
         n_align = sum(1 for jp in kept if ko_map[jp][1] == "align")
+        n_kana = sum(1 for jp in kept if ko_map[jp][1] == "kana")
         n_mt = sum(1 for jp in kept if ko_map[jp][1] == "mt")
-        print(f"[OK] {out}  키워드 {len(kept)}  (정렬 {n_align} · 기계번역 {n_mt} · "
-              f"빈칸 {len(kept) - n_align - n_mt})")
+        print(f"[OK] {out}  키워드 {len(kept)}  (정렬 {n_align} · 음차 {n_kana} · "
+              f"기계번역 {n_mt} · 빈칸 {len(kept) - n_align - n_kana - n_mt})")
     return 0
 
 
