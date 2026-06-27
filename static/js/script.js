@@ -1067,6 +1067,62 @@ function buildCaptureDOM() {
 
 const WC_PALETTE = ['#c084fc', '#ff6b9d', '#ff9f6b', '#ffd06b', '#6bcfff', '#cfd0ea'];
 
+let wcMode = 'tfidf';            // tfidf | color | bar | both
+
+/** 표시텍스트 → 감성값(-2..2). senti_lexicon 미등재=0. 1회 캐시. */
+let _wcSenti = null;
+function wordcloudSentiMap(data) {
+    if (_wcSenti) return _wcSenti;
+    const m = new Map();
+    for (const b in data)
+        for (const k of (data[b].keywords || [])) {
+            const t = ((k.ko || k.jp) || '').trim();
+            if (t && !m.has(t)) m.set(t, k.senti || 0);
+        }
+    _wcSenti = m;
+    return m;
+}
+
+/** 감성값(-2..2) → 색(부정 한색 ~ 중립 회색 ~ 긍정 난색). */
+function sentiColor(senti) {
+    if (!senti) return '#9a9ab0';
+    const t = Math.max(-2, Math.min(2, senti)) / 2;     // -1..1
+    return `hsl(${t > 0 ? 20 : 205}, ${Math.round(30 + Math.abs(t) * 50)}%, 62%)`;
+}
+
+/** 밴드 가중 감성평균 s̄ (-1..1). */
+function bandSentiment(data, band) {
+    let num = 0, den = 0;
+    for (const k of ((data[band] && data[band].keywords) || [])) {
+        const w = k.weight || 1;
+        num += (k.senti || 0) * w; den += w;
+    }
+    return den ? num / den / 2 : 0;
+}
+
+/** 전 밴드 감성평균 막대(긍정→부정 정렬, 현재 밴드 강조). */
+function renderSentiBars() {
+    const data = window.WORDCLOUD_DATA || {};
+    const bars = document.getElementById('senti-bars');
+    if (!bars) return;
+    const rows = Object.keys(data)
+        .map(b => [b, bandSentiment(data, b)])
+        .sort((a, b) => b[1] - a[1]);
+    bars.innerHTML = '';
+    rows.forEach(([b, s]) => {
+        const pct = Math.min(1, Math.abs(s)) * 50;
+        const side = s >= 0 ? `left:50%;width:${pct}%` : `right:50%;width:${pct}%`;
+        const row = document.createElement('div');
+        row.className = 'sb-row' + (b === currentBand ? ' cur' : '');
+        row.innerHTML =
+            `<span class="sb-name">${bandDisplay(b)}</span>` +
+            `<span class="sb-track"><span class="sb-mid"></span>` +
+            `<span class="sb-fill" style="${side};background:${sentiColor(s * 2)}"></span></span>` +
+            `<span class="sb-val">${s >= 0 ? '+' : ''}${s.toFixed(2)}</span>`;
+        bars.appendChild(row);
+    });
+}
+
 /** 한 밴드 키워드를 표시텍스트(ko‖jp)로 병합 → Map(text → weight 합). 心·気→마음 통합. */
 function mergeBandKeywords(keywords) {
     const m = new Map();
@@ -1118,10 +1174,21 @@ function renderWordcloud() {
     const wrap = document.getElementById('wordcloud-wrap');
     const canvas = document.getElementById('wordcloud-canvas');
     const empty = document.getElementById('wc-empty');
+    const bars = document.getElementById('senti-bars');
     if (!wrap || !canvas) return;
 
     document.getElementById('bi-band-name').textContent =
         (currentBand === 'ALL' ? '전체' : bandDisplay(currentBand)) + ' 워드클라우드';
+
+    // 모드별 영역: bar=막대만, both=클라우드+막대, 그 외=클라우드만
+    const showBars = (wcMode === 'bar' || wcMode === 'both');
+    const showCloud = (wcMode !== 'bar');
+    if (bars) { bars.hidden = !showBars; if (showBars) renderSentiBars(); }
+    wrap.style.display = showCloud ? '' : 'none';
+    if (!showCloud) {
+        document.getElementById('bi-sub').textContent = '밴드별 가사 감성 평균 (긍정 ↔ 부정)';
+        return;
+    }
 
     const w = wrap.clientWidth, h = wrap.clientHeight;
     if (w === 0 || h === 0) return;     // 숨김 상태 → 탭 전환 시 재호출됨
@@ -1137,9 +1204,13 @@ function renderWordcloud() {
         return;
     }
     empty.hidden = true;
-    subEl.textContent = (currentBand === 'ALL')
-        ? `전 밴드 키워드 ${list.length}개 병합`
-        : `조회수 TOP10 가사 ${songCount}곡 · 키워드 ${list.length}개`;
+    const useSenti = (wcMode === 'color' || wcMode === 'both');
+    const sentiMap = wordcloudSentiMap(window.WORDCLOUD_DATA || {});
+    subEl.textContent = useSenti
+        ? '색 = 감성(난색 긍정 · 한색 부정 · 회색 중립), 크기 = 차별성'
+        : (currentBand === 'ALL')
+            ? `전 밴드 키워드 ${list.length}개 병합`
+            : `조회수 TOP10 가사 ${songCount}곡 · 키워드 ${list.length}개`;
 
     // 상위 60개만(좁은 패널 가독성) + 후렴 반복 완화를 위해 sqrt로 폰트 압축
     const top = list.slice(0, 60);
@@ -1158,6 +1229,7 @@ function renderWordcloud() {
         fontFamily: "'M PLUS Rounded 1c', 'Inter', sans-serif",
         fontWeight: '700',
         color: word => {
+            if (useSenti) return sentiColor(sentiMap.get(word) || 0);
             let hsh = 0;
             for (let i = 0; i < word.length; i++) hsh = (hsh * 31 + word.charCodeAt(i)) | 0;
             return WC_PALETTE[Math.abs(hsh) % WC_PALETTE.length];
@@ -1259,6 +1331,12 @@ document.addEventListener('DOMContentLoaded', () => {
         b.addEventListener('click', () => switchTab(b.dataset.tab)));
     document.querySelectorAll('.type-tab').forEach(b =>
         b.addEventListener('click', () => switchType(b.dataset.type)));
+    document.querySelectorAll('.wc-mode').forEach(b =>
+        b.addEventListener('click', () => {
+            wcMode = b.dataset.mode;
+            document.querySelectorAll('.wc-mode').forEach(x => x.classList.toggle('active', x === b));
+            renderWordcloud();
+        }));
 
     // 말풍선/툴팁 밖을 누르면 고정 툴팁 닫기. 리사이즈 시에도 위치 어긋나니 숨김.
     document.addEventListener('pointerdown', e => {
