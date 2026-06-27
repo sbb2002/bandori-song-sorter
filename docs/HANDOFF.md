@@ -5,6 +5,10 @@
 
 마지막 갱신: **HANDOFF 1 진행중** — Data API 조회수→밴드별 TOP10 + 가사 템플릿(`assets/lyrics/`) 완료, 백필 후보 도출 완료(신규 165 = 오리지널 30 / 커버 135 · namedup 402). 남은 건 **오리지널 30개 데이터 추가**(1-a) 등. 도구: `tools/collect/youtube_api.py`·`band_top10.py`·`backfill.py`. (2026-06-25)
 
+> 2026-06-27 **세션3** (`feature/emoi-sentiment`): #2 **감성 시각화 토글 롤백**(사용자 코멘트) — 밴드정보 [차별성·감성색·감성막대·둘다] 토글 **제거하고 워드클라우드 단일로 복원**. 탭은 추후 **[워드클라우드 | 클러스터]** 로 구분 예정. **감성 데이터(senti_lexicon·build.py senti)는 보존** — 용도 전환: **감성막대(긍↔부정 벡터) + 진지성(진지↔유쾌, 4D 벡터)을 #3 2D 클러스터링에 활용 예정**. **밴드 퍼스널 컬러 확정**(워드클라우드·클러스터 색으로 활용, 아래 표). **미완 — 추후 다른 세션에서 이어감**. 상세는 memory `wordcloud_quality_plan.md`.
+>
+> **밴드 퍼스널 컬러**: poppin_party `#ff3377` · afterglow `#ee3344` · pastel_palettes `#33ddaa` · roselia `#3344aa` · hello_happy_world `#ffdd00` · morfonica `#33AAFF` · raise_a_suilen `#33CCCC` · mygo `#0088BB` · ave_mujica `#881144` · mugendai_mutype `#ff7788`(+보조 `#2288dd` 20% 그라데이션) · millsage `#AA22EE` · ikka_dump_rock `#FFAA33`
+
 > 2026-06-27 **세션2** (`feature/emoi-cloud`): #2-c 품질 보정 진행 — **①변별력 가중(TF-IDF) 완료**(렌더: ALL=원빈도/밴드별=차별성 `w·idf`), **②가타카나 음차화 완료**(신규 `tools/wordcloud/kana2ko.py` + `resolve_ko`: align→음차유사도검증→음차→MT(일본어잔존거부)→빈칸, STOPWORD에 取り·通り) → 제·텐·밍·퐁퐁포퐁 등 노이즈 제거. **잔여 노이즈 패턴 3종**: ⓐ영어외래어가 일본식음차(챤스→찬스 등, 한국표기 필요) ⓑ의미불명 단편(시후·켄·티·완 등, align 오정렬·df=1 부각) ⓒ문맥/극성손실(거짓·한잔). → OVERRIDE 사전+수동검수로 처리중. **감성 분포(B)**: 연속 극성 라벨(`tools/wordcloud/senti_lexicon.yaml` 122개)·파이프라인 완료(`248e6f0`, **feature/emoi-sentiment**), **시각화 UI 진행중**(3표현 토글). ⚠️ **감성은 키워드를 단어 단독으로 추출·라벨하므로 밴드 실제 컨셉과 어긋날 수 있음**(예: afterglow는 어두운 밴드가 아닌데 키워드 단어만 보면 부정적으로 비칠 수 있음) — 참고·재미용이지 밴드 컨셉 단정이 아님. 경향성은 대체로 맞음(사용자 검증). **확장 아이디어**: 긍↔부정 1축 외 **진지↔유쾌 등 축을 더한 다차원(예: 4D) 무드 벡터**로 밴드 표현(레이더 차트 비교 등) — 재미 컨텐츠. **상세·진행은 memory `wordcloud_quality_plan.md`**(세션 간 단일 출처). 아래 2-c는 1차 기록.
 
 > 2026-06-27 (`feature/emoi-cloud`): #2 **키워드 추출 파이프라인 + 워드클라우드 렌더 1차 완료** — `tools/wordcloud/`로 10밴드 `wordcloud/<band>.yaml` 생성, 우패널 "밴드 정보" 탭 렌더(wordcloud2.js). 커버 제외·번안 우선 정렬(+MT). **렌더 품질 보완 필요(2-c)**: 밀집 가독성·무의미 키워드·배치(좁은 탭)·**변별력 기반 가중**(빈도≠밴드성격). 상세는 2번 섹션.
