@@ -4,14 +4,24 @@ import json
 from jinja2 import Environment, FileSystemLoader
 
 
+def load_senti(path="tools/wordcloud/senti_lexicon.yaml"):
+    """감성 사전(표시텍스트→극성 -2..+2). 없으면 빈 dict(감성 뷰 중립)."""
+    if not os.path.exists(path):
+        return {}
+    doc = yaml.safe_load(open(path, encoding='utf-8'))
+    return (doc or {}).get('words', {}) or {}
+
+
 def load_wordclouds(wc_dir="wordcloud"):
-    """wordcloud/<band>.yaml → {band: {song_count, keywords:[{jp,ko,weight}]}}.
+    """wordcloud/<band>.yaml → {band: {song_count, keywords:[{jp,ko,weight,senti}]}}.
 
     build_keywords.py 산출물(커밋·사용자 편집). 없으면 빈 dict(워드클라우드 탭 비활성).
+    senti = senti_lexicon.yaml 룩업(표시텍스트 ko‖jp 기준, 미등재=0=중립).
     """
     out = {}
     if not os.path.isdir(wc_dir):
         return out
+    senti = load_senti()
     for filename in sorted(os.listdir(wc_dir)):
         if not filename.endswith('.yaml'):
             continue
@@ -20,11 +30,14 @@ def load_wordclouds(wc_dir="wordcloud"):
         if not doc or not doc.get('keywords'):
             continue
         band = doc.get('band') or filename[:-5]
-        kws = [
-            {'jp': k.get('jp', ''), 'ko': (k.get('ko') or '').strip(),
-             'weight': k.get('weight', 1)}
-            for k in doc['keywords'] if k.get('jp')
-        ]
+        kws = []
+        for k in doc['keywords']:
+            if not k.get('jp'):
+                continue
+            ko = (k.get('ko') or '').strip()
+            text = ko or k.get('jp', '')
+            kws.append({'jp': k.get('jp', ''), 'ko': ko,
+                        'weight': k.get('weight', 1), 'senti': senti.get(text, 0)})
         out[band] = {'song_count': doc.get('song_count', 0), 'keywords': kws}
     return out
 
