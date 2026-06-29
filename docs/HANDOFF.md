@@ -5,6 +5,8 @@
 
 마지막 갱신: **HANDOFF 1 진행중** — Data API 조회수→밴드별 TOP10 + 가사 템플릿(`assets/lyrics/`) 완료, 백필 후보 도출 완료(신규 165 = 오리지널 30 / 커버 135 · namedup 402). 남은 건 **오리지널 30개 데이터 추가**(1-a) 등. 도구: `tools/collect/youtube_api.py`·`band_top10.py`·`backfill.py`. (2026-06-25)
 
+> 2026-06-29 **세션4** (`feature/emoi-sentiment`): `backfill.py` 재실행 → 신규 후보 164개(오리지널 29 / 커버 135) 확인. **`new_songs.csv`(루트) 생성** — 칼럼: song_name·url·type(original/cover)·author(밴드명)·note(특이사항). ⚠️ **사용자 검수 필요** — 추가 여부 확정 후 다음 단계(데이터 삽입 스크립트) 진행 가능. 특히 오리지널 중 버전/편곡곡(`NO GIRL NO CRY (Poppin'Party Ver.)` 등) 취사선택 필요.
+
 > 2026-06-27 **세션3** (`feature/emoi-sentiment`): #2 **감성 시각화 토글 롤백**(사용자 코멘트) — 밴드정보 [차별성·감성색·감성막대·둘다] 토글 **제거하고 워드클라우드 단일로 복원**. 탭은 추후 **[워드클라우드 | 클러스터]** 로 구분 예정. **감성 데이터(senti_lexicon·build.py senti)는 보존** — 용도 전환: **감성막대(긍↔부정 벡터) + 진지성(진지↔유쾌, 4D 벡터)을 #3 2D 클러스터링에 활용 예정**. **밴드 퍼스널 컬러 확정**(워드클라우드·클러스터 색으로 활용, 아래 표). **미완 — 추후 다른 세션에서 이어감**. 상세는 memory `wordcloud_quality_plan.md`.
 >
 > **밴드 퍼스널 컬러**: poppin_party `#ff3377` · afterglow `#ee3344` · pastel_palettes `#33ddaa` · roselia `#3344aa` · hello_happy_world `#ffdd00` · morfonica `#33AAFF` · raise_a_suilen `#33CCCC` · mygo `#0088BB` · ave_mujica `#881144` · mugendai_mutype `#ff7788`(+보조 `#2288dd` 20% 그라데이션) · millsage `#AA22EE` · ikka_dump_rock `#FFAA33`
