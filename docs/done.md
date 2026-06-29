@@ -425,3 +425,32 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 - `python build.py` 성공(밴드 13, 곡 **543**, 워드클라우드 10). 신규 vid 5종 반영·지역락 vid 3종 0 확인. data diff **+84/−0**(순수 추가, 기존 url 미변경 — 이스터에그 url 포함 무손상).
 - CSV 목적별 이동: `new_songs.csv`→`tools/collect/`, `invalid_url.csv`→`tools/curate/`(fix_url.csv 형제). 코드 경로(insert_backfill) 갱신.
 - **docs/ 재배치**: `spec/`(PRD+mockup) · `archive/`(urgent.md) 신설, 참조 링크·도크스트링 경로 수정. HANDOFF 1-a 완료분 → 본 세션 이관.
+
+---
+
+# 세션 17 — 밴드 워드클라우드: 키워드 파이프라인 + 렌더 1차 + 라이브 머지 (HANDOFF #2 부분완료)
+
+`feature/emoi-cloud` → `feature/emoi-sentiment`(2026-06-27 파이프라인·렌더, 2026-06-29 main 머지 `d6f05c7`·라이브). **품질 보완(2-c)은 미완 → HANDOFF에 남김.** 품질 진행의 단일 출처 = memory `wordcloud_quality_plan.md`.
+
+## 키워드 추출 파이프라인 (`tools/wordcloud/`, `4d66c11`·`db226cf`)
+- 가사 = 밴드별 조회수 TOP10 곡, **사용자 직접 복붙**(크롤링 안 함). 빈 템플릿만 `assets/lyrics/<band>_template.md`로 커밋, 채운 `<band>.md`는 `.gitignore`(가사 비커밋). **원문 미보관 원칙** — yaml엔 단어 단위 키워드만.
+- `lyrics_parser.py`(줄 문자종으로 jp/음차/번안 트리플렛 + 곡 메타) + `build_keywords.py`(fugashi 명사추출→빈도, **커버 제외**, ko 채움) → `wordcloud/<band>.yaml` **10밴드 전부 생성**(빈 곡 0).
+- **ko = 한글 번안 우선**(kiwipiepy 명사 + Dice 단어정렬 ~85–90%) → 실패분만 기계번역(deep-translator, `# 기계번역 초안` 주석) → 빈칸 0. 필터: 형식명사·영어조각·단일가나·감탄사 컷, 외래어 `-romaji` 제거, `--min-weight 2`. 산출 71~174어/밴드.
+- 의존성 4종(fugashi·unidic-lite·kiwipiepy·deep-translator) → `tools/wordcloud/requirements.txt`(빌드타임 전용). 재생성 = `python tools/wordcloud/build_keywords.py`(멱등) → `python build.py`.
+
+## 렌더 1차 (`2942dd6`)
+- `build.py`가 `wordcloud/*.yaml`→`WORDCLOUD_DATA` 주입, 우패널 **3번째 탭 "밴드 정보"**에 `static/js/wordcloud2.min.js`(벤더링) 렌더. `renderWordcloud()`: 현재 밴드 따라감(ALL=전체 병합), ko 표시, 동일 번역어 빈도 합산, 상위 60, sqrt 폰트 압축, 테마색. 헤드리스 Chrome 스크린샷 검증.
+- 빈 메시지 안 사라지던 버그 수정(CSS `.wc-empty[hidden]{display:none}`). '곡 클릭 시 탭 자동활성화'·jp 툴팁은 의도적 미적용(v1).
+
+## 품질 1차 보정 (`86bb773`·`58b52ad`)
+- **①TF-IDF 변별력 가중**: ALL=원빈도 / 밴드별=차별성 `w·idf`(공통어 감점·특징어 가점).
+- **②가타카나 음차화**(`kana2ko.py` + `resolve_ko`: align→음차유사도검증→음차→MT→빈칸): 제·텐·밍·퐁퐁포퐁 등 노이즈 제거. align Dice 임계 0.30→0.45(N:1 오정렬 직역 폴백).
+
+## 감성 데이터 (`248e6f0`) + 토글 롤백 (`42be797` → `c067b69`)
+- 연속 극성 라벨 `tools/wordcloud/senti_lexicon.yaml`(122개) + 파이프라인 완료.
+- 감성 시각화 3표현 토글을 만들었다가 **사용자 코멘트로 롤백 → 워드클라우드 단일로 복원**. **감성 데이터·`build.py senti`는 보존** — #3 클러스터의 감성막대(긍↔부정) + 진지성(진지↔유쾌) 다차원 무드 벡터로 용도 전환 예정. 탭은 추후 `[워드클라우드 | 클러스터]`로 구분 예정.
+- ⚠️ 감성은 단어 단독 추출이라 밴드 실제 컨셉과 어긋날 수 있음(재미·참고용, 컨셉 단정 아님 — 경향성은 대체로 맞음, 사용자 검증).
+
+## 머지 · 라이브
+- `feature/emoi-sentiment`(워드클라우드 전체 + 세션 16 백필) → **main 머지 `d6f05c7`**, GitHub Pages 라이브 반영. **롤백 지점 `backup/main-20260629`**(머지 직전 main = `e062bca`) 보존 — 복구법은 HANDOFF.
+- **밴드 퍼스널 컬러 12밴드 확정**(워드클라우드·클러스터 색): 표는 HANDOFF #2.
