@@ -1,10 +1,10 @@
 """
-fix_url.csv 적용기 — urgent.md 재생불가(지역락) 곡 URL 교체/삭제.
+fix_url.csv 적용기 — docs/archive/urgent.md 재생불가(지역락) 곡 URL 교체/삭제.
 
 입력: tools/curate/fix_url.csv  [song_name, current_url, modified_url, plb]
 동작(행별, current_url 의 video_id 로 data/*.yaml 에서 트랙을 찾는다):
   · modified_url 있음 → 그 url 줄을 modified_url 로 교체(텍스트 단위, 포맷·따옴표 보존).
-  · modified_url 공란 → 해당 트랙 삭제(없는 곡 — urgent.md 규약).
+  · modified_url 공란 → 해당 트랙 삭제(없는 곡 — docs/archive/urgent.md 규약).
 
 YAML 은 텍스트 라인 단위로만 손대 기존 따옴표/들여쓰기/정렬을 보존한다
 (youtube_rss/execute_placement 와 동일 원칙 — 재직렬화 금지).

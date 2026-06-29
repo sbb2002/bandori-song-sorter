@@ -1,5 +1,5 @@
 """
-재생불가 곡 탐지 + 원인 분류(plb) — urgent.md 대응.
+재생불가 곡 탐지 + 원인 분류(plb) — docs/archive/urgent.md 대응.
 
 증상: 앱 유튜브 iframe 에서 일부 곡이
   '동영상을 재생할 수 없음. 동영상을 볼 수 없습니다.'
@@ -22,7 +22,7 @@ plb 칼럼 분류:
   ok                : 정상(플래그 안 함).
 
 산출물: tools/curate/fix_url.csv  [song_name, current_url, modified_url, plb]
-  - modified_url 공란. 사람이 채우면 그 url 로 교체, 공란이면 곡 삭제(urgent.md 규약).
+  - modified_url 공란. 사람이 채우면 그 url 로 교체, 공란이면 곡 삭제(docs/archive/urgent.md 규약).
 캐시: tools/curate/plb_cache.json (watch 스크랩 결과). 재실행 시 네트워크 재요청 안 함.
 """
 import os

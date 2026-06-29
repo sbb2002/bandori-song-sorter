@@ -29,7 +29,7 @@
 - `tests/core.test.js` + `package.json` (신규) — `node --test` 16개
 
 ## 확정된 결정
-- **디자인**: `docs/bandori-song-sorter-mockup.html`을 주 디자인으로 채택. 검증된 조각(밴드 아이콘, YT IFrame API, 롱프레스 350ms, domtoimage, fixPath) + 모바일 반응형 + localStorage 결합.
+- **디자인**: `docs/spec/bandori-song-sorter-mockup.html`을 주 디자인으로 채택. 검증된 조각(밴드 아이콘, YT IFrame API, 롱프레스 350ms, domtoimage, fixPath) + 모바일 반응형 + localStorage 결합.
 - **티어**: 최애(1)/차애(2)/호(3)/중간(4)/불호(5). 같은 티어 재선택 시 해제. 이모지 💖💕👍😐👎.
 - **곡 중복**: 밴드 내 제목 기준 중복 제거(URL 유효 항목 우선). 488곡 → 445곡.
 - **저장**: localStorage(`bandori-song-ranks-v1`). 새로고침/재방문 유지.
@@ -371,7 +371,7 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 
 # 세션 15 — urgent: 재생불가(지역락) 7곡 URL 교체 + tools/ 목적별 재편 (완료)
 
-`docs/urgent.md` 대응. 일부 곡 선택 시 유튜브 iframe에 **'동영상을 재생할 수 없음. 동영상을 볼 수 없습니다.'**가 뜨는데 url 자체는 살아 있는 케이스 파악·수정. urgent.md 규약대로 처리 후 이관.
+`docs/archive/urgent.md` 대응. 일부 곡 선택 시 유튜브 iframe에 **'동영상을 재생할 수 없음. 동영상을 볼 수 없습니다.'**가 뜨는데 url 자체는 살아 있는 케이스 파악·수정. urgent.md 규약대로 처리 후 이관.
 
 ## 원인 진단 (재생불가 = 지역락 7곡, 그 외 0)
 일반 메시지라 원인을 따로 가려야 해서 **두 독립 신호 교차검증**:
@@ -395,3 +395,33 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 최종 상태
 - **전곡 한국 재생가능**(지역락 7곡 → 임베드 가능 대체 url로 교체 완료). 곡수 517 유지.
 - 커밋 미진행(사용자 확인 대기).
+
+---
+
+# 세션 16 — HANDOFF #1: 백필 1-a 오리지널 29곡 추가 + 지역락 3곡 처리 + docs/ 재배치 (완료)
+
+`feature/emoi-sentiment`. 미추가 곡 백필(1-a) — Topic 채널 오리지널 누락분을 데이터에 추가하고, 재생테스트로 KR 지역락 곡을 분리·삭제(보존), 재발 방지 가드까지.
+
+## 백필 후보 → 사용자 검수 (new_songs.csv)
+- `backfill.py` 재실행: 신규 후보 **164**(오리지널 29 / 커버 135 · namedup 403) → `tools/collect/new_songs.csv` 생성(`song_name·url·type·author·note·comment`).
+- 사용자 검수 반영: `CiRCLE THANKS MUSiC♪`→various_artists 이동, `NO GIRL NO CRY (Poppin'Party Ver.)`→original 취급. 기존 데이터 중복 0·mygo `ホワイトノイズ`(공식음원 없음, 게임 간접링크뿐) 부재 확인.
+- 커버 135(1-b)·namedup 403(1-c)은 **보류**(별도 배치).
+
+## 오리지널 29곡 삽입 (insert_backfill.py 신규)
+- `tools/collect/insert_backfill.py` — new_songs.csv type=original → 각 밴드 **New Singles**(numbering=Single/album=New Singles/img=FALLBACK_IMG). 발매일(track_number)은 `fetch_uploads` 재조회(백필 동일 출처).
+- **(band, numbering, album_title) 3중 매칭** 삽입(`insert_track` 보강판) → various_artists 복수 Single 앨범(Glitter*Green 등) 오삽입 방지. CiRCLE은 VA 새 New Singles 블록 created.
+- dry-run → loss-0 검증 → `--apply`, 멱등(이미 있는 vid 스킵). 28곡 밴드 append + 1곡 VA created = **29 삽입**.
+- 분포: roselia 14·raise_a_suilen 7·poppin_party 3·morfonica 2·afterglow 1·ave_mujica 1 + VA 1.
+
+## 재생테스트 → 지역락 3곡 삭제 (보존)
+- 신규 29곡 한정 `check_embeddable.py` 로직 재사용(Data API regionRestriction + 한국 IP watch playabilityStatus, **2신호 일치**) → **KR 지역락 3곡** 검출: raise_a_suilen `DEAD HEAT BEAT`, roselia `Our Carol`·`Swear ～Night & Day～`(모두 2022 구곡, blocked 다수국).
+- 정책(2026-06-29): 지역락=법적 이슈·대체 불가 → **앱 데이터에서 삭제, 곡 정보는 `tools/curate/invalid_url.csv`에 보존**(`song_name·author·current_url·modified_url·plb`).
+- `apply_fix_url.py` 삭제 로직(modified_url 공란=삭제) 재사용(경로만 invalid_url.csv로, 기존 fix_url.csv 배치 불간섭) → 3곡 삭제. 곡수 546→**543**, 순증 26.
+
+## 재발 방지 가드 (insert_backfill.py)
+- insert_backfill에 `invalid_url.csv` 가드: 해당 vid는 건너뜀(modified_url 공란=보류). modified_url 채워지면 그 url로 **재등록** → 삭제한 지역락 곡이 재실행으로 부활하지 않으면서, 대체 음원 확보 시 자동 복귀. 양방향 dry-run 검증.
+
+## 빌드·정리
+- `python build.py` 성공(밴드 13, 곡 **543**, 워드클라우드 10). 신규 vid 5종 반영·지역락 vid 3종 0 확인. data diff **+84/−0**(순수 추가, 기존 url 미변경 — 이스터에그 url 포함 무손상).
+- CSV 목적별 이동: `new_songs.csv`→`tools/collect/`, `invalid_url.csv`→`tools/curate/`(fix_url.csv 형제). 코드 경로(insert_backfill) 갱신.
+- **docs/ 재배치**: `spec/`(PRD+mockup) · `archive/`(urgent.md) 신설, 참조 링크·도크스트링 경로 수정. HANDOFF 1-a 완료분 → 본 세션 이관.

@@ -3,9 +3,9 @@
 해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
 (참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
 
-마지막 갱신: **HANDOFF 1 진행중** — Data API 조회수→밴드별 TOP10 + 가사 템플릿(`assets/lyrics/`) 완료, 백필 후보 도출 완료(신규 165 = 오리지널 30 / 커버 135 · namedup 402). 남은 건 **오리지널 30개 데이터 추가**(1-a) 등. 도구: `tools/collect/youtube_api.py`·`band_top10.py`·`backfill.py`. (2026-06-25)
+마지막 갱신: **2026-06-29 세션 16 — 백필 1-a 완료**(오리지널 29 추가·KR 지역락 3 삭제 = 순증 26 · 데이터 **543곡** · 도구 `insert_backfill.py`). 상세 [done.md](done.md) 세션 16. 남은 건 커버 1-b·namedup 1-c(보류) · #2 워드클라우드 · #3 클러스터. 백필 도구: `tools/collect/`(youtube_api·band_top10·backfill·insert_backfill).
 
-> 2026-06-29 **세션4** (`feature/emoi-sentiment`): `backfill.py` 재실행 → 신규 후보 164개(오리지널 29 / 커버 135) 확인. **`new_songs.csv`(루트) 생성** — 칼럼: song_name·url·type(original/cover)·author(밴드명)·note(특이사항). ⚠️ **사용자 검수 필요** — 추가 여부 확정 후 다음 단계(데이터 삽입 스크립트) 진행 가능. 특히 오리지널 중 버전/편곡곡(`NO GIRL NO CRY (Poppin'Party Ver.)` 등) 취사선택 필요.
+> 2026-06-29 **세션 16** (`feature/emoi-sentiment`): 백필 1-a — 오리지널 29곡 New Singles 추가(`tools/collect/insert_backfill.py`, dry-run→loss-0→`--apply`, 멱등) + 재생테스트로 KR 지역락 3곡 삭제·`tools/curate/invalid_url.csv` 보존(가드로 재실행 부활 방지·대체 url 시 재등록). **상세·정책은 [done.md](done.md) 세션 16**, 지역락은 아래 '한국 지역락 대응'. 커버 135(1-b)·namedup 403(1-c) 보류.
 
 > 2026-06-27 **세션3** (`feature/emoi-sentiment`): #2 **감성 시각화 토글 롤백**(사용자 코멘트) — 밴드정보 [차별성·감성색·감성막대·둘다] 토글 **제거하고 워드클라우드 단일로 복원**. 탭은 추후 **[워드클라우드 | 클러스터]** 로 구분 예정. **감성 데이터(senti_lexicon·build.py senti)는 보존** — 용도 전환: **감성막대(긍↔부정 벡터) + 진지성(진지↔유쾌, 4D 벡터)을 #3 2D 클러스터링에 활용 예정**. **밴드 퍼스널 컬러 확정**(워드클라우드·클러스터 색으로 활용, 아래 표). **미완 — 추후 다른 세션에서 이어감**. 상세는 memory `wordcloud_quality_plan.md`.
 >
@@ -27,7 +27,7 @@
 
 | 순 | 작업 | 난이도 | 비고 |
 |----|------|--------|------|
-| 1 | YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 | 중 | 🔄 조회수/백필 완료 · **오리지널 30 추가 남음** |
+| 1 | YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 | 중 | ✅ **오리지널 1-a 완료**(29 삽입·지역락 3 삭제=순증 26) · 커버 1-b·namedup 1-c 보류 |
 | 2 | 밴드 메타패널(우패널 3번째 탭): 밴드소개 + 밴드 워드클라우드 | 중 | 🔄 **부분완료** — 키워드 추출 파이프라인+10밴드 yaml 완료, **ko 검수·렌더 남음** |
 | 3 | 키워드 의미공간 2D 클러스터 (전 밴드) | 중~높 | 2의 워드클라우드 키워드 재활용 · 유튜브 프레임 하단(고려중) |
 | — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(진행 덮어쓰기) |
@@ -37,23 +37,20 @@
 
 ---
 
-### 1. YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 (new_idea #3) — 🔄 진행중
+### 1. YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 (new_idea #3) — 🔄 1-a 완료 · 1-b/1-c 보류
 키: `.env`의 `YOUTUBE_API_KEY`(stdlib 파싱 — `tools/collect/youtube_api.py`의 `load_env_key`). `.gitignore`에 `.env` 포함. youtube_rss의 'no API key'(CI RSS)와 **별개** — 일회성/저빈도 조회 전용. `backfill.py`는 출력 전용·멱등이라 재실행 안전.
 
 **✅ 완료**
 - `tools/collect/youtube_api.py` — Data API v3 stdlib 클라이언트: `load_env_key` / `fetch_view_counts`(videos.list) / `fetch_uploads`(channels+playlistItems 페이징).
 - `tools/collect/band_top10.py` — 재생가능 트랙 조회수 → 밴드별 TOP10. 커버 제외(`--no-cover`), 같은 video_id dedup(roselia LOUDER 중복 방어).
   → **10개 밴드 TOP10 확정**, `assets/lyrics/<band>.md` 가사 템플릿 생성(gitignore·원문 비커밋). 조회수 443/443 수신.
-- `tools/collect/backfill.py` — Topic 업로드 전체 vs known(id/name) 비교 → 누락 후보 **출력만**(데이터 미변경). variant/known_name 필터는 youtube_rss와 동일.
-  → 결과: **신규 165 = 오리지널 30 + 커버 135 · namedup 402**.
-    · 오리지널 30(스팟체크로 진짜 누락 확인): roselia 14, raise_a_suilen 7, poppin_party 5, morfonica 2, afterglow 1, ave_mujica 1. **2022년 정규앨범 곡 포함**(roselia Our Carol/Swear, raise DEAD HEAT BEAT) — RSS로 못 잡던 것.
-    · namedup 402 = 음원우선 정책으로 데이터가 Topic 외 영상(MV 등)을 url로 씀 → **신곡 아님**(url 품질 영역).
+- `tools/collect/backfill.py` — Topic 업로드 전체 vs known(id/name) 비교 → 누락 후보 **출력만**(멱등). variant/known_name 필터는 youtube_rss와 동일. → 재실행 결과 **신규 164 = 오리지널 29 + 커버 135 · namedup 403**(상세 [done.md](done.md) 세션 16).
+
+**✅ (1-a) 오리지널 29곡 추가 완료** → 상세 [done.md](done.md) 세션 16. `tools/collect/insert_backfill.py`(New Singles 삽입·`tools/curate/invalid_url.csv` 가드, dry-run→loss-0→`--apply`, 멱등): 29 추가 + KR 지역락 3 삭제 = **순증 26**. `CiRCLE THANKS MUSiC♪`→VA 새 블록, `NO GIRL NO CRY (Poppin'Party Ver.)`→original 취급.
 
 **⬜ 남은 것**
-- **(1-a) 오리지널 30개 데이터 추가** ← 다음 작업. `python tools/collect/backfill.py`로 후보 재산출(멱등) → `insert_track` 기반 추가 스크립트(dry-run → loss-0 검증 → `--apply`). 오리지널은 New Singles(numbering=`Single`/album=`New Singles`), track_number=published, img=FALLBACK_IMG.
-  - ⚠️ poppin `(Popipa Acoustic Ver.)`·`(Poppin'Party Ver.)`·`Yes! BanG Dream! (Acoustic Ver.)` 등 **편곡/버전곡은 취사선택**(같은 곡 다른 편곡).
 - **(1-b) 커버 135개**: Covers 카탈로그 확장(numbering=`Cover`/album=`Covers`). 양 많아 **별도 배치로 보류**(사용자 보류 동의 대기). 이게 new_idea #3의 'A(Topic 백필)'에 해당. 그래도 빠지는 '유튜브 한정 커버'는 B(공식채널 バンドリちゃんねる☆ 수집)인데 노이즈·밴드배정 난점 → 후순위.
-- **(1-c) namedup 402**: url을 Topic 음원으로 교체하는 url 품질 개선 — 별도·후순위.
+- **(1-c) namedup 403**: url을 Topic 음원으로 교체하는 url 품질 개선 — 별도·후순위.
 - 대상 밴드: Topic 채널 보유 12밴드. various_artists(Topic 없음)·ikka_dumb_rock·millsage(업로드 1개)는 사실상 제외.
 
 ### 2. 밴드 메타패널 + 밴드 워드클라우드 (new_idea #1, '밴드 중심'으로 전환)
@@ -111,3 +108,6 @@
 ### (보류) 한국 지역락 노래 대응 (ux-02.md #5) — 난이도 높(불확실) · 리스크 중
 일부 곡이 한국 지역락일 수 있음 → 대응책 필요.
 - 미정: 지역락 **감지 방법**(클라이언트 판별 난해), **대체 링크/표기** 정책. 방안 구상부터 필요. `verify_links` oEmbed 점검 로직 일부 공유 가능.
+- **감지는 해결됨**: `tools/curate/check_embeddable.py`(Data API regionRestriction + 한국 IP watch playabilityStatus 2신호)로 KR 지역락 확정 판정 가능. 신규 백필 전용 점검은 `tools/collect/new_songs.csv` 대상으로 동일 로직 재사용.
+- **정책 결정(2026-06-29)**: **지역락 = 법적 이슈라 대체 불가 → 앱 데이터(`data/*.yaml`)에서는 삭제하되, 곡 정보는 `tools/curate/invalid_url.csv`에 보존**(기록 유지). 대체 음원이 생기면 그때 재등록.
+- **현황(보류 곡)**: 세션 16 백필에서 KR 지역락 **3곡 삭제·보존** — `tools/curate/invalid_url.csv`의 `DEAD HEAT BEAT`/`Our Carol`/`Swear`(modified_url 공란 = 대체 음원 대기, 채우면 `insert_backfill.py`가 재등록). 상세 [done.md](done.md) 세션 16. (별개: `tools/curate/fix_url.csv`엔 대체 URL 확보한 지역락 7곡 apply 대기.)
