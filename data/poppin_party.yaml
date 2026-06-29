@@ -315,6 +315,15 @@
     - track_number: 'X12'
       name: '勇気Limit！'
       url: https://youtu.be/HNpDj7g9Fd0
+    - track_number: '2025-04-03'
+      name: '開けたらDream!'
+      url: https://youtu.be/E7Vac5VF7Qg
+    - track_number: '2025-04-03'
+      name: '絆色のアンサンブル'
+      url: https://youtu.be/tvXmaug8tG8
+    - track_number: '2025-04-03'
+      name: 'NO GIRL NO CRY (Poppin''Party Ver.)'
+      url: https://youtu.be/uBLg7gB5FiM
 
 - band: 'poppin_party'
   numbering: 'Cover'

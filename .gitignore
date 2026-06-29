@@ -20,7 +20,10 @@ tools/curate/verify_cache.json
 tools/curate/plb_cache.json
 
 # Copyrighted content
-assets/lyrics/
+# 가사 채운 실제 파일(assets/lyrics/<band>.md)은 추적 금지.
+# 단, 빈 템플릿(<band>_template.md)은 세션 간 공유용으로 추적 허용.
+assets/lyrics/*
+!assets/lyrics/*_template.md
 
 # Secrets
 .env

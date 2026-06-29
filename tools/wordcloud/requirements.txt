@@ -1,0 +1,7 @@
+# 워드클라우드 키워드 추출 파이프라인 의존성 (빌드타임 전용 — 정적 사이트에는 미포함)
+# 설치: python -m pip install -r tools/wordcloud/requirements.txt
+fugashi>=1.3          # 일본어 형태소 분석(MeCab 래퍼)
+unidic-lite>=1.0.8    # fugashi용 경량 UniDic 사전(명사 표제형·품사)
+kiwipiepy>=0.18       # 한국어 형태소 분석(번안문에서 명사 추출 — Java 불필요)
+deep-translator>=1.11 # ja→ko 기계번역 보완(선택; 번안 정렬 실패 명사용)
+ruamel.yaml>=0.18     # 사용자 편집용 yaml(플로우 스타일·eol 주석) 출력

@@ -27,3 +27,12 @@
     - track_number: 'X01'
       name: "Here, the world"
       url: https://youtu.be/LuwRRghPD1A
+
+- band: 'various_artists'
+  numbering: 'Single'
+  album_title: 'New Singles'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2025-04-03'
+      name: 'CiRCLE THANKS MUSiC♪'
+      url: https://youtu.be/P6o2SIJAxWw

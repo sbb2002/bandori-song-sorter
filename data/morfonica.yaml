@@ -132,6 +132,12 @@
     - track_number: 'X0'
       name: 'Shining Leaves'
       url: https://youtu.be/HkruyxEhOPI
+    - track_number: '2025-02-27'
+      name: '音がえしのセレナーデ'
+      url: https://youtu.be/sUaDAY9u4y8
+    - track_number: '2025-02-27'
+      name: '蒼穹へのトレイル'
+      url: https://youtu.be/eAjX1Ihvtac
 
 - band: 'morfonica'
   numbering: 'Cover'
