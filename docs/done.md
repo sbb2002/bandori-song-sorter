@@ -478,3 +478,21 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 빌드·결과
 - `python build.py` 성공(밴드 13, 트랙 657, 워드클라우드 10). **화면 표시 곡수(고유 video_id dedup) 526 → 640(+114)** = 커버 135 − 지역락 21. 헤더 `n / 640곡 평가됨`.
 - ⚠️ `npm test`는 이 장치 node 미설치로 미실행(core.js 무수정 → 회귀 위험 낮음). fix_url.csv는 스크래치 출력이라 커밋 직전 원복.
+
+---
+
+# 세션 19 — 지역락 커버 대체 음원 재등록 (region_blocked.csv 20곡 복귀 · 최종 지역락 4)
+
+세션 18에서 뺀 지역락 24곡(커버 21 + 기존 오리지널 3)을 사용자가 `region_blocked.csv` 워크시트에서 블락 없는 대체 영상으로 채움 → 검증 후 재등록.
+
+## 대체 URL 검증 (Data API)
+- region_blocked.csv `url` 칸에 사용자가 대체 영상 20곡 기입 → 제목·채널·embeddable·regionRestriction 검증. 전부 KR차단 0·embed OK.
+- **제목 대조로 오입력 1건 적발**: シルエット(HHW)에 afterglow `インフェルノ` vid(`DOrx3z-Z86c`)가 들어가 있었음 → 사용자 수정(`n7U-z7okdBM` = シルエット (Cover), Hello happy world Topic, 검증 통과). **단어/지역락 검증뿐 아니라 제목 대조가 오입력을 잡음.**
+- Swear ～Night & Day～는 스튜디오 음원 부재 → 공식 라이브 영상(`バンドリちゃんねる☆`) 채택(곡 일치·embed·KR ok).
+
+## 재등록 (`invalid_url.csv` modified_url → insert_backfill 가드 경로)
+- 검증된 20곡(커버 19 + 오리지널 Swear)을 `invalid_url.csv`의 modified_url에 기입 → `insert_backfill.py --cover`/기본 실행: 가드가 blocked orig vid를 modified_url(대체 vid)로 **재등록**(blocked vid는 계속 가드, 부활 안 함). dry-run loss-0 → apply.
+- **최종 지역락 4곡**(modified_url 공란 유지 = 끝까지 블락): poppin `千本桜` · RAS `DAYBREAK FRONTLINE`·`DEAD HEAT BEAT` · roselia `Our Carol`. `region_blocked.csv`는 이 4곡만 남겨 기록(대체 음원 확보 시 url 채워 재등록).
+
+## 결과
+- `build.py` 성공(밴드 13, 트랙 677, 워드클라우드 10). **화면 곡수 640 → 660(+20)**. 백필 1-b 누적: 526 → **660(+134)**, 최종 KR 지역락 4곡만 제외.

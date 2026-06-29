@@ -2,14 +2,14 @@
 
 이 문서는 **앞으로 할 일만** 담습니다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 진행의 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-06-30** — 백필 1-b 커버 +114곡(done 세션 18) · handoff 재작성(완료분 done 세션 17 이관 · 남은 작업만).
+마지막 갱신: **2026-06-30** — 백필 1-b 커버 + 지역락 대체 재등록(done 세션 18·19, 화면 660곡) · handoff 재작성(완료분 done 17 이관).
 
 ---
 
 ## 현황
 
-- 데이터 **657 트랙 / 화면 640곡(dedup) / 13밴드**. 워드클라우드 **라이브 노출 중**(렌더 동작 OK, 품질 보완 2-c만 남음).
-- 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~18). 화면 곡수 526→**640**(+114).
+- 데이터 **677 트랙 / 화면 660곡(dedup) / 13밴드**. 워드클라우드 **라이브 노출 중**(렌더 동작 OK, 품질 보완 2-c만 남음).
+- 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~19). 화면 곡수 526→**660**(+134). 끝까지 KR 지역락인 4곡만 제외.
 - 다음 본류: **#1 워드클라우드 품질 보완 → #2 키워드 2D 클러스터.**
 
 > ⏪ **롤백 지점 — `backup/main-20260629`** (local·origin 보존): 워드클라우드+백필을 main에 올린 머지 `d6f05c7`의 **직전 main = `e062bca`**. 문제 시 `git revert -m 1 d6f05c7 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard e062bca`(+force-push).
@@ -99,5 +99,5 @@
 감지·정책 모두 해결됨(done 세션 15·16). 신규 검수 시 절차만 재사용:
 - **감지**: `tools/curate/check_embeddable.py`(Data API `regionRestriction` + 한국 IP `playabilityStatus` 2신호). 신규 백필은 `tools/collect/new_songs.csv` 대상으로 동일 로직 재사용.
 - **정책(2026-06-29)**: 지역락 = 법적 이슈·대체 불가 → 앱 데이터(`data/*.yaml`)에서 삭제, 곡 정보는 `tools/curate/invalid_url.csv`에 보존(가드: 그 vid는 재실행으로 부활 안 함).
-- **현재 parked 24곡**(`invalid_url.csv`): 기존 3곡(RAS `DEAD HEAT BEAT` · roselia `Our Carol`·`Swear ～Night & Day～`) + **커버 1-b 지역락 21곡**(7밴드 ×3).
-- 🔎 **대체 음원 찾기 워크시트 = `tools/curate/region_blocked.csv`**(new_songs.csv 형식). 블락 없는 대체 영상을 찾으면 `url` 칸에 채우면 됨 → `insert_backfill.py --cover`(또는 new_songs.csv 병합)로 재등록. 블락된 원본 vid는 invalid_url.csv 가드로 막혀 충돌 없음.
+- **최종 parked 4곡**(`invalid_url.csv` modified_url 공란 = 끝까지 지역락): poppin `千本桜` · RAS `DAYBREAK FRONTLINE`·`DEAD HEAT BEAT` · roselia `Our Carol`. (나머지 지역락 20곡은 사용자가 찾은 대체 음원으로 재등록 완료 — done 세션 19.)
+- 🔎 **`tools/curate/region_blocked.csv`** = 위 4곡 기록 워크시트. 대체 음원 찾으면 `url` 칸 채워 `insert_backfill.py --cover`로 재등록(블락 vid는 invalid_url.csv 가드로 충돌 없음). ⚠️ 대체 URL은 **제목 대조 검증 필수**(세션 19에서 곡 오입력 1건 적발).
