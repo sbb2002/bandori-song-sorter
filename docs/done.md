@@ -425,3 +425,74 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 - `python build.py` 성공(밴드 13, 곡 **543**, 워드클라우드 10). 신규 vid 5종 반영·지역락 vid 3종 0 확인. data diff **+84/−0**(순수 추가, 기존 url 미변경 — 이스터에그 url 포함 무손상).
 - CSV 목적별 이동: `new_songs.csv`→`tools/collect/`, `invalid_url.csv`→`tools/curate/`(fix_url.csv 형제). 코드 경로(insert_backfill) 갱신.
 - **docs/ 재배치**: `spec/`(PRD+mockup) · `archive/`(urgent.md) 신설, 참조 링크·도크스트링 경로 수정. HANDOFF 1-a 완료분 → 본 세션 이관.
+
+---
+
+# 세션 17 — 밴드 워드클라우드: 키워드 파이프라인 + 렌더 1차 + 라이브 머지 (HANDOFF #2 부분완료)
+
+`feature/emoi-cloud` → `feature/emoi-sentiment`(2026-06-27 파이프라인·렌더, 2026-06-29 main 머지 `d6f05c7`·라이브). **품질 보완(2-c)은 미완 → HANDOFF에 남김.** 품질 진행의 단일 출처 = memory `wordcloud_quality_plan.md`.
+
+## 키워드 추출 파이프라인 (`tools/wordcloud/`, `4d66c11`·`db226cf`)
+- 가사 = 밴드별 조회수 TOP10 곡, **사용자 직접 복붙**(크롤링 안 함). 빈 템플릿만 `assets/lyrics/<band>_template.md`로 커밋, 채운 `<band>.md`는 `.gitignore`(가사 비커밋). **원문 미보관 원칙** — yaml엔 단어 단위 키워드만.
+- `lyrics_parser.py`(줄 문자종으로 jp/음차/번안 트리플렛 + 곡 메타) + `build_keywords.py`(fugashi 명사추출→빈도, **커버 제외**, ko 채움) → `wordcloud/<band>.yaml` **10밴드 전부 생성**(빈 곡 0).
+- **ko = 한글 번안 우선**(kiwipiepy 명사 + Dice 단어정렬 ~85–90%) → 실패분만 기계번역(deep-translator, `# 기계번역 초안` 주석) → 빈칸 0. 필터: 형식명사·영어조각·단일가나·감탄사 컷, 외래어 `-romaji` 제거, `--min-weight 2`. 산출 71~174어/밴드.
+- 의존성 4종(fugashi·unidic-lite·kiwipiepy·deep-translator) → `tools/wordcloud/requirements.txt`(빌드타임 전용). 재생성 = `python tools/wordcloud/build_keywords.py`(멱등) → `python build.py`.
+
+## 렌더 1차 (`2942dd6`)
+- `build.py`가 `wordcloud/*.yaml`→`WORDCLOUD_DATA` 주입, 우패널 **3번째 탭 "밴드 정보"**에 `static/js/wordcloud2.min.js`(벤더링) 렌더. `renderWordcloud()`: 현재 밴드 따라감(ALL=전체 병합), ko 표시, 동일 번역어 빈도 합산, 상위 60, sqrt 폰트 압축, 테마색. 헤드리스 Chrome 스크린샷 검증.
+- 빈 메시지 안 사라지던 버그 수정(CSS `.wc-empty[hidden]{display:none}`). '곡 클릭 시 탭 자동활성화'·jp 툴팁은 의도적 미적용(v1).
+
+## 품질 1차 보정 (`86bb773`·`58b52ad`)
+- **①TF-IDF 변별력 가중**: ALL=원빈도 / 밴드별=차별성 `w·idf`(공통어 감점·특징어 가점).
+- **②가타카나 음차화**(`kana2ko.py` + `resolve_ko`: align→음차유사도검증→음차→MT→빈칸): 제·텐·밍·퐁퐁포퐁 등 노이즈 제거. align Dice 임계 0.30→0.45(N:1 오정렬 직역 폴백).
+
+## 감성 데이터 (`248e6f0`) + 토글 롤백 (`42be797` → `c067b69`)
+- 연속 극성 라벨 `tools/wordcloud/senti_lexicon.yaml`(122개) + 파이프라인 완료.
+- 감성 시각화 3표현 토글을 만들었다가 **사용자 코멘트로 롤백 → 워드클라우드 단일로 복원**. **감성 데이터·`build.py senti`는 보존** — #3 클러스터의 감성막대(긍↔부정) + 진지성(진지↔유쾌) 다차원 무드 벡터로 용도 전환 예정. 탭은 추후 `[워드클라우드 | 클러스터]`로 구분 예정.
+- ⚠️ 감성은 단어 단독 추출이라 밴드 실제 컨셉과 어긋날 수 있음(재미·참고용, 컨셉 단정 아님 — 경향성은 대체로 맞음, 사용자 검증).
+
+## 머지 · 라이브
+- `feature/emoi-sentiment`(워드클라우드 전체 + 세션 16 백필) → **main 머지 `d6f05c7`**, GitHub Pages 라이브 반영. **롤백 지점 `backup/main-20260629`**(머지 직전 main = `e062bca`) 보존 — 복구법은 HANDOFF.
+- **밴드 퍼스널 컬러 12밴드 확정**(워드클라우드·클러스터 색): 표는 HANDOFF #2.
+
+---
+
+# 세션 18 — HANDOFF #1-b: 백필 커버 114곡 추가 (135 삽입 − KR 지역락 21 제거)
+
+`feature/backfill-1b-covers`. 보류였던 1-b 커버를 사용자 요청으로 진행 — 오리지널(세션 16)과 동일한 "삽입 → 지역락 검증 → 차단곡 제거·보존" 워크플로우.
+
+## 커버 삽입 (`insert_backfill.py --cover` 신규 모드)
+- `insert_backfill.py`에 `--cover` 모드 추가: type=cover → numbering=`Cover` / album_title=`Covers`, 곡명에 `" (Cover)"` 접미(클라이언트 커버 탭 판별 = album_title 'Covers' + 곡명 '(Cover)'). 오리지널 경로·안전장치(loss-0·present·멱등·invalid 가드) 그대로 재사용.
+- `new_songs.csv` type=cover **135곡** → 9밴드 Covers 앨범 append(발매일은 Topic 채널 `fetch_uploads` 재조회). dry-run loss-0 → `--apply`. 트랙 543→678, 중복 스킵 0.
+- 분포: poppin 22·roselia 21·pastel 21·HHW 18·afterglow 17·RAS 15·morfonica 14·mygo 4·ave 3.
+
+## 재생테스트 → KR 지역락 21곡 삭제 (보존)
+- `check_embeddable.py` 전량 점검(678트랙·고유 661 vid, 한국 IP watch + Data API 2신호): **region_blocked 21건**, 나머지 657 ok. embed_disabled/deleted/login 0.
+- 교차대조: 21건 **전부 신규 커버**(기존 데이터 0건 — 깨끗). 7밴드(afterglow·HHW·morfonica·pastel·poppin·RAS·roselia) ×3곡.
+- 정책대로 `tools/curate/invalid_url.csv`에 21곡 보존(author·blank modified_url) + `apply_fix_url.py`로 삭제(loss-0 21/21, 678→657). invalid_url.csv 3→24행, 가드로 재실행 부활 방지.
+
+## 대체 음원 워크시트 (`tools/curate/region_blocked.csv` 신규)
+- 사용자 요청: 지역락 곡은 블락 없는 대체 영상을 직접 찾을 수 있으므로 `new_songs.csv` 형식 워크시트로 별도 정리.
+- invalid_url.csv의 region_blocked 24곡(커버 21 + 기존 오리지널 3) → `region_blocked.csv`(song_name·url·type·author·note·comment). `url` 공란 = 사용자가 대체 영상 채움, `comment`에 블락된 원본 링크. 채우면 `insert_backfill.py --cover`(또는 new_songs.csv 병합)로 재등록.
+
+## 빌드·결과
+- `python build.py` 성공(밴드 13, 트랙 657, 워드클라우드 10). **화면 표시 곡수(고유 video_id dedup) 526 → 640(+114)** = 커버 135 − 지역락 21. 헤더 `n / 640곡 평가됨`.
+- ⚠️ `npm test`는 이 장치 node 미설치로 미실행(core.js 무수정 → 회귀 위험 낮음). fix_url.csv는 스크래치 출력이라 커밋 직전 원복.
+
+---
+
+# 세션 19 — 지역락 커버 대체 음원 재등록 (region_blocked.csv 20곡 복귀 · 최종 지역락 4)
+
+세션 18에서 뺀 지역락 24곡(커버 21 + 기존 오리지널 3)을 사용자가 `region_blocked.csv` 워크시트에서 블락 없는 대체 영상으로 채움 → 검증 후 재등록.
+
+## 대체 URL 검증 (Data API)
+- region_blocked.csv `url` 칸에 사용자가 대체 영상 20곡 기입 → 제목·채널·embeddable·regionRestriction 검증. 전부 KR차단 0·embed OK.
+- **제목 대조로 오입력 1건 적발**: シルエット(HHW)에 afterglow `インフェルノ` vid(`DOrx3z-Z86c`)가 들어가 있었음 → 사용자 수정(`n7U-z7okdBM` = シルエット (Cover), Hello happy world Topic, 검증 통과). **단어/지역락 검증뿐 아니라 제목 대조가 오입력을 잡음.**
+- Swear ～Night & Day～는 스튜디오 음원 부재 → 공식 라이브 영상(`バンドリちゃんねる☆`) 채택(곡 일치·embed·KR ok).
+
+## 재등록 (`invalid_url.csv` modified_url → insert_backfill 가드 경로)
+- 검증된 20곡(커버 19 + 오리지널 Swear)을 `invalid_url.csv`의 modified_url에 기입 → `insert_backfill.py --cover`/기본 실행: 가드가 blocked orig vid를 modified_url(대체 vid)로 **재등록**(blocked vid는 계속 가드, 부활 안 함). dry-run loss-0 → apply.
+- **최종 지역락 4곡**(modified_url 공란 유지 = 끝까지 블락): poppin `千本桜` · RAS `DAYBREAK FRONTLINE`·`DEAD HEAT BEAT` · roselia `Our Carol`. `region_blocked.csv`는 이 4곡만 남겨 기록(대체 음원 확보 시 url 채워 재등록).
+
+## 결과
+- `build.py` 성공(밴드 13, 트랙 677, 워드클라우드 10). **화면 곡수 640 → 660(+20)**. 백필 1-b 누적: 526 → **660(+134)**, 최종 KR 지역락 4곡만 제외.

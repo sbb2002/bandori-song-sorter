@@ -1,115 +1,103 @@
 # HANDOFF: bandori-song-sorter — 남은 작업
 
-해야 할 것·남은 것만 담습니다. **완료된 작업 기록은 [done.md](done.md)** 참조.
-(참고 사실 — v2 표시 범위, 라이브/원격 URL, 환경 등 — 도 done.md 상단에 정리.)
+이 문서는 **앞으로 할 일만** 담습니다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 진행의 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-06-29 세션 16 — 백필 1-a 완료**(오리지널 29 추가·KR 지역락 3 삭제 = 순증 26 · 데이터 **543곡** · 도구 `insert_backfill.py`). 상세 [done.md](done.md) 세션 16. 남은 건 커버 1-b·namedup 1-c(보류) · #2 워드클라우드 · #3 클러스터. 백필 도구: `tools/collect/`(youtube_api·band_top10·backfill·insert_backfill).
-
-> ⏪ **롤백 지점 — `backup/main-20260629`** (local·origin 보존): 세션 16 + **워드클라우드 기능 전체**를 `main`에 머지(`d6f05c7`)·라이브 반영(GitHub Pages)한 **직전 main = `e062bca`**. 워드클라우드는 "렌더 동작·품질 보완 2-c 남음" 상태로 라이브 노출(사용자 승인). **문제 시 언제든 복구 가능** — `git revert -m 1 d6f05c7 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard e062bca`(+force-push).
-
-> 2026-06-29 **세션 16** (`feature/emoi-sentiment`): 백필 1-a — 오리지널 29곡 New Singles 추가(`tools/collect/insert_backfill.py`, dry-run→loss-0→`--apply`, 멱등) + 재생테스트로 KR 지역락 3곡 삭제·`tools/curate/invalid_url.csv` 보존(가드로 재실행 부활 방지·대체 url 시 재등록). **상세·정책은 [done.md](done.md) 세션 16**, 지역락은 아래 '한국 지역락 대응'. 커버 135(1-b)·namedup 403(1-c) 보류.
-
-> 2026-06-27 **세션3** (`feature/emoi-sentiment`): #2 **감성 시각화 토글 롤백**(사용자 코멘트) — 밴드정보 [차별성·감성색·감성막대·둘다] 토글 **제거하고 워드클라우드 단일로 복원**. 탭은 추후 **[워드클라우드 | 클러스터]** 로 구분 예정. **감성 데이터(senti_lexicon·build.py senti)는 보존** — 용도 전환: **감성막대(긍↔부정 벡터) + 진지성(진지↔유쾌, 4D 벡터)을 #3 2D 클러스터링에 활용 예정**. **밴드 퍼스널 컬러 확정**(워드클라우드·클러스터 색으로 활용, 아래 표). **미완 — 추후 다른 세션에서 이어감**. 상세는 memory `wordcloud_quality_plan.md`.
->
-> **밴드 퍼스널 컬러**: poppin_party `#ff3377` · afterglow `#ee3344` · pastel_palettes `#33ddaa` · roselia `#3344aa` · hello_happy_world `#ffdd00` · morfonica `#33AAFF` · raise_a_suilen `#33CCCC` · mygo `#0088BB` · ave_mujica `#881144` · mugendai_mutype `#ff7788`(+보조 `#2288dd` 20% 그라데이션) · millsage `#AA22EE` · ikka_dump_rock `#FFAA33`
-
-> 2026-06-27 **세션2** (`feature/emoi-cloud`): #2-c 품질 보정 진행 — **①변별력 가중(TF-IDF) 완료**(렌더: ALL=원빈도/밴드별=차별성 `w·idf`), **②가타카나 음차화 완료**(신규 `tools/wordcloud/kana2ko.py` + `resolve_ko`: align→음차유사도검증→음차→MT(일본어잔존거부)→빈칸, STOPWORD에 取り·通り) → 제·텐·밍·퐁퐁포퐁 등 노이즈 제거. **잔여 노이즈 패턴 3종**: ⓐ영어외래어가 일본식음차(챤스→찬스 등, 한국표기 필요) ⓑ의미불명 단편(시후·켄·티·완 등, align 오정렬·df=1 부각) ⓒ문맥/극성손실(거짓·한잔). → OVERRIDE 사전+수동검수로 처리중. **감성 분포(B)**: 연속 극성 라벨(`tools/wordcloud/senti_lexicon.yaml` 122개)·파이프라인 완료(`248e6f0`, **feature/emoi-sentiment**), **시각화 UI 진행중**(3표현 토글). ⚠️ **감성은 키워드를 단어 단독으로 추출·라벨하므로 밴드 실제 컨셉과 어긋날 수 있음**(예: afterglow는 어두운 밴드가 아닌데 키워드 단어만 보면 부정적으로 비칠 수 있음) — 참고·재미용이지 밴드 컨셉 단정이 아님. 경향성은 대체로 맞음(사용자 검증). **확장 아이디어**: 긍↔부정 1축 외 **진지↔유쾌 등 축을 더한 다차원(예: 4D) 무드 벡터**로 밴드 표현(레이더 차트 비교 등) — 재미 컨텐츠. **상세·진행은 memory `wordcloud_quality_plan.md`**(세션 간 단일 출처). 아래 2-c는 1차 기록.
-
-> 2026-06-27 (`feature/emoi-cloud`): #2 **키워드 추출 파이프라인 + 워드클라우드 렌더 1차 완료** — `tools/wordcloud/`로 10밴드 `wordcloud/<band>.yaml` 생성, 우패널 "밴드 정보" 탭 렌더(wordcloud2.js). 커버 제외·번안 우선 정렬(+MT). **렌더 품질 보완 필요(2-c)**: 밀집 가독성·무의미 키워드·배치(좁은 탭)·**변별력 기반 가중**(빈도≠밴드성격). 상세는 2번 섹션.
-
-> 2026-06-26 구체화: #2 워드클라우드 처리=②안(원문 명사추출→한국어 번역, `wordcloud/<band>.yaml` 사용자 편집), #3 클러스터=**키워드 단위 채택**(곡 단위는 idea로 환원)·게시는 유튜브 프레임 가로분할 하단(고려중). 상세는 2·3번 섹션.
-
-> 이전 갱신: idea/260625.md 검토 완료 → 채택 3건 이관, 자동 장르추출 등 반려. 메타패널 '밴드 중심' 전환(밴드소개 + 밴드 워드클라우드), 워드클라우드는 밴드별 조회수 TOP10 가사(사용자 직접 제공·원문 미보관).
-
-> **ux-02.md 1·2·3·6·7번 + youtube_rss 자동화 + 데이터 정합성 검수 완료**. 상세는 [done.md](done.md). 옵션 A(랭크순)는 `feature/ux-02-opt-a` 백업, 진행률 링 conic 시안은 `feature/ux-02-ring-conic` 백업.
+마지막 갱신: **2026-06-30** — 백필 1-b 커버 + 지역락 대체 재등록(done 세션 18·19, 화면 660곡) · handoff 재작성(완료분 done 17 이관).
 
 ---
 
-## 작업 순서 (의존성·우선순위)
+## 현황
 
-| 순 | 작업 | 난이도 | 비고 |
+- 데이터 **677 트랙 / 화면 660곡(dedup) / 13밴드**. 워드클라우드 **라이브 노출 중**(렌더 동작 OK, 품질 보완 2-c만 남음).
+- 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~19). 화면 곡수 526→**660**(+134). 끝까지 KR 지역락인 4곡만 제외.
+- 다음 본류: **#1 워드클라우드 품질 보완 → #2 키워드 2D 클러스터.**
+
+> ⏪ **롤백 지점 — `backup/main-20260629`** (local·origin 보존): 워드클라우드+백필을 main에 올린 머지 `d6f05c7`의 **직전 main = `e062bca`**. 문제 시 `git revert -m 1 d6f05c7 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard e062bca`(+force-push).
+
+---
+
+## 우선순위
+
+| 순 | 작업 | 난이도 | 상태 |
 |----|------|--------|------|
-| 1 | YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 | 중 | ✅ **오리지널 1-a 완료**(29 삽입·지역락 3 삭제=순증 26) · 커버 1-b·namedup 1-c 보류 |
-| 2 | 밴드 메타패널(우패널 3번째 탭): 밴드소개 + 밴드 워드클라우드 | 중 | 🔄 **부분완료** — 키워드 추출 파이프라인+10밴드 yaml 완료, **ko 검수·렌더 남음** |
-| 3 | 키워드 의미공간 2D 클러스터 (전 밴드) | 중~높 | 2의 워드클라우드 키워드 재활용 · 유튜브 프레임 하단(고려중) |
-| — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(진행 덮어쓰기) |
-| — | (보류) 한국 지역락 대응 | 높(불확실) | 감지·대체 방안 미정 |
+| 1 | 워드클라우드 품질 보완 (2-c) | 중 | 🔄 렌더는 라이브, 품질 4건 남음 |
+| 2 | 키워드 의미공간 2D 클러스터 | 중~높 | ⬜ 미착수 (1의 키워드 재활용) |
+| — | (보류) 백필 1-c namedup 403 | — | url 품질 개선 · 후순위 |
+| — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(덮어쓰기) |
+| — | (백로그) youtube_rss Phase 2 / Phase 1.5 | — | precision 축적 후 |
 
-원칙: **데이터 기반(1) → 밴드 시각화(2) → 후속 확장(3)**. 보류 2건은 별도 결정 사안.
+원칙: **밴드 시각화 마무리(1) → 후속 확장(2)**. 보류·백로그는 별도 결정 사안.
 
 ---
 
-### 1. YouTube Data API — 조회수 TOP10 + 미추가 곡 백필 (new_idea #3) — 🔄 1-a 완료 · 1-b/1-c 보류
-키: `.env`의 `YOUTUBE_API_KEY`(stdlib 파싱 — `tools/collect/youtube_api.py`의 `load_env_key`). `.gitignore`에 `.env` 포함. youtube_rss의 'no API key'(CI RSS)와 **별개** — 일회성/저빈도 조회 전용. `backfill.py`는 출력 전용·멱등이라 재실행 안전.
+## 1. 워드클라우드 품질 보완 (2-c) — 최우선
 
-**✅ 완료**
-- `tools/collect/youtube_api.py` — Data API v3 stdlib 클라이언트: `load_env_key` / `fetch_view_counts`(videos.list) / `fetch_uploads`(channels+playlistItems 페이징).
-- `tools/collect/band_top10.py` — 재생가능 트랙 조회수 → 밴드별 TOP10. 커버 제외(`--no-cover`), 같은 video_id dedup(roselia LOUDER 중복 방어).
-  → **10개 밴드 TOP10 확정**, `assets/lyrics/<band>.md` 가사 템플릿 생성(gitignore·원문 비커밋). 조회수 443/443 수신.
-- `tools/collect/backfill.py` — Topic 업로드 전체 vs known(id/name) 비교 → 누락 후보 **출력만**(멱등). variant/known_name 필터는 youtube_rss와 동일. → 재실행 결과 **신규 164 = 오리지널 29 + 커버 135 · namedup 403**(상세 [done.md](done.md) 세션 16).
+파이프라인·렌더 1차·TF-IDF 변별력 가중·가타카나 음차화·감성 데이터·라이브 머지는 **완료**(→ done 세션 17). 재생성 = `python tools/wordcloud/build_keywords.py`(멱등) → `python build.py`.
 
-**✅ (1-a) 오리지널 29곡 추가 완료** → 상세 [done.md](done.md) 세션 16. `tools/collect/insert_backfill.py`(New Singles 삽입·`tools/curate/invalid_url.csv` 가드, dry-run→loss-0→`--apply`, 멱등): 29 추가 + KR 지역락 3 삭제 = **순증 26**. `CiRCLE THANKS MUSiC♪`→VA 새 블록, `NO GIRL NO CRY (Poppin'Party Ver.)`→original 취급.
+사용자 실사용 피드백 기반 남은 4건:
 
-**⬜ 남은 것**
-- **(1-b) 커버 135개**: Covers 카탈로그 확장(numbering=`Cover`/album=`Covers`). 양 많아 **별도 배치로 보류**(사용자 보류 동의 대기). 이게 new_idea #3의 'A(Topic 백필)'에 해당. 그래도 빠지는 '유튜브 한정 커버'는 B(공식채널 バンドリちゃんねる☆ 수집)인데 노이즈·밴드배정 난점 → 후순위.
-- **(1-c) namedup 403**: url을 Topic 음원으로 교체하는 url 품질 개선 — 별도·후순위.
-- 대상 밴드: Topic 채널 보유 12밴드. various_artists(Topic 없음)·ikka_dumb_rock·millsage(업로드 1개)는 사실상 제외.
+- **(A) yaml `ko` 검수**: `wordcloud/<band>.yaml`의 정렬/MT 초안 오역·노이즈 수정. **`# 기계번역 초안` 주석이 1순위 점검 대상.** (C와 직결)
+- **(B) 가독성**: 키워드 과밀 → 표시 개수 60→~30-40, `gridSize`·여백·폰트 하한 ↑. (D와 연동 — 영역 넓히면 자연 해소)
+- **(C) 무의미 키워드 + 변별력 가중**(`한·충성·텐` 등 일반·노이즈어): TF-IDF는 1차 적용됨 → 잔여는 **불용어 확장 + yaml 큐레이션(weight 0/삭제) + OVERRIDE 사전**으로. 잔여 노이즈 3종 = ⓐ영어외래어 음차(챤스→찬스) ⓑ의미불명 단편(시후·켄, align 오정렬·df=1) ⓒ문맥/극성 손실. **워드클라우드 핵심 개선 방향.**
+- **(D) 배치 재결정** ⚠️ **사용자 결정 필요**: 우패널 탭이 좁아 워드클라우드에 부적합. 후보 = 유튜브 프레임 가로 2분할(아래=클라우드) / 전용 모달 / 하단 넓은 영역. 가독성(B)과 직결.
 
-### 2. 밴드 메타패널 + 밴드 워드클라우드 (new_idea #1, '밴드 중심'으로 전환)
-위치: **우패널 3번째 탭** `[밴드 정보 | 히스토그램 | 히트맵]`. **그리드 미변경**(리스크 최소). 곡 클릭 시 밴드정보 탭 자동 활성화. 가독성 나쁘면 롤백 → 원안(유튜브 프레임 가로분할).
-- **곡 단위 메타(곡 길이·곡 장르·수록 자켓)는 반려** — 수집/관리 부담. 메타패널은 밴드 정보로 한정.
-- **밴드소개**: 공식 소개문/플레이버 텍스트(읽는 글).
-- **밴드 워드클라우드**: 밴드별 조회수 TOP10 곡 가사 → 키워드 빈도 → 밴드 개성/테마 시각화.
-  - **가사는 사용자가 직접 복붙 제공**(크롤링 안 함 → 수집 저작권 회피). **원문 미보관** — 빌드타임에 키워드/빈도만 산출하고 원문 .md 삭제.
-  - **처리(결정 2026-06-26 = ②안)**: 일어 원문 **명사 추출(fugashi+unidic-lite)** → 한국어 번역 후 렌더.
-  - **산출물 = `wordcloud/<band>.yaml`(커밋·사용자 편집 가능)**: 기계번역은 *초안*일 뿐, **공식 번역이 있으면 맥락·의도가 우수하므로 사용자가 yaml의 `ko`/`weight`를 직접 덮어씀**(번역기보다 우선). 스키마(안): `keywords: [{jp: 원문, ko: 번역, weight: 빈도}]`. 원문 가사 텍스트는 미보관(단어 단위 키워드만 보관 → 저작권 회피 유지).
-  - 렌더 라이브러리(wordcloud2.js 등)·후렴 반복 빈도 보정(log 압축 등)은 착수 시 결정.
-- **🔄 부분완료 — 키워드 추출 파이프라인 + 렌더 1차(`feature/emoi-cloud`, 2026-06-27)**. `tools/wordcloud/`(README 참조). 렌더는 1차 구현·검증 완료, **품질 보완 필요**(아래 2-c).
-  - **✅ 완료**
-    - `lyrics_parser.py`(줄 문자종 분류로 jp/음차/번안 트리플렛 + 곡 메타 파싱) + `build_keywords.py`(fugashi 명사추출→빈도, **커버 제외**, ko 채움) → `wordcloud/<band>.yaml` **10밴드 전부 생성**. 가사도 10밴드 TOP10 전곡 작성 완료(빈 곡 0).
-    - **ko 결정(사용자 지시)**: 가사의 **한글 번안을 우선 활용**(kiwipiepy로 번안문 명사 추출 + Dice 통계 단어정렬, 정렬률 ~85–90%) → 실패분만 **기계번역**(deep-translator, `# 기계번역 초안` 주석) → 빈칸 0. 커버는 일어만 있어도 패스(번역 안 함).
-    - **필터**: 형식명사·영어 가사조각·단일 가나·한국어 감탄사 노이즈 컷, 외래어 lemma `-romaji` 접미 제거, 기본 `--min-weight 2`(단발성 컷). 산출 키워드 71~174/밴드.
-    - song_count(커버·빈 곡 제외): afterglow 7, HHW 7, pastel 6, poppin 9, 나머지 10.
-    - 의존성 4종(fugashi·unidic-lite·kiwipiepy·deep-translator) → `tools/wordcloud/requirements.txt`. 빌드타임 전용(정적 사이트 미포함).
-    - **원문 .md는 삭제하지 않고 로컬 보관**(저작권은 `.gitignore` 비커밋으로 충족 + 재생성에 필요). yaml엔 단어 단위 키워드만 → 원문 미보관 원칙 유지.
-  - **⬜ 남은 것**
-    - **(2-a) yaml ko 사용자 검수**: 정렬/MT 초안의 오역·노이즈(특히 HHW 가타카나 의성어, 저빈도 weight 2 오결합) 수정. `# 기계번역 초안` 주석이 우선 점검 대상. (2-c와 직결.)
-  - **🔄 (2-b) 렌더 1차 구현 완료(2026-06-27)** — `build.py`가 `wordcloud/*.yaml`→`WORDCLOUD_DATA` 주입, 우패널 **3번째 탭 "밴드 정보"**에 `static/js/wordcloud2.min.js`(벤더링)로 렌더. `renderWordcloud()`(script.js): 현재 밴드 따라감(ALL=전체 병합), ko 표시, `心·気→마음` 동일 번역어 빈도 합산, 상위 60, **sqrt 폰트 압축**, 가로 고정, 테마 색. 헤드리스 Chrome 스크린샷으로 렌더 검증.
-    - HANDOFF 원안의 '곡 클릭 시 탭 자동 활성화'는 **의도적으로 미적용**(랭킹 중 산만함 회피, 밴드 선택을 따라감). jp 원문 툴팁도 v1 생략.
-  - **⬜ (2-c) 렌더 품질 보완 — 사용자 실사용 피드백(2026-06-27)**. 우선순위 높음.
-    1. ✅ **빈 메시지(`이 밴드의 가사 키워드가 아직 없어요.`)가 클라우드 렌더 후에도 안 사라짐** → 수정 완료(CSS `.wc-empty[hidden]{display:none}`; author `display:flex`가 `hidden`을 덮던 문제). 키워드 없는 밴드에서만 표시됨을 스크린샷 확인.
-    2. ⬜ **키워드가 너무 촘촘 → 가독성 저하**: 표시 개수 축소(60→~30-40)·`gridSize`/여백 증가·폰트 하한 상향. **4번(배치)와 연동** — 넓은 영역 확보 시 자연 해소.
-    3. ⬜ **무의미 키워드 혼입**(예: `한·충성·개천벽지·앞·방정식`, HHW `텐`): 밴드 성격과 무관한 일반·노이즈어. 방안 ⓐ 불용어 확장(위치·일반명사·가타카나 단편) ⓑ **변별력 가중(아래 5번)** ⓒ 사용자 yaml 큐레이션(weight 0/삭제). 5번과 한 축.
-    4. ⬜ **우패널 탭이 좁아 워드클라우드에 부적합**: 배치 재고. 후보 = 유튜브 프레임 영역 가로 2분할(아래=클라우드) / 전용 모달 / 하단 넓은 영역. **사용자와 배치 결정 필요**.
-    5. ⬜ **폰트크기(=등장빈도)가 밴드 성격과 항상 일치하지 않음**: 후렴 반복으로 빈도만 큰 무의미어(텐 등)는 과대, 저빈도라도 변별력 높은 단어는 과소. → **빈도 대신/병행해 변별력 기반 가중**(TF-IDF류: 전 밴드 공통어 감점, 그 밴드 특징어 가점). 3번과 동일 축 — **워드클라우드의 핵심 개선 방향**. `build_keywords.py`에 변별력 점수 추가 또는 렌더 단계 재가중 검토.
-  - 재생성: 가사 수정 시 `python tools/wordcloud/build_keywords.py`(멱등) → `python build.py`. mygo `春日影` 2버전은 1개만 채워 빈 곡 스킵으로 자동 dedup.
-- **파일 규칙(세션 간 공유)**: 빈 템플릿은 **`assets/lyrics/<band>_template.md`로 커밋**(저작권 가사 0글자 → 추적 허용, `.gitignore` 예외). 작업 시 **이 템플릿에 가사를 채우고 `_template`을 뗀 `<band>.md`로 저장**해 활용 — `<band>.md`는 `.gitignore`로 추적 안 됨(가사 비커밋 유지). 다른 세션은 `git pull`로 템플릿만 받으면 됨(.env API 키만 별도). ⚠️ 향후 `band_top10.py`로 템플릿 재생성 시 출력명을 `_template.md`로 맞출 것.
+> 참고: 가사 파일 규칙 — 빈 템플릿 `assets/lyrics/<band>_template.md`만 커밋, 채운 `<band>.md`는 `.gitignore`(가사 비커밋). 다른 세션은 `git pull`로 템플릿만 받고 `.env`(`YOUTUBE_API_KEY`)는 별도. 상세 done 세션 17.
 
-### 3. 키워드 의미공간 2D 클러스터 (전 밴드 1장, global)
-2번 워드클라우드의 **키워드를 재활용** → **고유 키워드=점**, 단어 임베딩(다국어)을 2D 투영(UMAP) 산점도. **오디오/BPM 불필요.** (구 원안 '곡 단위' 클러스터는 흥미 컨텐츠성 조사 필요로 [idea/260625.md](idea/260625.md) '조사 필요'로 환원 — 키워드 단위와 별개 산출물.)
-- **단위 = 고유 키워드 1개당 점 1개**. 그 점에 그 단어를 쓴 **밴드 아이콘들을 미니 배지로** 표시(여러 밴드 공유어 = 다중 아이콘 점 = 밴드 간 어휘 교집합 / 단일 밴드어 = 밴드 개성). 점 크기 = 전체 빈도(s=3 수준 소형). → 동일 키워드가 좌표상 겹치는 문제를 *통합 점*으로 해소.
-- **라벨 겹침**: 빈도 상위 N개만 상시 라벨 + 충돌회피 배치, 나머지는 **호버 시 표시**. 줌/팬 시 라벨 추가 노출.
+---
+
+## 2. 키워드 의미공간 2D 클러스터 (전 밴드 1장, global) — 미착수
+
+1번 워드클라우드의 **키워드를 재활용** → **고유 키워드=점**, 다국어 단어 임베딩을 2D 투영(UMAP) 산점도. 오디오/BPM 불필요.
+
+- **단위 = 고유 키워드 1개당 점 1개.** 그 점에 쓴 밴드 아이콘을 미니 배지로 표시(공유어=다중 아이콘=어휘 교집합 / 단일밴드어=개성). 점 크기 = 전체 빈도.
+- **라벨 겹침**: 빈도 상위 N개만 상시 라벨 + 충돌회피, 나머지는 호버·줌 시 노출.
 - **호버 UX**: 점 호버 → 툴팁(키워드·쓰는 밴드·밴드별 빈도). 밴드 아이콘 호버 → 그 밴드 키워드만 하이라이트(나머지 디밍).
-- **게시 위치(고려중)**: **유튜브 프레임 영역 가로 2분할 — 위=유튜브 플레이어, 아래=이 클러스터.** 전 밴드 상시 노출(ambient). ⚠️ 플레이어가 작아지는 트레이드오프 + 모바일(유튜브 상단 배치) 레이아웃 검토 필요. 대안: 전용 모달 / 우패널 4번째 탭.
+- **감성/무드 축**: done 세션 17에서 보존한 감성 데이터(긍↔부정) + 진지성(진지↔유쾌) 다차원 벡터를 색·축으로 활용 가능.
+- **게시 위치(고려중)**: 유튜브 프레임 가로 2분할(위=플레이어, 아래=클러스터) — 1번 D와 함께 결정 / 대안: 전용 모달, 우패널 탭. ⚠️ 모바일 레이아웃 검토.
 - **렌더(안)**: 호버·줌·아이콘 symbol 필요 → ECharts scatter 유력.
-- **한계**: 단어 임베딩 2D 투영은 거리 왜곡 있어 **정성 해석용**. 키워드 표본은 TOP10 가사 한정.
+- **한계**: 2D 투영은 거리 왜곡 있어 정성 해석용. 표본은 TOP10 가사 한정.
+
+**밴드 퍼스널 컬러**(워드클라우드·클러스터 색, 확정):
+
+| 밴드 | 색 | 밴드 | 색 |
+|------|------|------|------|
+| poppin_party | `#ff3377` | morfonica | `#33AAFF` |
+| afterglow | `#ee3344` | raise_a_suilen | `#33CCCC` |
+| pastel_palettes | `#33ddaa` | mygo | `#0088BB` |
+| roselia | `#3344aa` | ave_mujica | `#881144` |
+| hello_happy_world | `#ffdd00` | mugendai_mutype | `#ff7788` (+보조 `#2288dd` 20% 그라데이션) |
+| millsage | `#AA22EE` | ikka_dump_rock | `#FFAA33` |
 
 ---
 
-> ⚠️ **진행률 링(done 세션 11)에서 보류된 열린 결정**: 70% Green은 **링 색상일 뿐**이고, "70% 이상만 최애밴드 표시 자격" **하드게이트는 미도입**. 현 최애밴드는 스코어링 수축(`w(n)`)으로만 선정. 게이트 도입 여부는 별도 결정 사안(ux-02.md #2 "최애밴드 표시 자격 조건"과 연결).
+## 보류 · 백로그
 
-> ℹ️ **youtube_rss 자동화 운영 메모**: ① CI에선 길이 스크랩이 막혀(`length_s=null`, 데이터센터 IP consent wall) **길이필터 비활성·`variant_tag`만 작동** → 데이터 정합성 검수(done 세션 14)의 `verify_links` oEmbed/길이 로직과 공유해 보강 가능. ② `tools/rss_seen.json`(폐기 프로토타입 산출물) untracked 잔존 → 삭제 가능. ③ Phase 2(고신뢰 auto-merge)·Phase 1.5(build+deploy 자동)는 precision 축적 후 검토. 상세는 done.md 세션 13.
+### (보류) 백필 1-c namedup 403
+- **1-c namedup 403**: 기존 곡의 url을 Topic 음원으로 교체하는 품질 개선(새 곡 아님). 후순위.
+- (✅ **1-b 커버 135곡은 완료** — done 세션 18: `insert_backfill.py --cover`로 135 삽입 − KR 지역락 21 제거 = **+114**.)
+
+### (보류) 진행도 Save/Load (ux-02.md #4) — 리스크 높음
+내 진행을 json 백업/공유. Load 시 Mine/Others 선택. ⚠️ **Load = 기존 진행 덮어쓰기 → 손실 위험.** 로드 전 자동 백업·복구 경로 선설계 필수. 디씨 첨부가 헤비/금기면 반려 가능.
+- 직렬화 범위에 코멘트(`bandori-song-comments-v1`)를 `ranks`와 함께 포함할지 확정 필요.
+
+### (백로그) youtube_rss 자동화 후속
+- **Phase 2**(고신뢰 auto-merge) · **Phase 1.5**(build+deploy 자동): precision 축적 후 검토. 상세 done 세션 13.
+- CI에선 길이 스크랩 막힘(`length_s=null`, consent wall) → 길이필터 비활성·`variant_tag`만 작동. `verify_links` oEmbed/길이 로직과 공유해 보강 가능.
+- `tools/rss_seen.json`·`tools/rss_inbox.csv`·`tools/verify_cache.json`(옛 프로토타입 untracked 잔재) 삭제 가능.
 
 ---
 
-### (보류) 진행도 Save/Load (ux-02.md #4) — 난이도 중~높 · 리스크 높음
-내 진행상황을 **json으로 백업/공유**. Load 시 즉시 로딩 아니라 **Mine/Others 선택**(Mine=내 것 즉시 로드, Others=타인 것 로드 대화창). 내 진행은 항상 백업. 공유는 디씨 등 커뮤니티 첨부 상정.
-- ⚠️ **Load = 기존 진행 덮어쓰기 → 데이터 손실 위험**. 로드 전 현재 진행 자동 백업·복구 경로 선설계 필수.
-- 후순위: 디씨 json 첨부가 금기/헤비하면 반려 가능. (코멘트는 별도 키 `bandori-song-comments-v1`로 구현됨 → Save/Load 직렬화 범위에 `ranks`와 함께 코멘트 포함 여부 확정 필요.)
+## 열린 결정
 
-### (보류) 한국 지역락 노래 대응 (ux-02.md #5) — 난이도 높(불확실) · 리스크 중
-일부 곡이 한국 지역락일 수 있음 → 대응책 필요.
-- 미정: 지역락 **감지 방법**(클라이언트 판별 난해), **대체 링크/표기** 정책. 방안 구상부터 필요. `verify_links` oEmbed 점검 로직 일부 공유 가능.
-- **감지는 해결됨**: `tools/curate/check_embeddable.py`(Data API regionRestriction + 한국 IP watch playabilityStatus 2신호)로 KR 지역락 확정 판정 가능. 신규 백필 전용 점검은 `tools/collect/new_songs.csv` 대상으로 동일 로직 재사용.
-- **정책 결정(2026-06-29)**: **지역락 = 법적 이슈라 대체 불가 → 앱 데이터(`data/*.yaml`)에서는 삭제하되, 곡 정보는 `tools/curate/invalid_url.csv`에 보존**(기록 유지). 대체 음원이 생기면 그때 재등록.
-- **현황(보류 곡)**: 세션 16 백필에서 KR 지역락 **3곡 삭제·보존** — `tools/curate/invalid_url.csv`의 `DEAD HEAT BEAT`/`Our Carol`/`Swear`(modified_url 공란 = 대체 음원 대기, 채우면 `insert_backfill.py`가 재등록). 상세 [done.md](done.md) 세션 16. (별개: `tools/curate/fix_url.csv`엔 대체 URL 확보한 지역락 7곡 apply 대기.)
+- **진행률 링 70% 하드게이트**(done 세션 11): 70% Green은 **링 색상일 뿐**, "70%↑만 최애밴드 자격" 하드게이트는 미도입. 현 최애밴드는 스코어링 수축(`w(n)`)으로만 선정. 게이트 도입 여부는 별도 결정(ux-02.md #2 "최애밴드 표시 자격").
+- **워드클라우드 배치**(1-D): 사용자 결정 필요.
+
+---
+
+## 지역락 — 정책 확립됨 (TODO 아님, 참고)
+
+감지·정책 모두 해결됨(done 세션 15·16). 신규 검수 시 절차만 재사용:
+- **감지**: `tools/curate/check_embeddable.py`(Data API `regionRestriction` + 한국 IP `playabilityStatus` 2신호). 신규 백필은 `tools/collect/new_songs.csv` 대상으로 동일 로직 재사용.
+- **정책(2026-06-29)**: 지역락 = 법적 이슈·대체 불가 → 앱 데이터(`data/*.yaml`)에서 삭제, 곡 정보는 `tools/curate/invalid_url.csv`에 보존(가드: 그 vid는 재실행으로 부활 안 함).
+- **최종 parked 4곡**(`invalid_url.csv` modified_url 공란 = 끝까지 지역락): poppin `千本桜` · RAS `DAYBREAK FRONTLINE`·`DEAD HEAT BEAT` · roselia `Our Carol`. (나머지 지역락 20곡은 사용자가 찾은 대체 음원으로 재등록 완료 — done 세션 19.)
+- 🔎 **`tools/curate/region_blocked.csv`** = 위 4곡 기록 워크시트. 대체 음원 찾으면 `url` 칸 채워 `insert_backfill.py --cover`로 재등록(블락 vid는 invalid_url.csv 가드로 충돌 없음). ⚠️ 대체 URL은 **제목 대조 검증 필수**(세션 19에서 곡 오입력 1건 적발).

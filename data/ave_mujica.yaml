@@ -99,3 +99,18 @@
     - track_number: '2026-06-16'
       name: '碧い瞳の中に'
       url: https://youtu.be/bLOb7kC9Jns
+
+- band: 'ave_mujica'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: '2024-12-17'
+      name: '堕天 (Cover)'
+      url: https://youtu.be/OLb0YQJfos0
+    - track_number: '2024-12-17'
+      name: 'KINGS (Cover)'
+      url: https://youtu.be/NI1cd7_soy8
+    - track_number: '2024-12-17'
+      name: '暗黒天国 (Cover)'
+      url: https://youtu.be/HHxaj24Rx0I
