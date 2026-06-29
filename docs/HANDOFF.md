@@ -4,6 +4,13 @@
 
 마지막 갱신: **2026-06-30** — 백필 1-b 커버 + 지역락 대체 재등록(done 세션 18·19, 화면 660곡) · handoff 재작성(완료분 done 17 이관).
 
+> 🖥️ **다음 작업은 다른 로컬·다른 세션에서 진행** — 시작 전 체크:
+> 1. `git pull origin main`(현재 라이브 = `6a9b473` · 660곡). 작업은 **새 feature 브랜치**에서 시작.
+> 2. `.env`의 `YOUTUBE_API_KEY`는 **장치별·비커밋**(.gitignore) — 백필/지역락 점검 시 재추가 필요(없으면 `insert_backfill.py`·`check_embeddable.py` 즉시 중단).
+> 3. `npm test`(=`node --test`)용 **node 설치 확인** — 직전 장치엔 없어 미실행했음.
+> 4. 워드클라우드 가사 원문 `assets/lyrics/<band>.md`는 **로컬 전용(gitignore)** — 커밋된 `wordcloud/<band>.yaml`로 2-c 검수·렌더는 가능하나, `build_keywords.py` **재생성은 원문 .md 필요**(새 장치엔 없음 → 가사 재공급 or 기존 yaml만 편집).
+> 5. 로컬 브랜치(2026-06-30 정리 후): `main` + 백업 3(`backup/main-20260620·22·30`) + `feature/ux-02-opt-a`(옵션A 유일본, 미머지·원격없음 — 삭제 금지).
+
 ---
 
 ## 현황
