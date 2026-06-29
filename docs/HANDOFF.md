@@ -5,6 +5,8 @@
 
 마지막 갱신: **2026-06-29 세션 16 — 백필 1-a 완료**(오리지널 29 추가·KR 지역락 3 삭제 = 순증 26 · 데이터 **543곡** · 도구 `insert_backfill.py`). 상세 [done.md](done.md) 세션 16. 남은 건 커버 1-b·namedup 1-c(보류) · #2 워드클라우드 · #3 클러스터. 백필 도구: `tools/collect/`(youtube_api·band_top10·backfill·insert_backfill).
 
+> ⏪ **롤백 지점 — `backup/main-20260629`** (local·origin 보존): 세션 16 + **워드클라우드 기능 전체**를 `main`에 머지(`d6f05c7`)·라이브 반영(GitHub Pages)한 **직전 main = `e062bca`**. 워드클라우드는 "렌더 동작·품질 보완 2-c 남음" 상태로 라이브 노출(사용자 승인). **문제 시 언제든 복구 가능** — `git revert -m 1 d6f05c7 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard e062bca`(+force-push).
+
 > 2026-06-29 **세션 16** (`feature/emoi-sentiment`): 백필 1-a — 오리지널 29곡 New Singles 추가(`tools/collect/insert_backfill.py`, dry-run→loss-0→`--apply`, 멱등) + 재생테스트로 KR 지역락 3곡 삭제·`tools/curate/invalid_url.csv` 보존(가드로 재실행 부활 방지·대체 url 시 재등록). **상세·정책은 [done.md](done.md) 세션 16**, 지역락은 아래 '한국 지역락 대응'. 커버 135(1-b)·namedup 403(1-c) 보류.
 
 > 2026-06-27 **세션3** (`feature/emoi-sentiment`): #2 **감성 시각화 토글 롤백**(사용자 코멘트) — 밴드정보 [차별성·감성색·감성막대·둘다] 토글 **제거하고 워드클라우드 단일로 복원**. 탭은 추후 **[워드클라우드 | 클러스터]** 로 구분 예정. **감성 데이터(senti_lexicon·build.py senti)는 보존** — 용도 전환: **감성막대(긍↔부정 벡터) + 진지성(진지↔유쾌, 4D 벡터)을 #3 2D 클러스터링에 활용 예정**. **밴드 퍼스널 컬러 확정**(워드클라우드·클러스터 색으로 활용, 아래 표). **미완 — 추후 다른 세션에서 이어감**. 상세는 memory `wordcloud_quality_plan.md`.
