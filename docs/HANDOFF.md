@@ -12,7 +12,7 @@
 - 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~19). 화면 곡수 526→**660**(+134). 끝까지 KR 지역락인 4곡만 제외.
 - 다음 본류: **#1 워드클라우드 품질 보완 → #2 키워드 2D 클러스터.**
 
-> ⏪ **롤백 지점 — `backup/main-20260629`** (local·origin 보존): 워드클라우드+백필을 main에 올린 머지 `d6f05c7`의 **직전 main = `e062bca`**. 문제 시 `git revert -m 1 d6f05c7 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard e062bca`(+force-push).
+> ⏪ **롤백 지점 — `backup/main-20260630`** (local·origin): 백필 1-b 커버를 main에 올린 머지 `162f096`의 **직전 main = `d586ffb`**. 문제 시 `git revert -m 1 162f096 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard d586ffb`(+force-push). (이전 백업 `backup/main-20260629`=`e062bca`는 워드클라우드 머지 `d6f05c7` 직전.)
 
 ---
 
