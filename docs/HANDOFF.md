@@ -2,14 +2,14 @@
 
 이 문서는 **앞으로 할 일만** 담습니다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 진행의 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-06-30** — handoff 재작성(완료분 done 세션 17 이관 · 남은 작업만 정리 · stale 메모 제거).
+마지막 갱신: **2026-06-30** — 백필 1-b 커버 +114곡(done 세션 18) · handoff 재작성(완료분 done 세션 17 이관 · 남은 작업만).
 
 ---
 
 ## 현황
 
-- 데이터 **543곡 / 13밴드**. 워드클라우드 **라이브 노출 중**(렌더 동작 OK, 품질 보완 2-c만 남음).
-- 백필 오리지널(1-a)·지역락 7곡 교체·신규 3곡 처리 **완료**(done 세션 14~17).
+- 데이터 **657 트랙 / 화면 640곡(dedup) / 13밴드**. 워드클라우드 **라이브 노출 중**(렌더 동작 OK, 품질 보완 2-c만 남음).
+- 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~18). 화면 곡수 526→**640**(+114).
 - 다음 본류: **#1 워드클라우드 품질 보완 → #2 키워드 2D 클러스터.**
 
 > ⏪ **롤백 지점 — `backup/main-20260629`** (local·origin 보존): 워드클라우드+백필을 main에 올린 머지 `d6f05c7`의 **직전 main = `e062bca`**. 문제 시 `git revert -m 1 d6f05c7 && git push origin main`(라이브 안전·권장) 또는 `git reset --hard e062bca`(+force-push).
@@ -22,7 +22,7 @@
 |----|------|--------|------|
 | 1 | 워드클라우드 품질 보완 (2-c) | 중 | 🔄 렌더는 라이브, 품질 4건 남음 |
 | 2 | 키워드 의미공간 2D 클러스터 | 중~높 | ⬜ 미착수 (1의 키워드 재활용) |
-| — | (보류) 백필 1-b 커버 135 · 1-c namedup 403 | — | 사용자 보류 동의 대기 |
+| — | (보류) 백필 1-c namedup 403 | — | url 품질 개선 · 후순위 |
 | — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(덮어쓰기) |
 | — | (백로그) youtube_rss Phase 2 / Phase 1.5 | — | precision 축적 후 |
 
@@ -72,10 +72,9 @@
 
 ## 보류 · 백로그
 
-### (보류) 백필 1-b 커버 135 · 1-c namedup 403
-`tools/collect/new_songs.csv`에 후보 정리됨(오리지널 29는 추가 완료, 커버 135 미반영). 양이 많아 **별도 배치 — 사용자 보류 동의 대기**.
-- **1-b 커버 135**: Covers 카탈로그 확장(numbering=`Cover`/album=`Covers`).
-- **1-c namedup 403**: url을 Topic 음원으로 교체하는 품질 개선. 후순위.
+### (보류) 백필 1-c namedup 403
+- **1-c namedup 403**: 기존 곡의 url을 Topic 음원으로 교체하는 품질 개선(새 곡 아님). 후순위.
+- (✅ **1-b 커버 135곡은 완료** — done 세션 18: `insert_backfill.py --cover`로 135 삽입 − KR 지역락 21 제거 = **+114**.)
 
 ### (보류) 진행도 Save/Load (ux-02.md #4) — 리스크 높음
 내 진행을 json 백업/공유. Load 시 Mine/Others 선택. ⚠️ **Load = 기존 진행 덮어쓰기 → 손실 위험.** 로드 전 자동 백업·복구 경로 선설계 필수. 디씨 첨부가 헤비/금기면 반려 가능.
@@ -99,5 +98,6 @@
 
 감지·정책 모두 해결됨(done 세션 15·16). 신규 검수 시 절차만 재사용:
 - **감지**: `tools/curate/check_embeddable.py`(Data API `regionRestriction` + 한국 IP `playabilityStatus` 2신호). 신규 백필은 `tools/collect/new_songs.csv` 대상으로 동일 로직 재사용.
-- **정책(2026-06-29)**: 지역락 = 법적 이슈·대체 불가 → 앱 데이터(`data/*.yaml`)에서 삭제, 곡 정보는 `tools/curate/invalid_url.csv`에 보존. `modified_url` 채워지면 `insert_backfill.py`가 자동 재등록(가드).
-- **현재 parked 3곡**(`invalid_url.csv`, `modified_url` 공란 = 대체 음원 대기): raise_a_suilen `DEAD HEAT BEAT` · roselia `Our Carol`·`Swear ～Night & Day～`. *지금 할 작업 없음 — 대체 url 확보 시 채우면 됨.*
+- **정책(2026-06-29)**: 지역락 = 법적 이슈·대체 불가 → 앱 데이터(`data/*.yaml`)에서 삭제, 곡 정보는 `tools/curate/invalid_url.csv`에 보존(가드: 그 vid는 재실행으로 부활 안 함).
+- **현재 parked 24곡**(`invalid_url.csv`): 기존 3곡(RAS `DEAD HEAT BEAT` · roselia `Our Carol`·`Swear ～Night & Day～`) + **커버 1-b 지역락 21곡**(7밴드 ×3).
+- 🔎 **대체 음원 찾기 워크시트 = `tools/curate/region_blocked.csv`**(new_songs.csv 형식). 블락 없는 대체 영상을 찾으면 `url` 칸에 채우면 됨 → `insert_backfill.py --cover`(또는 new_songs.csv 병합)로 재등록. 블락된 원본 vid는 invalid_url.csv 가드로 막혀 충돌 없음.

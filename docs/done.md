@@ -454,3 +454,27 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 머지 · 라이브
 - `feature/emoi-sentiment`(워드클라우드 전체 + 세션 16 백필) → **main 머지 `d6f05c7`**, GitHub Pages 라이브 반영. **롤백 지점 `backup/main-20260629`**(머지 직전 main = `e062bca`) 보존 — 복구법은 HANDOFF.
 - **밴드 퍼스널 컬러 12밴드 확정**(워드클라우드·클러스터 색): 표는 HANDOFF #2.
+
+---
+
+# 세션 18 — HANDOFF #1-b: 백필 커버 114곡 추가 (135 삽입 − KR 지역락 21 제거)
+
+`feature/backfill-1b-covers`. 보류였던 1-b 커버를 사용자 요청으로 진행 — 오리지널(세션 16)과 동일한 "삽입 → 지역락 검증 → 차단곡 제거·보존" 워크플로우.
+
+## 커버 삽입 (`insert_backfill.py --cover` 신규 모드)
+- `insert_backfill.py`에 `--cover` 모드 추가: type=cover → numbering=`Cover` / album_title=`Covers`, 곡명에 `" (Cover)"` 접미(클라이언트 커버 탭 판별 = album_title 'Covers' + 곡명 '(Cover)'). 오리지널 경로·안전장치(loss-0·present·멱등·invalid 가드) 그대로 재사용.
+- `new_songs.csv` type=cover **135곡** → 9밴드 Covers 앨범 append(발매일은 Topic 채널 `fetch_uploads` 재조회). dry-run loss-0 → `--apply`. 트랙 543→678, 중복 스킵 0.
+- 분포: poppin 22·roselia 21·pastel 21·HHW 18·afterglow 17·RAS 15·morfonica 14·mygo 4·ave 3.
+
+## 재생테스트 → KR 지역락 21곡 삭제 (보존)
+- `check_embeddable.py` 전량 점검(678트랙·고유 661 vid, 한국 IP watch + Data API 2신호): **region_blocked 21건**, 나머지 657 ok. embed_disabled/deleted/login 0.
+- 교차대조: 21건 **전부 신규 커버**(기존 데이터 0건 — 깨끗). 7밴드(afterglow·HHW·morfonica·pastel·poppin·RAS·roselia) ×3곡.
+- 정책대로 `tools/curate/invalid_url.csv`에 21곡 보존(author·blank modified_url) + `apply_fix_url.py`로 삭제(loss-0 21/21, 678→657). invalid_url.csv 3→24행, 가드로 재실행 부활 방지.
+
+## 대체 음원 워크시트 (`tools/curate/region_blocked.csv` 신규)
+- 사용자 요청: 지역락 곡은 블락 없는 대체 영상을 직접 찾을 수 있으므로 `new_songs.csv` 형식 워크시트로 별도 정리.
+- invalid_url.csv의 region_blocked 24곡(커버 21 + 기존 오리지널 3) → `region_blocked.csv`(song_name·url·type·author·note·comment). `url` 공란 = 사용자가 대체 영상 채움, `comment`에 블락된 원본 링크. 채우면 `insert_backfill.py --cover`(또는 new_songs.csv 병합)로 재등록.
+
+## 빌드·결과
+- `python build.py` 성공(밴드 13, 트랙 657, 워드클라우드 10). **화면 표시 곡수(고유 video_id dedup) 526 → 640(+114)** = 커버 135 − 지역락 21. 헤더 `n / 640곡 평가됨`.
+- ⚠️ `npm test`는 이 장치 node 미설치로 미실행(core.js 무수정 → 회귀 위험 낮음). fix_url.csv는 스크래치 출력이라 커밋 직전 원복.

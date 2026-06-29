@@ -1,6 +1,9 @@
 """
-오리지널 백필 삽입 (HANDOFF 1-a) — `new_songs.csv` 의 type=original 행을
-각 밴드 New Singles 앨범(또는 various_artists)으로 추가한다.
+백필 삽입 (HANDOFF 1-a 오리지널 / 1-b 커버) — `new_songs.csv` 의 행을
+각 밴드 앨범(또는 various_artists)으로 추가한다.
+- 기본(오리지널): type=original → numbering=Single / album_title="New Singles".
+- `--cover`(1-b 커버): type=cover → numbering=Cover / album_title="Covers",
+  곡명에 " (Cover)" 접미(클라이언트 커버 탭 판별: album_title='Covers' + 곡명 '(Cover)').
 
 - 발매일(track_number)은 Data API(`fetch_uploads`)로 video_id→published 재조회
   (백필과 동일 출처). 미확인 시 'X0' 폴백(기존 큐레이션 관행과 동일).
@@ -13,9 +16,11 @@
 - dry-run 기본(파일·데이터 미변경). `--apply` 로 기록.
 - comment 라우팅: 'various' 포함 → various_artists(etc.yaml) 로 이동.
 
-  python tools/collect/insert_backfill.py            # dry-run (미리보기)
-  python tools/collect/insert_backfill.py --apply    # 실제 기록
-  python tools/collect/insert_backfill.py roselia    # 특정 밴드만(공백 다수)
+  python tools/collect/insert_backfill.py                  # 오리지널 dry-run
+  python tools/collect/insert_backfill.py --apply          # 오리지널 기록
+  python tools/collect/insert_backfill.py --cover          # 커버 dry-run
+  python tools/collect/insert_backfill.py --cover --apply  # 커버 기록
+  python tools/collect/insert_backfill.py roselia          # 특정 밴드만(공백 다수)
 """
 import csv
 import sys
@@ -102,7 +107,12 @@ def load_invalid():
 
 def main():
     apply = "--apply" in sys.argv
+    cover = "--cover" in sys.argv
     only = {a for a in sys.argv[1:] if not a.startswith("-")}
+
+    want_type = "cover" if cover else "original"
+    numbering = "Cover" if cover else NUMBERING
+    album = "Covers" if cover else ALBUM
 
     key = load_env_key()
     if not key:
@@ -112,8 +122,8 @@ def main():
         print(f"‼️ {CSV} 없음."); sys.exit(1)
 
     rows = [r for r in csv.DictReader(CSV.open(encoding="utf-8-sig"))
-            if r["type"] == "original" and (not only or r["author"] in only)]
-    print(f"오리지널 {len(rows)}곡 대상 (커버 제외)\n")
+            if r["type"] == want_type and (not only or r["author"] in only)]
+    print(f"{want_type} {len(rows)}곡 대상 ({'오리지널 제외' if cover else '커버 제외'})\n")
 
     # 발매일 매핑 — source 채널(author)별 업로드 전체 조회(백필과 동일 출처)
     authors = sorted({r["author"] for r in rows})
@@ -170,10 +180,11 @@ def main():
         print(f"=== {path.name} ===")
         items = by_file[path]
         for (target, r, vid, date, use_url, note) in items:
+            disp_name = r["song_name"] + " (Cover)" if cover else r["song_name"]
             text, action = insert_track_strict(
-                text, target, NUMBERING, ALBUM, FALLBACK_IMG, date, r["song_name"], use_url)
+                text, target, numbering, album, FALLBACK_IMG, date, disp_name, use_url)
             tgt = f" → {target}" if target != r["author"] else ""
-            print(f"   [{action:8}] {date:10} {r['song_name']}{tgt}{note}  ({vid})")
+            print(f"   [{action:8}] {date:10} {disp_name}{tgt}{note}  ({vid})")
             total += 1
 
         after = yaml.safe_load(text)
