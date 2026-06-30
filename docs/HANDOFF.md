@@ -19,7 +19,7 @@
 - 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~19). 화면 곡수 526→**660**(+134). 끝까지 KR 지역락인 4곡만 제외.
 - 다음 본류: **#1은 (D) 배치 결정만 남음 → #2 키워드 2D 클러스터.**
 
-> ⏪ **롤백 지점 — `backup/main-20260630-emoicloud`** (local·origin) = emoi-cloud(워드클라우드 색·품질) 머지 **직전 main = `cebbce4`**. 문제 시 `git reset --hard cebbce4`(+force-push) 또는 `git revert -m 1 <최신 머지커밋> && git push origin main`(라이브 안전·권장). (이전 백업 `backup/main-20260630`=`d586ffb`는 1-b 커버 머지 직전.)
+> ⏪ **롤백 지점 — `backup/main-20260630-emoicloud`** (local·origin) = emoi-cloud(워드클라우드 색·품질) 머지 **직전 main = `cebbce4`**. 문제 시 `git reset --hard cebbce4`(+force-push) 또는 `git revert -m 1 961ab93 && git push origin main`(라이브 안전·권장). (이전 백업 `backup/main-20260630`=`d586ffb`는 1-b 커버 머지 직전.)
 
 ---
 
