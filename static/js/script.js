@@ -1141,12 +1141,12 @@ function renderWordcloud() {
         ? `전 밴드 키워드 ${list.length}개 병합`
         : `조회수 TOP10 가사 ${songCount}곡 · 키워드 ${list.length}개`;
 
-    // 상위 60개만(좁은 패널 가독성) + 후렴 반복 완화를 위해 sqrt로 폰트 압축
-    const top = list.slice(0, 60);
+    // 상위 40개만(좁은 패널 가독성) + 후렴 반복 완화를 위해 sqrt로 폰트 압축
+    const top = list.slice(0, 40);
     const sq = v => Math.sqrt(v);
     const maxW = sq(top[0][1]), minW = sq(top[top.length - 1][1]);
     const span = Math.max(1e-6, maxW - minW);
-    const FMIN = Math.max(12, Math.round(h / 18)), FMAX = Math.round(h / 5);
+    const FMIN = Math.max(15, Math.round(h / 15)), FMAX = Math.round(h / 5);
     const items = top.map(([text, wt]) => {
         const t = (sq(wt) - minW) / span;          // 0..1
         return [text, Math.round(FMIN + t * (FMAX - FMIN))];
@@ -1164,7 +1164,7 @@ function renderWordcloud() {
         },
         backgroundColor: 'transparent',
         rotateRatio: 0,                             // 한글 가독성 — 가로 고정
-        gridSize: Math.max(4, Math.round(w / 64)),
+        gridSize: Math.max(8, Math.round(w / 48)),  // 단어 간 여백 확대(과밀 완화)
         drawOutOfBound: false,
         shrinkToFit: true,
         clearCanvas: true,
