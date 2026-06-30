@@ -1395,9 +1395,7 @@ function switchTab(tab) {
     document.getElementById('hist-panel').classList.toggle('active', tab === 'hist');
     document.getElementById('heat-panel').classList.toggle('active', tab === 'heat');
     document.getElementById('band-panel').classList.toggle('active', tab === 'band');
-    document.getElementById('cluster-panel').classList.toggle('active', tab === 'cluster');
     if (tab === 'band') renderWordcloud();
-    if (tab === 'cluster') renderCluster();
 }
 
 /** 곡 종류 탭 전환 (ALL/Ori/Cover) */
@@ -1443,6 +1441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProgress();
     renderStatChips();
     switchTab('hist');     // 초기 탭 활성화(패널 표시)
+    renderCluster();       // 음원맵: 우패널 탭에서 분리되어 유튜브 하단 상시 표시(밴드 무관 전역 뷰)
     initPressHandlers();
 
     document.getElementById('copy-btn').addEventListener('click', copyLinks);

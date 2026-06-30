@@ -410,12 +410,35 @@ header h1 {
   background: #000;
   overflow: hidden;
 }
+/* 유튜브 컬럼 세로 2분할: 위=유튜브(yt-top) / 아래=음원맵(audiomap-area), 각 ~50% */
+.yt-top {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 .yt-stage {
   position: relative;
   flex: 1;
   min-height: 0;
   background: #000;
 }
+.audiomap-area {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 8px 10px 10px;
+  overflow: hidden;
+}
+.am-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-shrink: 0; }
+.am-title { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+.am-sub { font-size: 0.6rem; color: var(--text-sub); }
+.audiomap-area .cluster-wrap { min-height: 0; }
+.audiomap-area #cluster-chart { min-height: 0; }
 #youtube-player, #youtube-player iframe {
   position: absolute;
   inset: 0;
@@ -543,12 +566,12 @@ header h1 {
 /* 음원맵 유사곡 목록(곡 클릭 시 CLAP 유사곡) */
 .cl-similar { margin-top: 8px; font-size: 0.64rem; min-height: 18px; }
 .cl-similar .cl-hint { color: var(--text-sub); opacity: 0.75; }
-.cl-similar .cl-q { color: var(--text-main); margin-bottom: 4px; }
+.cl-similar .cl-q { color: var(--text); margin-bottom: 4px; }
 .cl-similar .cl-q .cl-bd { color: var(--text-sub); }
 .cl-similar ul { list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; }
 .cl-similar li { display: flex; align-items: center; gap: 5px;
-  color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cl-similar .cl-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; }
 .cl-similar .cl-bd { color: var(--text-sub); font-size: 0.58rem; }
 .wc-empty {
@@ -859,7 +882,9 @@ header h1 {
     flex-direction: column;
   }
   .youtube-panel { order: -1; } /* 모바일은 유튜브를 리스트 위에 */
+  .yt-top { flex: none; }
   .yt-stage { height: 200px; flex: none; }
+  .audiomap-area { flex: none; height: 320px; }   /* 모바일: 음원맵 고정 높이로 스택 */
   .song-list-panel { border-bottom: none; }
   .song-list { max-height: 60vh; }
 

@@ -57,19 +57,34 @@
             <div class="song-list" id="song-list"></div>
         </section>
 
-        <!-- C: YOUTUBE -->
+        <!-- C: YOUTUBE (위) + 음원맵 (아래) — 유튜브 컬럼 세로 2분할 -->
         <section class="youtube-panel">
-            <div class="yt-stage">
-                <div id="youtube-player"></div>
-                <div class="yt-placeholder" id="yt-placeholder">
-                    <div class="yt-icon">▶</div>
-                    <div class="yt-label">곡을 짧게 누르면 여기서 재생돼요</div>
-                    <div class="yt-hint">길게 누르면 랭크를 매길 수 있어요</div>
+            <div class="yt-top">
+                <div class="yt-stage">
+                    <div id="youtube-player"></div>
+                    <div class="yt-placeholder" id="yt-placeholder">
+                        <div class="yt-icon">▶</div>
+                        <div class="yt-label">곡을 짧게 누르면 여기서 재생돼요</div>
+                        <div class="yt-hint">길게 누르면 랭크를 매길 수 있어요</div>
+                    </div>
+                </div>
+                <div class="yt-now-playing" id="yt-now-playing" hidden>
+                    <div class="yt-dot"></div>
+                    <span id="yt-song-name"></span>
                 </div>
             </div>
-            <div class="yt-now-playing" id="yt-now-playing" hidden>
-                <div class="yt-dot"></div>
-                <span id="yt-song-name"></span>
+
+            <!-- F2: BAND AUDIO MAP — 상시 표시(밴드 무관 전역 뷰). ECharts 2D 산점도 -->
+            <div class="audiomap-area" id="audiomap">
+                <div class="am-head">
+                    <span class="am-title">밴드 음원 지도</span>
+                    <span class="am-sub" id="cl-sub"></span>
+                </div>
+                <div class="cluster-wrap" id="cluster-wrap">
+                    <div id="cluster-chart"></div>
+                    <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
+                </div>
+                <div class="cl-similar" id="cl-similar"></div>
             </div>
         </section>
 
@@ -81,7 +96,6 @@
             <button class="tab-btn active" type="button" data-tab="hist">히스토그램</button>
             <button class="tab-btn" type="button" data-tab="heat">히트맵</button>
             <button class="tab-btn" type="button" data-tab="band">밴드 정보</button>
-            <button class="tab-btn" type="button" data-tab="cluster">음원맵</button>
         </div>
 
         <!-- D: HISTOGRAM (JS 렌더) -->
@@ -106,16 +120,6 @@
             </div>
         </div>
 
-        <!-- F2: BAND AUDIO MAP — 음악 음원 2D 산점도 (ECharts) -->
-        <div class="cluster-panel" id="cluster-panel">
-            <div class="bi-title">밴드 음원 지도</div>
-            <div class="bi-sub" id="cl-sub"></div>
-            <div class="cluster-wrap" id="cluster-wrap">
-                <div id="cluster-chart"></div>
-                <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
-            </div>
-            <div class="cl-similar" id="cl-similar"></div>
-        </div>
     </aside>
 
     <!-- BOTTOM BAR -->
