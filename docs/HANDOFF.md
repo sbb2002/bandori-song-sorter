@@ -2,7 +2,7 @@
 
 이 문서는 **앞으로 할 일만** 담습니다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 진행의 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-06-30** — #1 워드클라우드 완료(세션 20, main 머지) · **#2 키워드 2D 클러스터 1차 구현**(feature/emoi-cluster, 미머지 — 검수 + 2차 기능 남음). #1은 (D) 배치만.
+마지막 갱신: **2026-07-01** — #1 워드클라우드 완료(세션 20, main 머지) · **#2 클러스터: 키워드→음원 피벗 완료**(feature/emoi-cluster, 미머지 — 옵션1 밴드 음원 지도/옵션2 CLAP비교→librosa채택/옵션3 CLAP 유사곡 탐색기, 구현 완료·브라우저 검수+(D)배치 남음). 실험 종합 = `docs/report/cluster_experiment.md`. #1은 (D) 배치만.
 
 > 🖥️ **다음 작업은 다른 로컬·다른 세션에서 진행** — 시작 전 체크:
 > 1. `git pull origin main`(emoi-cloud 머지 반영 · 660곡). 작업은 **새 feature 브랜치**에서 시작.
@@ -28,7 +28,7 @@
 | 순 | 작업 | 난이도 | 상태 |
 |----|------|--------|------|
 | 1 | 워드클라우드 품질 (2-c) A·B·C + 색상 | 중 | ✅ 완료(세션 20) — (D) 배치만 남음 |
-| 2 | 키워드 의미공간 2D 클러스터 | 중~높 | 🔄 1차 완료(feature/emoi-cluster, 미머지) — 검수 + 2차 기능 남음 |
+| 2 | 클러스터(키워드→**음원** 피벗) | 중~높 | ✅ 옵션1·2·3 구현(feature/emoi-cluster, 미머지) — 브라우저 검수+(D)배치 남음. report 참조 |
 | — | (보류) 백필 1-c namedup 403 | — | url 품질 개선 · 후순위 |
 | — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(덮어쓰기) |
 | — | (백로그) youtube_rss Phase 2 / Phase 1.5 | — | precision 축적 후 |
@@ -50,25 +50,24 @@
 
 ---
 
-## 2. 키워드 의미공간 2D 클러스터 — 1차 완료 (검수 + 2차 기능 남음)
+## 2. 클러스터 — **키워드→음원 피벗 완료** (옵션 1·2·3 구현, 미머지)
 
-워드클라우드 **키워드를 재활용** → **고유 키워드=점**(곡 아님), 일본어 원문을 다국어 임베딩(sentence-transformers `paraphrase-multilingual-MiniLM`) → UMAP 2D 산점도. **`feature/emoi-cluster` 브랜치(미머지)**.
+> ⚠️ **방향 전면 변경**(2026-07-01). 키워드/문장/곡 어느 단위로도 **가사로는 밴드 군집 불가**(silhouette≈0). **음원 음악특징으로 밴드 단위 집계 시 밴드 구별됨**(LOO 분류 59%). **종합 실험 기록 = [docs/report/cluster_experiment.md](report/cluster_experiment.md)**(전 단계 수치·방법·결정), 백엔드 비교 = [report/cluster_audio_clap.md](report/cluster_audio_clap.md) + `cluster_audio_backends.png`. 구 키워드 파이프라인(`build_embeddings.py`·`keywords_2d.json`)은 **미사용 잔존**(폐기 가능).
 
-- **파이프라인**: `python tools/cluster/build_embeddings.py` → `cluster/keywords_2d.json`(고유 키워드 567 / 10밴드, 좌표 0~100 + ko·밴드별빈도·총빈도·senti). 입력은 `wordcloud/*.yaml`만(가사 원문 불필요). 의존성 `tools/cluster/requirements.txt`(sentence-transformers·umap-learn·scikit-learn, **설치 큼**). 재생성 후 `python build.py`.
-- **렌더**: `script.js` `renderCluster`(ECharts, CDN) — 점=키워드, 색=주 밴드 퍼스널 컬러, 크기=√빈도, 공유어=흰 테두리, 빈도 상위 30 상시 라벨(`LABEL_TOP`·hideOverlap), 호버 툴팁·강조, 줌/팬. 우패널 **"키워드 맵" 탭**(임시 — (D)와 함께 이동).
+- **파이프라인**: `python tools/cluster/build_audio_map.py`(= `--backend librosa --sim clap`) → `cluster/audio_map.json`(커밋). 입력 `cluster/songs_top10.csv`(TOP10×10 매니페스트, 커밋). 음원은 `data/*.yaml` url에서 **yt-dlp로 60초·48kHz 추출 → `cluster/audio_cache/`(gitignore, 저작물)**. 의존성 `tools/cluster/requirements-audio.txt` + `transformers>=5`(CLAP 내장). **로컬 빌드 전용(CI 불가)**, 산출 JSON만 커밋. 재생성 후 `python build.py`.
+- **좌표·지표**: 밴드 중심점에 PCA(2) fit → 곡·중심 한 좌표계. `audio_map.json` = `{songs:[{band,song,x,y,sim:[…]}], centroids:[{band,x,y,n}], metrics:{loo_acc,…}}`. `sim`=곡별 **CLAP 코사인** 유사곡 인덱스(소리·무드).
+- **렌더**: `script.js` `renderCluster`/`_clDraw`/`_clSimList`(ECharts) — 작은 점=곡, 큰 라벨 점=밴드 중심, 색=밴드 퍼스널 컬러. **곡 클릭 → CLAP 유사곡 연결선·강조 + `#cl-similar` 목록**. 줌/팬, 빈영역 클릭 해제. 우패널 **"음원맵" 탭**(임시 — (D)와 함께 이동).
+- **역할 분담(실측 결론)**: 밴드 **식별 지도**=librosa(LOO 59% > CLAP 45%), 곡 **유사곡**=CLAP(무드 일관 > librosa 지문매칭). 융합은 손해. 상세 report.
 
-### 🔍 지금 검수할 것 (브라우저: `python -m http.server` → 키워드 맵 탭)
-- **임베딩 배치 타당성**: 유의어가 실제로 인접하는지, 엉뚱한 군집은 없는지. 일본어 임베딩 기반이라 한국어 라벨 직관과 어긋날 수 있음. 이상하면 UMAP 파라미터(`n_neighbors`·`min_dist`) 조정 또는 모델 교체(`--model`).
-- **라벨/색/밀도**: 상위 30 라벨 수·겹침(`LABEL_TOP`), 다크 배경 10밴드 색 구분 + 공유어 흰 테두리 식별, 점 크기 식(`6 + 22·√(total/max)`).
+### 🔍 지금 검수 (브라우저: `python -m http.server` → 음원맵 탭)
+- 밴드 중심점 분리·가독성, 곡 클릭 시 유사곡 하이라이트·목록(소리/무드 납득되는지), 모바일 레이아웃. (node 미설치 장치라 `npm test` 미실행 — 다른 장치서 확인.)
 
-### ⬜ 2차 기능 (우선순위 미정 — 사용자와 결정)
-1. **밴드 아이콘 미니 배지**: 색 점 대신/위에 밴드 로고. ⚠️ 밴드 아이콘 이미지 에셋 존재 여부 먼저 확인(없으면 색 점 유지).
-2. **밴드별 하이라이트**: 특정 밴드 선택 → 그 밴드 키워드만 부각(범례/필터). 현재 호버 강조는 점 단위만.
-3. **감성 색·축**: `senti` 값을 json에 이미 보존. 색을 밴드↔감성(긍↔부정) 토글 또는 한 축을 감성으로. ⚠️ ko 검수로 `senti_lexicon.yaml` 표시텍스트 매칭이 일부 깨졌을 수 있어 점검 필요.
-4. **게시 위치 이동**: (D)와 함께 우패널 탭 → 넓은 영역(유튜브 2분할/모달). ⚠️ 모바일 레이아웃.
+### ⬜ 남은 것 (우선순위 미정)
+1. **게시 위치**: (D)와 함께 우패널 탭 → 넓은 영역. ⚠️ 모바일.
+2. **밴드 아이콘 배지 / 밴드 하이라이트 필터**(기존 2차기능). 3. 청크(10s)평균 CLAP·전곡으로 식별·유사도 동시 개선 검증(report §9).
 
 ### 한계
-2D 투영은 거리 왜곡 있어 정성 해석용. 표본은 밴드별 TOP10 가사 한정(빈도는 sqrt만, 곡 파트/반복 보정 미적용 — 본 대화 합의: 현재 불요).
+2D 투영은 정성용(정직성 지표는 고차원 LOO). 표본 밴드별 ~9곡(TOP10−지역락/실패), 60초 1구간. 동일 장르(BanG Dream)라 식별 난도 본질적으로 높음(silhouette≈0이 그 증거).
 
 **밴드 퍼스널 컬러**(✅ 워드클라우드 적용 완료 — `script.js` `BAND_COLORS`/`BAND_SUBCOLORS`; #2 클러스터에도 재사용):
 

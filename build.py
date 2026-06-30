@@ -42,10 +42,11 @@ def load_wordclouds(wc_dir="wordcloud"):
     return out
 
 
-def load_cluster(path="cluster/keywords_2d.json"):
-    """키워드 2D 임베딩 좌표(build_embeddings.py 산출). 없으면 빈 dict(클러스터 탭 비활성).
+def load_cluster(path="cluster/audio_map.json"):
+    """밴드 음원 지도 좌표(build_audio_map.py 산출). 없으면 빈 dict(맵 탭 비활성).
 
-    스키마: {model, generated, bands:[...], keywords:[{jp,ko,x,y,total,bands,senti}]}
+    스키마: {generated, backend, bands:[...], songs:[{band,song,x,y}],
+            centroids:[{band,x,y,n}], metrics:{loo_acc,knn_ratio,silhouette,...}}
     """
     if not os.path.exists(path):
         return {}
@@ -144,9 +145,9 @@ def build():
 
     total = sum(len(v) for v in songs_by_band.values())
     wc = len(wordcloud_data)
-    cl = len(cluster_data.get('keywords', []))
+    cl = len(cluster_data.get('songs', []))
     print(f"[OK] Build Success: index.html 생성 완료 "
-          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 클러스터 {cl}키워드)")
+          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 음원맵 {cl}곡)")
 
 
 if __name__ == "__main__":

@@ -81,7 +81,7 @@
             <button class="tab-btn active" type="button" data-tab="hist">히스토그램</button>
             <button class="tab-btn" type="button" data-tab="heat">히트맵</button>
             <button class="tab-btn" type="button" data-tab="band">밴드 정보</button>
-            <button class="tab-btn" type="button" data-tab="cluster">키워드 맵</button>
+            <button class="tab-btn" type="button" data-tab="cluster">음원맵</button>
         </div>
 
         <!-- D: HISTOGRAM (JS 렌더) -->
@@ -106,14 +106,15 @@
             </div>
         </div>
 
-        <!-- F2: KEYWORD CLUSTER — 2D 임베딩 산점도 (ECharts) -->
+        <!-- F2: BAND AUDIO MAP — 음악 음원 2D 산점도 (ECharts) -->
         <div class="cluster-panel" id="cluster-panel">
-            <div class="bi-title">키워드 의미 지도</div>
+            <div class="bi-title">밴드 음원 지도</div>
             <div class="bi-sub" id="cl-sub"></div>
             <div class="cluster-wrap" id="cluster-wrap">
                 <div id="cluster-chart"></div>
-                <div class="wc-empty" id="cl-empty" hidden>키워드 좌표 데이터가 아직 없어요.</div>
+                <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
             </div>
+            <div class="cl-similar" id="cl-similar"></div>
         </div>
     </aside>
 

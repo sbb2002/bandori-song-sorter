@@ -25,5 +25,11 @@ tools/curate/plb_cache.json
 assets/lyrics/*
 !assets/lyrics/*_template.md
 
+# 멀티모달 클러스터 PoC — 음원 캐시·임시 파싱 산출물(가사/음원 = 저작물, 비커밋).
+# cluster/keywords_2d.json(키워드 좌표)만 추적, 나머지 파생물은 무시.
+cluster/audio_cache/
+# 언더스코어 접두 = 임시/파생/비교본(_ffbin·_songs·_sentences·_audio_map_clap)
+cluster/_*
+
 # Secrets
 .env

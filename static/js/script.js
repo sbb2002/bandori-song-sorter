@@ -1240,13 +1240,19 @@ function renderWordcloud() {
 }
 
 // ───────────────────────────
-// 14.6 Keyword cluster (F2) — ECharts 2D 의미공간 산점도
+// 14.6 Band audio map (F2) — ECharts 음악 음원 2D 산점도 + 유사곡 탐색
 // ───────────────────────────
+// 점=곡(음악 특징 벡터), 큰 라벨 점=밴드 중심점. 색=밴드 퍼스널 컬러.
+// 가사(키워드/문장)로는 밴드가 안 갈렸으나(silhouette≈0), 음원 특징으로
+// 밴드 단위 집계 시 밴드가 구별됨(LOO 최근접-중심 분류 ~59%, 우연 10%; backend=librosa).
+// 좌표는 build_audio_map.py 가 밴드 중심에 PCA(2)를 fit 해 한 좌표계로 투영.
+// 곡 클릭 시 그 곡의 CLAP 유사곡(songs[i].sim, 소리·무드 기준)을 연결선·강조로 표시.
+// 상세 실험 기록: docs/report/cluster_experiment.md.
 
 let _clusterChart = null;
+let _clSel = null;                 // 선택된 곡 인덱스(유사곡 하이라이트). null=평상
 
-/** 키워드 2D 임베딩 산점도. 점=고유 키워드, 색=주(최다빈도) 밴드 퍼스널 컬러,
- *  크기=전체 빈도, 공유어(다밴드)는 흰 테두리. 빈도 상위 N개만 상시 라벨. */
+/** 밴드 음원 지도 진입점. 정적 베이스는 1회만 설정(줌/팬 보존), 그리기는 _clDraw 가 담당. */
 function renderCluster() {
     const el = document.getElementById('cluster-chart');
     const empty = document.getElementById('cl-empty');
@@ -1254,78 +1260,129 @@ function renderCluster() {
     if (!el) return;
 
     const data = window.CLUSTER_DATA || {};
-    const kws = data.keywords || [];
-    if (!window.echarts || kws.length === 0) {
+    const songs = data.songs || [];
+    if (!window.echarts || songs.length === 0) {
         if (empty) empty.hidden = false;
         if (subEl) subEl.textContent = '';
         return;
     }
     if (empty) empty.hidden = true;
+    const m = data.metrics || {};
     if (subEl) subEl.textContent =
-        `고유 키워드 ${kws.length}개 · ${(data.bands || []).length}밴드 · 의미공간 2D(UMAP)`;
+        `${(data.bands || []).length}밴드 · 곡 ${songs.length} · 음원 특징 2D` +
+        (m.loo_acc ? ` · 밴드 분류 ${Math.round(m.loo_acc * 100)}%`
+            + ` (우연 ${Math.round((m.chance || 0.1) * 100)}%)` : '');
 
     if (!_clusterChart) {
         _clusterChart = echarts.init(el);
         window.addEventListener('resize', () => _clusterChart && _clusterChart.resize());
-    }
-
-    const maxT = kws.reduce((m, k) => Math.max(m, k.total), 1);
-    const LABEL_TOP = 30;                  // 빈도 상위 N개만 상시 라벨(나머지는 호버)
-    const points = kws.map((k, i) => {
-        const entries = Object.entries(k.bands).sort((a, b) => b[1] - a[1]);
-        const shared = entries.length > 1;
-        return {
-            value: [k.x, k.y],
-            name: k.ko || k.jp,
-            symbolSize: 6 + 22 * Math.sqrt(k.total / maxT),
-            itemStyle: {
-                color: BAND_COLORS[entries[0][0]] || '#c084fc',
-                opacity: shared ? 0.95 : 0.8,
-                borderColor: shared ? 'rgba(255,255,255,0.85)' : 'transparent',
-                borderWidth: shared ? 1 : 0,
+        _clusterChart.setOption({                 // 정적 베이스(1회)
+            backgroundColor: 'transparent', animation: false,
+            tooltip: {
+                trigger: 'item', confine: true,
+                backgroundColor: 'rgba(20,20,30,0.95)', borderColor: '#2a2a3a',
+                textStyle: { color: '#e8e8f0', fontSize: 11 },
+                formatter: p => p.data && p.data._song
+                    ? `<b>${p.data._song}</b><br>${bandDisplay(p.data._band)}`
+                    : (p.data && p.data._n != null
+                        ? `<b>${bandDisplay(p.data._band)}</b> · ${p.data._n}곡 평균` : ''),
             },
-            label: { show: i < LABEL_TOP },
-            _kw: k, _entries: entries,
+            grid: { left: 6, right: 6, top: 6, bottom: 6 },
+            xAxis: { type: 'value', show: false, scale: true },
+            yAxis: { type: 'value', show: false, scale: true },
+            dataZoom: [                        // 휠/핀치 줌·드래그 팬(점 유지)
+                { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
+                { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
+            ],
+        });
+        _clusterChart.on('click', p => {       // 곡 클릭=토글, 그 외=해제
+            _clSel = (p.seriesIndex === 0 && _clSel !== p.dataIndex) ? p.dataIndex : null;
+            _clDraw();
+        });
+        _clusterChart.getZr().on('click', e => {   // 빈 영역 클릭=해제
+            if (!e.target) { _clSel = null; _clDraw(); }
+        });
+    }
+    _clSel = null;                 // 탭 재진입 시 선택 초기화
+    _clDraw();
+    _clusterChart.resize();
+}
+
+/** 선택 상태(_clSel)에 따라 곡·중심·연결선 시리즈를 그린다(베이스 위 merge → 줌 보존). */
+function _clDraw() {
+    const data = window.CLUSTER_DATA || {};
+    const songs = data.songs || [];
+    const cents = data.centroids || [];
+    const sel = _clSel;
+    const sim = sel != null ? (songs[sel].sim || []) : [];
+    const simSet = new Set(sim);
+
+    const songPts = songs.map((s, i) => {
+        const isSel = i === sel, isSim = simSet.has(i), idle = sel == null;
+        return {
+            value: [s.x, s.y], name: s.song,
+            symbolSize: isSel ? 17 : (isSim ? 12 : 9),
+            itemStyle: {
+                color: BAND_COLORS[s.band] || '#c084fc',
+                opacity: idle ? 0.55 : (isSel ? 1 : (isSim ? 0.95 : 0.1)),
+                borderColor: isSel ? '#fff' : (isSim ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.3)'),
+                borderWidth: isSel ? 2.5 : (isSim ? 1.5 : 0.5),
+            },
+            _band: s.band, _song: s.song,
         };
     });
+    const centPts = cents.map(c => ({
+        value: [c.x, c.y], name: bandDisplay(c.band), symbolSize: 30,
+        itemStyle: {
+            color: BAND_COLORS[c.band] || '#c084fc', opacity: sel == null ? 1 : 0.3,
+            borderColor: '#fff', borderWidth: 2,
+            shadowBlur: 12, shadowColor: BAND_COLORS[c.band] || '#c084fc',
+        },
+        _band: c.band, _n: c.n,
+    }));
+    const links = sel != null
+        ? sim.map(j => ({ coords: [[songs[sel].x, songs[sel].y], [songs[j].x, songs[j].y]] }))
+        : [];
 
     _clusterChart.setOption({
-        backgroundColor: 'transparent',
-        animation: false,
-        tooltip: {
-            trigger: 'item', confine: true,
-            backgroundColor: 'rgba(20,20,30,0.95)', borderColor: '#2a2a3a',
-            textStyle: { color: '#e8e8f0', fontSize: 11 },
-            formatter: p => {
-                const k = p.data._kw;
-                const label = k.ko
-                    ? `${k.ko} <span style="opacity:.55">${k.jp}</span>` : k.jp;
-                const bands = p.data._entries
-                    .map(([b, w]) => `${bandDisplay(b)} <b>${w}</b>`).join('<br>');
-                return `<b>${label}</b> · 총 ${k.total}<br>${bands}`;
+        series: [
+            { id: 'songs', type: 'scatter', data: songPts, z: 2, emphasis: { scale: 1.3 } },
+            {
+                id: 'cents', type: 'scatter', data: centPts, z: 5,
+                label: {
+                    show: true, formatter: p => p.data.name, position: 'top',
+                    color: '#fff', fontSize: 12, fontWeight: 700,
+                    textBorderColor: 'rgba(0,0,0,0.7)', textBorderWidth: 3,
+                },
+                labelLayout: { hideOverlap: false }, emphasis: { scale: 1.25 },
             },
-        },
-        grid: { left: 6, right: 6, top: 6, bottom: 6 },
-        xAxis: { type: 'value', show: false, scale: true },
-        yAxis: { type: 'value', show: false, scale: true },
-        dataZoom: [                        // 휠/핀치 줌·드래그 팬(점 유지)
-            { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
-            { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
+            {
+                id: 'links', type: 'lines', coordinateSystem: 'cartesian2d',
+                data: links, z: 1, silent: true,
+                lineStyle: { color: '#ffffff', opacity: 0.4, width: 1, curveness: 0.08 },
+            },
         ],
-        series: [{
-            type: 'scatter',
-            data: points,
-            label: {
-                show: true, formatter: p => p.data.name, position: 'top',
-                color: '#e8e8f0', fontSize: 11, fontWeight: 700,
-                textBorderColor: 'rgba(0,0,0,0.6)', textBorderWidth: 2,
-            },
-            labelLayout: { hideOverlap: true },
-            emphasis: { focus: 'self', label: { show: true }, scale: 1.3 },
-            blur: { itemStyle: { opacity: 0.12 }, label: { opacity: 0.08 } },
-        }],
     });
-    _clusterChart.resize();
+    _clSimList(sel);
+}
+
+/** 선택 곡의 CLAP 유사곡 목록을 #cl-similar 에 렌더(미선택=안내문). */
+function _clSimList(sel) {
+    const box = document.getElementById('cl-similar');
+    if (!box) return;
+    const songs = (window.CLUSTER_DATA || {}).songs || [];
+    if (sel == null) {
+        box.innerHTML = '<span class="cl-hint">곡을 클릭하면 소리·무드가 비슷한 곡을 표시해요</span>';
+        return;
+    }
+    const q = songs[sel];
+    const items = (q.sim || []).map(j => {
+        const s = songs[j];
+        return `<li><span class="cl-dot" style="background:${BAND_COLORS[s.band] || '#c084fc'}"></span>`
+            + `<span class="cl-bd">${bandDisplay(s.band)}</span> ${s.song}</li>`;
+    }).join('');
+    box.innerHTML = `<div class="cl-q"><b>${q.song}</b> `
+        + `<span class="cl-bd">${bandDisplay(q.band)}</span> · 소리 비슷한 곡</div><ul>${items}</ul>`;
 }
 
 // ───────────────────────────

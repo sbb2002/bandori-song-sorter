@@ -1,0 +1,8 @@
+# 밴드 음원 지도(build_audio_map.py) 의존성. 음원=로컬 전용(저작물, gitignore).
+# librosa 백엔드 + yt-dlp 추출용. (옵션2 CLAP은 별도: laion-clap)
+yt-dlp
+imageio-ffmpeg        # ffmpeg 바이너리(PATH에 없을 때)
+librosa
+soundfile
+scikit-learn
+numpy
