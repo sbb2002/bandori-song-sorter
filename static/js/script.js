@@ -63,6 +63,25 @@ function hexToRgba(hex, a) {
     return `rgba(${r},${g},${b},${a})`;
 }
 
+/** #rrggbb → {h(0~360), s(0~100), l(0~100)}. 워드클라우드 명도 변주용. */
+function hexToHsl(hex) {
+    const m = hex.replace('#', '');
+    const r = parseInt(m.substring(0, 2), 16) / 255;
+    const g = parseInt(m.substring(2, 4), 16) / 255;
+    const b = parseInt(m.substring(4, 6), 16) / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+    const l = (max + min) / 2;
+    let h = 0, s = 0;
+    if (d !== 0) {
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h /= 6;
+    }
+    return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+}
+
 const TIER_BY_KEY = {};
 C.TIERS.forEach(t => { TIER_BY_KEY[t.key] = t; });
 
@@ -1067,6 +1086,19 @@ function buildCaptureDOM() {
 
 const WC_PALETTE = ['#c084fc', '#ff6b9d', '#ff9f6b', '#ffd06b', '#6bcfff', '#cfd0ea'];
 
+// 밴드 퍼스널 컬러(HANDOFF #2 확정) — 워드클라우드 키워드 색. ALL은 WC_PALETTE 유지.
+const BAND_COLORS = {
+    poppin_party: '#ff3377', afterglow: '#ee3344', pastel_palettes: '#33ddaa',
+    roselia: '#3344aa', hello_happy_world: '#ffdd00', morfonica: '#33aaff',
+    raise_a_suilen: '#33cccc', mygo: '#0088bb', ave_mujica: '#881144',
+    mugendai_mutype: '#ff7788', millsage: '#aa22ee', ikka_dump_rock: '#ffaa33',
+};
+
+// 투톤 밴드의 보조색(키워드 아랫부분에만 살짝). 미정의 밴드는 단색.
+const BAND_SUBCOLORS = {
+    mugendai_mutype: '#2288dd',
+};
+
 /** 한 밴드 키워드를 표시텍스트(ko‖jp)로 병합 → Map(text → weight 합). 心·気→마음 통합. */
 function mergeBandKeywords(keywords) {
     const m = new Map();
@@ -1152,15 +1184,36 @@ function renderWordcloud() {
         return [text, Math.round(FMIN + t * (FMAX - FMIN))];
     });
 
+    // 밴드별 = 퍼스널 컬러(hue 고정) + 빈도 명도 변주 / ALL = 단어 해시 6색 팔레트
+    const baseHsl = currentBand === 'ALL' ? null : hexToHsl(BAND_COLORS[currentBand] || '#c084fc');
+    const subHsl = baseHsl && BAND_SUBCOLORS[currentBand]
+        ? hexToHsl(BAND_SUBCOLORS[currentBand]) : null;
+    const ctx = canvas.getContext('2d');
+    // hue 고정·빈도(t)로 명도 변주한 hsl. 저빈도는 가라앉히고 고빈도를 강조(35%~82%).
+    const tone = (hsl, t) => `hsl(${hsl.h}, ${Math.max(55, hsl.s)}%, ${35 + 47 * t}%)`;
+
     window.WordCloud(canvas, {
         list: items,
         weightFactor: 1,                            // size = 위에서 계산한 폰트 px
         fontFamily: "'M PLUS Rounded 1c', 'Inter', sans-serif",
         fontWeight: '700',
-        color: word => {
-            let hsh = 0;
-            for (let i = 0; i < word.length; i++) hsh = (hsh * 31 + word.charCodeAt(i)) | 0;
-            return WC_PALETTE[Math.abs(hsh) % WC_PALETTE.length];
+        color: (word, weight, fontSize) => {
+            if (!baseHsl) {                         // ALL → 단어 해시 6색 팔레트
+                let hsh = 0;
+                for (let i = 0; i < word.length; i++) hsh = (hsh * 31 + word.charCodeAt(i)) | 0;
+                return WC_PALETTE[Math.abs(hsh) % WC_PALETTE.length];
+            }
+            // 폰트 px(FMIN~FMAX)를 0~1로 → 고빈도일수록 밝고 선명(다크 배경 가독성)
+            const t = FMAX > FMIN ? Math.min(1, Math.max(0, (weight - FMIN) / (FMAX - FMIN))) : 1;
+            const main = tone(baseHsl, t);
+            if (!subHsl) return main;
+            // 투톤: textBaseline=middle 기준 위(메인)→아래 끝 ~22%만 보조색 그라데이션
+            const size = fontSize || weight;
+            const grad = ctx.createLinearGradient(0, -size / 2, 0, size / 2);
+            grad.addColorStop(0, main);
+            grad.addColorStop(0.78, main);
+            grad.addColorStop(1, tone(subHsl, t));
+            return grad;
         },
         backgroundColor: 'transparent',
         rotateRatio: 0,                             // 한글 가독성 — 가로 고정
