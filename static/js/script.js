@@ -1184,13 +1184,20 @@ function renderWordcloud() {
         return [text, Math.round(FMIN + t * (FMAX - FMIN))];
     });
 
+    // 글로우 적용 임계: 표시 키워드 폰트(t) 분포의 Q2(중앙값) → 상위 절반에 네온
+    const tArr = items.map(it => FMAX > FMIN ? (it[1] - FMIN) / (FMAX - FMIN) : 1)
+        .sort((a, b) => a - b);
+    const _mid = tArr.length >> 1;
+    const q2 = tArr.length % 2 ? tArr[_mid] : (tArr[_mid - 1] + tArr[_mid]) / 2;
+
     // 밴드별 = 퍼스널 컬러(hue 고정) + 빈도 명도 변주 / ALL = 단어 해시 6색 팔레트
     const baseHsl = currentBand === 'ALL' ? null : hexToHsl(BAND_COLORS[currentBand] || '#c084fc');
     const subHsl = baseHsl && BAND_SUBCOLORS[currentBand]
         ? hexToHsl(BAND_SUBCOLORS[currentBand]) : null;
     const ctx = canvas.getContext('2d');
     // hue 고정·빈도(t)로 명도 변주한 hsl. 저빈도는 가라앉히고 고빈도를 강조(35%~82%).
-    const tone = (hsl, t) => `hsl(${hsl.h}, ${Math.max(55, hsl.s)}%, ${35 + 47 * t}%)`;
+    const lum = t => 35 + 47 * t;
+    const tone = (hsl, t) => `hsl(${hsl.h}, ${Math.max(55, hsl.s)}%, ${lum(t)}%)`;
 
     window.WordCloud(canvas, {
         list: items,
@@ -1199,12 +1206,20 @@ function renderWordcloud() {
         fontWeight: '700',
         color: (word, weight, fontSize) => {
             if (!baseHsl) {                         // ALL → 단어 해시 6색 팔레트
+                ctx.shadowBlur = 0;                 // 네온 잔여 차단
                 let hsh = 0;
                 for (let i = 0; i < word.length; i++) hsh = (hsh * 31 + word.charCodeAt(i)) | 0;
                 return WC_PALETTE[Math.abs(hsh) % WC_PALETTE.length];
             }
             // 폰트 px(FMIN~FMAX)를 0~1로 → 고빈도일수록 밝고 선명(다크 배경 가독성)
             const t = FMAX > FMIN ? Math.min(1, Math.max(0, (weight - FMIN) / (FMAX - FMIN))) : 1;
+            // 폰트 분포 Q2(중앙값) 이상(상위 절반)에만 같은 색 네온 글로우. 그 외는 해제.
+            if (t >= q2) {
+                ctx.shadowColor = `hsl(${baseHsl.h}, ${Math.max(55, baseHsl.s)}%, ${lum(t)}%)`;
+                ctx.shadowBlur = 8;
+            } else {
+                ctx.shadowBlur = 0;
+            }
             const main = tone(baseHsl, t);
             if (!subHsl) return main;
             // 투톤: textBaseline=middle 기준 위(메인)→아래 끝 ~22%만 보조색 그라데이션
