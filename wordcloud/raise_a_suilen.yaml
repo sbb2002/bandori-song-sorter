@@ -21,14 +21,14 @@ keywords:
 - {jp: 本気, ko: 진심, weight: 4}
 - {jp: 夢, ko: 꿈, weight: 4}
 - {jp: 音楽, ko: 음악, weight: 4}
-- {jp: 輝き, ko: 빛나는, weight: 4}  # 기계번역 초안
+- {jp: 輝き, ko: 빛남, weight: 4}
 - {jp: 自身, ko: 자신, weight: 4}
 - {jp: 魂, ko: 영혼, weight: 4}
 - {jp: 婆, ko: 할멈, weight: 4}
 - {jp: 勝利, ko: 승리, weight: 4}
-- {jp: 間, ko: 사이, weight: 3} # 기계번역 초안
+- {jp: 間, ko: 사이, weight: 3}
 - {jp: 宙, ko: 허공, weight: 3}
-- {jp: 此の世, ko: 규칙, weight: 3}
+- {jp: 此の世, ko: 이 세상, weight: 3}
 - {jp: 声, ko: 목소리, weight: 3}
 - {jp: 視線, ko: 시선, weight: 3}
 - {jp: 存在, ko: 존재, weight: 3}
@@ -39,69 +39,67 @@ keywords:
 - {jp: 万来, ko: 천객만래, weight: 3}
 - {jp: 抱腹, ko: 포복절도, weight: 3}
 - {jp: 絶倒, ko: 포복절도, weight: 3}
-- {jp: 笑顔, ko: 얼굴, weight: 2}
-- {jp: 笑止, ko: 가소, weight: 2}
-- {jp: 偽善, ko: 위선자, weight: 2}
+- {jp: 笑顔, ko: 미소, weight: 2}
+- {jp: 笑止, ko: 가소로움, weight: 2}
+- {jp: 偽善, ko: 위선, weight: 2}
 - {jp: 火花, ko: 불꽃, weight: 2}
 - {jp: 言い訳, ko: 변명, weight: 2}
 - {jp: 道, ko: 길, weight: 2}
-- {jp: 容赦, ko: 용서, weight: 2} # 기계번역 초안
+- {jp: 容赦, ko: 용서, weight: 2}
 - {jp: 渦, ko: 소용돌이, weight: 2}
 - {jp: 力, ko: 힘, weight: 2}
 - {jp: 先, ko: 앞, weight: 2}
 - {jp: 灯火, ko: 등불, weight: 2}
-- {jp: 開, ko: 개천벽지, weight: 2}
-- {jp: 闢地, ko: 개천벽지, weight: 2}
+- {jp: 開, ko: 개벽, weight: 2}
+- {jp: 闢地, ko: 개벽, weight: 2}
 - {jp: 絆, ko: 인연, weight: 2}
 - {jp: 希望, ko: 희망, weight: 2}
-- {jp: ぶす, ko: 부스, weight: 2} # 음차
 - {jp: 勝負, ko: 승부, weight: 2}
-- {jp: 後, ko: 후, weight: 2} # 기계번역 초안
+- {jp: 後, ko: 뒤, weight: 2}
 - {jp: 油断, ko: 방심, weight: 2}
 - {jp: 真実, ko: 진실, weight: 2}
-- {jp: 怖じ気, ko: 두려움, weight: 2} # 기계번역 초안
+- {jp: 怖じ気, ko: 두려움, weight: 2}
 - {jp: 忠誠, ko: 충성, weight: 2}
 - {jp: 制覇, ko: 제패, weight: 2}
-- {jp: バイタリティー, ko: 바이탈리티, weight: 2}
-- {jp: 断末魔, ko: 외침, weight: 2}
+- {jp: バイタリティー, ko: 바이탤리티, weight: 2}
+- {jp: 断末魔, ko: 단말마, weight: 2}
 - {jp: 灼熱, ko: 작열, weight: 2}
 - {jp: 女神, ko: 여신, weight: 2}
 - {jp: 時間, ko: 시간, weight: 2}
 - {jp: 方程, ko: 방정식, weight: 2}
 - {jp: 式, ko: 방정식, weight: 2}
 - {jp: 通過, ko: 통과, weight: 2}
-- {jp: 点, ko: 포인트, weight: 2} # 기계번역 초안
-- {jp: 真夏, ko: 기세, weight: 2}
+- {jp: 点, ko: 점, weight: 2}
+- {jp: 真夏, ko: 한여름, weight: 2}
 - {jp: 時代, ko: 시대, weight: 2}
 - {jp: 言葉, ko: 말, weight: 2}
-- {jp: 曲げ, ko: 굽힘, weight: 2} # 기계번역 초안
+- {jp: 曲げ, ko: 굽힘, weight: 2}
 - {jp: 喧嘩, ko: 싸움, weight: 2}
-- {jp: 図, ko: 그림, weight: 2} # 기계번역 초안
-- {jp: 定め, ko: 규칙, weight: 2}
+- {jp: 定め, ko: 숙명, weight: 2}
 - {jp: 因果, ko: 인과응보, weight: 2}
 - {jp: 応報, ko: 인과응보, weight: 2}
 - {jp: 報い, ko: 인과응보, weight: 2}
 - {jp: 馬鹿, ko: 바보, weight: 2}
 - {jp: 相手, ko: 상대, weight: 2}
-- {jp: 必要, ko: 필요, weight: 2} # 기계번역 초안
-- {jp: 有無, ko: 이의, weight: 2}
+- {jp: 必要, ko: 필요, weight: 2}
+- {jp: 有無, ko: 유무, weight: 2}
 - {jp: ステージ, ko: 스테이지, weight: 2}
 - {jp: 最高, ko: 최고, weight: 2}
-- {jp: 愉快, ko: 광, weight: 2}
+- {jp: 愉快, ko: 유쾌, weight: 2}
 - {jp: 光, ko: 빛, weight: 2}
-- {jp: 全て, ko: 모두, weight: 2} # 기계번역 초안
-- {jp: 産声, ko: 울음, weight: 2}
-- {jp: チート, ko: 치토, weight: 2} # 음차
+- {jp: 全て, ko: 모두, weight: 2}
+- {jp: 産声, ko: 첫울음, weight: 2}
+- {jp: チート, ko: 치트, weight: 2}
 - {jp: アビリティー, ko: 어빌리티, weight: 2}
-- {jp: 死, ko: 죽음, weight: 2} # 기계번역 초안
-- {jp: 物狂い, ko: 미친, weight: 2} # 기계번역 초안
+- {jp: 死, ko: 죽음, weight: 2}
+- {jp: 物狂い, ko: 광기, weight: 2}
 - {jp: 正解, ko: 정답, weight: 2}
 - {jp: 至高, ko: 지고, weight: 2}
 - {jp: 憑依, ko: 빙의, weight: 2}
 - {jp: 血, ko: 피, weight: 2}
-- {jp: 肉, ko: 피, weight: 2}
+- {jp: 肉, ko: 살, weight: 2}
 - {jp: 奇跡, ko: 기적, weight: 2}
 - {jp: 自信, ko: 자신감, weight: 2}
-- {jp: 無限, ko: 무한대, weight: 2}
-- {jp: 戦略, ko: 수단, weight: 2}
+- {jp: 無限, ko: 무한, weight: 2}
+- {jp: 戦略, ko: 전략, weight: 2}
 - {jp: 渇望, ko: 갈망, weight: 2}

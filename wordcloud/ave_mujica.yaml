@@ -6,18 +6,18 @@ generated: '2026-06-27'
 song_count: 10
 keywords:
 - {jp: アップ, ko: 업, weight: 16}
-- {jp: 本当, ko: 진짜, weight: 10}  # 기계번역 초안
+- {jp: 本当, ko: 진짜, weight: 10}
 - {jp: 世界, ko: 세계, weight: 8}
 - {jp: 人, ko: 사람, weight: 7}
 - {jp: 心, ko: 마음, weight: 7}
 - {jp: 時代, ko: 시대, weight: 6}
-- {jp: 記憶, ko: 유일, weight: 6}
+- {jp: 記憶, ko: 기억, weight: 6}
 - {jp: 闇, ko: 어둠, weight: 5}
 - {jp: ヤダ, ko: 싫어, weight: 5}
 - {jp: 影, ko: 그림자, weight: 4}
 - {jp: 星, ko: 별, weight: 4}
-- {jp: 全て, ko: 모두, weight: 4} # 기계번역 초안
-- {jp: 果て, ko: 내면, weight: 4}
+- {jp: 全て, ko: 모두, weight: 4}
+- {jp: 果て, ko: 끝, weight: 4}
 - {jp: 光, ko: 빛, weight: 4}
 - {jp: 嘘, ko: 거짓말, weight: 4}
 - {jp: 夢, ko: 꿈, weight: 4}
@@ -31,60 +31,56 @@ keywords:
 - {jp: 赤, ko: 빨강, weight: 3}
 - {jp: 象, ko: 코끼리, weight: 3}
 - {jp: 獅子, ko: 사자, weight: 3}
-- {jp: 熊, ko: 코끼리, weight: 3}
-- {jp: クラッカー, ko: 쿠랏카, weight: 3} # 음차
+- {jp: 熊, ko: 곰, weight: 3}
+- {jp: クラッカー, ko: 크래커, weight: 3}
 - {jp: 首謀, ko: 주모자, weight: 3}
 - {jp: 炎, ko: 불길, weight: 3}
-- {jp: 唯一, ko: 유일무이, weight: 3}
+- {jp: 唯一, ko: 유일, weight: 3}
 - {jp: ロザリオ, ko: 로사리오, weight: 3}
-- {jp: 孤高, ko: 유일, weight: 3}
+- {jp: 孤高, ko: 고고함, weight: 3}
 - {jp: 神, ko: 신, weight: 3}
-- {jp: 勝者, ko: 승자, weight: 3} # 기계번역 초안
+- {jp: 勝者, ko: 승자, weight: 3}
 - {jp: 音, ko: 소리, weight: 2}
 - {jp: 命, ko: 생명, weight: 2}
 - {jp: 手, ko: 손, weight: 2}
 - {jp: 惑星, ko: 행성, weight: 2}
-- {jp: ソラ, ko: 소라, weight: 2} # 음차
 - {jp: 歴史, ko: 역사, weight: 2}
-- {jp: 道化, ko: 광대, weight: 2} # 기계번역 초안
-- {jp: 羅, ko: 라, weight: 2} # 기계번역 초안
-- {jp: 乱, ko: 혼란, weight: 2} # 기계번역 초안
-- {jp: 裸, ko: 알몸, weight: 2} # 기계번역 초안
-- {jp: 嵐, ko: 폭풍, weight: 2} # 기계번역 초안
+- {jp: 道化, ko: 광대, weight: 2}
+- {jp: 乱, ko: 혼란, weight: 2}
+- {jp: 裸, ko: 알몸, weight: 2}
+- {jp: 嵐, ko: 폭풍, weight: 2}
 - {jp: 奇跡, ko: 기적, weight: 2}
 - {jp: 日常, ko: 일상, weight: 2}
 - {jp: 慈悲, ko: 자비, weight: 2}
-- {jp: 右手, ko: 오른손, weight: 2} # 기계번역 초안
+- {jp: 右手, ko: 오른손, weight: 2}
 - {jp: 漆黒, ko: 칠흑, weight: 2}
 - {jp: 魅惑, ko: 매혹, weight: 2}
-- {jp: 悦楽, ko: 열락, weight: 2}
-- {jp: Ō, ko: 숙, weight: 2}
-- {jp: 宿命, ko: 숙, weight: 2}
-- {jp: 産声, ko: 울음, weight: 2}
+- {jp: 悦楽, ko: 쾌락, weight: 2}
+- {jp: 宿命, ko: 숙명, weight: 2}
+- {jp: 産声, ko: 첫울음, weight: 2}
 - {jp: 秘密, ko: 비밀, weight: 2}
 - {jp: 薔薇, ko: 장미, weight: 2}
-- {jp: 今夜, ko: 오늘밤, weight: 2} # 기계번역 초안
+- {jp: 今夜, ko: 오늘밤, weight: 2}
 - {jp: 色, ko: 색, weight: 2}
-- {jp: 場面, ko: 장면, weight: 2} # 기계번역 초안
+- {jp: 場面, ko: 장면, weight: 2}
 - {jp: 太陽, ko: 태양, weight: 2}
 - {jp: 痛み, ko: 아픔, weight: 2}
 - {jp: 魂, ko: 영혼, weight: 2}
 - {jp: 空, ko: 하늘, weight: 2}
 - {jp: 運命, ko: 운명, weight: 2}
 - {jp: 火, ko: 불, weight: 2}
-- {jp: 芒, ko: 팔망성, weight: 2}
-- {jp: 笑い, ko: 웃음, weight: 2} # 기계번역 초안
-- {jp: 絵画, ko: 회화, weight: 2} # 기계번역 초안
-- {jp: 天, ko: 하늘, weight: 2} # 기계번역 초안
-- {jp: 過ち, ko: 유일, weight: 2}
+- {jp: 笑い, ko: 웃음, weight: 2}
+- {jp: 絵画, ko: 그림, weight: 2}
+- {jp: 天, ko: 하늘, weight: 2}
+- {jp: 過ち, ko: 잘못, weight: 2}
 - {jp: 皆, ko: 모두, weight: 2}
 - {jp: 残酷, ko: 잔혹, weight: 2}
-- {jp: 美, ko: 잔혹, weight: 2}
+- {jp: 美, ko: 아름다움, weight: 2}
 - {jp: 海, ko: 바다, weight: 2}
 - {jp: 鏡, ko: 거울, weight: 2}
-- {jp: 平気, ko: 평기, weight: 2} # 기계번역 초안
+- {jp: 平気, ko: 태연, weight: 2}
 - {jp: 涙, ko: 눈물, weight: 2}
-- {jp: 正気, ko: 정기, weight: 2} # 기계번역 초안
+- {jp: 正気, ko: 제정신, weight: 2}
 - {jp: 馬鹿, ko: 바보, weight: 2}
 - {jp: 美徳, ko: 미덕, weight: 2}
 - {jp: 絶望, ko: 절망, weight: 2}

@@ -14,19 +14,18 @@ keywords:
 - {jp: 空, ko: 하늘, weight: 8}
 - {jp: 心, ko: 마음, weight: 8}
 - {jp: 最後, ko: 마지막, weight: 8}
-- {jp: 思い, ko: 생각, weight: 7}  # 기계번역 초안
+- {jp: 思い, ko: 생각, weight: 7}
 - {jp: 奇跡, ko: 기적, weight: 7}
 - {jp: 夜, ko: 밤, weight: 6}
 - {jp: 願い, ko: 소원, weight: 6}
 - {jp: 涙, ko: 눈물, weight: 6}
-- {jp: 輝き, ko: 빛나는, weight: 6} # 기계번역 초안
+- {jp: 輝き, ko: 빛남, weight: 6}
 - {jp: 未来, ko: 미래, weight: 6}
 - {jp: 世界, ko: 세계, weight: 6}
 - {jp: 道, ko: 길, weight: 5}
 - {jp: 風, ko: 바람, weight: 5}
-- {jp: 一緒, ko: 함께, weight: 5} # 기계번역 초안
+- {jp: 一緒, ko: 함께, weight: 5}
 - {jp: 勇気, ko: 용기, weight: 5}
-- {jp: 形木, ko: 모양, weight: 4}
 - {jp: 樣, ko: 모양, weight: 4}
 - {jp: 希望, ko: 희망, weight: 4}
 - {jp: 自分, ko: 자신, weight: 4}
@@ -39,68 +38,65 @@ keywords:
 - {jp: 場所, ko: 장소, weight: 3}
 - {jp: 期待, ko: 기대, weight: 3}
 - {jp: 前, ko: 앞, weight: 3}
-- {jp: 全て, ko: 모두, weight: 3} # 기계번역 초안
+- {jp: 全て, ko: 모두, weight: 3}
 - {jp: 自由, ko: 자유, weight: 3}
 - {jp: 今日, ko: 오늘, weight: 3}
 - {jp: 胸, ko: 가슴, weight: 3}
 - {jp: 星, ko: 별, weight: 3}
 - {jp: 形, ko: 형태, weight: 3}
-- {jp: 全部, ko: 모두, weight: 3} # 기계번역 초안
+- {jp: 全部, ko: 모두, weight: 3}
 - {jp: 先, ko: 앞, weight: 3}
 - {jp: 言葉, ko: 말, weight: 3}
 - {jp: 歌, ko: 노래, weight: 3}
 - {jp: 其々, ko: 각자, weight: 3}
 - {jp: 物語, ko: 이야기, weight: 3}
 - {jp: 旋律, ko: 선율, weight: 3}
-- {jp: 遠く, ko: 멀리, weight: 3} # 기계번역 초안
+- {jp: 遠く, ko: 멀리, weight: 3}
 - {jp: メリーゴーランド, ko: 메리고라운드, weight: 3}
 - {jp: 明日, ko: 내일, weight: 3}
 - {jp: 約束, ko: 약속, weight: 3}
-- {jp: 限り, ko: 한, weight: 3}
+- {jp: 限り, ko: 한계, weight: 3}
 - {jp: 決意, ko: 결의, weight: 3}
 - {jp: 源, ko: 근원, weight: 3}
-- {jp: ぽつ, ko: 포츠, weight: 2} # 음차
 - {jp: 不安, ko: 불안, weight: 2}
 - {jp: 太陽, ko: 태양, weight: 2}
-- {jp: 本当, ko: 진짜, weight: 2} # 기계번역 초안
+- {jp: 本当, ko: 진짜, weight: 2}
 - {jp: 夜明け, ko: 새벽, weight: 2}
 - {jp: 現実, ko: 현실, weight: 2}
 - {jp: 予感, ko: 예감, weight: 2}
 - {jp: 祈り, ko: 기도, weight: 2}
-- {jp: 騒めき, ko: 소란, weight: 2} # 기계번역 초안
+- {jp: 騒めき, ko: 술렁임, weight: 2}
 - {jp: 過去, ko: 과거, weight: 2}
 - {jp: 瞬間, ko: 순간, weight: 2}
 - {jp: 想像, ko: 상상, weight: 2}
-- {jp: 向こう, ko: 저기, weight: 2} # 기계번역 초안
+- {jp: 向こう, ko: 저편, weight: 2}
 - {jp: 言い訳, ko: 변명, weight: 2}
-- {jp: 羽根, ko: 날개, weight: 2}
-- {jp: 始まり, ko: 시작, weight: 2} # 기계번역 초안
+- {jp: 羽根, ko: 깃털, weight: 2}
+- {jp: 始まり, ko: 시작, weight: 2}
 - {jp: 気持ち, ko: 기분, weight: 2}
-- {jp: バトン, ko: 바톤, weight: 2} # 음차
-- {jp: 青空, ko: 푸른 하늘, weight: 2} # 기계번역 초안
+- {jp: バトン, ko: 바통, weight: 2}
+- {jp: 青空, ko: 푸른 하늘, weight: 2}
 - {jp: 朝, ko: 아침, weight: 2}
-- {jp: 笑顔, ko: 얼굴, weight: 2}
-- {jp: 掛け替え, ko: 교체, weight: 2} # 기계번역 초안
+- {jp: 笑顔, ko: 미소, weight: 2}
+- {jp: 掛け替え, ko: 둘도 없음, weight: 2}
 - {jp: 苦しみ, ko: 괴로움, weight: 2}
-- {jp: 呼吸, ko: 호흡, weight: 2} # 기계번역 초안
-- {jp: 重なり合い, ko: 중첩, weight: 2} # 기계번역 초안
-- {jp: 時々, ko: 때때로, weight: 2} # 기계번역 초안
-- {jp: 嵐, ko: 폭풍, weight: 2} # 기계번역 초안
-- {jp: 分, ko: 분, weight: 2} # 기계번역 초안
+- {jp: 呼吸, ko: 호흡, weight: 2}
+- {jp: 重なり合い, ko: 겹침, weight: 2}
+- {jp: 時々, ko: 때때로, weight: 2}
+- {jp: 嵐, ko: 폭풍, weight: 2}
 - {jp: 絶望, ko: 절망, weight: 2}
-- {jp: 所為, ko: 소위, weight: 2} # 기계번역 초안
-- {jp: 終わり, ko: 끝, weight: 2} # 기계번역 초안
-- {jp: 駄目, ko: 쓸모없는, weight: 2} # 기계번역 초안
+- {jp: 所為, ko: 탓, weight: 2}
+- {jp: 終わり, ko: 끝, weight: 2}
+- {jp: 駄目, ko: 소용없음, weight: 2}
 - {jp: 息, ko: 숨, weight: 2}
-- {jp: 私, ko: 나, weight: 2} # 기계번역 초안
+- {jp: 私, ko: 나, weight: 2}
 - {jp: 翼, ko: 날개, weight: 2}
 - {jp: 時間, ko: 시간, weight: 2}
 - {jp: 蕾, ko: 꽃봉오리, weight: 2}
 - {jp: 痛み, ko: 아픔, weight: 2}
-- {jp: 元, ko: 원래, weight: 2} # 기계번역 초안
 - {jp: 炎, ko: 불길, weight: 2}
 - {jp: 欠片, ko: 조각, weight: 2}
 - {jp: 覚悟, ko: 각오, weight: 2}
-- {jp: 両翼, ko: 결의, weight: 2}
+- {jp: 両翼, ko: 양 날개, weight: 2}
 - {jp: 羽ばたき, ko: 날갯짓, weight: 2}
 - {jp: 勝利, ko: 승리, weight: 2}
