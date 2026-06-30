@@ -143,16 +143,59 @@ BACKENDS = {"librosa": feat_librosa, "clap": feat_clap}
 
 # ── 좌표·지표 ────────────────────────────────────────────────
 def project(X: np.ndarray, labels: np.ndarray, bands: list[str]):
-    """밴드 중심점에 PCA(2) fit → 곡·중심점을 같은 2D 로 투영, 0~100 정규화."""
+    """밴드 중심점에 PCA(2) fit → 곡·중심점을 같은 2D 로 투영.
+
+    좌표계 원점(0,0) = 곡 전체 평균(='평균적 소리'). 대칭 스케일로 ±50 범위.
+    """
     from sklearn.decomposition import PCA
     cent = np.array([X[labels == bi].mean(0) for bi in range(len(bands))])
     pca = PCA(n_components=2).fit(cent)
     sx = pca.transform(X)
     cx = pca.transform(cent)
-    allxy = np.vstack([sx, cx])
-    mn, mx = allxy.min(0), allxy.max(0)
-    span = np.where(mx - mn == 0, 1, mx - mn)
-    return (sx - mn) / span * 100, (cx - mn) / span * 100
+    origin = sx.mean(0)                         # 곡 평균을 원점으로
+    sx = sx - origin; cx = cx - origin
+    # 이상치가 전체를 압축(뭉침)하지 않게 95퍼센타일로 스케일 후 ±60 클립
+    scale = float(np.percentile(np.abs(np.vstack([sx, cx])), 95)) or 1.0
+    clip = lambda a: np.clip(a / scale * 50, -60, 60)
+    return clip(sx), clip(cx)
+
+
+# 해석가능 음향특징(feat_librosa 벡터 인덱스). 축 의미 라벨링용.
+AXIS_FEATURES = [
+    ("tempo", 70, "빠름", "느림"),
+    ("brightness", 59, "밝음", "어두움"),       # 스펙트럼 중심(고역 무게)
+    ("energy", 68, "강함", "여림"),             # RMS(음압)
+    ("rolloff", 63, "고음 풍부", "저음 위주"),
+    ("zcr", 66, "거친 음색", "매끄러운 음색"),
+]
+
+
+def axis_labels(feats_raw, sxy) -> dict:
+    """각 축(x,y)이 어떤 해석가능 특징과 가장 상관되는지 → +/− 방향 라벨.
+
+    PCA 축은 추상적이므로, 곡 좌표와 명명된 음향특징의 피어슨 상관으로 의미 부여.
+    백엔드가 librosa 일 때만 유효(인덱스 고정).
+    """
+    F = np.asarray(feats_raw, dtype=float)
+    used: set = set(); res: dict = {}
+    for ax, key in ((0, "x"), (1, "y")):
+        coord = sxy[:, ax]
+        best = None
+        for name, idx, pos, neg in AXIS_FEATURES:
+            if name in used or idx >= F.shape[1]:
+                continue
+            col = F[:, idx]
+            if col.std() == 0:
+                continue
+            r = float(np.corrcoef(coord, col)[0, 1])
+            if best is None or abs(r) > abs(best[0]):
+                best = (r, name, pos, neg)
+        if best is None:
+            continue
+        r, name, pos, neg = best; used.add(name)
+        res[key] = {"feature": name, "r": round(r, 2),
+                    "pos": pos if r >= 0 else neg, "neg": neg if r >= 0 else pos}
+    return res
 
 
 def metrics(X: np.ndarray, labels: np.ndarray, bands: list[str], K=10) -> dict:
@@ -240,6 +283,10 @@ def main(argv=None):
     print(f"LOO 정확도 {m['loo_acc']*100:.0f}% · kNN {m['knn_ratio']}x · "
           f"silhouette {m['silhouette']:+.3f}")
     sxy, cxy = project(X, labels, bands)
+    axes = axis_labels(feats, sxy) if args.backend == "librosa" else {}
+    if axes:
+        print("축 의미: " + " · ".join(
+            f"{k}축 −{v['neg']}↔+{v['pos']}({v['feature']} r={v['r']})" for k, v in axes.items()))
 
     sims = None
     if args.sim == "clap":
@@ -253,7 +300,7 @@ def main(argv=None):
               "x": round(float(cxy[bi][0]), 2), "y": round(float(cxy[bi][1]), 2)}
              for bi, b in enumerate(bands)]
     doc = {"generated": _dt.date.today().isoformat(), "backend": args.backend,
-           "sim_backend": "clap" if sims else None,
+           "sim_backend": "clap" if sims else None, "axes": axes,
            "bands": bands, "songs": songs, "centroids": cents, "metrics": m}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     json.dump(doc, open(args.out, "w", encoding="utf-8"), ensure_ascii=False,

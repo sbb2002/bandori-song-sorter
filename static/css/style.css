@@ -439,6 +439,16 @@ header h1 {
 .am-sub { font-size: 0.6rem; color: var(--text-sub); }
 .audiomap-area .cluster-wrap { min-height: 0; }
 .audiomap-area #cluster-chart { min-height: 0; }
+/* 음원맵 축 +/- 방향 의미 라벨(4모서리, 화면 고정) */
+.am-axis {
+  position: absolute; z-index: 3; pointer-events: none; white-space: nowrap;
+  font-size: 0.56rem; color: var(--text-sub); opacity: 0.9;
+  text-shadow: 0 0 4px #000, 0 0 4px #000;
+}
+.am-axis-top { top: 4px; left: 50%; transform: translateX(-50%); }
+.am-axis-bottom { bottom: 4px; left: 50%; transform: translateX(-50%); }
+.am-axis-left { left: 6px; top: 50%; transform: translateY(-50%); }
+.am-axis-right { right: 6px; top: 50%; transform: translateY(-50%); }
 #youtube-player, #youtube-player iframe {
   position: absolute;
   inset: 0;

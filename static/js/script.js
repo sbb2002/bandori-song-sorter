@@ -1251,6 +1251,7 @@ function renderWordcloud() {
 
 let _clusterChart = null;
 let _clSel = null;                 // 선택된 곡 인덱스(유사곡 하이라이트). null=평상
+let _clBand = null;                // 선택된 밴드(중심점 클릭 → 그 밴드 곡 전체 강조)
 
 /** 밴드 음원 지도 진입점. 정적 베이스는 1회만 설정(줌/팬 보존), 그리기는 _clDraw 가 담당. */
 function renderCluster() {
@@ -1272,6 +1273,7 @@ function renderCluster() {
         `${(data.bands || []).length}밴드 · 곡 ${songs.length} · 음원 특징 2D` +
         (m.loo_acc ? ` · 밴드 분류 ${Math.round(m.loo_acc * 100)}%`
             + ` (우연 ${Math.round((m.chance || 0.1) * 100)}%)` : '');
+    _clAxisLabels(data.axes);      // 축 +/− 방향 의미 라벨
 
     if (!_clusterChart) {
         _clusterChart = echarts.init(el);
@@ -1285,7 +1287,7 @@ function renderCluster() {
                 formatter: p => p.data && p.data._song
                     ? `<b>${p.data._song}</b><br>${bandDisplay(p.data._band)}`
                     : (p.data && p.data._n != null
-                        ? `<b>${bandDisplay(p.data._band)}</b> · ${p.data._n}곡 평균` : ''),
+                        ? `<b>${bandDisplay(p.data._band)}</b> · ${p.data._n}곡 (클릭=전체 표시)` : ''),
             },
             grid: { left: 6, right: 6, top: 6, bottom: 6 },
             xAxis: { type: 'value', show: false, scale: true },
@@ -1295,58 +1297,80 @@ function renderCluster() {
                 { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
             ],
         });
-        _clusterChart.on('click', p => {       // 곡 클릭=토글, 그 외=해제
-            _clSel = (p.seriesIndex === 0 && _clSel !== p.dataIndex) ? p.dataIndex : null;
+        _clusterChart.on('click', p => {       // 곡=유사곡 토글 / 중심=밴드 토글 / 그 외=해제
+            if (p.seriesIndex === 0) {
+                _clSel = (_clSel === p.dataIndex) ? null : p.dataIndex; _clBand = null;
+            } else if (p.seriesIndex === 1) {
+                _clBand = (_clBand === p.data._band) ? null : p.data._band; _clSel = null;
+            } else { _clSel = null; _clBand = null; }
             _clDraw();
         });
         _clusterChart.getZr().on('click', e => {   // 빈 영역 클릭=해제
-            if (!e.target) { _clSel = null; _clDraw(); }
+            if (!e.target) { _clSel = null; _clBand = null; _clDraw(); }
         });
     }
-    _clSel = null;                 // 탭 재진입 시 선택 초기화
+    _clSel = null; _clBand = null;  // 탭 재진입 시 선택 초기화
     _clDraw();
     _clusterChart.resize();
 }
 
-/** 선택 상태(_clSel)에 따라 곡·중심·연결선 시리즈를 그린다(베이스 위 merge → 줌 보존). */
+/** 원점(0,0) 십자 점선 — '평균적 소리' 기준선(줌/팬 따라감). */
+function _clOriginCross() {
+    return {
+        symbol: 'none', silent: true, animation: false,
+        lineStyle: { color: 'rgba(255,255,255,0.16)', type: 'dashed', width: 1 },
+        label: { show: false },
+        data: [{ xAxis: 0 }, { yAxis: 0 }],
+    };
+}
+
+/** 선택 상태(_clSel 곡 / _clBand 밴드)에 따라 곡·중심·연결선을 그린다(merge → 줌 보존). */
 function _clDraw() {
     const data = window.CLUSTER_DATA || {};
     const songs = data.songs || [];
     const cents = data.centroids || [];
-    const sel = _clSel;
-    const sim = sel != null ? (songs[sel].sim || []) : [];
+    const selSong = _clSel, selBand = _clBand;
+    const sim = selSong != null ? (songs[selSong].sim || []) : [];
     const simSet = new Set(sim);
 
     const songPts = songs.map((s, i) => {
-        const isSel = i === sel, isSim = simSet.has(i), idle = sel == null;
+        let op, size, bc, bw;
+        if (selBand != null) {                 // 밴드 모드: 그 밴드 곡 전체 강조
+            const on = s.band === selBand;
+            op = on ? 0.95 : 0.07; size = on ? 12 : 8;
+            bc = on ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.3)'; bw = on ? 1.3 : 0.5;
+        } else if (selSong != null) {          // 곡 모드: 선택 곡 + 유사곡
+            const isSel = i === selSong, isSim = simSet.has(i);
+            op = isSel ? 1 : (isSim ? 0.95 : 0.1); size = isSel ? 17 : (isSim ? 12 : 9);
+            bc = isSel ? '#fff' : (isSim ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.3)');
+            bw = isSel ? 2.5 : (isSim ? 1.5 : 0.5);
+        } else { op = 0.55; size = 9; bc = 'rgba(0,0,0,0.3)'; bw = 0.5; }
         return {
-            value: [s.x, s.y], name: s.song,
-            symbolSize: isSel ? 17 : (isSim ? 12 : 9),
-            itemStyle: {
-                color: BAND_COLORS[s.band] || '#c084fc',
-                opacity: idle ? 0.55 : (isSel ? 1 : (isSim ? 0.95 : 0.1)),
-                borderColor: isSel ? '#fff' : (isSim ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.3)'),
-                borderWidth: isSel ? 2.5 : (isSim ? 1.5 : 0.5),
-            },
+            value: [s.x, s.y], name: s.song, symbolSize: size,
+            itemStyle: { color: BAND_COLORS[s.band] || '#c084fc', opacity: op, borderColor: bc, borderWidth: bw },
             _band: s.band, _song: s.song,
         };
     });
-    const centPts = cents.map(c => ({
-        value: [c.x, c.y], name: bandDisplay(c.band), symbolSize: 30,
-        itemStyle: {
-            color: BAND_COLORS[c.band] || '#c084fc', opacity: sel == null ? 1 : 0.3,
-            borderColor: '#fff', borderWidth: 2,
-            shadowBlur: 12, shadowColor: BAND_COLORS[c.band] || '#c084fc',
-        },
-        _band: c.band, _n: c.n,
-    }));
-    const links = sel != null
-        ? sim.map(j => ({ coords: [[songs[sel].x, songs[sel].y], [songs[j].x, songs[j].y]] }))
+    const centPts = cents.map(c => {
+        const hot = selBand != null && c.band === selBand;
+        const dim = (selSong != null) || (selBand != null && !hot);
+        return {
+            value: [c.x, c.y], name: bandDisplay(c.band), symbolSize: hot ? 36 : 30,
+            itemStyle: {
+                color: BAND_COLORS[c.band] || '#c084fc', opacity: dim ? 0.3 : 1,
+                borderColor: '#fff', borderWidth: hot ? 3 : 2,
+                shadowBlur: hot ? 18 : 12, shadowColor: BAND_COLORS[c.band] || '#c084fc',
+            },
+            _band: c.band, _n: c.n,
+        };
+    });
+    const links = selSong != null
+        ? sim.map(j => ({ coords: [[songs[selSong].x, songs[selSong].y], [songs[j].x, songs[j].y]] }))
         : [];
 
     _clusterChart.setOption({
         series: [
-            { id: 'songs', type: 'scatter', data: songPts, z: 2, emphasis: { scale: 1.3 } },
+            { id: 'songs', type: 'scatter', data: songPts, z: 2, emphasis: { scale: 1.3 }, markLine: _clOriginCross() },
             {
                 id: 'cents', type: 'scatter', data: centPts, z: 5,
                 label: {
@@ -1363,19 +1387,36 @@ function _clDraw() {
             },
         ],
     });
-    _clSimList(sel);
+    _clSimList(selSong, selBand);
 }
 
-/** 선택 곡의 CLAP 유사곡 목록을 #cl-similar 에 렌더(미선택=안내문). */
-function _clSimList(sel) {
+/** 축 +/− 방향 의미 라벨(data.axes: x/y 각 {pos,neg,feature})을 4모서리에 표시. */
+function _clAxisLabels(axes) {
+    const set = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+    const x = axes && axes.x, y = axes && axes.y;
+    set('cl-ax-top', y ? `↑ ${y.pos}` : '');
+    set('cl-ax-bottom', y ? `↓ ${y.neg}` : '');
+    set('cl-ax-left', x ? `← ${x.neg}` : '');
+    set('cl-ax-right', x ? `${x.pos} →` : '');
+}
+
+/** #cl-similar 목록: 밴드 선택=그 밴드 곡 전체 / 곡 선택=CLAP 유사곡 / 미선택=안내. */
+function _clSimList(selSong, selBand) {
     const box = document.getElementById('cl-similar');
     if (!box) return;
     const songs = (window.CLUSTER_DATA || {}).songs || [];
-    if (sel == null) {
-        box.innerHTML = '<span class="cl-hint">곡을 클릭하면 소리·무드가 비슷한 곡을 표시해요</span>';
+    if (selBand != null) {
+        const list = songs.filter(s => s.band === selBand);
+        const items = list.map(s =>
+            `<li><span class="cl-dot" style="background:${BAND_COLORS[s.band] || '#c084fc'}"></span>${s.song}</li>`).join('');
+        box.innerHTML = `<div class="cl-q"><b>${bandDisplay(selBand)}</b> · ${list.length}곡</div><ul>${items}</ul>`;
         return;
     }
-    const q = songs[sel];
+    if (selSong == null) {
+        box.innerHTML = '<span class="cl-hint">곡 클릭=소리 비슷한 곡 · 밴드 원 클릭=그 밴드 곡 전체</span>';
+        return;
+    }
+    const q = songs[selSong];
     const items = (q.sim || []).map(j => {
         const s = songs[j];
         return `<li><span class="cl-dot" style="background:${BAND_COLORS[s.band] || '#c084fc'}"></span>`

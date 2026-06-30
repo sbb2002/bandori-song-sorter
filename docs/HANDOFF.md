@@ -2,7 +2,7 @@
 
 이 문서는 **앞으로 할 일만** 담습니다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 진행의 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-01** — #1 워드클라우드 완료(세션 20, main 머지) · **#2 클러스터: 키워드→음원 피벗 완료**(feature/emoi-cluster, 미머지 — 옵션1 밴드 음원 지도/옵션2 CLAP비교→librosa채택/옵션3 CLAP 유사곡 탐색기, 구현 완료·브라우저 검수+(D)배치 남음). 실험 종합 = `docs/report/cluster_experiment.md`. #1은 (D) 배치만.
+마지막 갱신: **2026-07-01** — #1 워드클라우드 완료(세션 20, main 머지) · **#2 클러스터: 키워드→음원 피벗 + v2 UI 완료**(feature/emoi-cluster-v2, 미머지). 옵션1 밴드 음원 지도/옵션2 CLAP비교→librosa채택/옵션3 CLAP 유사곡 탐색기 + **v2: 음원맵을 유튜브 하단 상시영역으로 이동·축 의미 라벨·밴드 원 클릭 강조**. 남음=브라우저 실검수·분할비율·밴드정보 이동 결정. 실험 종합 = `docs/report/cluster_experiment.md`. #1은 (D) 배치만.
 
 > 🖥️ **다음 작업은 다른 로컬·다른 세션에서 진행** — 시작 전 체크:
 > 1. `git pull origin main`(emoi-cloud 머지 반영 · 660곡). 작업은 **새 feature 브랜치**에서 시작.
@@ -28,7 +28,7 @@
 | 순 | 작업 | 난이도 | 상태 |
 |----|------|--------|------|
 | 1 | 워드클라우드 품질 (2-c) A·B·C + 색상 | 중 | ✅ 완료(세션 20) — (D) 배치만 남음 |
-| 2 | 클러스터(키워드→**음원** 피벗) | 중~높 | ✅ 옵션1·2·3 구현(feature/emoi-cluster, 미머지) — 브라우저 검수+(D)배치 남음. report 참조 |
+| 2 | 클러스터(키워드→**음원** 피벗) + v2 UI | 중~높 | ✅ 옵션1·2·3 + v2(유튜브 하단 이동·축라벨·밴드클릭) 구현(feature/emoi-cluster-v2, 미머지) — 브라우저 실검수·분할비율·밴드정보 이동 남음 |
 | — | (보류) 백필 1-c namedup 403 | — | url 품질 개선 · 후순위 |
 | — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(덮어쓰기) |
 | — | (백로그) youtube_rss Phase 2 / Phase 1.5 | — | precision 축적 후 |
@@ -55,16 +55,16 @@
 > ⚠️ **방향 전면 변경**(2026-07-01). 키워드/문장/곡 어느 단위로도 **가사로는 밴드 군집 불가**(silhouette≈0). **음원 음악특징으로 밴드 단위 집계 시 밴드 구별됨**(LOO 분류 59%). **종합 실험 기록 = [docs/report/cluster_experiment.md](report/cluster_experiment.md)**(전 단계 수치·방법·결정), 백엔드 비교 = [report/cluster_audio_clap.md](report/cluster_audio_clap.md) + `cluster_audio_backends.png`. 구 키워드 파이프라인(`build_embeddings.py`·`keywords_2d.json`)은 **미사용 잔존**(폐기 가능).
 
 - **파이프라인**: `python tools/cluster/build_audio_map.py`(= `--backend librosa --sim clap`) → `cluster/audio_map.json`(커밋). 입력 `cluster/songs_top10.csv`(TOP10×10 매니페스트, 커밋). 음원은 `data/*.yaml` url에서 **yt-dlp로 60초·48kHz 추출 → `cluster/audio_cache/`(gitignore, 저작물)**. 의존성 `tools/cluster/requirements-audio.txt` + `transformers>=5`(CLAP 내장). **로컬 빌드 전용(CI 불가)**, 산출 JSON만 커밋. 재생성 후 `python build.py`.
-- **좌표·지표**: 밴드 중심점에 PCA(2) fit → 곡·중심 한 좌표계. `audio_map.json` = `{songs:[{band,song,x,y,sim:[…]}], centroids:[{band,x,y,n}], metrics:{loo_acc,…}}`. `sim`=곡별 **CLAP 코사인** 유사곡 인덱스(소리·무드).
-- **렌더**: `script.js` `renderCluster`/`_clDraw`/`_clSimList`(ECharts) — 작은 점=곡, 큰 라벨 점=밴드 중심, 색=밴드 퍼스널 컬러. **곡 클릭 → CLAP 유사곡 연결선·강조 + `#cl-similar` 목록**. 줌/팬, 빈영역 클릭 해제. 우패널 **"음원맵" 탭**(임시 — (D)와 함께 이동).
+- **좌표·지표**: 밴드 중심점에 PCA(2) fit → 곡·중심 한 좌표계. **원점(0,0)=곡 평균('평균적 소리'), 95퍼센타일 스케일+±60 클립(뭉침 완화)**. `audio_map.json` = `{axes:{x,y:{feature,pos,neg,r}}, songs:[{band,song,x,y,sim:[…]}], centroids:[{band,x,y,n}], metrics:{loo_acc,…}}`. `sim`=곡별 **CLAP 코사인** 유사곡 인덱스. `axes`=각 축이 어떤 음향특징과 상관되는지(현재 x=rolloff 고음↔저음, y=zcr 매끄↔거침; `AXIS_FEATURES` 상관분석).
+- **렌더(v2)**: `script.js` `renderCluster`/`_clDraw`/`_clSimList`/`_clAxisLabels`(ECharts) — 작은 점=곡, 큰 라벨 점=밴드 중심. **곡 클릭=CLAP 유사곡 연결선·강조 / 밴드 원 클릭=그 밴드 곡 전체 강조 / 빈영역=해제**. 원점 십자 점선(markLine), 4모서리 축 의미 라벨(`#cl-ax-*`), `#cl-similar` 목록. 줌/팬. **유튜브 컬럼 하단에 상시 표시**(`.audiomap-area`, 우패널 탭에서 분리 — v2).
 - **역할 분담(실측 결론)**: 밴드 **식별 지도**=librosa(LOO 59% > CLAP 45%), 곡 **유사곡**=CLAP(무드 일관 > librosa 지문매칭). 융합은 손해. 상세 report.
 
-### 🔍 지금 검수 (브라우저: `python -m http.server` → 음원맵 탭)
-- 밴드 중심점 분리·가독성, 곡 클릭 시 유사곡 하이라이트·목록(소리/무드 납득되는지), 모바일 레이아웃. (node 미설치 장치라 `npm test` 미실행 — 다른 장치서 확인.)
-
-### ⬜ 남은 것 (우선순위 미정)
-1. **게시 위치**: (D)와 함께 우패널 탭 → 넓은 영역. ⚠️ 모바일.
-2. **밴드 아이콘 배지 / 밴드 하이라이트 필터**(기존 2차기능). 3. 청크(10s)평균 CLAP·전곡으로 식별·유사도 동시 개선 검증(report §9).
+### 🔜 다음 세션 할 일 (feature/emoi-cluster-v2, 미머지)
+1. **브라우저 실검수**: `python -m http.server` → 유튜브 하단 음원맵. 축 라벨·원점·**밴드 원 클릭→그 밴드 곡 전체**·곡 클릭→유사곡, 모바일(음원맵 320px). node 미설치라 `npm test`·실렌더 미확인.
+2. **분할 비율 결정**(yt:음원맵, 현재 50:50) — 사용자 보류.
+3. **밴드 정보(워드클라우드)도 이쪽으로 옮길지** — 사용자 보류(가독성 보고 결정). 옮기면 우패널은 히스토/히트맵만.
+4. **머지 경로**: `feature/emoi-cluster-v2` → `feature/emoi-cluster` → `main`(또는 직접). 라이브는 sbb2002.github.io.
+5. (선택) 밴드 아이콘 배지 · 청크(10s)평균 CLAP·전곡 검증(report §9) · 구 `keywords_2d.json`/`build_embeddings.py` 폐기.
 
 ### 한계
 2D 투영은 정성용(정직성 지표는 고차원 LOO). 표본 밴드별 ~9곡(TOP10−지역락/실패), 60초 1구간. 동일 장르(BanG Dream)라 식별 난도 본질적으로 높음(silhouette≈0이 그 증거).
