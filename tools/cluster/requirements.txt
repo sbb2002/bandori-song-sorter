@@ -1,0 +1,4 @@
+sentence-transformers
+umap-learn
+scikit-learn
+PyYAML

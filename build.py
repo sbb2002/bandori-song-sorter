@@ -42,6 +42,18 @@ def load_wordclouds(wc_dir="wordcloud"):
     return out
 
 
+def load_cluster(path="cluster/keywords_2d.json"):
+    """키워드 2D 임베딩 좌표(build_embeddings.py 산출). 없으면 빈 dict(클러스터 탭 비활성).
+
+    스키마: {model, generated, bands:[...], keywords:[{jp,ko,x,y,total,bands,senti}]}
+    """
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        doc = json.load(f)
+    return doc or {}
+
+
 def build():
     """data/*.yaml(앨범 단위)를 곡 단위로 평탄화하여 index.html을 생성한다.
 
@@ -96,6 +108,7 @@ def build():
 
     song_data = {'bands': bands, 'songsByBand': songs_by_band}
     wordcloud_data = load_wordclouds()
+    cluster_data = load_cluster()
 
     env = Environment(loader=FileSystemLoader(template_dir))
     try:
@@ -115,10 +128,13 @@ def build():
     song_data_json = json.dumps(song_data, ensure_ascii=False).replace('<', '\\u003c')
     wordcloud_data_json = json.dumps(
         wordcloud_data, ensure_ascii=False).replace('<', '\\u003c')
+    cluster_data_json = json.dumps(
+        cluster_data, ensure_ascii=False).replace('<', '\\u003c')
 
     rendered_html = template.render(
         song_data_json=song_data_json,
         wordcloud_data_json=wordcloud_data_json,
+        cluster_data_json=cluster_data_json,
         static_paths=static_paths,
     )
 
@@ -128,8 +144,9 @@ def build():
 
     total = sum(len(v) for v in songs_by_band.values())
     wc = len(wordcloud_data)
+    cl = len(cluster_data.get('keywords', []))
     print(f"[OK] Build Success: index.html 생성 완료 "
-          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드)")
+          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 클러스터 {cl}키워드)")
 
 
 if __name__ == "__main__":

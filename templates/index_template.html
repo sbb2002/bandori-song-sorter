@@ -9,6 +9,7 @@
     <script>window.SONG_DATA = {{ song_data_json | safe }};</script>
     <!-- 밴드 워드클라우드 키워드 (build.py 주입 · wordcloud/<band>.yaml) -->
     <script>window.WORDCLOUD_DATA = {{ wordcloud_data_json | safe }};</script>
+    <script>window.CLUSTER_DATA = {{ cluster_data_json | safe }};</script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,6 +81,7 @@
             <button class="tab-btn active" type="button" data-tab="hist">히스토그램</button>
             <button class="tab-btn" type="button" data-tab="heat">히트맵</button>
             <button class="tab-btn" type="button" data-tab="band">밴드 정보</button>
+            <button class="tab-btn" type="button" data-tab="cluster">키워드 맵</button>
         </div>
 
         <!-- D: HISTOGRAM (JS 렌더) -->
@@ -101,6 +103,16 @@
             <div class="wordcloud-wrap" id="wordcloud-wrap">
                 <canvas id="wordcloud-canvas"></canvas>
                 <div class="wc-empty" id="wc-empty" hidden>이 밴드의 가사 키워드가 아직 없어요.</div>
+            </div>
+        </div>
+
+        <!-- F2: KEYWORD CLUSTER — 2D 임베딩 산점도 (ECharts) -->
+        <div class="cluster-panel" id="cluster-panel">
+            <div class="bi-title">키워드 의미 지도</div>
+            <div class="bi-sub" id="cl-sub"></div>
+            <div class="cluster-wrap" id="cluster-wrap">
+                <div id="cluster-chart"></div>
+                <div class="wc-empty" id="cl-empty" hidden>키워드 좌표 데이터가 아직 없어요.</div>
             </div>
         </div>
     </aside>
@@ -150,6 +162,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 <!-- 워드클라우드 렌더 라이브러리 (벤더링) -->
 <script src="./static/js/wordcloud2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <!-- 순수 로직 (build.py 주입) -->
 <script src="{{ static_paths.core }}"></script>
 <!-- 앱 로직 (build.py 주입) -->

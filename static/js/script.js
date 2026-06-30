@@ -1240,6 +1240,95 @@ function renderWordcloud() {
 }
 
 // ───────────────────────────
+// 14.6 Keyword cluster (F2) — ECharts 2D 의미공간 산점도
+// ───────────────────────────
+
+let _clusterChart = null;
+
+/** 키워드 2D 임베딩 산점도. 점=고유 키워드, 색=주(최다빈도) 밴드 퍼스널 컬러,
+ *  크기=전체 빈도, 공유어(다밴드)는 흰 테두리. 빈도 상위 N개만 상시 라벨. */
+function renderCluster() {
+    const el = document.getElementById('cluster-chart');
+    const empty = document.getElementById('cl-empty');
+    const subEl = document.getElementById('cl-sub');
+    if (!el) return;
+
+    const data = window.CLUSTER_DATA || {};
+    const kws = data.keywords || [];
+    if (!window.echarts || kws.length === 0) {
+        if (empty) empty.hidden = false;
+        if (subEl) subEl.textContent = '';
+        return;
+    }
+    if (empty) empty.hidden = true;
+    if (subEl) subEl.textContent =
+        `고유 키워드 ${kws.length}개 · ${(data.bands || []).length}밴드 · 의미공간 2D(UMAP)`;
+
+    if (!_clusterChart) {
+        _clusterChart = echarts.init(el);
+        window.addEventListener('resize', () => _clusterChart && _clusterChart.resize());
+    }
+
+    const maxT = kws.reduce((m, k) => Math.max(m, k.total), 1);
+    const LABEL_TOP = 30;                  // 빈도 상위 N개만 상시 라벨(나머지는 호버)
+    const points = kws.map((k, i) => {
+        const entries = Object.entries(k.bands).sort((a, b) => b[1] - a[1]);
+        const shared = entries.length > 1;
+        return {
+            value: [k.x, k.y],
+            name: k.ko || k.jp,
+            symbolSize: 6 + 22 * Math.sqrt(k.total / maxT),
+            itemStyle: {
+                color: BAND_COLORS[entries[0][0]] || '#c084fc',
+                opacity: shared ? 0.95 : 0.8,
+                borderColor: shared ? 'rgba(255,255,255,0.85)' : 'transparent',
+                borderWidth: shared ? 1 : 0,
+            },
+            label: { show: i < LABEL_TOP },
+            _kw: k, _entries: entries,
+        };
+    });
+
+    _clusterChart.setOption({
+        backgroundColor: 'transparent',
+        animation: false,
+        tooltip: {
+            trigger: 'item', confine: true,
+            backgroundColor: 'rgba(20,20,30,0.95)', borderColor: '#2a2a3a',
+            textStyle: { color: '#e8e8f0', fontSize: 11 },
+            formatter: p => {
+                const k = p.data._kw;
+                const label = k.ko
+                    ? `${k.ko} <span style="opacity:.55">${k.jp}</span>` : k.jp;
+                const bands = p.data._entries
+                    .map(([b, w]) => `${bandDisplay(b)} <b>${w}</b>`).join('<br>');
+                return `<b>${label}</b> · 총 ${k.total}<br>${bands}`;
+            },
+        },
+        grid: { left: 6, right: 6, top: 6, bottom: 6 },
+        xAxis: { type: 'value', show: false, scale: true },
+        yAxis: { type: 'value', show: false, scale: true },
+        dataZoom: [                        // 휠/핀치 줌·드래그 팬(점 유지)
+            { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
+            { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
+        ],
+        series: [{
+            type: 'scatter',
+            data: points,
+            label: {
+                show: true, formatter: p => p.data.name, position: 'top',
+                color: '#e8e8f0', fontSize: 11, fontWeight: 700,
+                textBorderColor: 'rgba(0,0,0,0.6)', textBorderWidth: 2,
+            },
+            labelLayout: { hideOverlap: true },
+            emphasis: { focus: 'self', label: { show: true }, scale: 1.3 },
+            blur: { itemStyle: { opacity: 0.12 }, label: { opacity: 0.08 } },
+        }],
+    });
+    _clusterChart.resize();
+}
+
+// ───────────────────────────
 // 15. Tabs / Reset
 // ───────────────────────────
 
@@ -1249,7 +1338,9 @@ function switchTab(tab) {
     document.getElementById('hist-panel').classList.toggle('active', tab === 'hist');
     document.getElementById('heat-panel').classList.toggle('active', tab === 'heat');
     document.getElementById('band-panel').classList.toggle('active', tab === 'band');
+    document.getElementById('cluster-panel').classList.toggle('active', tab === 'cluster');
     if (tab === 'band') renderWordcloud();
+    if (tab === 'cluster') renderCluster();
 }
 
 /** 곡 종류 탭 전환 (ALL/Ori/Cover) */
