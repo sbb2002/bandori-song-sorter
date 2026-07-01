@@ -65,7 +65,7 @@
 > **본류 = 축 재정의.** 현 v2 축(PCA+사후 단일 feature 라벨)은 라벨이 축을 과장(x=rolloff r=−.66, y=zcr r=+.61)하고 전체믹스·16kHz·60s 프록시라 체감과 괴리(예: hello/pastel이 "저음·거침" 사분면). **해결: PCA를 semantic 축에서 빼고 축을 지각 feature로 직접 계산** → 라벨=축 성립. **상세·확정 설계 = [docs/spec/audio-map-axes.md](spec/audio-map-axes.md)**. 아래는 요약:
 
 1. **범위(확정)**: 1차 **밴드당 캡 ~40곡**(~300, n≥30 균형), 2차 전곡 660(+렌더 최적화). `build_audio_map.py`에 `--manifest`/캡 인자 추가(`data/*.yaml`에서 dedup=vid 생성).
-2. **오디오 재추출(승인)**: 현 60s·16kHz 캐시 폐기 → **48kHz·긴 구간(또는 후렴 탐지)** 재빌드.
+2. **오디오 재추출(승인)**: 캐시는 이미 48kHz mono(16kHz는 librosa 내부 로드값) → **전곡으로 재추출**(60s 크롭 폐기). 클라이막스는 **전곡 f0 상위 95p로 통계 포착**(후렴 위치 탐지 불필요, spec §2.1).
 3. **x축(확정)**: 보컬 f0 70% + centroid 20% + rolloff 10%. Demucs→CREPE/pYIN f0 **상위 95p**(절대max 아님)+믹스 centroid/rolloff → 각 z-score 정규화 가중합. 전곡 여성보컬이라 성별분기 불필요.
 4. **y축(우선순위)**: **후보3(오디오 정서/mode = 밝음↔어두움, 가사 불필요·스케일 O) 우선** → 폐기 시 후보1(가사 감성; ⚠️ 곡별 가사 필요·이 장치 0개·캡40=~200곡 수작업 장벽) 또는 후보2(음색 왜곡/노이즈).
 5. **좌표**: PCA 대신 x·y=지각 feature 직접. `audio_map.json` 스키마·`renderCluster` 라벨 갱신.
