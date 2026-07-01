@@ -86,6 +86,13 @@
 - CI에선 길이 스크랩 막힘(`length_s=null`, consent wall) → 길이필터 비활성·`variant_tag`만 작동. `verify_links` oEmbed/길이 로직과 공유해 보강 가능.
 - `tools/rss_seen.json`·`tools/rss_inbox.csv`·`tools/verify_cache.json`(옛 프로토타입 untracked 잔재) 삭제 가능.
 
+### (백로그) 재생 이퀄라이저 애니메이션 — 후순위
+재생 중인 곡에 이퀄라이저/스펙트럼 막대 애니메이션. **재생 파동(effectScatter)이 이미 "재생 중" 신호를 저비용 제공** 중이라 추가 가치는 보조적.
+- **실시간 실제 소리 = 불가**: YouTube는 크로스오리진 iframe이라 부모 페이지가 오디오 샘플을 탭 못 함(Web Audio `AnalyserNode` 연결 불가). `getDisplayMedia` 탭 캡처는 매 세션 권한 팝업+Chrome/Edge 전용이라 탈락.
+- **LFS도 불가**: **GitHub Pages는 LFS 파일을 서빙하지 않음**(포인터 텍스트만 감) → 대용량 사전분석 데이터를 LFS로 우회하는 길은 막힘.
+- **B(진짜, 무거움)**: 곡별 주파수 엔벨로프를 오프라인 사전계산. **통짜 JSON 금지**(순진하면 660곡 ~70MB). 대신 **곡별 lazy 파일**(`equalizer/<vid>.bin`, 재생곡만 fetch) + 바이트 양자화 + gzip(`DecompressionStream`) → 곡당 ~10KB·총 6~8MB로 서빙 가능. **전곡 오디오 확보(전곡 확대) 이후 저렴해짐** — 그 시점 재검토.
+- **A+(절충, 권장)**: `audio_map.json`의 정적 특징(tempo·contrast·onset)으로 **실시간 절차적 생성**. 곡 성격에 맞춰 움직이되(빠른 곡=바쁨) 추가 용량 ~0. 실제 파형은 아니지만 순수 가짜(A)보단 진짜에 가까움. 지금 단계 가성비 최고.
+
 ---
 
 ## 열린 결정
