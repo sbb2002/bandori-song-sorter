@@ -58,6 +58,8 @@
 
 **현재 채택본**: x=spectral contrast(거칢↔매끄러움, r−0.81)·y=mode(밝음↔어두움, r+0.51). 파이프라인 `tools/cluster/build_perceptual_map.py` → `cluster/audio_map.json` → `script.js _clDraw`(ALL 개요/밴드 포커스 2모드, 밴드 아이콘 PNG 센트로이드, 재생 곡 파동). TOP10×10 97곡 미리보기 라이브. 미머지(feature/emoi-cluster-v2).
 
+> Comment: 센트로이드 선택 시 센트로이드는 클릭 비활성화하고 반투명(opacity=0.3)처리하기. UX 평가에서 센트로이드에 근접한 데이터 포인트를 클릭하기 어렵다고 함.
+
 ### 🔜 다음 작업 본류 — 음원맵 전곡 확대
 > **⚠️ 구현 시 반드시 [docs/spec/audio-map-fullscale.md](spec/audio-map-fullscale.md) 를 열어서 참고할 것.** (범위 결정 ①전체660/②밴드당 캡N/③유지, 매니페스트 생성 + `--manifest` 인자, yt-dlp 오디오 추출→`audio_full`, `--cache audio_full` 빌드, 수백 점 렌더 최적화까지 순서·비용·불균형 전부 그 파일에 정리됨.)
 
