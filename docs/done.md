@@ -524,3 +524,28 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 결과
 - `index.html`은 `script.js`를 외부 참조(`<script src=...>`)라 색상 작업은 재빌드 불필요. `build.py` 성공·`node --check` 통과.
 - HANDOFF #1은 **(D) 워드클라우드 배치 결정**만 남음(#2 클러스터 게시위치와 함께 사용자 결정 사안).
+
+---
+
+# 세션 21 — 음원맵 축 지각 재정의: 30곡 파일럿 검증 + 구현 + UI (HANDOFF #2-v3 완료, 전곡 확대만 남음)
+
+`docs/spec/audio-map-axes.md` §5 검증을 30곡 손 라벨로 실행 → 축을 **음향 feature로 직접 재정의**. 전곡 확대(스케일업)만 남았고, 그 구현 스펙은 **[spec/audio-map-fullscale.md](spec/audio-map-fullscale.md)** 로 분리.
+
+## 검증 (n=28, 워크시트 손 라벨 ↔ feature 상관)
+- **spec 예상 뒤집힘**: x축(f0/음고) **실패**(r≈0) — BanG Dream 전곡 여성보컬·유사 음역이라 f0 median이 뭉쳐 곡별 변별력 없음. §2.1 peak-f0 가설 반증. Demucs 보컬분리는 필수였으나(믹스 f0는 베이스에 락) 분리해도 음역 균질.
+- **채택 축**: x = **spectral contrast**(r=−0.81, 오른쪽 거칢/왼쪽 매끄러움), y = **mode_score 장·단조**(r=+0.51, 위 밝음/아래 어두움). contrast가 valence·rough 양쪽 지배 → 카탈로그가 **음향적으로 사실상 1차원**, mode만 독립(r=0.37). 측정가능 2D = (contrast, mode) 하나뿐.
+
+## 구현
+- `tools/cluster/build_perceptual_map.py`(신규 채택본) — contrast·mode만·z-score 직접좌표(**PCA/f0/Demucs 불필요**), `cluster/songs_top10.csv` → `cluster/audio_map.json`. `carry_sim()`으로 v2 CLAP sim 승계, songs에 url 포함.
+- `tools/cluster/perceptual_features.py`(Demucs+f0+mode/timbre, mode_valence=Krumhansl KS 프로파일) · `tools/cluster/axis_correlation.py`(피어슨/스피어만) · `cluster/axis_labels_worksheet.csv`(손 라벨 30행) · `cluster/axis_pilot_features.csv`.
+- **튜닝**: `Y_SHIFT=+10`(데이터 평균이 밝은팝 치우침 → RAS '약간 마이너' 앵커) · `BAND_OVERRIDES morfonica dy+15`(★측정 아님★ 바이올린 음색 밝음이 어떤 feature로도 안 잡힘 → 밴드 큐레이션, `audio_map.json.overrides` 투명 기록). ave는 미보정(y 정확·x만 프록시 한계).
+- 보고서 `docs/report/cluster-correlation/README.md`(§7 x축 재검정·§8 구현·§8.1 morfonica).
+
+## UI (script.js `_clDraw` 재작성 — 두 모드)
+- **ALL 개요**: 완전 정적(호버=타밴드 흐림만, 이동 없음 → 센트로이드 클릭 안정) · 곡 s=0.5로 밴드 중심 뭉침 · **밴드 센트로이드=`assets/icons/<band>.png` 아이콘** · zero-line 없음.
+- **밴드 포커스**: 센트로이드를 [0,0]에 놓고 축을 대칭 범위로 잡아 **정중앙 배치** · 센트로이드 통과 **x·y 축선 점선** · 곡은 센트로이드 기준 상대좌표.
+- 밴드셀렉터 ↔ 음원맵 양방향(센트로이드 클릭=그 밴드 선택, ALL 빈영역=개요). 곡 점 클릭=재생(리스트 선택과 동일). CLAP 연결선/유사목록 **표시 제거**(JSON 데이터는 보존). **재생 곡 파동 애니메이션**(effectScatter rippleEffect). `_clRangeKey` 가드로 호버·재생 시 줌 리셋 방지. `.cl-similar` 고정높이+스크롤(하단 점 가림 버그 수정).
+
+## 결과 / 남은 것
+- TOP10×10 **97곡 미리보기 라이브 확인 완료**. `index.html`은 `<script src>` 외부 참조라 JS·CSS 수정은 재빌드 불필요(템플릿 변경만 `python build.py`).
+- **남은 작업 = 전곡 확대뿐** → **[spec/audio-map-fullscale.md](spec/audio-map-fullscale.md)** 참조. 미머지(feature/emoi-cluster-v2).

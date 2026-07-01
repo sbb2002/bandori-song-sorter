@@ -2,7 +2,7 @@
 
 이 문서는 **앞으로 할 일만** 담습니다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 진행의 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-01** — #1 워드클라우드 완료(세션 20, main 머지) · **#2 클러스터: 키워드→음원 피벗 + v2 UI 완료**(feature/emoi-cluster-v2, 미머지) · **#2-v3 축 재정의 설계 확정(미구현)**. 옵션1 밴드 음원 지도/옵션2 CLAP비교→librosa채택/옵션3 CLAP 유사곡 탐색기 + v2 UI. **v3: 현 축(PCA+사후 라벨)이 체감과 괴리 → 축을 지각 feature로 직접 재정의**(x=보컬음고+세션밝기, y=오디오 정서/mode). 상세 설계 = **[docs/spec/audio-map-axes.md](spec/audio-map-axes.md)**. 실험 종합 = `docs/report/cluster_experiment.md`. #1은 (D) 배치만.
+마지막 갱신: **2026-07-02** — #1 워드클라우드 완료(세션 20, main 머지) · **#2 클러스터 v2 UI + #2-v3 축 지각 재정의(30곡 파일럿 검증·구현·UI) 완료**(세션 21, feature/emoi-cluster-v2, 미머지). **#2 남은 작업 = 전곡 확대뿐** → 구현 스펙은 **[docs/spec/audio-map-fullscale.md](spec/audio-map-fullscale.md)** 참조. 축 설계 근거 = [docs/spec/audio-map-axes.md](spec/audio-map-axes.md) + `docs/report/cluster-correlation/`. #1은 (D) 배치만.
 
 > 🖥️ **다음 작업은 다른 로컬·다른 세션에서 진행** — 시작 전 체크:
 > 1. `git pull origin main`(emoi-cloud 머지 반영 · 660곡). 작업은 **새 feature 브랜치**에서 시작.
@@ -17,7 +17,7 @@
 
 - 데이터 **677 트랙 / 화면 660곡(dedup) / 13밴드**. 워드클라우드 **라이브**(품질 2-c A·B·C + 밴드 퍼스널 컬러·mutype 투톤·네온 글로우 완료, done 세션 20).
 - 백필 오리지널(1-a)·커버(1-b)·지역락 처리 **완료**(done 세션 14~19). 화면 곡수 526→**660**(+134). 끝까지 KR 지역락인 4곡만 제외.
-- 다음 본류: **#1은 (D) 배치 결정만 남음 → #2 키워드 2D 클러스터.**
+- 다음 본류: **음원맵 전곡 확대**(#2-확대) → [spec/audio-map-fullscale.md](spec/audio-map-fullscale.md). #1은 (D) 배치 결정만 남음.
 
 > ⏪ **롤백 지점 — `backup/main-20260630-emoicloud`** (local·origin) = emoi-cloud(워드클라우드 색·품질) 머지 **직전 main = `cebbce4`**. 문제 시 `git reset --hard cebbce4`(+force-push) 또는 `git revert -m 1 961ab93 && git push origin main`(라이브 안전·권장). (이전 백업 `backup/main-20260630`=`d586ffb`는 1-b 커버 머지 직전.)
 
@@ -28,8 +28,9 @@
 | 순 | 작업 | 난이도 | 상태 |
 |----|------|--------|------|
 | 1 | 워드클라우드 품질 (2-c) A·B·C + 색상 | 중 | ✅ 완료(세션 20) — (D) 배치만 남음 |
-| 2 | 클러스터(키워드→**음원** 피벗) + v2 UI | 중~높 | ✅ 옵션1·2·3 + v2 구현(feature/emoi-cluster-v2, 미머지) |
-| 2-v3 | **축 지각 재정의**(x=음고+밝기, y=오디오 정서) | 높 | 🔜 설계 확정·미구현 → [spec/audio-map-axes.md](spec/audio-map-axes.md). **다음 작업 본류** |
+| 2 | 클러스터(음원 피벗) + v2 UI | 중~높 | ✅ 완료(세션 21, feature/emoi-cluster-v2, 미머지) |
+| 2-v3 | **축 지각 재정의**(x=거칢/contrast, y=정서/mode) | 높 | ✅ 30곡 파일럿 검증·구현·UI 완료(세션 21) |
+| **2-확대** | **음원맵 전곡 확대**(TOP10 → 전 카탈로그) | 중~높 | 🔜 **다음 작업 본류** → **[spec/audio-map-fullscale.md](spec/audio-map-fullscale.md)** |
 | — | (보류) 백필 1-c namedup 403 | — | url 품질 개선 · 후순위 |
 | — | (보류) 진행도 Save/Load | 중~높 | 리스크 높음(덮어쓰기) |
 | — | (백로그) youtube_rss Phase 2 / Phase 1.5 | — | precision 축적 후 |
@@ -51,53 +52,20 @@
 
 ---
 
-## 2. 클러스터 — **키워드→음원 피벗 완료** (옵션 1·2·3 구현, 미머지)
+## 2. 클러스터 — v2 UI + v3 축 재정의 **완료**, 남은 것은 전곡 확대뿐
 
-> ⚠️ **방향 전면 변경**(2026-07-01). 키워드/문장/곡 어느 단위로도 **가사로는 밴드 군집 불가**(silhouette≈0). **음원 음악특징으로 밴드 단위 집계 시 밴드 구별됨**(LOO 분류 59%). **종합 실험 기록 = [docs/report/cluster_experiment.md](report/cluster_experiment.md)**(전 단계 수치·방법·결정), 백엔드 비교 = [report/cluster_audio_clap.md](report/cluster_audio_clap.md) + `cluster_audio_backends.png`. 구 키워드 파이프라인(`build_embeddings.py`·`keywords_2d.json`)은 **미사용 잔존**(폐기 가능).
+> ✅ **음원 피벗·v2 UI·v3 축 지각 재정의(30곡 파일럿 검증·구현·UI) 완료**(세션 21). 상세 완료 기록 = [done.md](done.md) 세션 21. 축 설계 근거 = [spec/audio-map-axes.md](spec/audio-map-axes.md) + `docs/report/cluster-correlation/README.md`.
 
-- **파이프라인**: `python tools/cluster/build_audio_map.py`(= `--backend librosa --sim clap`) → `cluster/audio_map.json`(커밋). 입력 `cluster/songs_top10.csv`(TOP10×10 매니페스트, 커밋). 음원은 `data/*.yaml` url에서 **yt-dlp로 60초·48kHz 추출 → `cluster/audio_cache/`(gitignore, 저작물)**. 의존성 `tools/cluster/requirements-audio.txt` + `transformers>=5`(CLAP 내장). **로컬 빌드 전용(CI 불가)**, 산출 JSON만 커밋. 재생성 후 `python build.py`.
-- **좌표·지표**: 밴드 중심점에 PCA(2) fit → 곡·중심 한 좌표계. **원점(0,0)=곡 평균('평균적 소리'), 95퍼센타일 스케일+±60 클립(뭉침 완화)**. `audio_map.json` = `{axes:{x,y:{feature,pos,neg,r}}, songs:[{band,song,x,y,sim:[…]}], centroids:[{band,x,y,n}], metrics:{loo_acc,…}}`. `sim`=곡별 **CLAP 코사인** 유사곡 인덱스. `axes`=각 축이 어떤 음향특징과 상관되는지(현재 x=rolloff 고음↔저음, y=zcr 매끄↔거침; `AXIS_FEATURES` 상관분석).
-- **렌더(v2)**: `script.js` `renderCluster`/`_clDraw`/`_clSimList`/`_clAxisLabels`(ECharts) — 작은 점=곡, 큰 라벨 점=밴드 중심. **곡 클릭=CLAP 유사곡 연결선·강조 / 밴드 원 클릭=그 밴드 곡 전체 강조 / 빈영역=해제**. 원점 십자 점선(markLine), 4모서리 축 의미 라벨(`#cl-ax-*`), `#cl-similar` 목록. 줌/팬. **유튜브 컬럼 하단에 상시 표시**(`.audiomap-area`, 우패널 탭에서 분리 — v2).
-- **역할 분담(실측 결론)**: 밴드 **식별 지도**=librosa(LOO 59% > CLAP 45%), 곡 **유사곡**=CLAP(무드 일관 > librosa 지문매칭). 융합은 손해. 상세 report.
+**현재 채택본**: x=spectral contrast(거칢↔매끄러움, r−0.81)·y=mode(밝음↔어두움, r+0.51). 파이프라인 `tools/cluster/build_perceptual_map.py` → `cluster/audio_map.json` → `script.js _clDraw`(ALL 개요/밴드 포커스 2모드, 밴드 아이콘 PNG 센트로이드, 재생 곡 파동). TOP10×10 97곡 미리보기 라이브. 미머지(feature/emoi-cluster-v2).
 
-### 🔜 다음 세션 할 일 — **#2-v3 축 지각 재정의**(feature/emoi-cluster-v2, 미머지)
+### 🔜 다음 작업 본류 — 음원맵 전곡 확대
+> **⚠️ 구현 시 반드시 [docs/spec/audio-map-fullscale.md](spec/audio-map-fullscale.md) 를 열어서 참고할 것.** (범위 결정 ①전체660/②밴드당 캡N/③유지, 매니페스트 생성 + `--manifest` 인자, yt-dlp 오디오 추출→`audio_full`, `--cache audio_full` 빌드, 수백 점 렌더 최적화까지 순서·비용·불균형 전부 그 파일에 정리됨.)
 
-> **본류 = 축 재정의.** 현 v2 축(PCA+사후 단일 feature 라벨)은 라벨이 축을 과장(x=rolloff r=−.66, y=zcr r=+.61)하고 전체믹스·16kHz·60s 프록시라 체감과 괴리(예: hello/pastel이 "저음·거침" 사분면). **해결: PCA를 semantic 축에서 빼고 축을 지각 feature로 직접 계산** → 라벨=축 성립. **상세·확정 설계 = [docs/spec/audio-map-axes.md](spec/audio-map-axes.md)**. 아래는 요약:
-
-1. **범위(확정)**: 1차 **밴드당 캡 ~40곡**(~300, n≥30 균형), 2차 전곡 660(+렌더 최적화). `build_audio_map.py`에 `--manifest`/캡 인자 추가(`data/*.yaml`에서 dedup=vid 생성).
-2. **오디오 재추출(승인)**: 캐시는 이미 48kHz mono(16kHz는 librosa 내부 로드값) → **전곡으로 재추출**(60s 크롭 폐기). 클라이막스는 **전곡 f0 상위 95p로 통계 포착**(후렴 위치 탐지 불필요, spec §2.1).
-3. **x축(확정)**: 보컬 f0 70% + centroid 20% + rolloff 10%. Demucs→CREPE/pYIN f0 **상위 95p**(절대max 아님)+믹스 centroid/rolloff → 각 z-score 정규화 가중합. 전곡 여성보컬이라 성별분기 불필요.
-4. **y축(우선순위)**: **후보3(오디오 정서/mode = 밝음↔어두움, 가사 불필요·스케일 O) 우선** → 폐기 시 후보1(가사 감성; ⚠️ 곡별 가사 필요·이 장치 0개·캡40=~200곡 수작업 장벽) 또는 후보2(음색 왜곡/노이즈).
-5. **좌표**: PCA 대신 x·y=지각 feature 직접. `audio_map.json` 스키마·`renderCluster` 라벨 갱신.
-6. **검증셋(선결)**: 사용자에게 **곡 20~30개 손 라벨**(고음/저음·정서) 요청 → feature와 상관 확인 후 채택.
-
-### 🔜 v2 잔여(재정의와 병행 가능, 우선순위 낮음)
-- **브라우저 실검수**: `python -m http.server` → 유튜브 하단 음원맵. 밴드 원 클릭→그 밴드 곡 전체·곡 클릭→유사곡, 모바일(320px). node 미설치라 `npm test`·실렌더 미확인.
-- **분할 비율**(yt:음원맵 50:50) · **워드클라우드 이동 여부** — 사용자 보류.
+### 🔜 v2 잔여(확대와 병행 가능, 우선순위 낮음)
+- **브라우저 실검수**: `python -m http.server` → 유튜브 하단 음원맵. 모바일(320px). node 미설치라 `npm test`·실렌더 미확인.
+- **분할 비율**(yt:음원맵) · **워드클라우드 이동 여부** — 사용자 보류(아래 열린 결정).
 - **머지 경로**: `feature/emoi-cluster-v2` → `feature/emoi-cluster` → `main`. 라이브 sbb2002.github.io.
-- (선택) 구 `keywords_2d.json`/`build_embeddings.py` 폐기 · 밴드 아이콘 배지.
-
-### 💡 확장 아이디어: 전체 음원분석(사용자 제안, 2026-07-01 — 미결정)
-현재 TOP10×10=100곡(균형). **전 카탈로그로 늘리면 "밴드 지문 지도" → "전 디스코그래피를 소리로 탐색하는 도구"로 성격 전환**(아무 곡 클릭→전 카탈로그 유사곡). 사용자 평: "꽤 재밌는 컨텐츠." 값어치 큼.
-- **규모(실측)**: 고유 660곡/13밴드. 60s·48kHz 캐시 **~3.7GB**(로컬·gitignore). 다운로드 ~30–60분 + 추출 ~20–30분 = 일회성 로컬 빌드, 산출 JSON만 커밋.
-- **밴드 불균형**: poppin124·roselia98·raise80·pastel74·afterglow72·hello72·morfonica57·mygo41·ave29·mugendai23 / **various_artists5·ikka_dumb_rock1·millsage1(곡 너무 적음 → 중심점 생략, 점으로만)**. 중심점 균형 깨지나 곡 유사도/탐색은 전부 이득.
-- **렌더**: 660점은 매우 빽빽 → 밴드 클릭 강조·줌 더 중요, 넓은 영역 필요(분할비율/위치 결정과 연결).
-- **범위 옵션(택1)**: ① 전체 660 ② **밴드당 상한 N(예 30~40)으로 균형 확장**(~300곡·~1.7GB, 중심점 깨끗 유지+탐색 3~4배) ③ 지금은 TOP10 유지·나중에. (개인 추천: 탐색 도구로 키울 거면 ①, 밴드 지도 품질 유지하며 키우려면 ②.)
-- **구현**: `build_audio_map.py`가 `songs_top10.csv`만 읽음 → **전체 매니페스트(`data/*.yaml`에서 생성) + `--manifest` 인자** 추가하면 됨. dedup=vid 기준(660 고유). 파이프라인 자체는 그대로 스케일.
-
-### 한계
-2D 투영은 정성용(정직성 지표는 고차원 LOO). 표본 밴드별 ~9곡(TOP10−지역락/실패), 60초 1구간. 동일 장르(BanG Dream)라 식별 난도 본질적으로 높음(silhouette≈0이 그 증거).
-
-**밴드 퍼스널 컬러**(✅ 워드클라우드 적용 완료 — `script.js` `BAND_COLORS`/`BAND_SUBCOLORS`; #2 클러스터에도 재사용):
-
-| 밴드 | 색 | 밴드 | 색 |
-|------|------|------|------|
-| poppin_party | `#ff3377` | morfonica | `#33AAFF` |
-| afterglow | `#ee3344` | raise_a_suilen | `#33CCCC` |
-| pastel_palettes | `#33ddaa` | mygo | `#0088BB` |
-| roselia | `#3344aa` | ave_mujica | `#881144` |
-| hello_happy_world | `#ffdd00` | mugendai_mutype | `#ff7788` (+보조 `#2288dd` 20% 그라데이션) |
-| millsage | `#AA22EE` | ikka_dump_rock | `#FFAA33` |
+- (선택) 구 `keywords_2d.json`/`build_embeddings.py`·`build_audio_map.py` 등 미사용 잔존 폐기.
 
 ---
 

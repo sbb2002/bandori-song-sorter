@@ -574,7 +574,7 @@ header h1 {
 #wordcloud-canvas { display: block; width: 100%; height: 100%; }
 #cluster-chart { width: 100%; height: 100%; min-height: 240px; }
 /* 음원맵 유사곡 목록(곡 클릭 시 CLAP 유사곡) */
-.cl-similar { margin-top: 8px; font-size: 0.64rem; min-height: 18px; }
+.cl-similar { margin-top: 6px; font-size: 0.64rem; height: 58px; overflow-y: auto; flex-shrink: 0; }
 .cl-similar .cl-hint { color: var(--text-sub); opacity: 0.75; }
 .cl-similar .cl-q { color: var(--text); margin-bottom: 4px; }
 .cl-similar .cl-q .cl-bd { color: var(--text-sub); }
