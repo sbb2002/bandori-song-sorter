@@ -1,0 +1,2 @@
+# 배치 스크립트는 CRLF 유지 (cmd 실행 안정성 — 라벨/goto)
+*.bat text eol=crlf

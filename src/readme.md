@@ -3,6 +3,8 @@
 > 한 줄 원칙: **레포 루트 = 배포되는 사이트**(`index.html` · `static/` · `assets/`), **`src/` = 그 사이트를 만드는 모든 소스**(빌드 스크립트·입력 데이터·도구·테스트).
 > GitHub Pages는 루트를 서빙한다. `src/` 안의 것은 런타임에 fetch되지 않고, `build.py`가 읽어 `index.html`에 구워넣거나(baking) 개발 시에만 쓰인다.
 
+> 🔁 **다른 로컬에서 이 구조를 처음 받을 때(1회)**: `git pull`은 추적 파일만 옮기고 gitignore된 데이터(오디오 캐시 등)는 옛 경로에 남는다. 브랜치 checkout/pull 후 cmd에서 **`src\tools\migrate_local_cache.bat`** 를 한 번 실행하면 옛 경로의 캐시가 새 위치로 이동한다. (`.env`·`assets\lyrics\` 는 루트가 안 바뀌었으므로 이동 대상 아님.)
+
 ## 폴더 지도
 
 | 경로 | 용도 |
