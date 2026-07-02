@@ -39,7 +39,8 @@
 
 ### 4. 빌드
 `python src/tools/cluster/build_perceptual_map.py --cache audio_full [--manifest <full.csv>]` → `src/content/cluster/audio_map.json` → `python src/build.py`.
-- 곡수 급증 시 `BAND_OVERRIDES`(morfonica) 재점검. 필요하면 `--y-shift` 재튜닝.
+- 곡수 급증 시 `BAND_OVERRIDES`(morfonica) 재점검. 필요하면 `--y-shift` 재튜닝. **이 전곡 빌드가 좌표 기준의 "마지막 튜닝 순간"** — 여기서 상수를 확정·동결하고 그 다음부터 오디오 폐기.
+- ⭐ **증분 자동화 대비(지금 남길 것)**: 이후 CI 신곡을 재다운로드 없이 얹으려면 **정규화 파라미터(contrast·mode의 mean·std + x/y_shift + overrides)를 `audio_map.json`에 함께 저장**. 오디오는 분석 후 폐기되므로 지금 안 남기면 나중에 전곡 재수집 필요. 자동화 설계 = [pipeline-automation.md](pipeline-automation.md) §5.
 - `carry_sim()`은 (band,song) 매칭으로 구 CLAP sim 승계 — 신규 곡은 sim 없음(연결선은 이미 표시 제거 상태라 무해).
 
 ### 5. 렌더 최적화 (수백 점 대응)
