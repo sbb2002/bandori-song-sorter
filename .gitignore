@@ -8,16 +8,16 @@ restore
 __pycache__/
 *.pyc
 
-# Generated CSVs — data/*.yaml이 원본. converter 산출물·RSS inbox 모두 추적 안 함.
-# data/*.csv
-# tools/*.csv
+# Generated CSVs — src/content/songs/*.yaml이 원본. converter 산출물·RSS inbox 모두 추적 안 함.
+# src/content/songs/*.csv
+# src/tools/*.csv
 
-# tools/collect/rss_events.jsonl(이벤트 로그)은 git 추적 대상 — ignore하지 않음.
+# src/tools/collect/rss_events.jsonl(이벤트 로그)은 git 추적 대상 — ignore하지 않음.
 # (멱등 재계산으로 seen 원장 폐기 → rss_seen.json은 더 이상 쓰지 않음.)
 
 # Regeneratable network cache files
-tools/curate/verify_cache.json
-tools/curate/plb_cache.json
+src/tools/curate/verify_cache.json
+src/tools/curate/plb_cache.json
 
 # Copyrighted content
 # 가사 채운 실제 파일(assets/lyrics/<band>.md)은 추적 금지.
@@ -26,11 +26,11 @@ assets/lyrics/*
 !assets/lyrics/*_template.md
 
 # 멀티모달 클러스터 PoC — 음원 캐시·임시 파싱 산출물(가사/음원 = 저작물, 비커밋).
-# cluster/keywords_2d.json(키워드 좌표)만 추적, 나머지 파생물은 무시.
-cluster/audio_cache/
-cluster/audio_full/
+# src/content/cluster/keywords_2d.json(키워드 좌표)만 추적, 나머지 파생물은 무시.
+src/content/cluster/audio_cache/
+src/content/cluster/audio_full/
 # 언더스코어 접두 = 임시/파생/비교본(_ffbin·_songs·_sentences·_audio_map_clap)
-cluster/_*
+src/content/cluster/_*
 
 # Secrets
 .env

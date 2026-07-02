@@ -1249,7 +1249,7 @@ function renderWordcloud() {
 //   x = spectral contrast → 거칢↔매끄러움 (검증 r=−0.81)
 //   y = mode(장/단조)     → 어두움↔밝음  (검증 r=+0.51)
 // PCA가 아니라 두 지각축을 직접 좌표로 사용(원점=평균 곡). 축 재정의 실험:
-// docs/report/cluster-correlation, 이전 PCA/식별 실험: docs/report/cluster_experiment.md.
+// docs/working/report/cluster-correlation, 이전 PCA/식별 실험: docs/working/report/cluster_experiment.md.
 // 곡 클릭=재생(곡 리스트 선택과 동일)·밴드 원 클릭=그 밴드 곡 강조. CLAP 유사곡 데이터
 // (songs[i].sim)는 JSON에 보존하되 표시는 하지 않음(근접=유사가 이 지도엔 더 자연스러움).
 

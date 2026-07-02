@@ -136,10 +136,10 @@ pip install pyyaml
 
 ### 빌드
 
-`data/*.yaml`을 편집한 뒤 아래 명령어를 실행하면 `index.html`이 재생성됩니다.
+`src/content/songs/*.yaml`을 편집한 뒤 아래 명령어를 실행하면 `index.html`이 재생성됩니다.
 
 ```bash
-python build.py
+python src/build.py
 ```
 
 ### 테스트
