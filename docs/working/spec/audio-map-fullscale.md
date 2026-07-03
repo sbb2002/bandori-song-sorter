@@ -33,9 +33,10 @@
 `src/content/songs/*.yaml`에서 **전체/캡 매니페스트 CSV**(`band,idx,song,url`, dedup=vid) 생성. `build_perceptual_map.py`에 **`--manifest` 인자 추가**(현재 `MANIFEST` 하드코딩) 또는 새 CSV로 교체. 캡 옵션이면 밴드당 상한 N 잘라내기.
 
 ### 3. 오디오 추출
-매니페스트의 각 url을 **yt-dlp로 추출 → `src/content/cluster/audio_full/<band>__<idx:03d>.wav`**(48kHz, gitignore).
+매니페스트의 각 url을 **`fetch_audio.py`로 추출 → `src/content/cluster/audio_full/<band>__<idx:03d>.wav`**(48kHz mono, gitignore).
+- 툴: `python src/tools/cluster/fetch_audio.py --cache audio_full --manifest <full.csv>` (2026-07-03 추가). **재개 가능**(skip-existing)·**fail-soft**(실패곡 스킵, 재실행 재시도). 안티봇 5원칙(`-f ba -x` / 곡간 30–60s 랜덤 / `--sleep-requests 5` / `--limit-rate 250K` / `--cookies-from-browser`) 출처 = [../../idea/260703.md](../../idea/260703.md). `--dry-run`/`--limit N` 으로 무네트워크 점검·스모크.
 - contrast·mode는 **전곡 통계**라 60초 크롭 불필요 — 전곡(또는 대표 구간) 로드로 충분. Demucs 보컬분리 **불필요**(f0 축을 폐기했으므로).
-- 비용: 다운로드 ~30–60분 + 추출 ~20–30분, **일회성 로컬 빌드**(산출 `audio_map.json`만 커밋).
+- 비용: 다운로드 ~30–60분 + 추출 ~20–30분, **일회성 로컬 빌드**(산출 `audio_map.json`만 커밋). ⚠️ wav 캐시는 gitignore=장치 전용 → 다른 로컬은 재수집.
 
 ### 4. 빌드
 `python src/tools/cluster/build_perceptual_map.py --cache audio_full [--manifest <full.csv>]` → `src/content/cluster/audio_map.json` → `python src/build.py`.

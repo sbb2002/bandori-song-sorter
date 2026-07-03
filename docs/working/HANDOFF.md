@@ -2,7 +2,7 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-02** — 작업별 재구성 + 자동화 파이프라인 설계 반영.
+마지막 갱신: **2026-07-03** — 작업 2·3 **병렬 실행 계획** 확정 + 오디오 수집기 `fetch_audio.py` 추가(브랜치 `feature/emoi-cluster-v3a`).
 
 ---
 
@@ -28,6 +28,35 @@
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
+
+---
+
+## 병렬 실행 계획 (작업 2·3 — 2026-07-03 확정, 이 순서로 진행)
+
+> 오늘 작업 브랜치 = **`feature/emoi-cluster-v3a`**. 크리티컬 패스는 하나뿐: **범위 → 오디오 수집 → 전곡 빌드·동결 → 증분 append.** 나머지는 오디오 무관 → **오디오 수집 대기시간(로컬 ~30~90분 무인)에 병렬**로 굴린다.
+>
+> **⏸ 중단 시 재개(다른 로컬·세션)**: 각 페이즈/트랙은 독립 커밋 → `git push` 하면 다른 로컬이 이어받는다. **단 오디오 wav 캐시는 gitignore = 장치 전용** — 다른 로컬로 옮겨도 wav 는 안 따라온다(현재 이 장치엔 wav 0개). 다운로드를 다른 로컬에서 이어가면 그 장치 기준으로 재수집하되, `fetch_audio.py` 의 **skip-existing 으로 장치 내 재개는 보장**(끊겨도 같은 명령 재실행 = 남은 곡만).
+
+**Phase 0 — 결정 + 빌드 준비 (동시)**
+- **[사용자 게이트]** ① 범위(660 / 캡 N~300 / 97 유지 — fullscale §1) = 오디오 물량 확정 · ② 레이아웃 묶음(아래 **열린 결정**) = 2.5 최종·작업1(D) 확정.
+- **[A·코드]** `build_perceptual_map.py`에 `--manifest` 인자 + 매니페스트 생성(`songs/*.yaml`→`band,idx,song,url`, dedup=vid, 캡N) + **정규화 파라미터 저장(contrast·mode의 mean/std + shift + overrides, pipeline §5)**. 셋 다 audio 없이 현행으로 스모크 가능. ⚠️ 이 저장 코드가 **다운로드 착수 전에** 들어가 있어야 전곡 빌드가 파라미터를 남긴다(안 남기면 나중에 전곡 재수집).
+
+**Phase 1 — 대기시간 병렬 (핵심 구간)**
+- **[A]** **오디오 수집 착수**: `python src/tools/cluster/build_manifest.py`(→ `songs_full.csv` 660곡, 생성 완료) → `python src/tools/cluster/fetch_audio.py --cache audio_full`. 재개 가능·fail-soft·10%마다 진행률/예상종료·일시중지(429 재시도소진 / 17시+ETA≥5h). 안티봇 5원칙 = `docs/idea/260703.md`. ← 도는 동안 ↓ 병렬.
+  > 🟡 **현재 상태(2026-07-03 오전) = 도구 준비 완료·미착수.** 착수 선결: ① `pip install yt-dlp imageio-ffmpeg`(이 장치 conda base 미설치) · ② 쿠키 방식 결정(**권장 `--no-cookies`** — 본계정 쿠키는 pipeline §4 '본계정 금지' 정지 리스크, 봇월 감지 시 버너로 승격) · ③ 실행. 660곡 ≈ 곡간 30–60s 대기 지배로 **~10–13h** → 17시 조건2)로 중간 일시중지 후 다른 로컬 이어받기 예상. 진행상태 = `src/content/cluster/fetch_progress.json`.
+- **[B]** 렌더 최적화(ECharts `large`/`largeThreshold`/`progressive` + 줌/팬 + ALL z-order) + UX(센트로이드 클릭 비활성 + opacity 0.3). `static/js/script.js`만 → 리빌드 불필요. 현행 97곡/목업으로 개발.
+- **[C]** 구 파일 폐기(`keywords_2d.json`·`build_embeddings.py`·`build_audio_map.py` + untracked `rss_seen/inbox/verify_cache`) + `actions/` 오케스트레이터 골격(collect[1–3]→cluster[**stub**]→stage[4–7]) + Phase 1.5 워크플로우.
+
+**Phase 2 — 합류 (오디오 완료 후, 직렬)**
+- **[A]** 전곡 빌드 `build_perceptual_map.py --cache audio_full` → `audio_map.json` + **파라미터 동결·저장**. `BAND_OVERRIDES`(morfonica)·`y_shift` 육안 재점검 → **여기서 상수 확정·동결**(= 마지막 튜닝 순간, fullscale §4 · pipeline §6) → 이후 오디오 폐기. `python src/build.py`.
+
+**Phase 3 — 통합**
+- B(렌더) ↔ A(전곡 `audio_map.json`) 머지 → 브라우저 실검수(`http.server` · 모바일 320px).
+- C의 cluster stub → **동결 파라미터 기반 증분 append** 완성(pipeline §5).
+- 레이아웃 결정 반영(작업 1-D + 음원맵 게시).
+- 머지 경로: `feature/emoi-cluster-v2` → `feature/emoi-cluster` → `main`.
+
+**트랙 충돌면**: A=`build_perceptual_map.py`+`audio_map.json` / B=`script.js` / C=신규·삭제 → 거의 무충돌. 공유물 `audio_map.json`(A 재생성, B 읽음)은 Phase 3에서 B를 A 결과 위로 정리.
 
 ---
 
