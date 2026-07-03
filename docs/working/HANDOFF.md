@@ -2,7 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-04** — [재생 펄스 파일럿] 음원맵 재생 곡에 **박자 펄스**(백로그 이퀄라이저 B안 구체화) 7밴드 대표곡 파일럿 완료 → **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. beat 그리드+드럼 볼륨 5단계, 박 고정. 오디오 수집 재개되어 **388/660**, audio_map v3 재산출(388곡+bpm). 브랜치 `feature/emoi-cluster-v3b`.
+마지막 갱신: **2026-07-04** — [재생 펄스 파일럿] 음원맵 재생 곡에 **박자 펄스**(백로그 이퀄라이저 B안 구체화) 7밴드 대표곡 파일럿 완료 → **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. beat 그리드+드럼 볼륨 5단계, '박' 고정. 오디오 수집 재개 **388/660**, audio_map v3 재산출(388곡+bpm). 브랜치 `feature/emoi-cluster-v3b`.
+> **⏭ 내일 이어서 = 재생 펄스 "지각 pulse 추정(방안 A)" 구현** (report §해결방안). 핵심발견: 목표는 '정확 tempo'가 아니라 **지각 pulse rate** — afterglow·morfonica 는 실제 tempo 가 **둘 다 185** 인데 선호가 8분/박 상반이라 tempo 로는 구분 불가. **ACF 옥타브 비율**(afterglow 0.98→185 / morfonica 0.84→92)이 지각 pulse 를 잡아 둘 다 선호와 일치(실측). → `build_beat_track.py` 에 이 추정함수 넣어 beat_track tempo 대체. ⚠️ 외부 BPM 을 grid 로 직접 쓰면 틀림(morfonica 185 강제=박선호와 어긋남).
 이전(2026-07-03 17:00): 작업 1(D) **레이아웃 확정**(대안 B) + **정적파일 기능분할**(CSS 3 / JS 19) main 머지(done 22) · 오디오 1차 수집 **조건2로 일시중지(285/660·6.0GiB)** → 재개는 Phase 1[A]. `fetch_audio.py` 조건3(7GB) + `migrate_local_cache.bat`→legacy 동봉 커밋.
 
 ---
@@ -96,7 +97,7 @@ RSS 수집 → cluster 분석 → 라이브 반영을 `actions/` 오케스트레
 ## 보류 · 백로그
 - **(보류) 백필 1-c namedup 403**: 기존 곡 url을 Topic 음원으로 교체(품질 개선, 새 곡 아님). 후순위. (1-b 커버 135곡은 완료 — done 18.)
 - **(보류) 진행도 Save/Load** (ux-02.md #4): 진행 json 백업/공유. ⚠️ Load = 기존 진행 덮어쓰기 → 손실 위험, 자동 백업·복구 경로 선설계 필수. 코멘트(`bandori-song-comments-v1`) 직렬화 포함 여부 확정 필요.
-- **(진행중) 재생 이퀄라이저 애니메이션 = 음원맵 재생 펄스** — B안(lazy 사전계산)으로 착수, **7밴드 파일럿 완료**(2026-07-04). beat 그리드(`beat_track`) + 드럼(demucs) 볼륨 5단계, 박 고정. 전곡 배치 = `build_pulse_all.py`(demucs CPU ~45s/곡 · onsets 대량 시 lazy fetch 전환 필요). 상세·미해결(8분박 자동판정·전곡 확대) = **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. 원안 방안비교 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
+- **(진행중) 재생 이퀄라이저 애니메이션 = 음원맵 재생 펄스** — B안(lazy 사전계산)으로 착수, **7밴드 파일럿 완료**(2026-07-04). beat 그리드(`beat_track`) + 드럼(demucs) 볼륨 5단계, 박 고정. 전곡 배치 = `build_pulse_all.py`(demucs CPU ~45s/곡 · onsets 대량 시 lazy fetch 전환 필요). 상세·**다음단계(지각 pulse 추정=방안 A)**·미해결(전곡 확대 lazy fetch·mugendai 난곡) = **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. 원안 방안비교 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
 
 ---
 
