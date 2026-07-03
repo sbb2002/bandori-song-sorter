@@ -154,6 +154,31 @@ beat 방식에도 HOP256 유지.
 - **볼륨 5단계 구간·프리셋** 미세조정 여지(`CL_PULSE_R5`, `_clVolStep` 경계).
 - 파일럿 캐시(`audio_drums/`)는 gitignore(대용량). 다른 장치에선 `separate_drums.py` 재실행 필요.
 
+## 향후 아이디어 — 곡 구조 기반 section별 리듬 패턴 (2026-07-04 제안)
+
+**착상**: 노래는 intro–verse–chorus… 구조를 띠고, section 마다 드럼 리듬 패턴이 반복된다.
+구조를 읽어 **각 section 의 반복 리듬 패턴을 그 구간에 적용**하면 전역 tempo/정박에 덜 의존한다.
+
+**왜 유망한가 = 지각 pulse 의 자연 확장**
+- 지금까지의 결론은 "pulse 는 곡마다 하나"(전곡 '박' 또는 곡별 8분 큐레이션). 하지만 pulse 는
+  **곡 내에서도 section 별로 변한다** — verse 는 차분(박), chorus 는 꽉 참(8분/16분).
+- afterglow 를 '8분'이 낫다고 느낀 것도 특정 section(후렴)일 가능성. 전곡 단일 subdivision 으로
+  억지 통일하던 것을 **곡 내 다이나믹스**로 푼다 → morfonica/afterglow 같은 곡별 상반도 흡수.
+
+**기술 경로**
+- 구조 분할: `librosa.segment`(recurrence/self-similarity matrix, novelty), laplacian segmentation,
+  또는 MSAF. → intro/verse/chorus 경계.
+- section 별 패턴: 각 구간 국소 autocorrelation 으로 반복 주기 + 드럼 onset 시퀀스 → 대표 1–2마디
+  패턴. 그 패턴을 구간에 반복 배치해 펄스 이벤트 생성.
+- 전역 tempo 추정(옥타브 오류)을 **국소 반복 주기**로 대체 → 옥타브 문제 상당 부분 우회.
+
+**한계·리스크**
+- "정박 완전 무관"은 아님: 반복 패턴 **단위 길이**(마디/박)는 여전히 필요.
+- 구조 분할 정확도(경계 오검출) + SSM 계산 비용.
+
+**순서 제안**: 우선 방안 A(전곡 단일 지각 pulse)를 검증·구현한 뒤, 그 pulse 추정을 **section 단위로
+국소 적용**하는 방식으로 확장하는 게 점진적이고 안전하다(A 가 section 내 pulse 추정의 부품이 됨).
+
 ## 파일럿 결과 (7밴드 대표곡, HOP256)
 
 | 밴드 (곡) | tempo | 박(초당) | 8분 | 16분 | 기본 |
