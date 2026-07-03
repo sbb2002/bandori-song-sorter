@@ -370,7 +370,10 @@ function renderSongList() {
 
         const titleEl = document.createElement('span');
         titleEl.className = 'song-title';
-        titleEl.textContent = song.title;
+        const titleText = document.createElement('span');
+        titleText.className = 'st-text';
+        titleText.textContent = song.title;
+        titleEl.appendChild(titleText);
         row.appendChild(titleEl);
 
         if (showBand) {
@@ -411,6 +414,29 @@ function renderSongList() {
 
     list.innerHTML = '';
     list.appendChild(frag);
+    markSongTitleOverflow();
+}
+
+/** 곡 이름이 슬롯보다 길면 .is-overflow 부여 + 마퀴 이동량(--st-shift)/속도(--st-dur) 설정.
+ *  실제 넘칠 때만 호버/재생 중 마퀴가 돈다(짧은 이름은 그대로 말줄임). 읽기→쓰기 분리로 리플로우 최소화. */
+function markSongTitleOverflow() {
+    const els = document.querySelectorAll('#song-list .song-title');
+    const measures = [];
+    els.forEach(el => {
+        const txt = el.firstElementChild;               // .st-text
+        if (txt) measures.push([el, txt.scrollWidth - el.clientWidth]);
+    });
+    measures.forEach(([el, shift]) => {
+        if (shift > 2) {
+            el.classList.add('is-overflow');
+            el.style.setProperty('--st-shift', `-${shift + 8}px`);
+            el.style.setProperty('--st-dur', `${Math.max(3, (shift + 8) / 45).toFixed(1)}s`);
+        } else {
+            el.classList.remove('is-overflow');
+            el.style.removeProperty('--st-shift');
+            el.style.removeProperty('--st-dur');
+        }
+    });
 }
 
 function songFromRow(row) {
@@ -1546,6 +1572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         vizResizeTimer = setTimeout(() => {
             renderWordcloud();
             if (_clusterChart) _clusterChart.resize();
+            markSongTitleOverflow();          // 슬롯 폭 변동 → 곡 이름 넘침 재측정
         }, 180);
     });
 
