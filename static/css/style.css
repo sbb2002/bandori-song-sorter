@@ -932,8 +932,11 @@ header h1 {
   .yt-stage { height: 200px; flex: none; aspect-ratio: auto; }
   .audiomap-area { flex: none; height: 320px; }   /* 모바일: 음원맵 고정 높이로 스택 */
   .yt-bottom-split { flex-direction: column; flex: none; }   /* 모바일: 좌우분할 → 세로 스택 */
-  .yt-bottom-split .audiomap-area { border-top: 1px solid var(--border); }
+  /* 데스크톱 좌우분할 규칙(flex:1.2 1 0)을 이겨야 음원맵이 붕괴 안 됨 → 명시적 고정 높이 */
+  .yt-bottom-split .audiomap-area { flex: none; height: 320px; min-width: 0; border-top: 1px solid var(--border); border-left: none; }
   .yt-bottom-split .bandinfo-panel.dock-wc { flex: none; height: 300px; border-left: none; border-top: 1px solid var(--border); }
+  /* 모바일 스택에선 음원맵 차트 최소 높이 회복(데스크톱 min-height:0 상쇄) */
+  .yt-bottom-split .audiomap-area .cluster-wrap { min-height: 0; }
   .song-list-panel { border-bottom: none; }
   .song-list { max-height: 60vh; }
 
