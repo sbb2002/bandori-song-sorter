@@ -16,8 +16,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- App Styles (build.py 주입) -->
-    <link rel="stylesheet" href="{{ static_paths.css }}">
+    <!-- App Styles (build.py 주입) · 로드 순서 고정: common → desktop → mobile -->
+    {% for css in static_paths.css %}<link rel="stylesheet" href="{{ css }}">
+    {% endfor %}
 </head>
 <body>
 
@@ -170,9 +171,10 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <!-- 순수 로직 (build.py 주입) -->
 <script src="{{ static_paths.core }}"></script>
-<!-- 앱 로직 (build.py 주입) -->
-<script src="{{ static_paths.js }}"></script>
-<!-- YouTube IFrame API: script.js 이후 로드하여 onYouTubeIframeAPIReady 타이밍 보장 -->
+<!-- 앱 로직 (build.py 주입) · 기능별 분할 01→19, 로드 순서 고정 -->
+{% for js in static_paths.js %}<script src="{{ js }}"></script>
+{% endfor %}
+<!-- YouTube IFrame API: 앱 로직(10-youtube.js 포함) 이후 로드하여 onYouTubeIframeAPIReady 타이밍 보장 -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
 </body>

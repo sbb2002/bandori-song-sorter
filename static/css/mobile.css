@@ -1,0 +1,66 @@
+/* ===========================================================
+   BanG Dream! Song Sorter — mobile.css (모바일 오버라이드)
+   @media (max-width:1023px). desktop.css 레이아웃을 세로 스택으로 재배치.
+   ⚠ 로드 순서 고정: common.css → desktop.css → mobile.css
+   (원본 style.css를 섹션 경계로 3분할 · 캐스케이드 순서 보존)
+=========================================================== */
+
+/* ===========================
+   11. 반응형 (≤1023px)
+=========================== */
+@media (max-width: 1023px) {
+  body { height: auto; overflow: auto; overflow-x: hidden; }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* A: 밴드 레일 → 상단 가로 스크롤 */
+  .band-selector {
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .band-divider { width: 1px; height: 24px; }
+
+  /* CENTER: 리스트 + 유튜브 세로 */
+  .center {
+    display: flex;
+    flex-direction: column;
+  }
+  .youtube-panel { order: -1; } /* 모바일은 유튜브를 리스트 위에 */
+  .yt-top { flex: none; }
+  .yt-stage { height: 200px; flex: none; aspect-ratio: auto; }
+  .audiomap-area { flex: none; height: 320px; }   /* 모바일: 음원맵 고정 높이로 스택 */
+  .yt-bottom-split { flex-direction: column; flex: none; }   /* 모바일: 좌우분할 → 세로 스택 */
+  /* 데스크톱 좌우분할 규칙(flex:1.2 1 0)을 이겨야 음원맵이 붕괴 안 됨 → 명시적 고정 높이 */
+  .yt-bottom-split .audiomap-area { flex: none; height: 320px; min-width: 0; border-top: 1px solid var(--border); border-left: none; }
+  .yt-bottom-split .bandinfo-panel.dock-wc { flex: none; height: 300px; border-left: none; border-top: 1px solid var(--border); }
+  /* 모바일 스택에선 음원맵 차트 최소 높이 회복(데스크톱 min-height:0 상쇄) */
+  .yt-bottom-split .audiomap-area .cluster-wrap { min-height: 0; }
+  .song-list-panel { border-bottom: none; }
+  .song-list { max-height: 60vh; }
+
+  /* 우측 패널 → 하단 전체폭 */
+  .right-panel {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  .histogram-panel, .heatmap-panel { max-height: none; flex: none; }   /* 모바일: 두 패널 내용 높이로 스택 */
+  .hm-grid { grid-template-columns: 40px repeat(5, 1fr); }
+  .hm-cell, .hm-head { height: 26px; font-size: 0.62rem; }
+
+  /* 하단 바 */
+  .bottom-bar { position: sticky; bottom: 0; z-index: 20; }
+  .bottom-actions { width: 100%; }
+  .bottom-actions button { flex: 1; }
+}

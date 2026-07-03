@@ -125,10 +125,23 @@ def build():
         print(f"Error: 템플릿 로드 실패: {e}")
         return
 
+    # 앱 로직: script.js를 기능별로 분할(js/functions/NN-*.js).
+    # 파일명 숫자 prefix(01→19) 정렬 = classic <script> 로드 순서(=원본 실행 순서).
+    fn_dir = ROOT / "static" / "js" / "functions"
+    js_paths = ["./static/js/functions/" + p.name
+                for p in sorted(fn_dir.glob("*.js"), key=lambda p: p.name)]
+    if not js_paths:
+        raise SystemExit(f"Error: {fn_dir} 에 분할 JS가 없습니다. (script.js 분할 산출물 확인)")
+
     static_paths = {
-        "css":  "./static/css/style.css",
+        # 로드 순서 고정: 공용 → PC → 모바일(오버라이드). 원본 style.css를 3분할.
+        "css":  [
+            "./static/css/common.css",
+            "./static/css/desktop.css",
+            "./static/css/mobile.css",
+        ],
         "core": "./static/js/core.js",
-        "js":   "./static/js/script.js",
+        "js":   js_paths,   # 19개 기능 파일(순서 고정) → 템플릿에서 <script> 반복
     }
 
     # <script> 안에 안전하게 주입: '<'만 이스케이프해도 </script> 브레이크아웃 방지.

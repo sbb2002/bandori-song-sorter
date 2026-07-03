@@ -16,8 +16,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- App Styles (build.py 주입) -->
-    <link rel="stylesheet" href="./static/css/style.css">
+    <!-- App Styles (build.py 주입) · 로드 순서 고정: common → desktop → mobile -->
+    <link rel="stylesheet" href="./static/css/common.css">
+    <link rel="stylesheet" href="./static/css/desktop.css">
+    <link rel="stylesheet" href="./static/css/mobile.css">
+    
 </head>
 <body>
 
@@ -170,9 +173,28 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <!-- 순수 로직 (build.py 주입) -->
 <script src="./static/js/core.js"></script>
-<!-- 앱 로직 (build.py 주입) -->
-<script src="./static/js/script.js"></script>
-<!-- YouTube IFrame API: script.js 이후 로드하여 onYouTubeIframeAPIReady 타이밍 보장 -->
+<!-- 앱 로직 (build.py 주입) · 기능별 분할 01→19, 로드 순서 고정 -->
+<script src="./static/js/functions/01-state.js"></script>
+<script src="./static/js/functions/02-utils.js"></script>
+<script src="./static/js/functions/03-persistence.js"></script>
+<script src="./static/js/functions/04-data.js"></script>
+<script src="./static/js/functions/05-band-selector.js"></script>
+<script src="./static/js/functions/06-filter-pills.js"></script>
+<script src="./static/js/functions/07-song-list.js"></script>
+<script src="./static/js/functions/08-press.js"></script>
+<script src="./static/js/functions/09-rank-popup.js"></script>
+<script src="./static/js/functions/10-youtube.js"></script>
+<script src="./static/js/functions/11-histogram.js"></script>
+<script src="./static/js/functions/12-heatmap.js"></script>
+<script src="./static/js/functions/13-progress.js"></script>
+<script src="./static/js/functions/14-share.js"></script>
+<script src="./static/js/functions/15-wordcloud.js"></script>
+<script src="./static/js/functions/16-audiomap.js"></script>
+<script src="./static/js/functions/17-tabs-reset.js"></script>
+<script src="./static/js/functions/18-refresh.js"></script>
+<script src="./static/js/functions/19-init.js"></script>
+
+<!-- YouTube IFrame API: 앱 로직(10-youtube.js 포함) 이후 로드하여 onYouTubeIframeAPIReady 타이밍 보장 -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
 </body>
