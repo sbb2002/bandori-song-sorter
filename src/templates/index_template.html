@@ -73,23 +73,6 @@
                     <span id="yt-song-name"></span>
                 </div>
             </div>
-
-            <!-- F2: BAND AUDIO MAP — 상시 표시(밴드 무관 전역 뷰). ECharts 2D 산점도 -->
-            <div class="audiomap-area" id="audiomap">
-                <div class="am-head">
-                    <span class="am-title">밴드 음원 지도</span>
-                    <span class="am-sub" id="cl-sub"></span>
-                </div>
-                <div class="cluster-wrap" id="cluster-wrap">
-                    <div id="cluster-chart"></div>
-                    <span class="am-axis am-axis-top" id="cl-ax-top"></span>
-                    <span class="am-axis am-axis-bottom" id="cl-ax-bottom"></span>
-                    <span class="am-axis am-axis-left" id="cl-ax-left"></span>
-                    <span class="am-axis am-axis-right" id="cl-ax-right"></span>
-                    <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
-                </div>
-                <div class="cl-similar" id="cl-similar"></div>
-            </div>
         </section>
 
     </div>
@@ -99,7 +82,6 @@
         <div class="panel-tab">
             <button class="tab-btn active" type="button" data-tab="hist">히스토그램</button>
             <button class="tab-btn" type="button" data-tab="heat">히트맵</button>
-            <button class="tab-btn" type="button" data-tab="band">밴드 정보</button>
         </div>
 
         <!-- D: HISTOGRAM (JS 렌더) -->
@@ -114,8 +96,28 @@
             <div class="hm-grid" id="heatmap-grid"></div>
         </div>
 
-        <!-- F: BAND INFO — 워드클라우드 (JS 렌더) -->
-        <div class="bandinfo-panel" id="band-panel">
+    </aside>
+
+    <!-- VIZ DOCK: 음원맵(전역 상시) + 워드클라우드(선택 밴드/ALL) — 전체폭 하단 -->
+    <section class="viz-dock">
+        <!-- F2: BAND AUDIO MAP — ECharts 2D 산점도 -->
+        <div class="audiomap-area" id="audiomap">
+            <div class="am-head">
+                <span class="am-title">밴드 음원 지도</span>
+                <span class="am-sub" id="cl-sub"></span>
+            </div>
+            <div class="cluster-wrap" id="cluster-wrap">
+                <div id="cluster-chart"></div>
+                <span class="am-axis am-axis-top" id="cl-ax-top"></span>
+                <span class="am-axis am-axis-bottom" id="cl-ax-bottom"></span>
+                <span class="am-axis am-axis-left" id="cl-ax-left"></span>
+                <span class="am-axis am-axis-right" id="cl-ax-right"></span>
+                <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
+            </div>
+            <div class="cl-similar" id="cl-similar"></div>
+        </div>
+        <!-- F: BAND WORDCLOUD -->
+        <div class="bandinfo-panel dock-wc" id="band-panel">
             <div class="bi-title" id="bi-band-name">밴드 워드클라우드</div>
             <div class="bi-sub" id="bi-sub"></div>
             <div class="wordcloud-wrap" id="wordcloud-wrap">
@@ -123,8 +125,7 @@
                 <div class="wc-empty" id="wc-empty" hidden>이 밴드의 가사 키워드가 아직 없어요.</div>
             </div>
         </div>
-
-    </aside>
+    </section>
 
     <!-- BOTTOM BAR -->
     <div class="bottom-bar">

@@ -293,7 +293,7 @@ function selectBand(band) {
         (band === 'ALL' ? '전체' : bandDisplay(band)) + ' 랭크 분포';
     renderSongList();
     renderHistogram();
-    if (currentTab === 'band') renderWordcloud();
+    renderWordcloud();      // 워드클라우드=하단 독 상시 → 밴드 바뀔 때마다 갱신
     if (_clusterChart) { _clHover = null; _clDraw(); }   // 음원맵 연동: 밴드 선택=포커스 / ALL=개요
 }
 
@@ -1453,8 +1453,6 @@ function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.getElementById('hist-panel').classList.toggle('active', tab === 'hist');
     document.getElementById('heat-panel').classList.toggle('active', tab === 'heat');
-    document.getElementById('band-panel').classList.toggle('active', tab === 'band');
-    if (tab === 'band') renderWordcloud();
 }
 
 /** 곡 종류 탭 전환 (ALL/Ori/Cover) */
@@ -1500,7 +1498,8 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProgress();
     renderStatChips();
     switchTab('hist');     // 초기 탭 활성화(패널 표시)
-    renderCluster();       // 음원맵: 우패널 탭에서 분리되어 유튜브 하단 상시 표시(밴드 무관 전역 뷰)
+    renderCluster();       // 음원맵: 하단 뷰 독에 상시 표시(밴드 무관 전역 뷰)
+    renderWordcloud();     // 워드클라우드: 하단 뷰 독에 상시 표시(선택 밴드/ALL)
     initPressHandlers();
 
     document.getElementById('copy-btn').addEventListener('click', copyLinks);
@@ -1540,12 +1539,14 @@ document.addEventListener('DOMContentLoaded', () => {
         hideCommentTip();
     }, true);
     window.addEventListener('resize', hideCommentTip);
-    // 워드클라우드는 캔버스 픽셀 기준이라 리사이즈 시 재렌더(밴드 탭 활성 시)
-    let wcResizeTimer = null;
+    // 하단 독은 캔버스/차트 픽셀 기준 → 리사이즈 시 워드클라우드 재렌더 + 음원맵 ECharts resize
+    let vizResizeTimer = null;
     window.addEventListener('resize', () => {
-        if (currentTab !== 'band') return;
-        clearTimeout(wcResizeTimer);
-        wcResizeTimer = setTimeout(renderWordcloud, 180);
+        clearTimeout(vizResizeTimer);
+        vizResizeTimer = setTimeout(() => {
+            renderWordcloud();
+            if (_clusterChart) _clusterChart.resize();
+        }, 180);
     });
 
     // 이미 YT API가 준비된 경우 직접 초기화 (타이밍 역전 방지)
