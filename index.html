@@ -73,6 +73,35 @@
                     <span id="yt-song-name"></span>
                 </div>
             </div>
+
+            <!-- 음원맵 슬롯을 세로 분할선으로 좌(음원맵)·우(워드클라우드)로 나눔 (대안 B) -->
+            <div class="yt-bottom-split">
+                <!-- F2: BAND AUDIO MAP — ECharts 2D 산점도 -->
+                <div class="audiomap-area" id="audiomap">
+                    <div class="am-head">
+                        <span class="am-title">밴드 음원 지도</span>
+                        <span class="am-sub" id="cl-sub"></span>
+                    </div>
+                    <div class="cluster-wrap" id="cluster-wrap">
+                        <div id="cluster-chart"></div>
+                        <span class="am-axis am-axis-top" id="cl-ax-top"></span>
+                        <span class="am-axis am-axis-bottom" id="cl-ax-bottom"></span>
+                        <span class="am-axis am-axis-left" id="cl-ax-left"></span>
+                        <span class="am-axis am-axis-right" id="cl-ax-right"></span>
+                        <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
+                    </div>
+                    <div class="cl-similar" id="cl-similar"></div>
+                </div>
+                <!-- F: BAND WORDCLOUD -->
+                <div class="bandinfo-panel dock-wc" id="band-panel">
+                    <div class="bi-title" id="bi-band-name">밴드 워드클라우드</div>
+                    <div class="bi-sub" id="bi-sub"></div>
+                    <div class="wordcloud-wrap" id="wordcloud-wrap">
+                        <canvas id="wordcloud-canvas"></canvas>
+                        <div class="wc-empty" id="wc-empty" hidden>이 밴드의 가사 키워드가 아직 없어요.</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </div>
@@ -97,35 +126,6 @@
         </div>
 
     </aside>
-
-    <!-- VIZ DOCK: 음원맵(전역 상시) + 워드클라우드(선택 밴드/ALL) — 전체폭 하단 -->
-    <section class="viz-dock">
-        <!-- F2: BAND AUDIO MAP — ECharts 2D 산점도 -->
-        <div class="audiomap-area" id="audiomap">
-            <div class="am-head">
-                <span class="am-title">밴드 음원 지도</span>
-                <span class="am-sub" id="cl-sub"></span>
-            </div>
-            <div class="cluster-wrap" id="cluster-wrap">
-                <div id="cluster-chart"></div>
-                <span class="am-axis am-axis-top" id="cl-ax-top"></span>
-                <span class="am-axis am-axis-bottom" id="cl-ax-bottom"></span>
-                <span class="am-axis am-axis-left" id="cl-ax-left"></span>
-                <span class="am-axis am-axis-right" id="cl-ax-right"></span>
-                <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
-            </div>
-            <div class="cl-similar" id="cl-similar"></div>
-        </div>
-        <!-- F: BAND WORDCLOUD -->
-        <div class="bandinfo-panel dock-wc" id="band-panel">
-            <div class="bi-title" id="bi-band-name">밴드 워드클라우드</div>
-            <div class="bi-sub" id="bi-sub"></div>
-            <div class="wordcloud-wrap" id="wordcloud-wrap">
-                <canvas id="wordcloud-canvas"></canvas>
-                <div class="wc-empty" id="wc-empty" hidden>이 밴드의 가사 키워드가 아직 없어요.</div>
-            </div>
-        </div>
-    </section>
 
     <!-- BOTTOM BAR -->
     <div class="bottom-bar">

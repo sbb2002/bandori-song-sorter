@@ -104,9 +104,7 @@ header h1 {
 .app {
   display: grid;
   grid-template-columns: 56px 1fr 280px;
-  /* 상단(밴드/센터/우패널) : 하단 뷰 독 : 바텀바.  비율 조정은 이 한 줄 — 3:7 은 7fr 3fr auto */
-  --app-rows: 6fr 4fr auto;
-  grid-template-rows: var(--app-rows);
+  grid-template-rows: 1fr auto;
   flex: 1 1 auto;
   height: calc(100vh - var(--header-h));
   overflow: hidden;
@@ -114,8 +112,7 @@ header h1 {
 .band-selector { grid-column: 1; grid-row: 1; }
 .center        { grid-column: 2; grid-row: 1; }
 .right-panel   { grid-column: 3; grid-row: 1; }
-.viz-dock      { grid-column: 1 / 4; grid-row: 2; }
-.bottom-bar    { grid-column: 1 / 4; grid-row: 3; }
+.bottom-bar    { grid-column: 1 / 4; grid-row: 2; }
 
 /* ===========================
    4. A. Band Selector
@@ -437,16 +434,16 @@ header h1 {
   padding: 8px 10px 10px;
   overflow: hidden;
 }
-/* ===== VIZ DOCK (전체폭 하단: 음원맵 | 워드클라우드) ===== */
-.viz-dock {
-  display: flex; min-height: 0; overflow: hidden;
-  border-top: 1px solid var(--border); background: var(--surface);
+/* ===== YT 하단 슬롯 좌우 분할: 음원맵 | 워드클라우드 (대안 B) ===== */
+.yt-bottom-split {
+  display: flex; flex: 1 1 0; min-height: 0; overflow: hidden;
+  background: var(--surface); border-top: 1px solid var(--border);
 }
-.viz-dock .audiomap-area { flex: 1.5 1 0; min-width: 0; border-top: none; }
-.viz-dock .bandinfo-panel.dock-wc {
+.yt-bottom-split .audiomap-area { flex: 1.2 1 0; min-width: 0; border-top: none; }
+.yt-bottom-split .bandinfo-panel.dock-wc {
   flex: 1 1 0; min-width: 0;
   display: flex; flex-direction: column;
-  padding: 8px 12px 10px; border-left: 1px solid var(--border); overflow: hidden;
+  padding: 8px 10px 10px; border-left: 1px solid var(--border); overflow: hidden;
 }
 .am-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-shrink: 0; }
 .am-title { font-size: 0.78rem; font-weight: 700; color: var(--text); }
@@ -909,9 +906,9 @@ header h1 {
   .yt-top { flex: none; }
   .yt-stage { height: 200px; flex: none; }
   .audiomap-area { flex: none; height: 320px; }   /* 모바일: 음원맵 고정 높이로 스택 */
-  .viz-dock { flex-direction: column; }           /* 모바일: 독을 세로 스택 */
-  .viz-dock .audiomap-area { border-top: 1px solid var(--border); }
-  .viz-dock .bandinfo-panel.dock-wc { flex: none; height: 300px; border-left: none; border-top: 1px solid var(--border); }
+  .yt-bottom-split { flex-direction: column; flex: none; }   /* 모바일: 좌우분할 → 세로 스택 */
+  .yt-bottom-split .audiomap-area { border-top: 1px solid var(--border); }
+  .yt-bottom-split .bandinfo-panel.dock-wc { flex: none; height: 300px; border-left: none; border-top: 1px solid var(--border); }
   .song-list-panel { border-bottom: none; }
   .song-list { max-height: 60vh; }
 
