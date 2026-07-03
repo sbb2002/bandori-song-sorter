@@ -86,50 +86,68 @@ beat 방식에도 HOP256 유지.
 원인**이었다. 아래 표의 `feature.tempo`·`beat_track` 은 둘 다 라이브러리 추정값이고,
 `실제 BPM` 은 외부 확인값(사용자 제공):
 
-| 밴드 | feature.tempo | beat_track | 실제 BPM | 선호 | 관계 |
+| 밴드 | feature.tempo | beat_track | 실제 BPM | 선호 | 원하는 pulse |
 |------|--------------|-----------|---------|------|------|
-| afterglow (ON YOUR MARK) | 123 | 92.3 | **185** | 8분 | beat_track = 185÷2 (half 오류) |
-| mugendai (アイの夢限) | 117.5 | 120.2 | **135** | 8분 | 배수도 아닌 근사 오류 |
-| morfonica (Daylight) | 123 | 92.3 | ? | 박 | afterglow 와 측정값 동일 |
-| mygo | 129 | 95.7 | ? | 박 | |
-| hello_happy | 123 | 123 | ? | 박 | |
-| ave_mujica | 136 | 132 | ? | 박 | |
-| pastel | 144 | 144 | ? | 박 | |
+| afterglow (ON YOUR MARK) | 123 | 92.3 | **185** | 8분 | 185 |
+| morfonica (Daylight) | 123 | 92.3 | **185** | 박 | 92.3 |
+| mugendai (アイの夢限) | 117.5 | 120.2 | **135** | 8분 | ? |
+| mygo | 129 | 95.7 | ? | 박 | ~95 |
+| hello_happy | 123 | 123 | ? | 박 | ~123 |
+| ave_mujica | 136 | 132 | ? | 박 | ~132 |
+| pastel | 144 | 144 | ? | 박 | ~144 |
 
-- **afterglow**: beat_track 92.3 = 실제 185 의 **정확히 절반**. 그래서 8분음표(92.3×2=184.6≈185)
-  가 실제 박 → "8분 선호"가 설명된다. (`feature.tempo(start_bpm=180)` 을 주면 184.6 으로 교정됨.)
-- **mugendai**: 실제 135 인데 측정 117~120 — 옥타브(2배)도 아닌 어긋남. start_bpm 힌트도 무효.
-- **결정적 난점**: afterglow(실제 185)와 morfonica(박 선호)는 **측정값이 완전히 동일**(beat_track
-  92.3, IOI 최빈 0.15s). 측정만으론 둘을 구분할 수 없다 → **실제 BPM 없이는 자동 판정 불가**.
-- IOI(inter-onset-interval) 최빈은 가장 촘촘한 연속(8분/16분)을 반영해 **박이 아닌 subdivision**
-  을 가리킨다(afterglow 0.15s) → 박 추정엔 부적합.
+- **핵심 반전(2026-07-04)**: afterglow 와 morfonica 는 **실제 tempo(185)·측정(92.3)·IOI(0.15s)가
+  전부 동일**한데 원하는 펄스가 다르다 — afterglow=8분(185 pulse), morfonica=박(92.3 pulse).
+  → tempo 로는(실제든 측정이든) **원리적으로 구분 불가**. 목표는 "정확한 tempo"가 아니라
+  **곡에 어울리는 지각적 pulse rate**(= 사용자가 원하는 펄스 밀도)임이 드러난다.
+- **afterglow**: 실제 185, 드럼이 꽉 차 185 pulse 가 두드러짐 → 8분(185). **morfonica**: 실제 185
+  지만 강세가 92.3 간격(하프타임 느낌) → 박(92.3). **같은 tempo, 다른 지각 pulse.**
+- **mugendai**: 실제 135 인데 측정 117~120 — 옥타브도 아닌 어긋남(변박/약한 다운비트). 난곡.
+- IOI 최빈은 가장 촘촘한 연속(8분/16분)을 반영해 박이 아닌 subdivision 을 가리킴 → 박 추정 부적합.
 
-### 해결 방안 (우선순위)
+### 해결 방안 — "지각 pulse rate" 추정 (2026-07-04, 목표 재정의)
 
-1. **실제 BPM 을 외부에서 확보 → 정확한 grid** ⭐권장.
-   - 소스: songbpm.com·tunebat 등 스크래핑, MusicBrainz/AcousticBrainz, 또는 사용자 큐레이션.
-   - 확보하면 grid = `실제 BPM` 기준(phase 는 beat_track/onset 으로 정렬), subdivision 큐레이션
-     자체가 불필요해진다. `audio_map.json` 의 `bpm`(현재 feature.tempo 라 부정확)도 이 값으로 교체.
-   - 리스크: 커버/편곡은 원곡 BPM 과 다를 수 있음 → 곡 단위 확인 필요.
-2. **tempogram 다중 옥타브 후보 + 지각 폴딩** (보조·자동).
-   - `librosa.feature.fourier_tempogram`/autocorr 에서 배수 후보(×½·×1·×2)를 나열하고 지각 tempo
-     범위(≈100–200 BPM)로 폴딩해 옥타브를 고른다. afterglow 92.3→184.6 은 교정되나,
-     morfonica 처럼 실제가 갈리는 경우는 여전히 한계(측정 동일).
-3. **known-BPM 대조 교정 규칙**: 소수 곡의 실제 BPM 으로 측정 오차 패턴(예 특정 곡군은 beat_track×2)
-   을 찾아 반영. 표본이 늘면 신뢰도 향상.
-4. **현행 임시**: 실제 BPM 확보 전까지 '박' 고정 + 곡별 예외 큐레이션(`CL_ONSET_DEFDIV`).
+**목표는 "정확한 악보 tempo"가 아니다.** afterglow·morfonica 는 실제 tempo 가 같아도(185) 원하는
+펄스가 8분/박으로 다르다 → 맞춰야 할 것은 **곡에 어울리는 지각적 pulse rate**(사용자 선호 펄스 밀도).
+외부 BPM(비공식·부재)은 정답이 아니라 sanity check 보조로만.
 
-→ **다음 단계 = 방안 1**: 전곡 실제 BPM 소스를 정해 `audio_map.json` 의 bpm 을 교체하고,
-`build_beat_track.py` 가 beat_track 의 tempo 대신 그 BPM 으로 grid 를 생성하도록 개편.
-(현재는 방안 4 상태 — 박 고정.)
+**A. 옥타브 후보 정합 스코어링 + 편향 보정** ⭐핵심 (실측 검증됨)
+- onset envelope autocorrelation(ACF)으로 후보 pulse 와 옥타브(×½·×1·×2)를 스코어링.
+- 관찰: **ACF 최고값은 느린 옥타브로 편향**(자기상관 배음). 단독으론 항상 절반을 고름.
+- **옥타브 쌍 비율 규칙**: `ACF(빠름) ≥ ACF(느림) × τ` (τ≈0.9) 이면 빠른 쪽 채택. 이 **비율 자체가
+  "빠른 pulse 가 얼마나 두드러지나" = 지각 pulse 지표**다.
+
+  | 곡 | ACF(92) | ACF(185) | 비율 | 판정 pulse | 실제 tempo | 선호 |
+  |----|---------|----------|------|-----------|-----------|------|
+  | afterglow | 1.00 | 0.976 | 0.98 | **185** | 185 | 8분 ✓ |
+  | morfonica | 0.989 | 0.828 | 0.84 | **92** | 185 | 박 ✓ |
+
+  → **실제 tempo 는 둘 다 185 로 같지만**, ACF 비율이 지각 pulse(afterglow 185 / morfonica 92)를
+    잡아 **둘 다 사용자 선호와 일치**. 이 방안은 "tempo 추정기"가 아니라 **지각 pulse 추정기**라서
+    오히려 목표에 정확히 부합한다(정확 tempo 로는 원리적으로 구분 불가였던 케이스를 해결).
+
+**B. 지각 prior + 앙상블**(강건화): `feature.tempo`·`beat_track`·ACF peak·`plp` 를 옥타브 정규화
+  후 합의(중앙값/투표) + 지각 pulse 범위(≈90–185) 가중.
+
+**C. 외부 BPM = 검증 보조**: 비공식이라도 소수 곡과 대조해 τ·prior 튜닝(정답 아님). 단 afterglow·
+  morfonica 처럼 **실제 BPM 이 같아도 원하는 pulse 가 다르므로, 외부 BPM 을 grid 로 직접 쓰면 오히려
+  틀린다**(morfonica 를 185 로 강제 → 박 선호와 어긋남). 외부 BPM 은 pulse 판정에 쓰지 말 것.
+
+**한계**: mugendai(실제 135)는 ACF·tracker 가 모두 120 을 골라 실패(변박/약한 다운비트). 난곡은
+  수동 큐레이션(`CL_ONSET_DEFDIV`).
+
+**구현 방향**: `build_beat_track.py` 에 **지각 pulse 추정 함수**(ACF 후보 → 옥타브 비율 규칙 →
+  prior/앙상블)를 넣어 beat_track tempo 대신 이 pulse 로 grid 를 만들고(phase 는 plp/onset 정렬).
+  `audio_map.json` 의 `bpm`(feature.tempo)은 **음악 특징용이라 별개** — pulse 값과 혼동 말 것.
+  검증 = A 의 τ 를 소수 정답 pulse(사용자 선호)로 튜닝. (현재 상태 = '박' 고정 임시.)
 
 ---
 
 ## 미해결 / 향후
 
-- **8분박 자동 판정 = tempo 옥타브 오류 문제**(위 "tempo 옥타브 오류" 절 참조): 근본 해결은
-  **실제 BPM 확보(방안 1)** — 확보하면 subdivision 큐레이션 자체가 불필요. 확보 전까지는 '박'
-  고정 + 곡별 예외(`CL_ONSET_DEFDIV`).
+- **8분박 자동 판정 = 지각 pulse 추정 문제**(위 절 참조): 근본 해결은 **ACF 옥타브 비율로 지각
+  pulse 추정(방안 A)** — 구현되면 subdivision 큐레이션 불필요. 그 전까진 '박' 고정 + 예외
+  (`CL_ONSET_DEFDIV`). ※ 외부 BPM 을 grid 로 직접 쓰면 안 됨(morfonica: 실제 185 지만 박 선호).
 - **전곡 확대**: `build_pulse_all.py` 로 배치. 단 (1) demucs 가 CPU 곡당 ~45s → 수백 곡은 수 시간
   (오디오 수집 완료 후 무인 배치), (2) onsets 총량이 커지면 index.html 인라인이 무거워짐 →
   **곡별 lazy fetch**(재생 시 해당 곡 json 만 로드)로 전환 필요. 로컬 검증은 http server 필요.
