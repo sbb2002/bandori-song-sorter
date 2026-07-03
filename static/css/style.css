@@ -572,9 +572,10 @@ header h1 {
   flex: 1;
   overflow-y: auto;
 }
-/* 우패널: 탭 제거 → 히스토그램(위)·히트맵(아래) 동시 표시, 세로 2등분 */
-.histogram-panel, .heatmap-panel { display: block; flex: 1 1 0; min-height: 0; }
-.heatmap-panel { border-top: 1px solid var(--border); }
+/* 우패널: 탭 제거 → 히스토그램(위, 내용 높이만) · 히트맵(아래, 남는 세로 전부 → 스크롤 최소화) */
+.histogram-panel, .heatmap-panel { display: block; min-height: 0; }
+.histogram-panel { flex: 0 0 auto; }
+.heatmap-panel { flex: 1 1 0; border-top: 1px solid var(--border); }
 .bandinfo-panel { display: none; }
 .bandinfo-panel.active { display: flex; flex-direction: column; }
 .cluster-panel { display: none; }
