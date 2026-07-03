@@ -59,7 +59,8 @@ def feats(path: str):
         return None
     contrast = float(librosa.feature.spectral_contrast(y=y, sr=sr).mean())
     mode = float(mode_valence(y, sr)["mode_score"])
-    return contrast, mode
+    tempo = float(librosa.feature.tempo(y=y, sr=sr)[0])   # [실험] 펄스 주기용 BPM(옥타브 오류 가능)
+    return contrast, mode, tempo
 
 
 def zscale(vals, k=25.0, clip=70.0):
@@ -113,13 +114,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", default="audio_cache",
                     help="음원 캐시 폴더명(audio_cache=60s / audio_full=전곡)")
+    ap.add_argument("--manifest", default=str(MANIFEST),
+                    help="입력 매니페스트 CSV(band,idx,song,url). 기본 songs_top10.csv / 전곡=songs_full.csv")
     ap.add_argument("--x-shift", type=float, default=X_SHIFT, help="x 원점 보정(거칢+)")
     ap.add_argument("--y-shift", type=float, default=Y_SHIFT, help="y 원점 보정(밝음+)")
     ap.add_argument("--out", default=str(OUT))
     args = ap.parse_args(argv)
     cache = Path("src/content/cluster") / args.cache
 
-    rows = list(csv.DictReader(open(MANIFEST, encoding="utf-8")))
+    rows = list(csv.DictReader(open(args.manifest, encoding="utf-8")))
     recs = []
     for r in rows:
         p = cache / f"{r['band']}__{int(r['idx']):03d}.wav"
@@ -129,7 +132,7 @@ def main(argv=None):
         if fv is None:
             continue
         recs.append({"band": r["band"], "song": r["song"], "url": r["url"],
-                     "contrast": fv[0], "mode": fv[1]})
+                     "contrast": fv[0], "mode": fv[1], "bpm": round(fv[2], 1)})
     print(f"특징 추출 {len(recs)}곡 (cache={args.cache})")
 
     X = zscale([-r["contrast"] for r in recs]) + args.x_shift   # 오른쪽=거칢(낮은 contrast)
@@ -139,7 +142,7 @@ def main(argv=None):
         if ov:
             X[i] += ov.get("dx", 0.0); Y[i] += ov.get("dy", 0.0)
     songs = [{"band": r["band"], "song": r["song"], "url": r["url"],
-              "x": round(float(X[i]), 2), "y": round(float(Y[i]), 2)}
+              "x": round(float(X[i]), 2), "y": round(float(Y[i]), 2), "bpm": r["bpm"]}
              for i, r in enumerate(recs)]
     carry_sim(songs)
 
