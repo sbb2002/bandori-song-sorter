@@ -12,6 +12,7 @@ yt-dlp 벌크 수집기. 가이드라인 출처 = docs/idea/260703.md (안티봇
   1b) **연속 실패 `--max-consec-fails`회**(기본 5) → IP 차단 추정. (단발 403 ≠ 차단: yt-dlp 서명/포맷 이슈가
       대부분이라 스킵하고 계속. 진짜 차단이면 연속으로 터진다.)
   2)  로컬 시각이 `--stop-hour`(기본 17시) 이상이면서 전체 완료 예상시간이 `--stop-eta-hours`(기본 5h) 이상.
+  3)  다운로드 **성공 데이터 총합**이 `--stop-size-gb`(기본 7GB) 초과(캐시 전체 wav 용량 기준).
 - **진행상태 JSON을 매 곡 갱신**: `fetch_progress.json`에 현재곡·진행률·경과·예상종료(시계)를 기록 → 파일만 열면 현황 파악.
 - **JS 런타임 필수**: yt-dlp 2026+ 는 YouTube 서명(nsig)에 deno/node 필요. 없으면 403 다발 → `--js-runtimes` 자동 연결.
 - **출력 규약**: <band>__<idx:03d>.wav — build_perceptual_map.py 가 이 이름을 읽는다(고정).
@@ -148,6 +149,9 @@ def main(argv=None) -> int:
     ap.add_argument("--stop-hour", type=int, default=17, help="조건2: 이 시각(로컬) 이상이면 검사")
     ap.add_argument("--stop-eta-hours", type=float, default=5.0, help="조건2: 남은 예상 이 이상이면 중지")
     ap.add_argument("--no-stop-clock", action="store_true", help="조건2 비활성")
+    ap.add_argument("--stop-size-gb", type=float, default=7.0,
+                    help="조건3: 성공 데이터(캐시 wav) 총합이 이 GB 초과면 중지(기본 7)")
+    ap.add_argument("--no-stop-size", action="store_true", help="조건3 비활성")
     ap.add_argument("--limit", type=int, default=0, help="앞 N곡만(0=전체)")
     ap.add_argument("--progress-file", default=str(DEFAULT_PROGRESS), help="진행상태 JSON 경로")
     ap.add_argument("--ytdlp", default="yt-dlp", help="yt-dlp 실행 경로")
@@ -170,6 +174,7 @@ def main(argv=None) -> int:
         dest = cache_dir / f"{r['band']}__{int(r['idx']):03d}.wav"
         (have if dest.exists() and dest.stat().st_size > 1024 else todo).append((r, dest))
     have0 = len(have)
+    have_bytes0 = sum(d.stat().st_size for _, d in have)   # 조건3: 기존 캐시 용량(바이트)
 
     print(f"매니페스트 {manifest.name} · 대상 {total}곡 → 캐시 {cache_dir}")
     print(f"이미 받음 {have0} · 받을 것 {len(todo)}  (진행률 {have0*100//total if total else 0}%)")
@@ -197,10 +202,14 @@ def main(argv=None) -> int:
     run_start = time.monotonic()
     wall_start = datetime.now()
     ok, fail, consec = 0, [], 0
+    sess_bytes = 0                                   # 조건3: 이번 세션 신규 wav 용량 합(바이트)
     status, reason = "done", "completed"
 
     def present_now() -> int:
         return have0 + ok
+
+    def present_bytes() -> int:                      # 조건3: 성공 데이터 총합(기존+세션)
+        return have_bytes0 + sess_bytes
 
     def eta_sec(done_att: int) -> float:
         return (time.monotonic() - run_start) / done_att * (len(todo) - done_att) if done_att else 0.0
@@ -217,7 +226,8 @@ def main(argv=None) -> int:
             eta_remaining=(fmt_dur(eta) if done_att else "측정중"),
             eta_end=(end.strftime("%Y-%m-%d %H:%M") if done_att else "측정중"),
             started_at=wall_start.strftime("%Y-%m-%d %H:%M:%S"),
-            sample_rate=args.sample_rate, manifest=manifest.name, cache=args.cache, failed=fail)
+            sample_rate=args.sample_rate, manifest=manifest.name, cache=args.cache,
+            total_gb=round(present_bytes() / 1024**3, 2), failed=fail)
 
     def milestone(done_att: int) -> None:
         pct_now = present_now() * 100 // total
@@ -247,6 +257,7 @@ def main(argv=None) -> int:
 
         if proc.returncode == 0 and dest.exists() and dest.stat().st_size > 1024:
             ok += 1
+            sess_bytes += dest.stat().st_size
             consec = 0
         else:
             out = (proc.stderr or "") + (proc.stdout or "")
@@ -274,6 +285,13 @@ def main(argv=None) -> int:
                 status, reason = "paused", (f"clock>={args.stop_hour}:00 & eta "
                                             f"{fmt_dur(eta_all)}>={args.stop_eta_hours}h")
                 print(f"\n⛔ 시각 {datetime.now():%H:%M} · 남은 예상 {fmt_dur(eta_all)} → 일시중지")
+                break
+
+        if not args.no_stop_size:                    # 3) 성공 데이터 총합 상한
+            gb = present_bytes() / 1024**3
+            if gb > args.stop_size_gb:
+                status, reason = "paused", f"size {gb:.2f}GB>{args.stop_size_gb}GB"
+                print(f"\n⛔ 성공 데이터 {gb:.2f}GB > 상한 {args.stop_size_gb}GB → 일시중지")
                 break
 
         if i < len(todo):                            # [G2] 곡간 무작위 대기

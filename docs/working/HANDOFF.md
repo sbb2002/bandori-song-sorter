@@ -2,7 +2,7 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-03** — 작업 2·3 **병렬 실행 계획** 확정 + 오디오 수집기 `fetch_audio.py` 추가(브랜치 `feature/emoi-cluster-v3a`).
+마지막 갱신: **2026-07-03 17:00** — 작업 1(D) **레이아웃 확정**(대안 B) + **정적파일 기능분할**(CSS 3 / JS 19) main 머지(done 22) · 오디오 1차 수집 **조건2로 일시중지(285/660·6.0GiB)** → 재개는 Phase 1[A]. `fetch_audio.py` 조건3(7GB) + `migrate_local_cache.bat`→legacy 동봉 커밋.
 
 ---
 
@@ -17,12 +17,13 @@
 
 ## 현황
 - 데이터 **677 트랙 / 화면 660곡(dedup) / 13밴드**. 워드클라우드 **라이브**, 백필(1-a/1-b)·지역락 처리 완료(done 14~20, 화면 526→660). 
-- **다음 본류 = 음원맵 전곡 확대**(작업 2). 클러스터 v2+v3는 미머지 브랜치 `feature/emoi-cluster-v2`.
+- **레이아웃 확정 + 정적파일 분할 완료**(done 22, main 반영): 편집 시 CSS=`common/desktop/mobile.css`·JS=`static/js/functions/01~19-*.js` **분할 파일 직접 수정**(참조식 → 리빌드 불필요), 템플릿 변경만 `python src/build.py`.
+- **다음 본류 = 음원맵 전곡 확대**(작업 2) — 오디오 수집 진행 중(아래 Phase 1[A]). 클러스터 v2+v3는 미머지 브랜치 `feature/emoi-cluster-v2`.
 
 ## 우선순위
 | 작업 | 상태 | 상세 |
 |------|------|------|
-| 1. 워드클라우드 | ✅ 완료 — (D) 배치만 | § 작업 1 · 열린 결정 |
+| 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | 🔜 **본류** | → [spec/audio-map-fullscale.md](spec/audio-map-fullscale.md) |
 | 3. 자동화 파이프라인 | 🔜 후속(2 이후) | → [spec/pipeline-automation.md](spec/pipeline-automation.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
@@ -38,13 +39,15 @@
 > **⏸ 중단 시 재개(다른 로컬·세션)**: 각 페이즈/트랙은 독립 커밋 → `git push` 하면 다른 로컬이 이어받는다. **단 오디오 wav 캐시는 gitignore = 장치 전용** — 다른 로컬로 옮겨도 wav 는 안 따라온다(현재 이 장치엔 wav 0개). 다운로드를 다른 로컬에서 이어가면 그 장치 기준으로 재수집하되, `fetch_audio.py` 의 **skip-existing 으로 장치 내 재개는 보장**(끊겨도 같은 명령 재실행 = 남은 곡만).
 
 **Phase 0 — 결정 + 빌드 준비 (동시)**
-- **[사용자 게이트]** ① 범위(660 / 캡 N~300 / 97 유지 — fullscale §1) = 오디오 물량 확정 · ② 레이아웃 묶음(아래 **열린 결정**) = 2.5 최종·작업1(D) 확정.
+- **[사용자 게이트]** ① 범위 = **660 전곡 확정**(수집 진행 중) · ② 레이아웃 묶음 = ✅ **확정(대안 B, done 22)**.
 - **[A·코드]** `build_perceptual_map.py`에 `--manifest` 인자 + 매니페스트 생성(`songs/*.yaml`→`band,idx,song,url`, dedup=vid, 캡N) + **정규화 파라미터 저장(contrast·mode의 mean/std + shift + overrides, pipeline §5)**. 셋 다 audio 없이 현행으로 스모크 가능. ⚠️ 이 저장 코드가 **다운로드 착수 전에** 들어가 있어야 전곡 빌드가 파라미터를 남긴다(안 남기면 나중에 전곡 재수집).
 
 **Phase 1 — 대기시간 병렬 (핵심 구간)**
-- **[A]** **오디오 수집 착수**: `python src/tools/cluster/build_manifest.py`(→ `songs_full.csv` 660곡, 생성 완료) → `python src/tools/cluster/fetch_audio.py --cache audio_full`. 재개 가능·fail-soft·10%마다 진행률/예상종료·일시중지(429 재시도소진 / 17시+ETA≥5h). 안티봇 5원칙 = `docs/idea/260703.md`. ← 도는 동안 ↓ 병렬.
-  > 🟢 **현재(2026-07-03 11:08~) = 수집 실행 중**(branch v3a · `--no-cookies` · JS런타임 node). 진행 실시간 = `src/content/cluster/fetch_progress.json`(gitignore, 매 곡 갱신: 현재곡·pct·경과·`eta_end`). 660곡 ≈ **~10–13h**(곡간 30–60s 대기 지배) → **17시 조건2)로 ~300곡 지점 자동 일시중지** 예상 → 그 시점에 HANDOFF·커밋·푸시 + `audio_full` zip.
-  > **다른 로컬 재개 선결**: ① `pip install yt-dlp imageio-ffmpeg` + **node 필수**(JS런타임 — 없으면 yt-dlp nsig 서명 실패로 403 다발; `--js-runtimes` 자동 연결) · ② 이 로컬 wav를 zip으로 옮겨 `src/content/cluster/audio_full/`에 언팩 · ③ `python src/tools/cluster/fetch_audio.py --cache audio_full --no-cookies`(skip-existing 재개). ⭐ **오디오 48kHz 항상 유지**(용량 무관·다운샘플 금지, 사용자 확정 2026-07-03).
+- **[A]** **오디오 수집 착수**: `python src/tools/cluster/build_manifest.py`(→ `songs_full.csv` 660곡, 생성 완료) → `python src/tools/cluster/fetch_audio.py --cache audio_full`. 재개 가능·fail-soft·10%마다 진행률/예상종료. **일시중지 조건(OR)**: 1) 429 재시도소진/연속실패, 2) 17시+ETA≥5h, **3) 성공용량 > `--stop-size-gb`(기본 7GB)** ← USB 7.25GB 대비(2026-07-03 추가, `total_gb` 진행JSON 기록). 안티봇 5원칙 = `docs/idea/260703.md`. ← 도는 동안 ↓ 병렬.
+  > ⏸ **2026-07-03 17:00 = 조건2로 자동 일시중지**(1차 수집 11:08~17:00, branch v3a · `--no-cookies` · JS런타임 node). **최종: 285/660(43%) · 세션신규 278 · 실패 24 · `audio_full` ≈ 6.0 GiB**(reason=`clock>=17:00 & eta 6h49m>=5.0h`). 7.25GB USB 여유 → `audio_full` **폴더째 복사**(압축·번들 생략). 진행 실시간 = `src/content/cluster/fetch_progress.json`(매 곡 갱신). ※ `total_gb`는 이 세션이 조건3 이전 구버전이라 미기록(디스크 기준 6.0 GiB).
+  > 💡 **압축 안 함(2026-07-03 실측 결정)**: WAV(PCM)는 Compress-Archive/zstd 모두 **~3%만** 압축(6.2GB→~6.0GB)되고 6.2GB zip에 ~4분 소요 → 무의미. 파일도 곡당 ~22MB·수백 개라 번들 이점 없음 + 단일 대용량 파일은 **FAT32 4GB 제한**에 걸림. → `audio_full` **폴더를 그대로** USB에 복사가 최선.
+  > ⚠️ **실패 = 전부 HTTP 403**(수집 중 24건 표본, 429/삭제/비공개 0건). node 서명해독은 정상(→ format 251까지 진행)인데 **`android vr` 클라이언트의 오디오 URL을 CDN이 거부**하는 케이스 → 레이트리밋/영구실패 아닌 **복구 가능**. 재개 시 실패분에 **`--extractor-args "youtube:player_client=tv,web_safari,ios"`** 류로 클라이언트 바꿔 재시도 권장(본계정 쿠키 금지 → 클라이언트 변경이 1순위).
+  > **다른 로컬 재개 선결**: ① `pip install yt-dlp imageio-ffmpeg` + **node 필수**(JS런타임 — 없으면 yt-dlp nsig 서명 실패로 403 다발; `--js-runtimes` 자동 연결) · ② 이 로컬 `audio_full` 폴더를 **압축·번들 없이 그대로** USB로 복사 → 다른 로컬 `src/content/cluster/audio_full/`에 복사(WAV ~3%만 압축 → 압축 무의미) · ③ `python src/tools/cluster/fetch_audio.py --cache audio_full --no-cookies`(skip-existing 재개; 조건3 7GB 상한 자동 적용). ⭐ **오디오 48kHz 항상 유지**(용량 무관·다운샘플 금지, 사용자 확정 2026-07-03).
 - **[B]** 렌더 최적화(ECharts `large`/`largeThreshold`/`progressive` + 줌/팬 + ALL z-order) + UX(센트로이드 클릭 비활성 + opacity 0.3). `static/js/script.js`만 → 리빌드 불필요. 현행 97곡/목업으로 개발.
 - **[C]** 구 파일 폐기(`keywords_2d.json`·`build_embeddings.py`·`build_audio_map.py` + untracked `rss_seen/inbox/verify_cache`) + `actions/` 오케스트레이터 골격(collect[1–3]→cluster[**stub**]→stage[4–7]) + Phase 1.5 워크플로우.
 
@@ -61,9 +64,8 @@
 
 ---
 
-## 작업 1. 워드클라우드 — (D) 배치만 남음
-품질(2-c A·B·C + 키워드 색상) **완료**(done 20). 재생성 명령·큐레이션 주의(`weight:0`은 렌더 `||1`로 부활 → 제거는 yaml 줄 삭제 / `ko`는 재생성 시 덮어써짐)는 memory `wordcloud_quality_plan.md`·done 17·20.
-- **남은 것 = (D) 배치 재결정** → 클러스터 게시 위치와 함께 결정 (아래 **열린 결정**).
+## 작업 1. 워드클라우드 — ✅ 완전 완료
+품질(2-c A·B·C + 키워드 색상) **완료**(done 20) + **(D) 배치 확정**(done 22): 음원맵 슬롯을 세로 분할선으로 좌=음원맵/우=워드클라우드(**대안 B**), 상시 렌더. 재생성 명령·큐레이션 주의(`weight:0`은 렌더 `||1`로 부활 → 제거는 yaml 줄 삭제 / `ko`는 재생성 시 덮어써짐)는 memory `wordcloud_quality_plan.md`·done 17·20.
 
 ## 작업 2. 음원맵 전곡 확대 [본류]
 **채택 축**: x = spectral contrast(거칢↔매끄러움, r−0.81) · y = mode(밝음↔어두움, r+0.51). 파이프라인 `build_perceptual_map.py` → `audio_map.json` → `script.js _clDraw`. 현재 TOP10×10 97곡 라이브. v2·v3 완료(done 21).
@@ -87,7 +89,7 @@ RSS 수집 → cluster 분석 → 라이브 반영을 `actions/` 오케스트레
 ---
 
 ## 열린 결정 (사용자)
-- **(레이아웃 — 묶어서 결정)** 워드클라우드 배치(1-D) + 음원맵 게시 위치 + 분할 비율(yt:음원맵). 우패널 탭이 좁아 워드클라우드 부적합 → 후보: 유튜브 프레임 가로 2분할(아래=클라우드) / 전용 모달 / 하단 넓은 영역. 전곡 음원맵도 넓은 영역 필요(fullscale §5) → **셋을 함께 결정.**
+- ✅ ~~(레이아웃 — 묶어서 결정)~~ **해소(done 22)**: 유튜브 컬럼 하단 슬롯을 세로 분할 → **좌=음원맵 / 우=워드클라우드(대안 B)** + 유튜브 16:9 + 우패널 히스토그램·히트맵 동시표시 + 곡리스트 30%↓·긴곡명 마퀴 + 모바일 세로 스택.
 - **(기능)** 진행률 링 70% 하드게이트: 현재 70% Green은 링 색상일 뿐, "70%↑만 최애밴드 자격" 게이트 미도입(현재는 스코어링 수축 `w(n)`만). 도입 여부 별도 결정(ux-02.md #2).
 
 ## 보류 · 백로그

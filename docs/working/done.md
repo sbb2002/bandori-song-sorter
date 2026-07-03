@@ -549,3 +549,27 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 ## 결과 / 남은 것
 - TOP10×10 **97곡 미리보기 라이브 확인 완료**. `index.html`은 `<script src>` 외부 참조라 JS·CSS 수정은 재빌드 불필요(템플릿 변경만 `python build.py`).
 - **남은 작업 = 전곡 확대뿐** → **[spec/audio-map-fullscale.md](spec/audio-map-fullscale.md)** 참조. 미머지(feature/emoi-cluster-v2).
+
+---
+
+# 세션 22 — 레이아웃 확정(작업 1-D 완결) + 정적파일 기능분할 리팩터 (feature/emoi-cluster-v3a · main FF 머지)
+
+HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `style.css`(956줄)·`script.js`(1581줄)를 기능별 파일로 분할. 오디오 전곡 수집(작업 2 Phase 1[A])은 **진행 중** → 현황·재개는 HANDOFF.
+
+## 레이아웃 확정 (작업 1-D + 음원맵 게시 위치)
+대안 A(전체폭 하단 독, `36d4629`)는 "너무 비대" 피드백 → **대안 B 채택**(`6373745`): 유튜브 컬럼 하단 슬롯을 세로 분할선으로 **좌=음원맵 / 우=워드클라우드**(`.yt-bottom-split`, flex 1.2:1). 워드클라우드 상시 렌더(탭 게이트 제거).
+- **B 정제**(`bf522a8`): 곡리스트 폭 30%↓(`.center` 0.7fr:1.8fr) → 유튜브+음원맵/WC 확대. 긴 곡이름 = 평상시 말줄임, **호버/재생·선택 시 마퀴**(`.st-text`·`markSongTitleOverflow`, scrollWidth 측정 → `--st-shift`/`--st-dur`).
+- **레이아웃 확정**(`5a7caf4`): 유튜브 **16:9 스테이지**(`aspect-ratio:16/9`·`max-height:52vh`) + 우패널 **탭 제거 → 히스토그램(위)·히트맵(아래) 동시 표시** + 음원맵 하단 유사곡 목록 **표시 숨김**(`.cl-similar{display:none}`, 요소·JS 보존).
+- **우패널 비율**(`db04a6a`): 히스토그램 내용 높이(`flex:0 0 auto`)·히트맵 남는 세로 전부(`flex:1 1 0`) → 히트맵 스크롤 최소화.
+- **모바일 붕괴 수정**(`4083f11`): 세로 스택에서 `.yt-bottom-split .audiomap-area`가 데스크톱 `flex:1.2 1 0`(basis 0)을 물려받아 높이 0으로 붕괴(워드클라우드에 파묻힘) → 명시적 `flex:none;height:320px`로 특이성 오버라이드.
+- 대안 매핑 = memory `wordcloud-layout-alternatives.md`.
+
+## 정적파일 기능분할 리팩터 (`d9f3b1b`)
+- **CSS 3분할**: `style.css` → `common.css`(변수/리셋/헤더/팝업/면책) · `desktop.css`(§3-8 레이아웃+컴포넌트) · `mobile.css`(@media ≤1023px). 섹션 경계로만 분리·로드순서 고정(common→desktop→mobile) → 렌더 바이트 동일. 재배치된 popup/disclaimer 셀렉터 충돌 0 검증.
+- **JS 19분할**: `script.js` → `static/js/functions/01~19-*.js`(§1 state ~ §17 init). **classic 순서 로드**(전역 스코프·가변상태 공유 유지, ES모듈 아님). 유일한 코드 변경 = §1 상태 로드(`loadRanks`/`loadComments`)를 `19-init.js` DOMContentLoaded 선두로 이동(파일 간 함수 호이스팅 회피). 검증: `node --check` 19/19 PASS, 연결본==편집원본(바이트 일치).
+- 주입: `build.py` `static_paths.css`(리스트)·`js`(functions 글롭) + 템플릿 `<link>`/`<script>` 반복. **편집 시 주의**: CSS/JS는 이제 분할 파일을 직접 편집(참조식이라 리빌드 불필요), 템플릿 변경만 `python src/build.py`.
+
+## 결과
+- 위 전부 `feature/emoi-cluster-v3a` → **main FF 머지·푸시**(라이브 반영). `index.html`은 링크/스크립트 태그만 변경(데이터 불변).
+- HANDOFF **작업 1(워드클라우드) 완전 완료**(품질 done 20 + 배치 D done 22). "열린 결정 — 레이아웃 묶음" 해소.
+- ⏳ **진행 중(별도 추적)**: 작업 2 오디오 전곡 수집(Phase 1[A]) — 현황·조건3(7GB)·403 실패분석은 HANDOFF. 커밋 대기분(일시중지 시): `fetch_audio.py` 조건3, `migrate_local_cache.bat`→legacy 이관.
