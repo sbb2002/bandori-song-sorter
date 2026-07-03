@@ -43,7 +43,8 @@
 
 **Phase 1 — 대기시간 병렬 (핵심 구간)**
 - **[A]** **오디오 수집 착수**: `python src/tools/cluster/build_manifest.py`(→ `songs_full.csv` 660곡, 생성 완료) → `python src/tools/cluster/fetch_audio.py --cache audio_full`. 재개 가능·fail-soft·10%마다 진행률/예상종료·일시중지(429 재시도소진 / 17시+ETA≥5h). 안티봇 5원칙 = `docs/idea/260703.md`. ← 도는 동안 ↓ 병렬.
-  > 🟡 **현재 상태(2026-07-03 오전) = 도구 준비 완료·미착수.** 착수 선결: ① `pip install yt-dlp imageio-ffmpeg`(이 장치 conda base 미설치) · ② 쿠키 방식 결정(**권장 `--no-cookies`** — 본계정 쿠키는 pipeline §4 '본계정 금지' 정지 리스크, 봇월 감지 시 버너로 승격) · ③ 실행. 660곡 ≈ 곡간 30–60s 대기 지배로 **~10–13h** → 17시 조건2)로 중간 일시중지 후 다른 로컬 이어받기 예상. 진행상태 = `src/content/cluster/fetch_progress.json`.
+  > 🟢 **현재(2026-07-03 11:08~) = 수집 실행 중**(branch v3a · `--no-cookies` · JS런타임 node). 진행 실시간 = `src/content/cluster/fetch_progress.json`(gitignore, 매 곡 갱신: 현재곡·pct·경과·`eta_end`). 660곡 ≈ **~10–13h**(곡간 30–60s 대기 지배) → **17시 조건2)로 ~300곡 지점 자동 일시중지** 예상 → 그 시점에 HANDOFF·커밋·푸시 + `audio_full` zip.
+  > **다른 로컬 재개 선결**: ① `pip install yt-dlp imageio-ffmpeg` + **node 필수**(JS런타임 — 없으면 yt-dlp nsig 서명 실패로 403 다발; `--js-runtimes` 자동 연결) · ② 이 로컬 wav를 zip으로 옮겨 `src/content/cluster/audio_full/`에 언팩 · ③ `python src/tools/cluster/fetch_audio.py --cache audio_full --no-cookies`(skip-existing 재개). ⭐ **오디오 48kHz 항상 유지**(용량 무관·다운샘플 금지, 사용자 확정 2026-07-03).
 - **[B]** 렌더 최적화(ECharts `large`/`largeThreshold`/`progressive` + 줌/팬 + ALL z-order) + UX(센트로이드 클릭 비활성 + opacity 0.3). `static/js/script.js`만 → 리빌드 불필요. 현행 97곡/목업으로 개발.
 - **[C]** 구 파일 폐기(`keywords_2d.json`·`build_embeddings.py`·`build_audio_map.py` + untracked `rss_seen/inbox/verify_cache`) + `actions/` 오케스트레이터 골격(collect[1–3]→cluster[**stub**]→stage[4–7]) + Phase 1.5 워크플로우.
 
