@@ -256,6 +256,24 @@ tie-break 후보. (b) 렌더 onset 포맷 확장 — `sections[]{t0,t1,pulse,div
 파이프라인 → Phase3 패턴+렌더 포맷. **벤치마크 곡 = millsage #179**(성공 판정: 구간별로 112/172 를
 올바로 전환).
 
+## 최종 구현 — 에너지 기반 동적 subdivision (2026-07-05, 채택 · 방안 B 대체)
+
+방안 B(구간 tempo period 국소화)는 **프로토타입까지만**(`section_pulse_proto.py`: millsage 172↔112 구간 검출 확인). 실제 채택은 더 단순·견고한 **에너지 기반 동적 subdivision**.
+
+**착상(사용자)**: 곡 구조(intro/verse/chorus) 판별은 과함. **에너지(음량)만으로** subdivision 제어 — 조용(intro/outro/브레이크다운/잔잔한 1절)=박, 고조=8분. 구조 검출 실패(특히 millsage 같은 매스락)에 안 걸리고 전곡 동일 적용.
+
+**진단 게이트**(`diagnose_pulse_variability.py`): full-mix tempogram → **옥타브 원(circular) spread**로 곡내 pulse 변동 측정(linear std는 90 BPM fold 경계에서 89↔92를 92↔178로 쪼개는 위양성 → circular로 해결). 전곡 스캔 `pulse_variability.csv`: ~70% 안정(spread<4), ~22%만 방안 B급 변동.
+
+**정규화 = 글로벌 절대음량(핵심)**: 처음엔 곡별(per-song) intensity 정규화 → **곡 간 절대 energy 차이가 뭉개짐**(Symbol I처럼 시종 시끄러운 곡에 박 오지정). 검증: ave_mujica `Symbol I`(절대 −8dB 평탄, 시종 에너지) vs roselia `軌跡`(1절 −18~−22dB, 조용) → 두 곡이 반대로 나와야 함. `build_dynamics.py`가 RMS dB를 **글로벌 앵커(−22~−7dB; 카탈로그 프레임 p10~p90 = −14.5~−8.9dB 압축분포 기준)**로 정규화 → onset JSON `dyn`(2Hz). 결과: Symbol I = 시종 dense, 軌跡 1절 = 박.
+
+**렌더**: `16-audiomap.js _clDynLevel`이 매 프레임 `dyn` 임계(`CL_DYN_T1`0.37 ≈ −16.5dB / `CL_DYN_T2`0.83)로 레벨 선택, 변화 시 재-bisect, 히스테리시스. `CL_DYN_MAX=1`(박/8분 — 16분은 과함). 3레벨 그리드는 이미 추출돼 있어 선택만.
+
+**볼륨 프리셋 4단계**(`_clVolStep` 경계 0.2/0.4/0.6): 1·2 = 발생 안 함 · 3(0.6~0.9) = 24px·두께3px · 4(0.9~1.0) = 48px·두께7px(`CL_PULSE_R3/LW3/SPEED3`). 경계는 **곡 최대볼륨(`_clOnsetVmax`) 상대화**(`CL_VOL_ADAPTIVE`) — 각 곡이 프리셋 범위를 일관되게 사용.
+
+**두 축 정리**: **밀도**(얼마나 자주 = subdivision) ← 글로벌 **절대** energy(음량). **크기·두께**(얼마나 세게 = 프리셋) ← 곡내 **상대** volume. 정규화 방향이 반대인 게 의도적(밀도는 곡 간 비교, punch는 곡 내 비교).
+
+**버그수정**: 프리롤 광고 중 `getCurrentTime` 진행으로 onset 오발화 → `getDuration()`이 트랙 길이 ±5s(`CL_ONSET_DUR_TOL`)일 때만 발화.
+
 ## 파일럿 결과 (7밴드 대표곡, HOP256)
 
 | 밴드 (곡) | tempo | 박(초당) | 8분 | 16분 | 기본 |

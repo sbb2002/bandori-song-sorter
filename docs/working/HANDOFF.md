@@ -2,8 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-04(세션 23)** — **작업 2(음원맵 전곡 확대) 완결·동결**: 오디오 **659/660** 완주(`android_music` 클라이언트로 403 복구 — `tv/ios`는 DRM/PO토큰), `audio_map.json` **659곡/13밴드 + `norm` 파라미터 동결**(증분 append 선결), `build.py` 반영. + **재생 펄스 방안 A**(지각 pulse=ACF 옥타브비율, 파일럿 6/7) + **음원맵 HUD**(우주선 스타일)·연출·버그수정. 브랜치 `feature/emoi-cluster-v3b`(미머지·푸시됨). 상세 **done 23**.
-> **⏭ 다음 = ① 머지(`v3b`→`feature/emoi-cluster`→`main`, 실검수 후) · ② 작업 3(자동화 파이프라인 — 동결 `norm` 기반 증분 append).** roselia `競宴Red×Violet` 1곡(DRM)은 증분으로.
+마지막 갱신: **2026-07-05(세션 25)** — **음원맵 클러스터링/재생펄스 계열 완결 + main 머지**: 전곡 **660곡** 좌표·펄스(roselia DRM 1곡 `android_music`로 확보) + **렌더 lazy-fetch**(index.html 0.30MB, onset 런타임 fetch) + 재생 펄스 = **에너지 기반 동적 subdivision**(구조 판별 없이 음량→박/8분, 글로벌 절대음량 정규화) + **볼륨 프리셋 4단계**(곡 최대볼륨 상대화). `v3b`→**main 머지**→`feature/emoi-cluster-v4`. 상세 **done 24~25** · [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
+> **⏭ 다음 = 작업 3(자동화 파이프라인 — 동결 `norm` 기반 증분 append; roselia `競宴Red×Violet` DRM 1곡도 이때).** 음원맵·재생펄스는 마무리됨.
 이전: (2026-07-04) 재생 펄스 파일럿(beat 그리드+드럼 볼륨) → 세션 23에서 방안 A로 완성. (2026-07-03 17:00) 작업 1(D) 레이아웃 확정 + 정적파일 분할 main 머지(done 22).
 
 ---
@@ -98,7 +98,7 @@ RSS 수집 → cluster 분석 → 라이브 반영을 `actions/` 오케스트레
 ## 보류 · 백로그
 - **(보류) 백필 1-c namedup 403**: 기존 곡 url을 Topic 음원으로 교체(품질 개선, 새 곡 아님). 후순위. (1-b 커버 135곡은 완료 — done 18.)
 - **(보류) 진행도 Save/Load** (ux-02.md #4): 진행 json 백업/공유. ⚠️ Load = 기존 진행 덮어쓰기 → 손실 위험, 자동 백업·복구 경로 선설계 필수. 코멘트(`bandori-song-comments-v1`) 직렬화 포함 여부 확정 필요.
-- **(대체로 완료) 재생 이퀄라이저 = 음원맵 재생 펄스** — B안(lazy 사전계산). **방안 A(지각 pulse=ACF 옥타브비율) 구현·검증 완료**(파일럿 6/7, done 23) + 펄스 프리셋 3단계·색 가시성 보정·**박 고정 확정**. **남은 것**: 전곡 확대(`build_pulse_all.py` demucs CPU ~45s/곡 · onsets 대량 시 lazy fetch 전환) · mugendai 난곡 큐레이션. 상세 = **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. 원안 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
+- **✅ (완료, done 24~25) 재생 이퀄라이저 = 음원맵 재생 펄스** — 전곡 660 pulse + **렌더 lazy-fetch** + **에너지 기반 동적 subdivision**(음량→박/8분, 글로벌 절대음량) + 볼륨 프리셋 4단계(곡 최대볼륨 상대화) + 광고펄스 버그수정. 상세 = **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. **(보류)** 방안 B(구간 tempo period) 프로토타입만(`section_pulse_proto.py`) · mugendai/난곡 예외 큐레이션(`CL_ONSET_DEFDIV`). 원안 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
 
 ---
 

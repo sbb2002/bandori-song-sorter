@@ -599,3 +599,36 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 - **머지**: `feature/emoi-cluster-v3b` → `feature/emoi-cluster` → `main`(라이브). 브라우저/모바일 실검수 후.
 - roselia 1곡(DRM) → 작업 3 증분 파이프라인으로. 오디오 캐시(`audio_full` 659곡)는 동결 후 폐기 가능.
 - (선택) pulse 전곡 확대(`build_pulse_all.py`, demucs CPU) + onsets lazy fetch.
+
+---
+
+# 세션 24~25 — 펄스 전곡 확대 + 렌더 lazy-fetch + 에너지 동적 subdivision (음원맵 클러스터링 마무리 · main 머지)
+
+**음원맵(F2) 클러스터링/재생펄스 계열을 여기서 완결.** roselia DRM 1곡 확보로 전곡 660 완비 → 좌표·펄스 전곡화 → 렌더 최적화 → 재생 펄스를 "에너지 기반 동적 subdivision"으로 완성. `feature/emoi-cluster-v3b` → **main 머지**(fee5bd0) → `feature/emoi-cluster-v4`에서 렌더·튜닝 마무리.
+
+## 데이터·추출 (전곡 660)
+- **오디오 660/660**: roselia `競宴Red×Violet`(idx629) DRM을 `--extractor-args youtube:player_client=android_music`로 확보 → `audio_map.json` **660곡/13밴드/13센트로이드 재빌드·norm 660 재동결**(증분 append 수치 = `audio_map.json.norm`).
+- **펄스 onset 전곡 660**: `build_pulse_all.py`(demucs htdemucs 4샤드 병렬) → `onsets/*.json`(박/8분/16분 3레벨 + 지각 pulse ACF). 원본 audio 미수정(librosa 읽기전용). 실험데이터 → `cluster/legacy/`.
+
+## 렌더 lazy-fetch (task#4)
+- onsets 전곡 ≈42MB → index.html 인라인 불가. `build.py` `load_onsets`(전곡 인라인) → **`load_onset_list`(경량 [band,song,id] 매니페스트)**, 데이터는 런타임 곡별 fetch(`16-audiomap.js _clFetchOnset`, `./src/content/cluster/onsets/<id>.json`, 캐시·file://→BPM폴백). **index.html 0.30MB**. `.nojekyll`로 Pages가 src/ 서빙.
+
+## 재생 펄스 = 에너지 기반 동적 subdivision (핵심 결정)
+- **진단**: `diagnose_pulse_variability.py`(full-mix tempogram → **circular octave% spread**; linear std는 90 fold경계 위양성). 전곡 스캔 `report/emoi-cluster-pulse/pulse_variability.csv` — ~70% 안정, ~22%만 곡내 pulse 변동(방안 B 후보).
+- **방안 B(구간 tempo) 대신 '에너지 동적 subdivision' 채택**(사용자): 구조(intro/verse) 판별 없이 **에너지(음량)로 subdivision 제어**. `build_dynamics.py`가 full-mix **절대 음량(RMS dB)을 글로벌 앵커(−22~−7dB)로 정규화**(★곡별 아님 → 곡 간 절대 energy 보존: Symbol I=시종 dense·軌跡 1절=박)한 `dyn` 곡선(2Hz)을 onset JSON에 추가. `16-audiomap.js _clDynLevel`이 매 프레임 dyn으로 **박/8분** 선택(`CL_DYN_T1/T2`, `CL_DYN_MAX=1`=16분 끔, 히스테리시스).
+- **볼륨 프리셋 4단계**(v 0.2/0.4/0.6 경계, `_clVolStep`): 1·2=발생안함 · 3(0.6~0.9)=24px·3px · 4(0.9~1.0)=48px·7px(`CL_PULSE_R3/LW3/SPEED3`). **경계는 곡 최대볼륨(`_clOnsetVmax`)에 상대화**(`CL_VOL_ADAPTIVE`).
+
+## 버그·기타
+- **광고 펄스 오발화**: 프리롤 광고 중 getCurrentTime로 onset 오발화 → `getDuration()`이 트랙 길이 ±5s일 때만 발화(`CL_ONSET_DUR_TOL`).
+- **ikka_dumb_rock 색**: `BAND_COLORS` 키 오타(`ikka_dump_rock`→`ikka_dumb_rock`) 수정(배경·글로우 #ffaa33) + `assets/icons/ikka_dumb_rock.png` 남색→#ffaa33 재색칠.
+- 음원맵 제목 **"밴드 음원 지도" → "EMOI-MAP"**(템플릿 동기).
+
+## 산출물
+- 도구: `build_pulse_all.py`·`separate_drums.py`·`build_beat_track.py`·`diagnose_pulse_variability.py`·`build_dynamics.py`(`src/tools/cluster/`).
+- 문서: `docs/research/`(cluster-map-extraction·pulse-onset-extraction 논문) · `report/emoi-cluster-pulse/README.md`(방법론+프로브+구현) · `pulse_variability.csv`.
+- 커밋(v4): 진단 `5dfbc42` · 광고펄스+박기본 `fb4ffba` · 동적subdiv `334a0eb` · 글로벌음량 `03a5dc1` · 프리셋튜닝 다수 · 볼륨적응 `afc9a75` · ikka색 `8602392`.
+
+## 보류(향후, 착수 안 함)
+- **방안 B(구간 tempo period)**: 프로토타입만(`section_pulse_proto.py`, tmp). millsage 172↔112 구간 검출까진 확인. 필요시 재개.
+- 볼륨 정규화 max→p95(아웃라이어 완화) 옵션.
+- onset 기본 subdivision 예외 큐레이션(`CL_ONSET_DEFDIV`).
