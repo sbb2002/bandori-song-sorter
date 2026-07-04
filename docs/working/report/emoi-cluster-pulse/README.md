@@ -139,7 +139,35 @@ beat 방식에도 HOP256 유지.
 **구현 방향**: `build_beat_track.py` 에 **지각 pulse 추정 함수**(ACF 후보 → 옥타브 비율 규칙 →
   prior/앙상블)를 넣어 beat_track tempo 대신 이 pulse 로 grid 를 만들고(phase 는 plp/onset 정렬).
   `audio_map.json` 의 `bpm`(feature.tempo)은 **음악 특징용이라 별개** — pulse 값과 혼동 말 것.
-  검증 = A 의 τ 를 소수 정답 pulse(사용자 선호)로 튜닝. (현재 상태 = '박' 고정 임시.)
+  검증 = A 의 τ 를 소수 정답 pulse(사용자 선호)로 튜닝.
+
+**✅ 구현 완료 (2026-07-04, feature/emoi-cluster-v3b)** — `build_beat_track.py` `perceptual_pulse()`:
+onset-envelope ACF 로 base(beat_track) 와 ×2 를 비교, `ratio = ACF(fast)/ACF(slow) ≥ τ` 이면
+8분(div 2) 채택. onsets json 에 `pulse:{pulse_bpm,pulse_div,slow,fast,acf_slow,acf_fast,ratio,tau}`
+저장. **τ=0.96**(아래 재튜닝 참조).
+
+  파일럿 7곡 검증 (τ=0.96 · **6/7 선호 일치**):
+
+  | 곡 | ratio | 판정 pulse | 선호 | |
+  |----|-------|-----------|------|--|
+  | afterglow | 0.976 | 185 (8분) | 8분 | ✅ |
+  | mygo | 0.941 | 95.7 (박) | 박 | ✅ |
+  | morfonica | 0.837 | 92.3 (박) | 박 | ✅ |
+  | pastel | 0.824 | 143.6 (박) | 박 | ✅ |
+  | hello_happy | 0.73 | 123 (박) | 박 | ✅ |
+  | ave_mujica | 0.267 | 132.5 (박) | 박 | ✅ |
+  | mugendai | 0.52 | 120.2 (박) | 8분 | ❌ 난곡(변박·약다운비트) |
+
+  - **핵심 확인**: afterglow(0.976)·morfonica(0.837)는 **실제 tempo 가 둘 다 185 로 같은데** ratio 로
+    8분/박을 정확히 갈랐다 — 정확 tempo 로는 불가능한 구분(방안 A 목표 달성). README 초안 표(0.98/0.84)
+    와도 재현 일치.
+  - **τ 재튜닝 0.9→0.96**: 초안 τ≈0.9 는 afterglow/morfonica 2곡만 본 값. **mygo(ratio 0.941, 선호 박)**
+    가 τ=0.9 에서 8분으로 오검출 → 정답 경계 afterglow 0.976(8분) vs mygo 0.941(박) 사이인 **0.96**
+    으로 상향, mygo 정정(6/7). ⚠️ 마진 좁음(0.941~0.976) → **전곡 확대 시 재검증 필요**(오버피팅 주의).
+  - **mugendai** 만 실패: 빠른 pulse 가 ACF 로 안 두드러지는데 8분 선호(변박) = τ 로 불가 → 난곡 수동
+    큐레이션(`CL_ONSET_DEFDIV`).
+  - **남은 것**: 프론트(`16-audiomap.js`)가 `pulse.pulse_div` 를 기본 subdivision 으로 소비하도록 연결
+    (현재는 `CL_ONSET_DEFDIV` 수동/‘박’ 고정) + 브라우저 렌더 검증.
 
 ---
 

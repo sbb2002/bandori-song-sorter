@@ -42,11 +42,41 @@ def _subdivide(beats: np.ndarray, div: int) -> list[float]:
     return out
 
 
+def perceptual_pulse(onset_env, sr, hop, base_tempo, tau=0.96, pmin=90.0, pmax=200.0):
+    """지각 pulse rate 추정 — README 방안 A(ACF 옥타브 비율 규칙).
+
+    onset-envelope 자기상관(ACF)은 느린 옥타브로 편향(자기상관 배음)돼 단독으론 항상
+    절반 tempo 를 고른다. base(beat_track)와 그 ×2 의 ACF 를 비교해, 빠른 쪽이 느린 쪽의
+    tau 배 이상이면 빠른 pulse 를 채택 — 이 **비율 자체가 '빠른 pulse 가 얼마나 두드러지나'
+    = 지각 pulse 지표**다. tempo 가 같아도(afterglow·morfonica 둘 다 실제 185) 지각 pulse
+    (afterglow 185 / morfonica 92)가 달라, 정확 tempo 로는 불가능한 구분을 해낸다.
+    """
+    acf = librosa.autocorrelate(onset_env)
+    acf = acf / (acf[0] or 1.0)                       # lag0=1 정규화(표기 일관)
+
+    def acf_at(bpm):
+        lag = int(round((60.0 / bpm) * sr / hop))     # BPM → onset-frame lag
+        return float(acf[lag]) if 1 <= lag < len(acf) else 0.0
+
+    slow, fast = float(base_tempo), float(base_tempo) * 2
+    a_slow, a_fast = acf_at(slow), acf_at(fast)
+    ratio = (a_fast / a_slow) if a_slow > 0 else 0.0
+    take_fast = ratio >= tau and pmin <= fast <= pmax
+    pulse = fast if take_fast else slow
+    return {"pulse_bpm": round(pulse, 1), "pulse_div": (2 if take_fast else 1),
+            "slow": round(slow, 1), "fast": round(fast, 1),
+            "acf_slow": round(a_slow, 3), "acf_fast": round(a_fast, 3),
+            "ratio": round(ratio, 3), "tau": tau}
+
+
 def build(path: str) -> dict:
     y, sr = librosa.load(path, sr=SR, mono=True)
     dur = len(y) / sr
     tempo, beats = librosa.beat.beat_track(y=y, sr=sr, hop_length=HOP, units="time")
     tempo = float(np.atleast_1d(tempo)[0])
+
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr, hop_length=HOP)
+    pulse = perceptual_pulse(onset_env, sr, HOP, tempo)     # 지각 pulse(방안 A)
 
     rms = librosa.feature.rms(y=y, hop_length=HOP)[0]
     tgrid = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=HOP)
@@ -61,7 +91,8 @@ def build(path: str) -> dict:
         events = [{"t": round(t, 2), "v": vol(t)} for t in grid]
         levels.append({"name": name, "div": div, "n": len(events), "events": events})
 
-    return {"sr": SR, "dur": round(dur, 1), "tempo": round(tempo, 1), "levels": levels}
+    return {"sr": SR, "dur": round(dur, 1), "tempo": round(tempo, 1),
+            "pulse": pulse, "levels": levels}
 
 
 def main(argv=None):
@@ -80,7 +111,11 @@ def main(argv=None):
     out.mkdir(exist_ok=True)
     p = out / f"{a.band}__{a.idx:03d}.json"
     json.dump(doc, open(p, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    pl = doc["pulse"]
     print(f"[OK] {p} / {doc['dur']}s tempo≈{doc['tempo']}")
+    print(f"    지각 pulse ≈ {pl['pulse_bpm']} (div {pl['pulse_div']}={'박' if pl['pulse_div']==1 else '8분'}) "
+          f"| ACF slow({pl['slow']})={pl['acf_slow']} fast({pl['fast']})={pl['acf_fast']} "
+          f"ratio={pl['ratio']} (τ={pl['tau']})")
     for lv in doc["levels"]:
         print(f"    {lv['name']:4} (x{lv['div']}) → {lv['n']:4}개 (초당 {lv['n'] / max(doc['dur'], 1):.1f})")
     return 0
