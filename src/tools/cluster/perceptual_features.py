@@ -32,10 +32,10 @@ try:
 except Exception:
     pass
 
-WORKSHEET = Path("src/content/cluster/axis_labels_worksheet.csv")
-MANIFEST = Path("src/content/cluster/songs_top10.csv")
+WORKSHEET = Path("src/content/cluster/legacy/axis_labels_worksheet.csv")
+MANIFEST = Path("src/content/cluster/legacy/songs_top10.csv")
 FULL_CACHE = Path("src/content/cluster/audio_full")     # 전곡 캐시(gitignore, 저작물). 60초 v2 캐시와 분리.
-OUT = Path("src/content/cluster/axis_pilot_features.csv")
+OUT = Path("src/content/cluster/legacy/axis_pilot_features.csv")
 SR = 22050                                   # 스펙트럼·f0 공용(보컬 D5≈587Hz 여유). 48k 불필요.
 
 # f0 탐색 범위: 옥타브-다운 오류 방지 위해 하한을 A2로. 여성 보컬 상단 여유 1000Hz.

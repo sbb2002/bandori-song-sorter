@@ -1,4 +1,4 @@
-"""src/content/cluster/songs_top10.csv → 지각 축 음원맵 (cluster/audio_map.json). v3 채택본.
+"""src/content/cluster/songs_full.csv → 지각 축 음원맵 (cluster/audio_map.json). v3 채택본.
 
 축 재정의 결과(docs/working/report/cluster-correlation) 채택:
   x = spectral contrast  → 거칢↔매끄러움 (검증 r=−0.81)
@@ -32,7 +32,7 @@ try:
 except Exception:
     pass
 
-MANIFEST = Path("src/content/cluster/songs_top10.csv")
+MANIFEST = Path("src/content/cluster/songs_full.csv")  # 전곡(660). 파일럿 top10은 legacy/ 로 이관됨.
 OUT = Path("src/content/cluster/audio_map.json")
 SR = 22050
 X_R, Y_R = -0.81, 0.51        # 검증 상관(보고서). 표기·기록용.
@@ -117,7 +117,7 @@ def main(argv=None):
     ap.add_argument("--cache", default="audio_cache",
                     help="음원 캐시 폴더명(audio_cache=60s / audio_full=전곡)")
     ap.add_argument("--manifest", default=str(MANIFEST),
-                    help="입력 매니페스트 CSV(band,idx,song,url). 기본 songs_top10.csv / 전곡=songs_full.csv")
+                    help="입력 매니페스트 CSV(band,idx,song,url). 기본 songs_full.csv(전곡 660)")
     ap.add_argument("--x-shift", type=float, default=X_SHIFT, help="x 원점 보정(거칢+)")
     ap.add_argument("--y-shift", type=float, default=Y_SHIFT, help="y 원점 보정(밝음+)")
     ap.add_argument("--out", default=str(OUT))

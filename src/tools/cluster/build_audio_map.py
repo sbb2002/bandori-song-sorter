@@ -40,7 +40,7 @@ try:
 except Exception:
     pass
 
-MANIFEST = "src/content/cluster/songs_top10.csv"
+MANIFEST = "src/content/cluster/legacy/songs_top10.csv"  # v2 CLAP 도구(legacy). 매니페스트도 legacy/.
 CACHE = Path("src/content/cluster/audio_cache")
 OUT = "src/content/cluster/audio_map.json"
 SECTION = "*45-105"          # 추출 구간(곡당 60초)

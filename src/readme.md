@@ -42,8 +42,10 @@
 
 ### `content/cluster/`
 - `audio_map.json` — **커밋되는 음원맵 산출물**(`build_perceptual_map.py` 생성, build.py가 baking).
-- `songs_top10.csv` — 매니페스트(`band,idx,song,url`). `axis_*.csv` — 축 파일럿 워크시트.
-- `audio_cache/`·`audio_full/`·`_*` — **gitignore**(음원=저작물·임시 산출). `keywords_2d.json`만 예외 추적(레거시).
+- `onsets/<band>__<idx>.json` — **커밋되는 재생 펄스 산출물**(`build_pulse_all.py` 생성: demucs 드럼분리→beat track).
+- `songs_full.csv` — 전곡 매니페스트(`idx,band,song,url`, 660곡).
+- `legacy/` — 실험 잔재(`songs_top10.csv` 97곡 프리뷰 서브셋, `axis_*.csv` 축 파일럿 워크시트).
+- `audio_cache/`·`audio_full/`·`audio_drums/`·`_*` — **gitignore**(음원=저작물·임시 산출). `keywords_2d.json`만 예외 추적(레거시).
 
 ### `tools/<purpose>/`
 성격에 맞는 하위폴더에 둔다:
