@@ -28,6 +28,7 @@ let _clOnsetIdx = 0;               // 다음 발생할 이벤트 포인터
 let _clOnsetKey = null;            // 현재 트랙의 곡 key(중복 시작 방지)
 let _clOnsetLastNow = 0;           // 직전 재생 위치(뒤로 시크 감지)
 let _clRafId = null;               // onset 폴링 requestAnimationFrame id
+let _clOnsetVmax = 1;              // 현재 곡 onset 최대 볼륨 — 볼륨 프리셋 경계를 곡별 상대화
 let _clSensIdx = 0;                // 선택된 subdivision 레벨(0=박·1=8분·2=16분). 기본 박.
 const CL_SHRINK = 0.5;             // 곡을 밴드 중심으로 뭉치는 정도(고정). 곡별 y 노이즈 완화.
 // various_artists = 여러 아티스트 묶음 → '밴드 중심점'이 의미 없음(이질적 곡 평균, y 폭주).
@@ -62,10 +63,14 @@ const CL_PULSE_DUR_MAX = 1600;    // [실험] onset 펄스 지속 상한(ms) —
 // [실험] beat 그리드 방식: 각 박의 볼륨(v)을 4단계로 나눠 크기·두께·속도 결정(강=크고 두껍게).
 // build_beat_track.py 의 events{t,v} 와 짝. 볼륨 경계 [0.2, 0.6, 0.9] → 1·2·3·4단계.
 //   1·2단계(v≤0.6): 펄스 없음 / 3단계(0.6~0.9): 24px·3px / 4단계(0.9~1.0): 48px·7px. (배열 idx=단계-1)
-const CL_PULSE_R3 = [0, 0, 24, 48];            // 볼륨 4단계 크기(px). 1·2=0(발생 안 함)·3=24·4=48
-const CL_PULSE_SPEED3 = [0, 0, 63, 63];        // 4단계 전파속도(px/s). 지속=크기/속도(3≈381ms·4≈762ms)
+const CL_PULSE_R3 = [0, 0, 36, 48];            // 볼륨 4단계 크기(px). 1·2=0(발생 안 함)·3=24·4=48
+const CL_PULSE_SPEED3 = [0, 0, 45, 63];        // 4단계 전파속도(px/s). 지속=크기/속도(3≈381ms·4≈762ms)
 const CL_PULSE_LW3 = [3, 3, 3, 7];             // 볼륨 4단계 펄스 두께(px lineWidth). 3=3·4=7
-function _clVolStep(v) { return v <= 0.2 ? 1 : (v <= 0.6 ? 2 : (v <= 0.9 ? 3 : 4)); }   // v 0~1 → 1~4
+const CL_VOL_ADAPTIVE = true;   // 볼륨 경계를 곡 최대볼륨(에너지)에 상대화(false=절대 v 사용)
+function _clVolStep(v) {         // 경계[0.2/0.4/0.6]는 _clOnsetVmax 기준 비율 → 곡마다 프리셋 범위 일관
+    const r = (CL_VOL_ADAPTIVE && _clOnsetVmax > 0) ? v / _clOnsetVmax : v;
+    return r <= 0.2 ? 1 : (r <= 0.4 ? 2 : (r <= 0.6 ? 3 : 4));   // v 0~1 → 1~4
+}
 // subdivision 탭 — UI에서 제거(박 고정 확정). 로직·라벨은 보존하여 추후 '설정' 패널로 이관.
 // 되살리려면 이 값만 true. 라벨은 build_beat_track SUBDIV 순서와 동기.
 const CL_ONSET_TABS = false;
@@ -193,6 +198,9 @@ function _clStartOnset(key, track) {
     if (_clOnsetKey === key && _clOnset) return;
     _clStopOnset();
     _clOnsetKey = key; _clOnset = track; _clOnsetIdx = 0; _clOnsetLastNow = 0;
+    _clOnsetVmax = 0;              // 곡 최대 onset 볼륨 산출(볼륨 프리셋 경계 곡별 정규화)
+    for (const lv of (track.levels || [])) for (const e of (lv.events || [])) if (e.v > _clOnsetVmax) _clOnsetVmax = e.v;
+    if (!(_clOnsetVmax > 0)) _clOnsetVmax = 1;
     _clSensIdx = CL_ONSET_DEFDIV[key] ?? 0;    // 곡별 기본 subdivision(기본 박, 예외만 큐레이션)
     document.querySelectorAll('#cl-sens-tabs button').forEach(b =>   // 탭 하이라이트 동기
         b.style.background = (+b.dataset.i === _clSensIdx) ? '#c084fc' : 'rgba(30,30,42,0.85)');
