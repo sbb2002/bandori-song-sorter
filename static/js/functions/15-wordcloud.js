@@ -16,7 +16,7 @@ const BAND_COLORS = {
     poppin_party: '#ff3377', afterglow: '#ee3344', pastel_palettes: '#33ddaa',
     roselia: '#3344aa', hello_happy_world: '#ffdd00', morfonica: '#33aaff',
     raise_a_suilen: '#33cccc', mygo: '#0088bb', ave_mujica: '#881144',
-    mugendai_mutype: '#ff7788', millsage: '#aa22ee', ikka_dump_rock: '#ffaa33',
+    mugendai_mutype: '#ff7788', millsage: '#aa22ee', ikka_dumb_rock: '#ffaa33',
 };
 
 // 투톤 밴드의 보조색(키워드 아랫부분에만 살짝). 미정의 밴드는 단색.
