@@ -573,3 +573,29 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 - 위 전부 `feature/emoi-cluster-v3a` → **main FF 머지·푸시**(라이브 반영). `index.html`은 링크/스크립트 태그만 변경(데이터 불변).
 - HANDOFF **작업 1(워드클라우드) 완전 완료**(품질 done 20 + 배치 D done 22). "열린 결정 — 레이아웃 묶음" 해소.
 - ⏳ **진행 중(별도 추적)**: 작업 2 오디오 전곡 수집(Phase 1[A]) — 현황·조건3(7GB)·403 실패분석은 HANDOFF. 커밋 대기분(일시중지 시): `fetch_audio.py` 조건3, `migrate_local_cache.bat`→legacy 이관.
+
+---
+
+# 세션 23 — 음원맵 전곡 확대 659곡 완결·동결 + 재생 펄스 방안 A + 음원맵 HUD (feature/emoi-cluster-v3b)
+
+`feature/emoi-cluster-v3a`(원격) 이어받아 `feature/emoi-cluster-v3b`에서 진행. 오디오 수집 완주→전곡 빌드·동결, 지각 pulse 추정, 음원맵 HUD/연출. 커밋 `274657e`·`39c82f3`·`69e9334`·`3e5e11c`(전부 v3b, 미머지).
+
+## 작업 2 음원맵 전곡 확대 — ✅ 완결·동결 (`274657e`)
+- **오디오 수집 완주 659/660**: v3a 285곡 USB 이관 후 재개. `fetch_audio.py` **`--extractor-args` 추가**(403 CDN 거부 복구) — 실패 24곡 중 **`android_music` 클라이언트로 19곡 회수**. ⚠️ HANDOFF 예시 `tv/web_safari/ios`는 전부 DRM/PO토큰이라 실패, **`android_music`이 정답**(단일곡 진단으로 규명). roselia `競宴Red×Violet` 1곡만 DRM 미해결.
+- **전곡 빌드·동결**: `build_perceptual_map.py --manifest src/content/cluster/songs_full.csv --cache audio_full` → `audio_map.json` **285→659곡/13밴드**(loo 0.134). **`--manifest` 인자** 추가(하드코딩 MANIFEST 대체) + **`norm` 파라미터 동결 저장**(contrast·mode의 mean/std/k/clip + shift + overrides + formula) = pipeline §5 증분 append 선결 충족(fullscale §4·§6 "마지막 튜닝 순간"). `build.py`로 index.html 반영.
+- 환경: node를 conda(`conda install -c conda-forge nodejs`)로 이 장치 설치(nsig 서명해독=403 회피). librosa/numpy/imageio-ffmpeg 등 기설치.
+
+## 재생 펄스 방안 A(지각 pulse 추정) (`39c82f3`)
+- `build_beat_track.py` **`perceptual_pulse()`**: onset ACF로 base(beat_track) vs ×2 비교, **ratio=ACF(fast)/ACF(slow)≥τ(0.96)면 8분** 채택. onsets json에 `pulse{}` 저장. 파일럿 7곡 **6/7 선호 일치**(afterglow 0.976→8분·morfonica 0.837→박 — 실제 tempo 둘다 185 동일한데 구분). **τ 0.9→0.96**(mygo 0.941 반례로 재튜닝). mugendai만 난곡 실패. 상세 [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
+- **펄스 프리셋 5→3단계**: 볼륨 경계 [0.2,0.6], 1단계=펄스없음/2=구3단계/3=구5단계(`CL_PULSE_R3`·`CL_PULSE_SPEED3`). **박 고정 확정**(`CL_ONSET_DEFDIV={}`).
+- **펄스색 가시성 보정** `_clPulseColor`(HSL 밝기 하한 L≥0.62): 어두운 밴드색(ave_mujica `#881144`→`#e95393`)이 어두운 배경에 묻히던 문제 해소 + 두께 3·글로우.
+
+## 음원맵 HUD·연출 (`69e9334`, 버그수정 `3e5e11c`)
+- subdivision 탭 제거(박 고정, 로직·라벨 보존→추후 '설정'). 센트로이드 포커스 시 반투명(0.3)·데이터뒤로(z:1)·클릭/호버 비활성(ALL 복귀 재활성). 데이터포인트 선택곡 밝게+심볼글로우+느린점멸 헤일로/나머지 ×0.62.
+- **HUD 오버레이**(우주선 스타일, 시안 `--hud` 모노스페이스·코너브래킷): 밴드명(ALL=`BanG Dream`)·밴드별곡수/센트로이드좌표(우상단) + 재생곡 거리·좌표·**밴드중심 방향 화살표**·곡메타(제목·앨범). 희미한 격자(`splitLine`)·원점십자·**센트로이드별 절대원점 방향지시기**(custom series, 밴드색·투명도 승계). 설계 = `docs/idea/260704-hud.png`.
+- **버그수정**(`3e5e11c`): ① 화살표 방향 절대원점→**밴드중심** 정정 · ② 줌/팬 시 글로우(zrender 절대픽셀) 분리→**dataZoom 이벤트 위치 갱신** · ③ custom series 삽입으로 밀린 `seriesIndex` 하드코딩(센트로이드 클릭/호버 회귀)→**`seriesId` 판단** 교체.
+
+## 남은 것
+- **머지**: `feature/emoi-cluster-v3b` → `feature/emoi-cluster` → `main`(라이브). 브라우저/모바일 실검수 후.
+- roselia 1곡(DRM) → 작업 3 증분 파이프라인으로. 오디오 캐시(`audio_full` 659곡)는 동결 후 폐기 가능.
+- (선택) pulse 전곡 확대(`build_pulse_all.py`, demucs CPU) + onsets lazy fetch.
