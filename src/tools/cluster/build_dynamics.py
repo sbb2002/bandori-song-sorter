@@ -2,8 +2,9 @@
 """
 에너지 기반 동적 subdivision용 intensity 곡선을 onset JSON에 추가.
 
-full-mix 의 loudness(RMS) + onset density 를 곡별 정규화·평활 → 2Hz 다운샘플한
-정규화 intensity 곡선을 onsets/<id>.json 의 "dyn" 필드로 저장한다.
+full-mix 의 절대 음량(RMS dB)을 글로벌 앵커(DB_LO~DB_HI)로 정규화·평활 → 2Hz 다운샘플한
+intensity 곡선을 onsets/<id>.json 의 "dyn" 필드로 저장한다. **곡별(per-song) 정규화가 아니라
+글로벌**이라 곡 간 절대 energy 차이를 보존한다(Symbol I=시종 dense, 軌跡 1절=박).
 렌더(_clOnsetTick)가 이 곡선을 임계로 잘라 순간 subdivision(박/8분/16분)을 고른다:
 조용(intro/outro/브레이크다운)=박, 고조=8분/16분. 임계는 JS 상수라 재추출 없이 튜닝 가능.
 
@@ -26,20 +27,16 @@ CLUSTER = Path(__file__).resolve().parents[2] / "content" / "cluster"
 SR, HOP = 22050, 512
 SMOOTH = 2.5      # 초, 구간 다이나믹스만(비트 단위 깜빡임 제거)
 DYN_HZ = 2        # 저장 곡선 샘플레이트
-
-
-def norm(x, lo=5, hi=95):
-    a, b = np.percentile(x, [lo, hi])
-    return np.clip((x - a) / (b - a + 1e-9), 0.0, 1.0)
+DB_LO, DB_HI = -22.0, -7.0   # 글로벌 음량 앵커(카탈로그 분포 기준: 조용≲-15dB, 최대~-7dB)
 
 
 def intensity_curve(path):
     y, sr = librosa.load(str(path), sr=SR, mono=True)   # READ-ONLY
     rms = librosa.feature.rms(y=y, hop_length=HOP)[0]
-    oenv = librosa.onset.onset_strength(y=y, sr=sr, hop_length=HOP)
+    db = librosa.amplitude_to_db(rms + 1e-9)             # 절대 음량(dB)
     w = max(1, int(SMOOTH * sr / HOP))
-    inten = 0.6 * norm(uniform_filter1d(rms, w)) + 0.4 * norm(uniform_filter1d(oenv, w))
-    inten = norm(inten)
+    db = uniform_filter1d(db, w)                         # 구간 평활
+    inten = np.clip((db - DB_LO) / (DB_HI - DB_LO), 0.0, 1.0)   # 글로벌 절대음량 정규화(곡별 아님)
     # 2Hz 다운샘플(0.5s 블록 평균)
     step = max(1, int(round((sr / HOP) / DYN_HZ)))
     v = [round(float(inten[i:i + step].mean()), 3) for i in range(0, len(inten), step)]

@@ -163,8 +163,8 @@ const _clOnsetPending = {};   // 진행 중 fetch 중복 방지
 // [에너지→subdivision] onset JSON 의 dyn(정규화 intensity 2Hz, build_dynamics.py)로 순간 subdivision
 // 선택: 조용(intro/outro/브레이크다운)=박 · 고조=8분 · 피크=16분. 임계는 여기서 튜닝(재추출 불필요).
 const CL_DYN_ON = true;      // false면 고정 subdivision(_clSensIdx 기본값 유지)
-const CL_DYN_T1 = 0.34;      // 박↔8분 임계(정규화 intensity)
-const CL_DYN_T2 = 0.72;      // 8분↔16분 임계(피크 전용으로 상향)
+const CL_DYN_T1 = 0.37;      // 박↔8분 임계(글로벌 절대음량 정규화 intensity; ~-16.5dB)
+const CL_DYN_T2 = 0.83;      // 8분↔16분 임계(~-9.5dB, 시끄러운 구간만 16분)
 const CL_DYN_MAX = 2;        // 최대 레벨(1=박/8분 2단계, 2=+16분 3단계)
 const CL_DYN_HYST = 0.05;    // 경계 히스테리시스(잦은 토글 방지)
 // 곡별 기본 subdivision(0=박·1=8분·2=16분). dyn 없을 때 폴백값(사용자 지정 기본 박).
