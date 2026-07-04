@@ -28,7 +28,7 @@ let _clOnsetIdx = 0;               // 다음 발생할 이벤트 포인터
 let _clOnsetKey = null;            // 현재 트랙의 곡 key(중복 시작 방지)
 let _clOnsetLastNow = 0;           // 직전 재생 위치(뒤로 시크 감지)
 let _clRafId = null;               // onset 폴링 requestAnimationFrame id
-let _clSensIdx = 0;                // [실험] 선택된 감도 레벨 인덱스(탭)
+let _clSensIdx = 1;                // 선택된 subdivision 레벨(0=박·1=8분·2=16분). 기본 8분.
 const CL_SHRINK = 0.5;             // 곡을 밴드 중심으로 뭉치는 정도(고정). 곡별 y 노이즈 완화.
 // various_artists = 여러 아티스트 묶음 → '밴드 중심점'이 의미 없음(이질적 곡 평균, y 폭주).
 // 센트로이드(중심 아이콘)만 숨기고 곡 점은 그대로 유지. score·신뢰도막대·최애 후보 제외와 일관(14-share.js).
@@ -164,10 +164,10 @@ const CL_ONSET_PILOT = {};
     ['mygo', '迷星叫', 'mygo__260'],
     ['pastel_palettes', 'TITLE IDOL', 'pastel_palettes__301'],
 ].forEach(([b, s, id]) => { CL_ONSET_PILOT[C.songKey(b, s)] = id; });
-// [실험] 곡별 기본 subdivision(0=박·1=8분·2=16분). 현재 전곡 '박' 고정.
-// tempo/bpm 으로 8분 여부 자동판정 불가(같은 tempo·비율에 선호 상반 — report 참조)라,
-// 8분이 나은 곡(afterglow·mugendai 등)의 공통 패턴을 찾으면 그때 예외를 큐레이션한다.
-const CL_ONSET_DEFDIV = {};   // 예: CL_ONSET_DEFDIV[C.songKey('afterglow','ON YOUR MARK')] = 1;
+// 곡별 기본 subdivision(0=박·1=8분·2=16분). 현재 전곡 '8분' 고정(사용자 지정).
+// tempo/bpm 으로 자동판정 불가(같은 tempo·비율에 선호 상반 — report 참조)라,
+// 박(0)이 나은 곡의 공통 패턴을 찾으면 그때 예외를 큐레이션한다.
+const CL_ONSET_DEFDIV = {};   // 예외 지정: CL_ONSET_DEFDIV[C.songKey('roselia','FIRE BIRD')] = 0; (박)
 function _clOnsetTrack(key) {
     const id = CL_ONSET_PILOT[key];
     return (id && (window.CLUSTER_ONSETS || {})[id]) || null;
@@ -181,7 +181,7 @@ function _clStartOnset(key, track) {
     if (_clOnsetKey === key && _clOnset) return;
     _clStopOnset();
     _clOnsetKey = key; _clOnset = track; _clOnsetIdx = 0; _clOnsetLastNow = 0;
-    _clSensIdx = CL_ONSET_DEFDIV[key] || 0;    // 곡별 기본 subdivision(박/8분 큐레이션)
+    _clSensIdx = CL_ONSET_DEFDIV[key] ?? 1;    // 곡별 기본 subdivision(기본 8분, 예외만 큐레이션)
     document.querySelectorAll('#cl-sens-tabs button').forEach(b =>   // 탭 하이라이트 동기
         b.style.background = (+b.dataset.i === _clSensIdx) ? '#c084fc' : 'rgba(30,30,42,0.85)');
     _clUpdateSensLabels();
