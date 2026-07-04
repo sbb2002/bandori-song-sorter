@@ -65,8 +65,9 @@ const CL_PULSE_DUR_MAX = 1600;    // [실험] onset 펄스 지속 상한(ms) —
 const CL_PULSE_R3 = [0, 32, 48];               // 볼륨 3단계 크기(px). 1단계=0=발생 안 함
 const CL_PULSE_SPEED3 = [0, 82.8, 63];         // 3단계 전파속도(px/s) — 구 3·5단계 값 승계(묵직함 유지)
 function _clVolStep(v) { return v <= 0.2 ? 1 : (v <= 0.6 ? 2 : 3); }   // v 0~1 → 1~3
-// [실험] subdivision 탭(메인 버전에선 CL_ONSET_TABS=false). 라벨은 build_beat_track SUBDIV 순서와 동기.
-const CL_ONSET_TABS = true;
+// subdivision 탭 — UI에서 제거(박 고정 확정). 로직·라벨은 보존하여 추후 '설정' 패널로 이관.
+// 되살리려면 이 값만 true. 라벨은 build_beat_track SUBDIV 순서와 동기.
+const CL_ONSET_TABS = false;
 const CL_ONSET_SENS = ['박', '8분', '16분'];
 // [실험] BPM 구간별 계단식으로 펄스를 묶는 박 수 — 빠를수록 더 성기게(부산스러움 완화).
 // 경계 초과 시 해당 박 수 적용(내림차순 우선). 3/4박자 등 변박은 일단 무시(4/4 가정).
@@ -128,6 +129,26 @@ function _clEmitPulse(r, ms) {
 function _clStopPulse() {
     if (_clPulseTimer) { clearInterval(_clPulseTimer); _clPulseTimer = null; }
     _clPulseKey = null;
+}
+
+// 선택(재생) 곡 상시 글로우: 데이터포인트 뒤(z:1)에서 느리게 점멸하는 밴드색 헤일로.
+// 박 펄스(_clEmitPulse, stroke 파동)와 별개 — 이건 "지금 이 곡" 표식(fill glow). 재draw마다 재설정.
+let _clPlayGlow = null;
+function _clSetPlayGlow() {
+    if (_clPlayGlow) { _clusterChart && _clusterChart.getZr().remove(_clPlayGlow); _clPlayGlow = null; }
+    if (!_clusterChart || !_clPlay) return;
+    const px = _clusterChart.convertToPixel({ seriesIndex: 0 }, _clPlay.val);
+    if (!px) return;
+    const col = _clPulseColor(_clPlay.color);
+    const glow = new echarts.graphic.Circle({
+        shape: { cx: px[0], cy: px[1], r: 17 }, silent: true, z: 1,
+        style: { fill: col, opacity: 0.3, shadowBlur: 18, shadowColor: col },
+    });
+    _clusterChart.getZr().add(glow);
+    const loop = to => glow.animateTo({ style: { opacity: to } },      // 느린 점멸(1.6s ease)
+        { duration: 1600, easing: 'sinusoidalInOut', done: () => _clPlayGlow === glow && loop(to > 0.2 ? 0.1 : 0.34) });
+    loop(0.1);
+    _clPlayGlow = glow;
 }
 
 // ── [파일럿] onset 트랙 재생: 유튜브 타임스탬프(getCurrentTime)에 맞춰 사전분석 이벤트로 펄스 ──
@@ -278,8 +299,10 @@ function renderCluster() {
                         ? `<b>${bandDisplay(p.data._band)}</b> · ${p.data._n}곡 (클릭=이 밴드 보기)` : ''),
             },
             grid: { left: 6, right: 6, top: 6, bottom: 6 },
-            xAxis: { type: 'value', show: false, scale: true },
-            yAxis: { type: 'value', show: false, scale: true },
+            xAxis: { type: 'value', show: false, scale: true,
+                     splitLine: { show: true, lineStyle: { color: 'rgba(102,224,230,0.07)' } } },   // 희미한 HUD 격자
+            yAxis: { type: 'value', show: false, scale: true,
+                     splitLine: { show: true, lineStyle: { color: 'rgba(102,224,230,0.07)' } } },
             dataZoom: [                        // 휠/핀치 줌·드래그 팬(점 유지)
                 { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
                 { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
@@ -335,16 +358,23 @@ function _clDraw() {
     if (wrap) wrap.style.background =
         (currentBand !== 'ALL' && !clHideCentroid(currentBand)) ? _clBandBg(currentBand) : '';
 
-    let playingPt = null;                  // 재생 곡의 화면 좌표(effectScatter 파동용)
-    const songMark = (s, val, base) => {   // 재생 곡이면 흰 테두리 override + 파동 좌표 기록
-        let st = base;
+    let playingPt = null;                  // 재생 곡의 화면 좌표(글로우/펄스용)
+    const songMark = (s, val, base) => {   // 선택(재생) 곡=밝게+글로우 / 재생 중이면 나머지=약간 어둡게
+        const col = BAND_COLORS[s.band] || '#c084fc';
         if (playKey && C.songKey(s.band, s.song) === playKey) {
-            st = { op: 1, size: Math.max(base.size, 14), bc: '#fff', bw: 2 };
-            playingPt = { value: val, itemStyle: { color: BAND_COLORS[s.band] || '#c084fc' }, _bpm: s.bpm };
+            const bright = _clPulseColor(col);                     // 밝기 보정색
+            playingPt = { value: val, itemStyle: { color: col }, _bpm: s.bpm };
+            return {
+                value: val, name: s.song, symbolSize: Math.max(base.size, 14) + 2,
+                itemStyle: { color: bright, opacity: 1, borderColor: '#fff', borderWidth: 2,
+                             shadowBlur: 14, shadowColor: bright },        // 심볼 글로우
+                _band: s.band, _song: s.song, _url: s.url,
+            };
         }
+        const dim = playKey ? 0.62 : 1;                            // 재생 곡 있으면 나머지 어둡게
         return {
-            value: val, name: s.song, symbolSize: st.size,
-            itemStyle: { color: BAND_COLORS[s.band] || '#c084fc', opacity: st.op, borderColor: st.bc, borderWidth: st.bw },
+            value: val, name: s.song, symbolSize: base.size,
+            itemStyle: { color: col, opacity: base.op * dim, borderColor: base.bc, borderWidth: base.bw },
             _band: s.band, _song: s.song, _url: s.url,
         };
     };
@@ -363,7 +393,7 @@ function _clDraw() {
         let Mx = 1, My = 1;
         list.forEach(s => { Mx = Math.max(Mx, Math.abs(s.x - c.x)); My = Math.max(My, Math.abs(s.y - c.y)); });
         xAxis = { min: -Mx * 1.3, max: Mx * 1.3 }; yAxis = { min: -My * 1.3, max: My * 1.3 };
-        centPts = clHideCentroid(focus) ? [] : [centMark(focus, [0, 0], 46, 1)];
+        centPts = clHideCentroid(focus) ? [] : [centMark(focus, [0, 0], 46, 0.3)];   // 포커스: 반투명(데이터 안 가리게)
         if (subEl) subEl.textContent = `${bandDisplay(focus)} · 곡 ${list.length} · 곡 클릭=재생 · 빈 곳=개요로`;
     } else {
         // ALL 개요: 전 밴드 항상 뭉침(이동 없음). 호버 밴드만 부각, 나머지는 투명도만 낮춤.
@@ -384,13 +414,38 @@ function _clDraw() {
     const rangeKey = focus || 'ALL';        // 모드/밴드 바뀔 때만 축범위 갱신(줌/팬 보존)
     const axisOpt = {};
     if (rangeKey !== _clRangeKey) { axisOpt.xAxis = xAxis; axisOpt.yAxis = yAxis; _clRangeKey = rangeKey; }
+    // 센트로이드 절대원점 방향지시기(밴드색·센트로이드 투명도 승계) — 원점(0,0)을 가리키는 쐐기
+    const centArrowData = focus
+        ? (clHideCentroid(focus) ? [] : [{ coord: [0, 0], origin: [-cById[focus].x, -cById[focus].y],
+                                           color: BAND_COLORS[focus] || '#c084fc', op: 0.3, gap: 30 }])
+        : cents.filter(c => !clHideCentroid(c.band)).map(c => ({
+              coord: [c.x, c.y], origin: [0, 0], color: BAND_COLORS[c.band] || '#c084fc',
+              op: (_clHover && _clHover !== c.band) ? 0.35 : 1, gap: 24 }));
     _clusterChart.setOption({
         ...axisOpt,
         series: [
             { id: 'songs', type: 'scatter', data: songPts, z: 2, emphasis: { scale: 1.3 },
-              markLine: focus ? _clOriginCross() : { silent: true, data: [] } },
+              markLine: _clOriginCross() },                                        // 원점 십자선(항상)
             {
-                id: 'cents', type: 'scatter', data: centPts, z: 5,
+                id: 'cent-arrows', type: 'custom', z: focus ? 0 : 4, silent: true,   // 센트로이드→원점 방향지시기
+                data: centArrowData.map(it => it.coord),
+                renderItem: (params, api) => {
+                    const it = centArrowData[params.dataIndex];
+                    if (!it) return;
+                    const p = api.coord(it.coord), o = api.coord(it.origin);       // 픽셀 기준(aspect 정확)
+                    const ang = Math.atan2(o[1] - p[1], o[0] - p[0]);
+                    return {
+                        type: 'path', silent: true,
+                        shape: { pathData: 'M9,0 L-5,-5 L-1,0 L-5,5 Z' },
+                        x: p[0] + Math.cos(ang) * it.gap, y: p[1] + Math.sin(ang) * it.gap,
+                        rotation: -ang,                                            // echarts custom=반시계 → -ang
+                        style: { fill: it.color, opacity: it.op * 0.85 },
+                    };
+                },
+            },
+            {
+                id: 'cents', type: 'scatter', data: centPts, z: focus ? 1 : 5,   // 포커스: 데이터 뒤로
+                silent: !!focus,                                                  // 포커스: 클릭·호버 비활성(ALL 복귀 시 재활성)
                 label: {
                     show: true, formatter: p => p.data.name, position: 'bottom',
                     color: '#fff', fontSize: 12, fontWeight: 700,
@@ -407,7 +462,50 @@ function _clDraw() {
     });
     _clPlay = playingPt ? { val: playingPt.value, color: playingPt.itemStyle.color } : null;
     _clSyncPulse(playingPt ? _clPulsePeriod(playingPt._bpm) : null);
+    _clSetPlayGlow();                       // 선택 곡 상시 글로우(느린 점멸)
     _clSimList(focus);
+    _clUpdateHud(focus);                    // HUD readout(밴드·센트로이드·재생곡·메타) 갱신
+}
+
+/** HUD readout: 밴드명·센트로이드 좌표(포커스), 재생곡 거리·좌표·원점 방향 화살표·곡 메타. */
+function _clFmt(n) { return (n >= 0 ? '+' : '') + n.toFixed(2); }
+function _clUpdateHud(focus) {
+    const $ = id => document.getElementById(id);
+    const data = window.CLUSTER_DATA || {};
+    const cById = {};
+    (data.centroids || []).forEach(c => { cById[c.band] = c; });
+    const band = $('hud-band'), ro = $('hud-centroid');
+    if (focus && cById[focus] && !clHideCentroid(focus)) {          // 포커스: 밴드명 + 센트로이드 좌표
+        const c = cById[focus];
+        band.innerHTML = `<span class="hud-name">${bandDisplay(focus)}</span>`;
+        ro.innerHTML = `밴드 거침 <span class="hud-val">x ${_clFmt(c.x)}</span><br>`
+                     + `밴드 밝음 <span class="hud-val">y ${_clFmt(c.y)}</span>`;
+    } else {                                                        // ALL: 'BanG Dream' + 밴드별 곡수
+        band.innerHTML = '<span class="hud-name">BanG Dream</span>';
+        const cs = (data.centroids || []).slice().sort((a, b) => b.n - a.n);
+        ro.innerHTML = cs.map(c => `${bandDisplay(c.band)} <span class="hud-val">${c.n}</span>`).join('<br>');
+    }
+    band.hidden = false; ro.hidden = false;                        // ALL 포함 항상 표시
+    const trk = $('hud-track'), meta = $('hud-meta'), arrow = $('hud-arrow'), txt = $('hud-track-txt');
+    const song = (data.songs || []).find(s => C.songKey(s.band, s.song) === nowPlaying);
+    if (song) {                                                     // 재생곡: 밴드중심 거리·좌표·방향·메타
+        const c = cById[song.band] || { x: 0, y: 0 };
+        const dist = Math.hypot(song.x - c.x, song.y - c.y);
+        if (txt) txt.innerHTML = '<div class="hud-hd">▶ 재생 중</div>'
+            + `중심 거리 <span class="hud-val">${dist.toFixed(2)}</span><br>`
+            + `거침 <span class="hud-val">x ${_clFmt(song.x)}</span> · 밝음 <span class="hud-val">y ${_clFmt(song.y)}</span>`;
+        if (arrow && _clPlay && _clusterChart) {                    // 화살표: 화면 픽셀 기준 원점 방향(aspect 왜곡 보정)
+            const pS = _clusterChart.convertToPixel({ seriesIndex: 0 }, _clPlay.val);
+            const oVal = (focus && cById[focus]) ? [-cById[focus].x, -cById[focus].y] : [0, 0];  // 절대원점의 현 좌표계 값
+            const pO = _clusterChart.convertToPixel({ seriesIndex: 0 }, oVal);
+            if (pS && pO) arrow.style.transform =
+                `rotate(${(Math.atan2(pO[1] - pS[1], pO[0] - pS[0]) * 180 / Math.PI).toFixed(1)}deg)`;
+        }
+        const list = ((window.SONG_DATA || {}).songsByBand || {})[song.band] || [];
+        const rec = list.find(t => C.songKey(song.band, t.title) === nowPlaying) || {};
+        meta.innerHTML = `<div class="hud-song">${song.song}</div>` + (rec.album ? `<div>${rec.album}</div>` : '');
+        trk.hidden = false; meta.hidden = false;
+    } else { trk.hidden = true; meta.hidden = true; }
 }
 
 /** 축 +/− 방향 의미 라벨(data.axes: x/y 각 {pos,neg,feature})을 4모서리에 표시. */

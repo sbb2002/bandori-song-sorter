@@ -93,6 +93,15 @@
                         <span class="am-axis am-axis-bottom" id="cl-ax-bottom"></span>
                         <span class="am-axis am-axis-left" id="cl-ax-left"></span>
                         <span class="am-axis am-axis-right" id="cl-ax-right"></span>
+                        <!-- HUD 오버레이 (우주선/비행기 스타일) — JS(_clUpdateHud)가 채움 -->
+                        <div class="hud hud-corner hud-band" id="hud-band" hidden></div>
+                        <div class="hud hud-corner hud-readout" id="hud-centroid" hidden></div>
+                        <div class="hud hud-corner hud-track" id="hud-track" hidden>
+                            <svg class="hud-arrow" id="hud-arrow" viewBox="-20 -20 40 40" aria-hidden="true">
+                                <polygon points="16,0 -10,-8 -4,0 -10,8" /></svg>
+                            <div class="hud-track-txt" id="hud-track-txt"></div>
+                        </div>
+                        <div class="hud hud-corner hud-meta" id="hud-meta" hidden></div>
                         <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
                     </div>
                     <div class="cl-similar" id="cl-similar"></div>
