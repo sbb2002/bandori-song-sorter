@@ -64,9 +64,11 @@ def feats(path: str):
 
 
 def zscale(vals, k=25.0, clip=70.0):
+    """z-score 후 k 스케일·clip. 증분 append 재현(pipeline §5)용으로 mean/std/k/clip 도 반환."""
     v = np.asarray(vals, float)
-    s = v.std() or 1.0
-    return np.clip((v - v.mean()) / s * k, -clip, clip)
+    mean = float(v.mean()); std = float(v.std() or 1.0)
+    scaled = np.clip((v - mean) / std * k, -clip, clip)
+    return scaled, {"mean": mean, "std": std, "k": k, "clip": clip}
 
 
 def carry_sim(new_songs: list[dict]) -> None:
@@ -135,8 +137,10 @@ def main(argv=None):
                      "contrast": fv[0], "mode": fv[1], "bpm": round(fv[2], 1)})
     print(f"특징 추출 {len(recs)}곡 (cache={args.cache})")
 
-    X = zscale([-r["contrast"] for r in recs]) + args.x_shift   # 오른쪽=거칢(낮은 contrast)
-    Y = zscale([r["mode"] for r in recs]) + args.y_shift        # 위=밝음(장조)+원점보정
+    X, xnorm = zscale([-r["contrast"] for r in recs]); X = X + args.x_shift  # 오른쪽=거칢(낮은 contrast)
+    Y, ynorm = zscale([r["mode"] for r in recs]);      Y = Y + args.y_shift  # 위=밝음(장조)+원점보정
+    xnorm.update(input="neg_contrast", shift=args.x_shift)   # 증분 재현: v=-contrast
+    ynorm.update(input="mode", shift=args.y_shift)           # 증분 재현: v=mode
     for i, r in enumerate(recs):                                # 밴드 큐레이션 보정(측정 아님)
         ov = BAND_OVERRIDES.get(r["band"])
         if ov:
@@ -163,6 +167,10 @@ def main(argv=None):
         "generated": _dt.date.today().isoformat(), "backend": "perceptual",
         "sim_backend": "clap", "axes": axes, "bands": bands,
         "overrides": BAND_OVERRIDES,        # 큐레이션 보정(측정 아님) 투명 기록
+        # 증분 append 동결 파라미터(pipeline §5): 신곡 raw contrast/mode → 이 mean/std/k/clip 로 z변환
+        # → +shift(+override) 하면 재다운로드 없이 songs[] 에 얹을 수 있다. 전곡 빌드 = 마지막 튜닝·동결 순간.
+        "norm": {"x": xnorm, "y": ynorm, "overrides": BAND_OVERRIDES,
+                 "formula": "coord = clip((v-mean)/std*k, -clip, clip) + shift (+override.d[xy])"},
         "songs": songs, "centroids": cents,
         "metrics": {"x_feature": "contrast", "y_feature": "mode",
                     "x_r": X_R, "y_r": Y_R, "n": len(recs),
