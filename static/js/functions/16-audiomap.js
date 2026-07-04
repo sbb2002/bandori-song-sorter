@@ -308,20 +308,27 @@ function renderCluster() {
                 { type: 'inside', yAxisIndex: 0, filterMode: 'none' },
             ],
         });
-        _clusterChart.on('click', p => {
-            if (p.seriesIndex === 0) {             // 곡 클릭 = 재생(이미 재생 중이면 무시)
+        _clusterChart.on('click', p => {           // seriesIndex 대신 seriesId(series 순서 변경에 안전)
+            if (p.seriesId === 'songs') {          // 곡 클릭 = 재생(이미 재생 중이면 무시)
                 const s = p.data;
                 if (s && s._url && C.songKey(s._band, s._song) !== nowPlaying)
                     playSong({ band: s._band, title: s._song, url: s._url });
-            } else if (p.seriesIndex === 1) {      // 센트로이드 클릭 = 그 밴드를 셀렉터에서 고른 것과 동일
+            } else if (p.seriesId === 'cents') {   // 센트로이드 클릭 = 그 밴드를 셀렉터에서 고른 것과 동일
                 if (currentBand === 'ALL') selectBand(p.data._band);
             }
         });
         _clusterChart.on('mouseover', p => {       // ALL 모드: 센트로이드 호버 = 그 밴드 확장 미리보기
-            if (currentBand === 'ALL' && p.seriesIndex === 1) { _clHover = p.data._band; _clDraw(); }
+            if (currentBand === 'ALL' && p.seriesId === 'cents') { _clHover = p.data._band; _clDraw(); }
         });
         _clusterChart.on('mouseout', p => {
-            if (currentBand === 'ALL' && p.seriesIndex === 1 && _clHover) { _clHover = null; _clDraw(); }
+            if (currentBand === 'ALL' && p.seriesId === 'cents' && _clHover) { _clHover = null; _clDraw(); }
+        });
+        _clusterChart.on('dataZoom', () => {       // 줌/팬: 글로우(zrender 절대픽셀)·화살표를 새 좌표로 갱신(분리 방지)
+            if (_clPlayGlow && _clPlay) {
+                const px = _clusterChart.convertToPixel({ seriesIndex: 0 }, _clPlay.val);
+                if (px) _clPlayGlow.attr({ shape: { cx: px[0], cy: px[1], r: 17 } });
+            }
+            _clUpdateHud(_clFocus());
         });
         _clusterChart.getZr().on('click', e => {   // 포커스 모드에서 빈 영역 클릭 = ALL(개요)로 복귀
             if (!e.target && currentBand !== 'ALL') selectBand('ALL');
@@ -468,6 +475,11 @@ function _clDraw() {
 }
 
 /** HUD readout: 밴드명·센트로이드 좌표(포커스), 재생곡 거리·좌표·원점 방향 화살표·곡 메타. */
+function _clFocus() {   // 현재 포커스 밴드(줌/재draw 밖에서 _clUpdateHud 호출 시 focus 재계산용)
+    const cById = {};
+    ((window.CLUSTER_DATA || {}).centroids || []).forEach(c => { cById[c.band] = c; });
+    return (currentBand !== 'ALL' && cById[currentBand]) ? currentBand : null;
+}
 function _clFmt(n) { return (n >= 0 ? '+' : '') + n.toFixed(2); }
 function _clUpdateHud(focus) {
     const $ = id => document.getElementById(id);
@@ -494,12 +506,13 @@ function _clUpdateHud(focus) {
         if (txt) txt.innerHTML = '<div class="hud-hd">▶ 재생 중</div>'
             + `중심 거리 <span class="hud-val">${dist.toFixed(2)}</span><br>`
             + `거침 <span class="hud-val">x ${_clFmt(song.x)}</span> · 밝음 <span class="hud-val">y ${_clFmt(song.y)}</span>`;
-        if (arrow && _clPlay && _clusterChart) {                    // 화살표: 화면 픽셀 기준 원점 방향(aspect 왜곡 보정)
+        if (arrow && _clPlay && _clusterChart) {                    // 화살표: 화면 픽셀 기준 밴드 중심(센트로이드) 방향
             const pS = _clusterChart.convertToPixel({ seriesIndex: 0 }, _clPlay.val);
-            const oVal = (focus && cById[focus]) ? [-cById[focus].x, -cById[focus].y] : [0, 0];  // 절대원점의 현 좌표계 값
-            const pO = _clusterChart.convertToPixel({ seriesIndex: 0 }, oVal);
-            if (pS && pO) arrow.style.transform =
-                `rotate(${(Math.atan2(pO[1] - pS[1], pO[0] - pS[0]) * 180 / Math.PI).toFixed(1)}deg)`;
+            const cs = cById[song.band] || { x: 0, y: 0 };
+            const centVal = focus ? [0, 0] : [cs.x, cs.y];          // 재생곡 밴드 중심의 현 좌표계 값(포커스=원점 offset)
+            const pC = _clusterChart.convertToPixel({ seriesIndex: 0 }, centVal);
+            if (pS && pC) arrow.style.transform =
+                `rotate(${(Math.atan2(pC[1] - pS[1], pC[0] - pS[0]) * 180 / Math.PI).toFixed(1)}deg)`;
         }
         const list = ((window.SONG_DATA || {}).songsByBand || {})[song.band] || [];
         const rec = list.find(t => C.songKey(song.band, t.title) === nowPlaying) || {};
