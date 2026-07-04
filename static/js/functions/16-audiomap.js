@@ -64,7 +64,7 @@ const CL_PULSE_DUR_MAX = 1600;    // [실험] onset 펄스 지속 상한(ms) —
 //   1·2단계(v≤0.6): 펄스 없음(0px, 사용자 요청) / 3단계(>0.6): 펄스 발생 — 가장 센 히트만.
 const CL_PULSE_R3 = [0, 0, 48];                // 볼륨 3단계 크기(px). 1·2단계=0=발생 안 함(3단계만)
 const CL_PULSE_SPEED3 = [0, 82.8, 63];         // 3단계 전파속도(px/s) — 구 3·5단계 값 승계(묵직함 유지)
-const CL_PULSE_LW3 = [3, 3, 5];                // 볼륨 3단계 펄스 두께(px lineWidth). 가장 큰 3단계만 두껍게
+const CL_PULSE_LW3 = [3, 3, 7];                // 볼륨 3단계 펄스 두께(px lineWidth). 3단계만 펄스라 마지막 값만 유효
 function _clVolStep(v) { return v <= 0.2 ? 1 : (v <= 0.6 ? 2 : 3); }   // v 0~1 → 1~3
 // subdivision 탭 — UI에서 제거(박 고정 확정). 로직·라벨은 보존하여 추후 '설정' 패널로 이관.
 // 되살리려면 이 값만 true. 라벨은 build_beat_track SUBDIV 순서와 동기.
