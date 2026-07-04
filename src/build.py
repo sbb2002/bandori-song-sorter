@@ -61,19 +61,23 @@ def load_cluster(path=CONTENT / "cluster" / "audio_map.json"):
     return doc or {}
 
 
-def load_onsets(d=CONTENT / "cluster" / "onsets"):
-    """[파일럿] 곡별 onset 트랙(build_onset_track.py) → {"<band>__<idx>": {events:[...]}}.
+def load_onset_list(csv_path=CONTENT / "cluster" / "songs_full.csv",
+                    d=CONTENT / "cluster" / "onsets"):
+    """onset 트랙이 있는 곡의 [band, song, id] 경량 매니페스트.
 
-    없으면 빈 dict(펄스는 BPM 폴백). 지금은 소수 곡만 → index.html 인라인(file:// 로컬도 동작).
-    전곡 확대 시 크기 커지면 곡별 lazy fetch 로 전환.
+    데이터(수십 MB)는 index.html 에 인라인하지 않고 런타임에 곡별 lazy-fetch 한다
+    (src/content/cluster/onsets/<band>__<idx>.json). 여기선 '어떤 곡에 트랙이 있고
+    그 id 가 무엇인지'만 주입 → JS 가 C.songKey(band,song) 로 키를 만들어 매핑(정규화 일치).
     """
-    out = {}
-    if not os.path.isdir(d):
+    import csv as _csv
+    out = []
+    if not os.path.isdir(d) or not os.path.isfile(csv_path):
         return out
-    for fn in sorted(os.listdir(d)):
-        if fn.endswith(".json"):
-            with open(os.path.join(d, fn), encoding="utf-8") as f:
-                out[fn[:-5]] = json.load(f)
+    with open(csv_path, encoding="utf-8") as f:
+        for row in _csv.DictReader(f):
+            oid = f"{row['band']}__{int(row['idx']):03d}"
+            if os.path.isfile(os.path.join(d, oid + ".json")):
+                out.append([row["band"], row["song"], oid])
     return out
 
 
@@ -133,7 +137,7 @@ def build():
     song_data = {'bands': bands, 'songsByBand': songs_by_band}
     wordcloud_data = load_wordclouds()
     cluster_data = load_cluster()
-    onset_data = load_onsets()
+    onset_list = load_onset_list()
 
     env = Environment(loader=FileSystemLoader(str(template_dir)))
     try:
@@ -168,14 +172,14 @@ def build():
         wordcloud_data, ensure_ascii=False).replace('<', '\\u003c')
     cluster_data_json = json.dumps(
         cluster_data, ensure_ascii=False).replace('<', '\\u003c')
-    onset_data_json = json.dumps(
-        onset_data, ensure_ascii=False).replace('<', '\\u003c')
+    onset_list_json = json.dumps(
+        onset_list, ensure_ascii=False).replace('<', '\\u003c')
 
     rendered_html = template.render(
         song_data_json=song_data_json,
         wordcloud_data_json=wordcloud_data_json,
         cluster_data_json=cluster_data_json,
-        onset_data_json=onset_data_json,
+        onset_list_json=onset_list_json,
         static_paths=static_paths,
     )
 
@@ -186,8 +190,9 @@ def build():
     total = sum(len(v) for v in songs_by_band.values())
     wc = len(wordcloud_data)
     cl = len(cluster_data.get('songs', []))
+    ons = len(onset_list)
     print(f"[OK] Build Success: index.html 생성 완료 "
-          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 음원맵 {cl}곡)")
+          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 음원맵 {cl}곡, onset {ons}곡 lazy-fetch)")
 
 
 if __name__ == "__main__":

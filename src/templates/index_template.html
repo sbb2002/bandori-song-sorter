@@ -10,8 +10,8 @@
     <!-- 밴드 워드클라우드 키워드 (build.py 주입 · src/content/wordcloud/<band>.yaml) -->
     <script>window.WORDCLOUD_DATA = {{ wordcloud_data_json | safe }};</script>
     <script>window.CLUSTER_DATA = {{ cluster_data_json | safe }};</script>
-    <!-- [파일럿] 곡별 onset 트랙 (build.py 주입 · src/content/cluster/onsets/*.json) -->
-    <script>window.CLUSTER_ONSETS = {{ onset_data_json | safe }};</script>
+    <!-- 곡별 onset 트랙: 데이터(수십MB)는 런타임 lazy-fetch(src/content/cluster/onsets/<id>.json), 여기선 경량 매니페스트만 주입 -->
+    <script>window.CLUSTER_ONSET_LIST = {{ onset_list_json | safe }}; window.CLUSTER_ONSETS = {};</script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

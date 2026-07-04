@@ -151,26 +151,29 @@ function _clSetPlayGlow() {
     _clPlayGlow = glow;
 }
 
-// ── [파일럿] onset 트랙 재생: 유튜브 타임스탬프(getCurrentTime)에 맞춰 사전분석 이벤트로 펄스 ──
-// 이벤트 {t 시각, v 볼륨(→크기), sus 서스테인(→퍼지는 시간)}. build_onset_track.py 산출.
-// 지금은 1곡만 매핑(window.CLUSTER_ONSETS[id]) — 검증 후 전곡 확대.
-const CL_ONSET_PILOT = {};
-[
-    ['afterglow', 'ON YOUR MARK', 'afterglow__000'],
-    ['ave_mujica', 'KiLLKiSS', 'ave_mujica__072'],
-    ['hello_happy_world', 'キミがいなくちゃっ！', 'hello_happy_world__106'],
-    ['morfonica', 'Daylight -デイライト-', 'morfonica__180'],
-    ['mugendai_mutype', 'アイの夢限', 'mugendai_mutype__237'],
-    ['mygo', '迷星叫', 'mygo__260'],
-    ['pastel_palettes', 'TITLE IDOL', 'pastel_palettes__301'],
-].forEach(([b, s, id]) => { CL_ONSET_PILOT[C.songKey(b, s)] = id; });
+// ── onset 트랙 재생: 유튜브 타임스탬프(getCurrentTime)에 맞춰 사전분석 이벤트로 펄스 ──
+// 이벤트 {t 시각, v 볼륨(→크기)}. build_beat_track.py 산출(onsets/<band>__<idx>.json).
+// 곡 key→onset id 매핑: build.py 가 onsets/ 존재 곡 전체를 window.CLUSTER_ONSET_LIST 로 주입
+// (하드코딩 파일럿 → 전곡 매니페스트). 데이터 자체는 런타임 lazy-fetch(_clFetchOnset).
+const CL_ONSET_IDMAP = {};
+(window.CLUSTER_ONSET_LIST || []).forEach(([b, s, id]) => { CL_ONSET_IDMAP[C.songKey(b, s)] = id; });
+const CL_ONSET_BASE = './src/content/cluster/onsets/';   // index.html(루트) 기준 상대경로
+const _clOnsetPending = {};   // 진행 중 fetch 중복 방지
 // 곡별 기본 subdivision(0=박·1=8분·2=16분). 현재 전곡 '8분' 고정(사용자 지정).
 // tempo/bpm 으로 자동판정 불가(같은 tempo·비율에 선호 상반 — report 참조)라,
 // 박(0)이 나은 곡의 공통 패턴을 찾으면 그때 예외를 큐레이션한다.
 const CL_ONSET_DEFDIV = {};   // 예외 지정: CL_ONSET_DEFDIV[C.songKey('roselia','FIRE BIRD')] = 0; (박)
-function _clOnsetTrack(key) {
-    const id = CL_ONSET_PILOT[key];
-    return (id && (window.CLUSTER_ONSETS || {})[id]) || null;
+function _clOnsetId(key) { return CL_ONSET_IDMAP[key] || null; }
+function _clFetchOnset(id) {                 // 곡별 onset 런타임 로드(캐시=window.CLUSTER_ONSETS)
+    const cache = (window.CLUSTER_ONSETS = window.CLUSTER_ONSETS || {});
+    if (cache[id]) return Promise.resolve(cache[id]);
+    if (_clOnsetPending[id]) return _clOnsetPending[id];
+    const p = fetch(CL_ONSET_BASE + id + '.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d) cache[id] = d; delete _clOnsetPending[id]; return d; })
+        .catch(() => { delete _clOnsetPending[id]; return null; });   // file:// / 404 → BPM 폴백
+    _clOnsetPending[id] = p;
+    return p;
 }
 function _clBisect(ev, t) {                 // 첫 t>=목표 인덱스(시크 시 포인터 재설정)
     let lo = 0, hi = ev.length;
@@ -251,14 +254,22 @@ function _clOnsetTick() {
 // onset 트랙이 있는 곡이면 BPM 대신 타임스탬프 동기 재생(_clStartOnset).
 function _clSyncPulse(period) {
     if (!CL_PULSE_BPM || !_clPlay) { _clStopPulse(); _clStopOnset(); return; }
-    const track = _clOnsetTrack(nowPlaying);
-    if (track) { _clStopPulse(); _clStartOnset(nowPlaying, track); return; }
+    const id = _clOnsetId(nowPlaying);
+    if (id) {                                         // onset 트랙 보유 곡 → 타임스탬프 동기 재생
+        const key = nowPlaying, cache = window.CLUSTER_ONSETS || {};
+        if (cache[id]) { _clStopPulse(); _clStartOnset(key, cache[id]); return; }
+        _clStopPulse();                               // 로딩 동안엔 펄스 없음(잠깐)
+        _clFetchOnset(id).then(track => {             // 도착 시 아직 같은 곡이면 시작(아니면 폐기)
+            if (track && nowPlaying === key && _clPlay) _clStartOnset(key, track);
+        });
+        return;
+    }
     _clStopOnset();
     if (!period) { _clStopPulse(); return; }
-    const key = nowPlaying + '@' + period;
-    if (key === _clPulseKey) return;
+    const pkey = nowPlaying + '@' + period;
+    if (pkey === _clPulseKey) return;
     _clStopPulse();
-    _clPulseKey = key;
+    _clPulseKey = pkey;
     _clEmitPulse();                                   // 박 시작 즉시 1발
     _clPulseTimer = setInterval(_clEmitPulse, period * 1000);
 }
