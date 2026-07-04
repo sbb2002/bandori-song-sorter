@@ -24,8 +24,8 @@ try:
 except Exception:
     pass
 
-WORKSHEET = Path("src/content/cluster/axis_labels_worksheet.csv")
-FEATURES = Path("src/content/cluster/axis_pilot_features.csv")
+WORKSHEET = Path("src/content/cluster/legacy/axis_labels_worksheet.csv")
+FEATURES = Path("src/content/cluster/legacy/axis_pilot_features.csv")
 
 # 손 라벨 축 → (컬럼, 기대 부호 설명). spec §2·§3 + v3-2차 x축 재정의.
 LABEL_AXES = {

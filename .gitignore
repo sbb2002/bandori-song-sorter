@@ -29,6 +29,7 @@ assets/lyrics/*
 # src/content/cluster/keywords_2d.json(키워드 좌표)만 추적, 나머지 파생물은 무시.
 src/content/cluster/audio_cache/
 src/content/cluster/audio_full/
+src/content/cluster/audio_drums/
 # 언더스코어 접두 = 임시/파생/비교본(_ffbin·_songs·_sentences·_audio_map_clap)
 src/content/cluster/_*
 # 오디오 수집 진행상태(로컬 실시간 조회용, fetch_audio.py 매 곡 갱신) — 비커밋

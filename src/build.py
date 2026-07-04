@@ -61,6 +61,26 @@ def load_cluster(path=CONTENT / "cluster" / "audio_map.json"):
     return doc or {}
 
 
+def load_onset_list(csv_path=CONTENT / "cluster" / "songs_full.csv",
+                    d=CONTENT / "cluster" / "onsets"):
+    """onset 트랙이 있는 곡의 [band, song, id] 경량 매니페스트.
+
+    데이터(수십 MB)는 index.html 에 인라인하지 않고 런타임에 곡별 lazy-fetch 한다
+    (src/content/cluster/onsets/<band>__<idx>.json). 여기선 '어떤 곡에 트랙이 있고
+    그 id 가 무엇인지'만 주입 → JS 가 C.songKey(band,song) 로 키를 만들어 매핑(정규화 일치).
+    """
+    import csv as _csv
+    out = []
+    if not os.path.isdir(d) or not os.path.isfile(csv_path):
+        return out
+    with open(csv_path, encoding="utf-8") as f:
+        for row in _csv.DictReader(f):
+            oid = f"{row['band']}__{int(row['idx']):03d}"
+            if os.path.isfile(os.path.join(d, oid + ".json")):
+                out.append([row["band"], row["song"], oid])
+    return out
+
+
 def build():
     """content/songs/*.yaml(앨범 단위)를 곡 단위로 평탄화하여 index.html을 생성한다.
 
@@ -117,6 +137,7 @@ def build():
     song_data = {'bands': bands, 'songsByBand': songs_by_band}
     wordcloud_data = load_wordclouds()
     cluster_data = load_cluster()
+    onset_list = load_onset_list()
 
     env = Environment(loader=FileSystemLoader(str(template_dir)))
     try:
@@ -151,11 +172,14 @@ def build():
         wordcloud_data, ensure_ascii=False).replace('<', '\\u003c')
     cluster_data_json = json.dumps(
         cluster_data, ensure_ascii=False).replace('<', '\\u003c')
+    onset_list_json = json.dumps(
+        onset_list, ensure_ascii=False).replace('<', '\\u003c')
 
     rendered_html = template.render(
         song_data_json=song_data_json,
         wordcloud_data_json=wordcloud_data_json,
         cluster_data_json=cluster_data_json,
+        onset_list_json=onset_list_json,
         static_paths=static_paths,
     )
 
@@ -166,8 +190,9 @@ def build():
     total = sum(len(v) for v in songs_by_band.values())
     wc = len(wordcloud_data)
     cl = len(cluster_data.get('songs', []))
+    ons = len(onset_list)
     print(f"[OK] Build Success: index.html 생성 완료 "
-          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 음원맵 {cl}곡)")
+          f"(밴드 {len(bands)}개, 곡 {total}개, 워드클라우드 {wc}밴드, 음원맵 {cl}곡, onset {ons}곡 lazy-fetch)")
 
 
 if __name__ == "__main__":

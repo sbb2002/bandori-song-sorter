@@ -2,14 +2,16 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-03 17:00** — 작업 1(D) **레이아웃 확정**(대안 B) + **정적파일 기능분할**(CSS 3 / JS 19) main 머지(done 22) · 오디오 1차 수집 **조건2로 일시중지(285/660·6.0GiB)** → 재개는 Phase 1[A]. `fetch_audio.py` 조건3(7GB) + `migrate_local_cache.bat`→legacy 동봉 커밋.
+마지막 갱신: **2026-07-04(세션 23)** — **작업 2(음원맵 전곡 확대) 완결·동결**: 오디오 **659/660** 완주(`android_music` 클라이언트로 403 복구 — `tv/ios`는 DRM/PO토큰), `audio_map.json` **659곡/13밴드 + `norm` 파라미터 동결**(증분 append 선결), `build.py` 반영. + **재생 펄스 방안 A**(지각 pulse=ACF 옥타브비율, 파일럿 6/7) + **음원맵 HUD**(우주선 스타일)·연출·버그수정. 브랜치 `feature/emoi-cluster-v3b`(미머지·푸시됨). 상세 **done 23**.
+> **⏭ 다음 = ① 머지(`v3b`→`feature/emoi-cluster`→`main`, 실검수 후) · ② 작업 3(자동화 파이프라인 — 동결 `norm` 기반 증분 append).** roselia `競宴Red×Violet` 1곡(DRM)은 증분으로.
+이전: (2026-07-04) 재생 펄스 파일럿(beat 그리드+드럼 볼륨) → 세션 23에서 방안 A로 완성. (2026-07-03 17:00) 작업 1(D) 레이아웃 확정 + 정적파일 분할 main 머지(done 22).
 
 ---
 
 ## 시작 전 체크 (다른 로컬·세션)
 > 1. `git pull origin main`(660곡). 작업은 **새 feature 브랜치**에서.
 > 2. `.env`의 `YOUTUBE_API_KEY` = **장치별·비커밋**(gitignore) — 백필/지역락 점검 시 재추가(없으면 `insert_backfill.py`·`check_embeddable.py` 즉시 중단).
-> 3. `npm test`(=`node --test`)용 **node 설치 확인**(직전 장치엔 없어 미실행).
+> 3. **node 필수**(yt-dlp nsig 서명해독 → 없으면 오디오 수집 403 다발 · `node --check` · `npm test`). 설치 = `conda install -c conda-forge nodejs`(세션 23에 이 장치 설치 완료).
 > 4. 가사 원문 `assets/lyrics/<band>.md` = 로컬 전용(gitignore). 커밋된 `wordcloud/<band>.yaml`로 검수·렌더는 가능하나 `build_keywords.py` **재생성은 원문 .md 필요**.
 > 5. 로컬 브랜치(2026-06-30 정리): `main` + 백업 3(`backup/main-20260620·22·30`) + `feature/ux-02-opt-a`(옵션A 유일본, 미머지·원격없음 — 삭제 금지).
 
@@ -18,14 +20,14 @@
 ## 현황
 - 데이터 **677 트랙 / 화면 660곡(dedup) / 13밴드**. 워드클라우드 **라이브**, 백필(1-a/1-b)·지역락 처리 완료(done 14~20, 화면 526→660). 
 - **레이아웃 확정 + 정적파일 분할 완료**(done 22, main 반영): 편집 시 CSS=`common/desktop/mobile.css`·JS=`static/js/functions/01~19-*.js` **분할 파일 직접 수정**(참조식 → 리빌드 불필요), 템플릿 변경만 `python src/build.py`.
-- **다음 본류 = 음원맵 전곡 확대**(작업 2) — 오디오 수집 진행 중(아래 Phase 1[A]). 클러스터 v2+v3는 미머지 브랜치 `feature/emoi-cluster-v2`.
+- **작업 2(음원맵 전곡 확대) 완결·동결**(done 23): 659곡/13밴드 + `norm` 파라미터, HUD·펄스까지. 작업 브랜치 `feature/emoi-cluster-v3b`(미머지·푸시됨). **다음 본류 = 머지 + 작업 3(자동화 파이프라인)**.
 
 ## 우선순위
 | 작업 | 상태 | 상세 |
 |------|------|------|
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
-| 2. 음원맵 전곡 확대 | 🔜 **본류** | → [spec/audio-map-fullscale.md](spec/audio-map-fullscale.md) |
-| 3. 자동화 파이프라인 | 🔜 후속(2 이후) | → [spec/pipeline-automation.md](spec/pipeline-automation.md) |
+| 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
+| 3. 자동화 파이프라인 | 🔜 **본류**(2 완료 → 다음) | → [spec/pipeline-automation.md](spec/pipeline-automation.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -33,6 +35,8 @@
 ---
 
 ## 병렬 실행 계획 (작업 2·3 — 2026-07-03 확정, 이 순서로 진행)
+
+> ✅ **Phase 0~2 완료(done 23)** — 오디오 수집(659/660)·전곡 빌드·`norm` 동결 끝. 아래는 실행 기록(참고 보존). **남은 것 = Phase 3(머지 + C의 증분 append).**
 
 > 오늘 작업 브랜치 = **`feature/emoi-cluster-v3a`**. 크리티컬 패스는 하나뿐: **범위 → 오디오 수집 → 전곡 빌드·동결 → 증분 append.** 나머지는 오디오 무관 → **오디오 수집 대기시간(로컬 ~30~90분 무인)에 병렬**로 굴린다.
 >
@@ -67,16 +71,15 @@
 ## 작업 1. 워드클라우드 — ✅ 완전 완료
 품질(2-c A·B·C + 키워드 색상) **완료**(done 20) + **(D) 배치 확정**(done 22): 음원맵 슬롯을 세로 분할선으로 좌=음원맵/우=워드클라우드(**대안 B**), 상시 렌더. 재생성 명령·큐레이션 주의(`weight:0`은 렌더 `||1`로 부활 → 제거는 yaml 줄 삭제 / `ko`는 재생성 시 덮어써짐)는 memory `wordcloud_quality_plan.md`·done 17·20.
 
-## 작업 2. 음원맵 전곡 확대 [본류]
-**채택 축**: x = spectral contrast(거칢↔매끄러움, r−0.81) · y = mode(밝음↔어두움, r+0.51). 파이프라인 `build_perceptual_map.py` → `audio_map.json` → `script.js _clDraw`. 현재 TOP10×10 97곡 라이브. v2·v3 완료(done 21).
-- ⚠️ **구현 시 [spec/audio-map-fullscale.md](spec/audio-map-fullscale.md) 필독** — 범위(전체660/캡N/유지)·매니페스트+`--manifest`·yt-dlp→`audio_full`·수백 점 렌더 최적화·비용·불균형까지 정리됨.
-- 축 설계 근거 = [spec/audio-map-axes.md](spec/audio-map-axes.md) + `report/cluster-correlation/README.md`.
-- ⭐ 전곡 빌드 시 **정규화 파라미터(contrast·mode의 mean·std + shift + overrides)를 `audio_map.json`에 저장** — 자동화 증분의 선결(fullscale §4 / pipeline-automation §5). 오디오는 폐기되므로 지금 안 남기면 나중에 전곡 재수집.
+## 작업 2. 음원맵 전곡 확대 — ✅ 완결·동결 (done 23)
+**채택 축**: x=contrast(거칢↔매끄러움 r−0.81) · y=mode(밝음↔어두움 r+0.51). **전곡 659곡/13밴드 빌드·동결 완료**: `build_perceptual_map.py --manifest src/content/cluster/songs_full.csv --cache audio_full` → `audio_map.json`(+ `norm` 파라미터: contrast·mode의 mean/std/k/clip+shift+overrides+formula) → `build.py`. 렌더 = `16-audiomap.js _clDraw`(+HUD·펄스).
+- 근거·상세: fullscale §4·§6 · pipeline §5 · axes([spec/audio-map-axes.md](spec/audio-map-axes.md)).
 
-### 2-잔여 (확대와 병행 가능, 우선순위 낮음)
-- **브라우저 실검수**: `python -m http.server` → 유튜브 하단 음원맵 · 모바일(320px). (node 미설치로 미확인)
-- **머지 경로**: `feature/emoi-cluster-v2` → `feature/emoi-cluster` → `main`(라이브 sbb2002.github.io).
-- **UX**: 센트로이드는 **클릭 비활성화 + 반투명(opacity 0.3)** — 근접 데이터포인트 클릭난 해소(UX 평가 지적).
+### 2-잔여
+- **머지·실검수**: `feature/emoi-cluster-v3b` → `feature/emoi-cluster` → `main`(라이브 sbb2002.github.io). 머지 전 `python -m http.server`로 음원맵·HUD·펄스 + 모바일 320px 실검수.
+- **오디오 캐시 폐기 가능**(`audio_full` 659곡 — 동결 완료, 커밋되는 건 파생 좌표뿐).
+- roselia `競宴Red×Violet` 1곡(DRM) → 작업 3 증분으로.
+- ✅ 완료: UX 센트로이드 클릭 비활성+반투명(done 23), HUD·펄스 연출.
 - (선택) 구 미사용 폐기: `keywords_2d.json` · `build_embeddings.py` · `build_audio_map.py`.
 
 ## 작업 3. 자동화 파이프라인 (RSS → cluster → main 반영)
@@ -95,7 +98,7 @@ RSS 수집 → cluster 분석 → 라이브 반영을 `actions/` 오케스트레
 ## 보류 · 백로그
 - **(보류) 백필 1-c namedup 403**: 기존 곡 url을 Topic 음원으로 교체(품질 개선, 새 곡 아님). 후순위. (1-b 커버 135곡은 완료 — done 18.)
 - **(보류) 진행도 Save/Load** (ux-02.md #4): 진행 json 백업/공유. ⚠️ Load = 기존 진행 덮어쓰기 → 손실 위험, 자동 백업·복구 경로 선설계 필수. 코멘트(`bandori-song-comments-v1`) 직렬화 포함 여부 확정 필요.
-- **(백로그) 재생 이퀄라이저 애니메이션** — 후순위. 제약(실시간 실제소리·LFS 불가)·방안(A+ 절차생성 권장 / B lazy 사전계산) 상세 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
+- **(대체로 완료) 재생 이퀄라이저 = 음원맵 재생 펄스** — B안(lazy 사전계산). **방안 A(지각 pulse=ACF 옥타브비율) 구현·검증 완료**(파일럿 6/7, done 23) + 펄스 프리셋 3단계·색 가시성 보정·**박 고정 확정**. **남은 것**: 전곡 확대(`build_pulse_all.py` demucs CPU ~45s/곡 · onsets 대량 시 lazy fetch 전환) · mugendai 난곡 큐레이션. 상세 = **[report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md)**. 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. 원안 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
 
 ---
 

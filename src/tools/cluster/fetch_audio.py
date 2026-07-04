@@ -113,6 +113,8 @@ def build_cmd(url: str, out_tmpl: str, args, ffmpeg_loc, js_rt) -> list[str]:
     ]
     if js_rt:
         cmd += ["--js-runtimes", js_rt]             # nsig 서명 해독(403 방지)
+    if args.extractor_args:
+        cmd += ["--extractor-args", args.extractor_args]   # 클라이언트 교체(android vr 403 CDN 거부 복구)
     if not args.no_cookies:
         cmd += ["--cookies-from-browser", args.cookies_from_browser]     # [G5]
     if ffmpeg_loc:
@@ -144,6 +146,9 @@ def main(argv=None) -> int:
     ap.add_argument("--cookies-from-browser", default="chrome", help="[G5] 쿠키 소스 브라우저")
     ap.add_argument("--no-cookies", action="store_true", help="쿠키 연동 비활성(권장)")
     ap.add_argument("--js-runtime", default="auto", help="JS런타임: auto|node|deno|none")
+    ap.add_argument("--extractor-args", default="",
+                    help="yt-dlp --extractor-args 그대로 전달(예 youtube:player_client=tv,web_safari,ios). "
+                         "android vr URL을 CDN이 403 거부할 때 클라이언트 교체로 복구")
     ap.add_argument("--retries", type=int, default=10, help="곡당 재시도")
     ap.add_argument("--max-consec-fails", type=int, default=5, help="연속 실패 이 횟수면 차단 추정 일시중지")
     ap.add_argument("--stop-hour", type=int, default=17, help="조건2: 이 시각(로컬) 이상이면 검사")

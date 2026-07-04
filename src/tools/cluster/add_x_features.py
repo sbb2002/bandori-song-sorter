@@ -24,7 +24,7 @@ try:
 except Exception:
     pass
 
-FEATURES = Path("src/content/cluster/axis_pilot_features.csv")
+FEATURES = Path("src/content/cluster/legacy/axis_pilot_features.csv")
 FULL = Path("src/content/cluster/audio_full")
 SR = 22050
 NEW = ["onset_rate", "harmonic_ratio", "perc_ratio"]

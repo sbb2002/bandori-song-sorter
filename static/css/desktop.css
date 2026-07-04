@@ -383,14 +383,47 @@
 .audiomap-area #cluster-chart { min-height: 0; }
 /* 음원맵 축 +/- 방향 의미 라벨(4모서리, 화면 고정) */
 .am-axis {
-  position: absolute; z-index: 3; pointer-events: none; white-space: nowrap;
-  font-size: 0.56rem; color: var(--text-sub); opacity: 0.9;
-  text-shadow: 0 0 4px #000, 0 0 4px #000;
+  position: absolute; z-index: 12; pointer-events: none; white-space: nowrap;
+  font-family: 'Consolas','SF Mono',ui-monospace,monospace;
+  font-size: 0.56rem; color: var(--hud, #66e0e6); opacity: 0.85; letter-spacing: 0.5px;
+  text-shadow: 0 0 4px #000, 0 0 6px rgba(102,224,230,0.4);
 }
 .am-axis-top { top: 4px; left: 50%; transform: translateX(-50%); }
 .am-axis-bottom { bottom: 4px; left: 50%; transform: translateX(-50%); }
 .am-axis-left { left: 6px; top: 50%; transform: translateY(-50%); }
 .am-axis-right { right: 6px; top: 50%; transform: translateY(-50%); }
+
+/* ── 음원맵 HUD (우주선/비행기 스타일 오버레이) — JS _clUpdateHud 가 채움 ── */
+:root { --hud: #66e0e6; --hud-dim: rgba(102,224,230,0.55); --hud-glow: rgba(102,224,230,0.5); --hud-warn: #ffe14d; }
+.cluster-wrap .hud {
+  position: absolute; z-index: 14; pointer-events: none; max-width: 46%;
+  font-family: 'Consolas','SF Mono',ui-monospace,monospace;
+  color: var(--hud); text-shadow: 0 0 6px var(--hud-glow); letter-spacing: 0.3px;
+}
+.hud[hidden] { display: none; }
+.hud-corner { padding: 7px 10px; }
+.hud-corner::before, .hud-corner::after {           /* 코너 브래킷(⌐ ¬) */
+  content: ''; position: absolute; width: 11px; height: 11px; border: 1.5px solid var(--hud-dim);
+}
+.hud-band { top: 6px; left: 8px; }
+.hud-band::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+.hud-band::after  { bottom: 0; right: 0; border-left: none; border-top: none; }
+.hud-band .hud-name { font-size: 1.55rem; font-weight: 800; line-height: 1.05; color: #fff; text-shadow: 0 0 10px var(--hud-glow); }
+.hud-readout { top: 6px; right: 8px; text-align: right; font-size: 0.66rem; line-height: 1.6; }
+.hud-readout::before { top: 0; right: 0; border-left: none; border-bottom: none; }
+.hud-readout::after  { bottom: 0; left: 0; border-right: none; border-top: none; }
+.hud-readout .hud-val { color: #fff; }
+.hud-track { bottom: 6px; left: 8px; font-size: 0.6rem; line-height: 1.5; display: flex; align-items: flex-end; gap: 7px; }
+.hud-track::before { bottom: 0; left: 0; border-right: none; border-top: none; }
+.hud-track::after  { top: 0; right: 0; border-left: none; border-bottom: none; }
+.hud-track .hud-hd { color: #fff; font-weight: 700; margin-bottom: 2px; }
+.hud-track .hud-track-txt { white-space: nowrap; }
+.hud-arrow { width: 38px; height: 38px; flex: 0 0 auto; fill: var(--hud-warn);
+  filter: drop-shadow(0 0 4px rgba(255,225,77,0.6)); transition: transform 0.45s ease; }
+.hud-meta { bottom: 6px; right: 8px; text-align: right; font-size: 0.62rem; line-height: 1.55; }
+.hud-meta::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+.hud-meta::after  { bottom: 0; right: 0; border-left: none; border-top: none; }
+.hud-meta .hud-song { color: #fff; font-weight: 700; }
 #youtube-player, #youtube-player iframe {
   position: absolute;
   inset: 0;
@@ -515,6 +548,7 @@
 }
 #wordcloud-canvas { display: block; width: 100%; height: 100%; }
 #cluster-chart { width: 100%; height: 100%; min-height: 240px; }
+.cluster-wrap { transition: background-color 0.35s ease; }   /* 밴드 선택 시 배경 틴트 부드럽게 전환 */
 /* 음원맵 유사곡 목록(곡 클릭 시 CLAP 유사곡) */
 /* 음원맵 하단 유사곡/힌트 목록 — 표시 숨김(요소·JS는 보존, 되돌리려면 이 display만 제거) */
 .cl-similar { display: none; margin-top: 6px; font-size: 0.64rem; height: 58px; overflow-y: auto; flex-shrink: 0; }

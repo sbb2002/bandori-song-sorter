@@ -10,6 +10,8 @@
     <!-- 밴드 워드클라우드 키워드 (build.py 주입 · src/content/wordcloud/<band>.yaml) -->
     <script>window.WORDCLOUD_DATA = {{ wordcloud_data_json | safe }};</script>
     <script>window.CLUSTER_DATA = {{ cluster_data_json | safe }};</script>
+    <!-- 곡별 onset 트랙: 데이터(수십MB)는 런타임 lazy-fetch(src/content/cluster/onsets/<id>.json), 여기선 경량 매니페스트만 주입 -->
+    <script>window.CLUSTER_ONSET_LIST = {{ onset_list_json | safe }}; window.CLUSTER_ONSETS = {};</script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,6 +91,15 @@
                         <span class="am-axis am-axis-bottom" id="cl-ax-bottom"></span>
                         <span class="am-axis am-axis-left" id="cl-ax-left"></span>
                         <span class="am-axis am-axis-right" id="cl-ax-right"></span>
+                        <!-- HUD 오버레이 (우주선/비행기 스타일) — JS(_clUpdateHud)가 채움 -->
+                        <div class="hud hud-corner hud-band" id="hud-band" hidden></div>
+                        <div class="hud hud-corner hud-readout" id="hud-centroid" hidden></div>
+                        <div class="hud hud-corner hud-track" id="hud-track" hidden>
+                            <svg class="hud-arrow" id="hud-arrow" viewBox="-20 -20 40 40" aria-hidden="true">
+                                <polygon points="16,0 -10,-8 -4,0 -10,8" /></svg>
+                            <div class="hud-track-txt" id="hud-track-txt"></div>
+                        </div>
+                        <div class="hud hud-corner hud-meta" id="hud-meta" hidden></div>
                         <div class="wc-empty" id="cl-empty" hidden>음원 좌표 데이터가 아직 없어요.</div>
                     </div>
                     <div class="cl-similar" id="cl-similar"></div>
