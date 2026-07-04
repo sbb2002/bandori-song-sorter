@@ -64,6 +64,7 @@ const CL_PULSE_DUR_MAX = 1600;    // [실험] onset 펄스 지속 상한(ms) —
 //   1단계(v≤0.2): 펄스 없음(0px) / 2단계(≤0.6): 구 5단계의 3단계 세팅 / 3단계(≤1.0): 구 5단계 세팅.
 const CL_PULSE_R3 = [0, 32, 48];               // 볼륨 3단계 크기(px). 1단계=0=발생 안 함
 const CL_PULSE_SPEED3 = [0, 82.8, 63];         // 3단계 전파속도(px/s) — 구 3·5단계 값 승계(묵직함 유지)
+const CL_PULSE_LW3 = [3, 3, 5];                // 볼륨 3단계 펄스 두께(px lineWidth). 가장 큰 3단계만 두껍게
 function _clVolStep(v) { return v <= 0.2 ? 1 : (v <= 0.6 ? 2 : 3); }   // v 0~1 → 1~3
 // subdivision 탭 — UI에서 제거(박 고정 확정). 로직·라벨은 보존하여 추후 '설정' 패널로 이관.
 // 되살리려면 이 값만 true. 라벨은 build_beat_track SUBDIV 순서와 동기.
@@ -109,15 +110,15 @@ function _clPulseColor(hex) {
 
 // [실험] 커스텀 펄스: 박 타이밍마다 원 하나가 짧게(CL_PULSE_SPREAD_MS) 커지며 사라진다.
 // effectScatter의 연속 물결과 달리 '발생 간격(period)'과 '퍼지는 속도(spread)'를 분리 → 박자감.
-function _clEmitPulse(r, ms) {
+function _clEmitPulse(r, ms, lw) {
     if (!_clusterChart || !_clPlay) return;
     const px = _clusterChart.convertToPixel({ seriesIndex: 0 }, _clPlay.val);   // songs 좌표계 → 픽셀
     if (!px) return;
-    const maxR = r || CL_PULSE_MAX_R, dur = ms || CL_PULSE_SPREAD_MS;
+    const maxR = r || CL_PULSE_MAX_R, dur = ms || CL_PULSE_SPREAD_MS, lineW = lw || 3;
     const circle = new echarts.graphic.Circle({
         shape: { cx: px[0], cy: px[1], r: 4 }, silent: true, z: 100,
-        // stroke=밝기 보정 밴드색 · 두께 상향 · 어두운 글로우로 밝은 배경(hello 노랑)에도 외곽 대비.
-        style: { stroke: _clPulseColor(_clPlay.color), fill: 'none', lineWidth: 3, opacity: 0.95,
+        // stroke=밝기 보정 밴드색 · 두께(볼륨단계별) · 어두운 글로우로 밝은 배경(hello 노랑)에도 외곽 대비.
+        style: { stroke: _clPulseColor(_clPlay.color), fill: 'none', lineWidth: lineW, opacity: 0.95,
                  shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.55)' },
     });
     _clusterChart.getZr().add(circle);
@@ -165,7 +166,7 @@ const _clOnsetPending = {};   // 진행 중 fetch 중복 방지
 const CL_DYN_ON = true;      // false면 고정 subdivision(_clSensIdx 기본값 유지)
 const CL_DYN_T1 = 0.37;      // 박↔8분 임계(글로벌 절대음량 정규화 intensity; ~-16.5dB)
 const CL_DYN_T2 = 0.83;      // 8분↔16분 임계(~-9.5dB, 시끄러운 구간만 16분)
-const CL_DYN_MAX = 2;        // 최대 레벨(1=박/8분 2단계, 2=+16분 3단계)
+const CL_DYN_MAX = 1;        // 최대 레벨(1=박/8분 2단계, 2=+16분 3단계). 16분 과함 → 박/8분만.
 const CL_DYN_HYST = 0.05;    // 경계 히스테리시스(잦은 토글 방지)
 // 곡별 기본 subdivision(0=박·1=8분·2=16분). dyn 없을 때 폴백값(사용자 지정 기본 박).
 // tempo/bpm 으로 자동판정 불가(같은 tempo·비율에 선호 상반 — report 참조)라,
@@ -276,7 +277,7 @@ function _clOnsetTick() {
             const maxR = CL_PULSE_R3[step - 1];
             if (maxR > 0) {                                        // 1단계(0px) = 펄스 발생 안 함
                 const speed = CL_PULSE_SPEED3[step - 1];           // 구 3·5단계 속도 승계
-                _clEmitPulse(maxR, Math.min(CL_PULSE_DUR_MAX, maxR / speed * 1000));
+                _clEmitPulse(maxR, Math.min(CL_PULSE_DUR_MAX, maxR / speed * 1000), CL_PULSE_LW3[step - 1]);
             }
         }
     }
