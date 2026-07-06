@@ -33,8 +33,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]                  # actions/<file> → repo root
 sys.path.insert(0, str(ROOT / "src" / "tools" / "collect"))
 sys.path.insert(0, str(ROOT / "src" / "tools" / "cluster"))
+sys.path.insert(0, str(ROOT / "src" / "tools" / "pipeline"))
 
 import youtube_rss as rss                                    # noqa: E402
+import notify                                                # noqa: E402  (Telegram, urllib 무의존)
 # append_song_map 은 librosa 등 오디오 스택을 끌어오므로 곡 처리 시 지연 import
 # (감지 전용 경로 --detect-only 는 가볍게 유지).
 
@@ -246,6 +248,19 @@ def _emit_github_output(key: str, val) -> None:
             f.write(f"{key}={val}\n")
 
 
+def _notify_text(candidates: list[dict], anomalies: list[str]) -> str:
+    """미처리 신곡 전체를 요약한 Telegram 본문(곡당 개별 알림 아님 — 매일 1건 요약)."""
+    lines = [f"🎵 밴도리 신곡 감지 {len(candidates)}곡 (미처리)", ""]
+    for c in candidates:
+        tag = f" [{c['variant']}]" if c["variant"] else ""
+        lines.append(f"· {c['band']} — {c['name']}{tag}  ({c['published']})")
+        lines.append(f"  {c['url']}")
+    if anomalies:
+        lines += ["", f"⚠️ 파싱 이상 밴드: {', '.join(anomalies)}"]
+    lines += ["", "→ 로컬에서 `python src/tools/pipeline/run_local.py` 실행"]
+    return "\n".join(lines)
+
+
 def log_events(landed: list[dict], failed: list[dict]) -> None:
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     recs = []
@@ -268,7 +283,17 @@ def main(argv=None) -> int:
     ap.add_argument("--test-band", default=None, help="[테스트] 감시 밴드 중 하나")
     ap.add_argument("--test-video", default=None,
                     help="[테스트] video_id 또는 URL — 감지 건너뛰고 이 곡만 강제 처리(--dry 필수)")
+    ap.add_argument("--notify", action="store_true",
+                    help="감지된 미처리 신곡 요약을 Telegram 1건 전송(candidates>0 시). 다운로드/처리와 무관")
+    ap.add_argument("--notify-test", action="store_true",
+                    help="배선 확인용 캔드 Telegram 메시지 1건 전송 후 종료(secrets 점검)")
     a = ap.parse_args(argv)
+
+    # ── [테스트] Telegram 배선 점검: 감지 없이 캔드 메시지만 전송 ──
+    if a.notify_test:
+        ok = notify.send_telegram(
+            "🔔 밴도리 신곡 로더 — Telegram 배선 테스트 OK (이 메시지가 보이면 secrets 정상)")
+        return 0 if ok else 1
 
     # ── [테스트] 강제 처리: 감지를 건너뛰고 지정 곡 1개를 end-to-end 실행(다운로드·demucs·
     #    펄스·좌표). --dry 강제 → 커밋/푸시 없음. CI 러너는 작업트리를 폐기하므로 레포 무변동.
@@ -301,6 +326,8 @@ def main(argv=None) -> int:
 
     anomalies = [b for b, h in health.items() if (not h["ok"]) or h["valid"] == 0]
     _emit_github_output("candidates", len(candidates))       # 워크플로우 감지 게이트
+    if a.notify and candidates:                              # 미처리 신곡 요약 1건 → Telegram
+        notify.send_telegram(_notify_text(candidates, anomalies))
     if a.detect_only:
         if anomalies:
             print(f"파싱 이상 밴드: {anomalies}")

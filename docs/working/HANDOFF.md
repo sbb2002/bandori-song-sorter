@@ -2,8 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-06(세션 26)** — **작업 3 인프라 완성·배포**(→ [done.md](done.md) 세션 26): full-auto 신곡 로더(감지→songs/→emoi-map 좌표·centroid→pulse→main) + **Pages 아티팩트 배포 전환(Option A)** 구축·**라이브 확인**. 깨진 `rss.yml`(리팩터 `db0771c` 후 경로 미갱신) 은퇴→`pipeline.yml`, 신규 `deploy.yml`·`actions/orchestrate.py`·`append_song_map.py`. deploy·감지·게이트 실증 green. **남은 것 = E2E dry-run 테스트 1회로 CI 다운로드 봇월 여부 판명 + (막히면) 대책.**
-> **⏭ 다음 = 작업 3 검증(§ 작업 3의 'E2E 테스트법').** `pipeline.yml` workflow_dispatch(`test_band`/`test_video`)로 dry-run E2E 실행 → 레포 무변동으로 다운로드→demucs→pulse→좌표 전 과정 관측.
+마지막 갱신: **2026-07-06(세션 26)** — **작업 3 = CI 다운로드 봇월 확정 → 반자동 전환**: E2E dry-run 3회로 GitHub Actions(데이터센터 IP)에서 YouTube 다운로드가 봇월에 막힘 실증(기본·클라이언트 로테이션·PO토큰 전부 hard-block). 벽은 IP 평판 → 클라우드로는 불가. **다운로드만 레지덴셜(집) IP로 빼는 반자동 채택**: (1)Actions가 매일 감지+Telegram 알림 (2)로컬에서 원커맨드로 다운로드~main push→deploy 자동. 계획 = `~/.claude/plans/floofy-tickling-corbato.md`. **현재 = 구현 중**(작업 브랜치 `feature/new-song-semiauto`).
+> **⏭ 다음 = 작업 3 구현·검증(§ 작업 3):** pipeline.yml 재작성(감지+알림) + `src/tools/pipeline/run_local.py`·`notify.py` + orchestrate `--notify`. 검증 = 로컬 다운로드 실증(CI ✗였던 곡이 로컬 ✅).
 이전: (2026-07-05 세션 25) 음원맵 클러스터링/재생펄스 완결 + main 머지: 전곡 **660곡** 좌표·펄스 + 렌더 lazy-fetch(index.html 0.30MB) + 에너지 동적 subdivision(음량→박/8분) + 볼륨 프리셋 4단계. done 24~25 · [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
 이전: (2026-07-04) 재생 펄스 파일럿 → 세션 23 방안 A 완성. (2026-07-03 17:00) 작업 1(D) 레이아웃 확정 + 정적파일 분할 main 머지(done 22).
 
@@ -28,7 +28,7 @@
 |------|------|------|
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
-| 3. 자동화 파이프라인 | 🔬 **인프라 완성·배포**(세션 26, done 26) → **E2E 검증 대기** | § 작업 3 · [spec](spec/pipeline-automation.md) |
+| 3. 자동화 파이프라인 | 🔧 **반자동 전환·구현 중**(CI 다운로드 봇월 확정 → Actions 감지·알림 + 로컬 처리) | § 작업 3 · [spec](spec/pipeline-automation.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -83,24 +83,43 @@
 - ✅ 완료: UX 센트로이드 클릭 비활성+반투명(done 23), HUD·펄스 연출.
 - (선택) 구 미사용 폐기: `keywords_2d.json` · `build_embeddings.py` · `build_audio_map.py`.
 
-## 작업 3. 자동화 파이프라인 — 신곡 로더 (🔬 인프라 완성·배포, E2E 검증 대기)
-**상세 구현·배선 = [done.md](done.md) 세션 26.** full-auto 신곡 로더(감지→songs/→emoi-map 좌표·centroid→pulse→main) + Pages 아티팩트 배포(Option A) **구축·라이브 확인 완료.** 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md). 작업 2(전곡 빌드+`norm` 동결)에 의존 — 완료됨.
+## 작업 3. 자동화 파이프라인 — 신곡 로더 (🔧 반자동 전환 · 구현 중)
+**상세 구현·배선 = [done.md](done.md) 세션 26.** 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md). 작업 2(전곡 빌드+`norm` 동결)에 의존 — 완료됨.
 
-### 배포·검증 현황
-- ✅ **deploy.yml**: `build.py`→Pages **아티팩트 배포 실증 성공**(라이브 재배포). Pages Source="GitHub Actions" 전환됨. index.html은 레포서 커밋 안 함(gitignore) = 핫픽스 충돌 회피.
-- ✅ **pipeline.yml**: 감지+게이트 실증(첫 실행 0곡→오디오스택 설치 스킵→green).
-- ⏳ **미검증**: 오디오 다운로드→demucs→pulse→좌표 경로(신곡 0곡이라 아직 안 밟힘) = **CI 다운로드 봇월 여부**(spec §4 리스크).
+### ⛔ 결론 — CI 다운로드는 봇월로 불가(실증 확정, 2026-07-06)
+E2E dry-run으로 CI 오디오 다운로드를 검증한 결과 **GitHub Actions(데이터센터 IP)에서 YouTube 다운로드가 봇월("Sign in to confirm you're not a bot")에 막힘**이 확정:
+- run `28789165878` 기본(android vr) hard-block → run `28789906761` **클라이언트 로테이션**(tv,web_safari,ios) 전부 hard-block → run `28791454189` **PO 토큰**(bgutil provider, 익명 visitor) web_safari/tv/mweb 전부 hard-block.
+- 벽은 **클라이언트가 아니라 IP 평판**. spec §4 카드 ①(최신 yt-dlp)·②(로테이션)·PO토큰까지 소진. Render 등 다른 클라우드도 전부 데이터센터 IP라 동일(도망 불가).
+- ★단 **다운로드 이후(demucs·pulse·좌표·커밋·배포)는 네트워크 게이트 없음** → E2E가 다운로드 直前까지 전 스텝 green으로 실증. **다운로드만 레지덴셜(집) IP로 빼면 나머지는 100% 자동.** 집 IP 다운로드는 전곡 660 벌크로 이미 실증.
 
-### ⭐ E2E dry-run 테스트법 (레포 무변동)
-`pipeline.yml` **Actions→Run workflow**(workflow_dispatch) → inputs:
-- `test_band` = `afterglow` · `test_video` = `09B-WljIiTo`(ON YOUR MARK, 확실히 받아지는 영상)
-→ `orchestrate.py --test-band … --test-video … --dry`: 감지 건너뛰고 그 곡만 **다운로드→demucs→pulse→좌표** end-to-end 실행하되 **커밋/푸시 없음**(CI 러너 폐기 → 레포 무변동). "Load new songs" 로그에서 `✅ 성공` / `✗ 실패(다운로드 봇월)` 판정. (입력창이 뜨려면 `pipeline.yml`이 main에 있어야 함.)
+### 🔧 채택 아키텍처 — 반자동(Actions 감지·알림 + 로컬 원커맨드 처리)
+계획 원본 = `~/.claude/plans/floofy-tickling-corbato.md`. 흐름:
+1. **(Actions, 매일 23:00 KST = cron `0 14 * * *`)** `orchestrate.py --detect-only --notify` → 신곡 있으면 **미처리 신곡 전체를 요약한 Telegram 메시지 1건** 전송(다운로드 안 함).
+2. **(Local, 사용자 트리거)** 알림 받고 **명령어 한 줄** → 다운로드(집 IP)→demucs/pulse→좌표 append→`push origin main` → `deploy.yml` 자동 배포.
+
+**격리 원칙**: 자동화 git 활동(main 커밋·푸시)이 데브 핫픽스와 안 얽히도록 **전용 로컬 클론에서만 실행**(별개 브랜치로는 워킹트리 공유라 격리 안 됨 / 별도 GitHub 레포는 과함 — 데이터는 이 레포로 push돼야 deploy됨). 코드는 `src/tools/pipeline/`에 두어 버전관리.
+
+### 컴포넌트
+- `.github/workflows/pipeline.yml` — **감지+알림 전용으로 재작성**(오디오/PO/node 스텝 제거, cron 23:00 KST). `TELEGRAM_BOT_TOKEN`·`TELEGRAM_CHAT_ID` secrets.
+- `src/tools/pipeline/run_local.py`(신규) — 사용자 원커맨드. 전용 클론(기본 `../bandori-pipeline`)을 `origin/main`로 reset → cwd=클론에서 `actions/orchestrate.py` 실행. 인자 `--repo-path/--limit/--dry/--test-band/--test-video`.
+- `src/tools/pipeline/notify.py`(신규) — `send_telegram()`(urllib, 무의존). Actions·로컬 공용.
+- `actions/orchestrate.py` — `--notify`/`--notify-test`만 신설. process_song·commit_and_push·`--test-*`는 **무수정 재사용**(로컬 엔진).
+- `deploy.yml` **무변경**(로컬 push가 트리거).
+
+### 로컬 사용법
+```
+python src/tools/pipeline/run_local.py                       # 감지→다운로드~push (실제 반영)
+python src/tools/pipeline/run_local.py --test-band afterglow --test-video 09B-WljIiTo  # E2E 검증(dry)
+```
+사전조건: 오디오 스택 env(yt-dlp·node·torch/demucs·librosa·ffmpeg = `hummingbird` conda) + git push 자격.
 
 ### 남은 것
-- [ ] **위 E2E 테스트 1회** → CI 다운로드 봇월 여부 판명.
-- [ ] 봇월 시 대책(버너 쿠키/클라이언트 로테이션/셀프호스티드) — spec §4, **막힌 것 확인 후**.
-- DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(자동 불가, 필요 시 수동).
-- (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화, vestigial 제거) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
+- [ ] pipeline.yml 재작성 + run_local.py·notify.py + orchestrate `--notify` 구현.
+- [ ] 검증: Telegram 배선 · **로컬 다운로드 실증**(CI ✗였던 곡이 로컬 ✅) · 데브 레포 무접촉.
+- [ ] repo secrets `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` 등록(사용자 보유).
+- DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(수동).
+- (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
+- (폐기) 실험 브랜치 `feature/ci-download-client-rotation`(로테이션·PO토큰) — CI 다운로드 포기로 무용, 삭제 예정.
 
 ---
 

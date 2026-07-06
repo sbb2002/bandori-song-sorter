@@ -663,3 +663,27 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 ## 남은 것 (HANDOFF 작업 3)
 - **E2E dry-run 테스트 1회** → CI 다운로드 봇월 여부 판명 → 막히면 대책(버너 쿠키/클라이언트 로테이션/셀프호스티드, spec §4).
 - DRM `競宴Red×Violet` 자동 불가(fail-soft 스킵). 영구실패 재시도 상한 가드 = 후속.
+
+---
+
+# 세션 27 — CI 다운로드 봇월 확정(E2E 3회) → 반자동 전환 결정 (feature/new-song-semiauto)
+
+**작업 3 인프라(세션 26)의 마지막 미검증 = CI 오디오 다운로드 경로를 E2E dry-run으로 검증 → ⛔ 봇월 확정.** GitHub Actions(Azure 데이터센터 IP)에서 YouTube 다운로드가 `Sign in to confirm you're not a bot` hard-block에 막힘. 대책(spec §4)을 약→강으로 실증 소진 후 **반자동(다운로드만 로컬 레지덴셜 IP)** 아키텍처로 전환 결정.
+
+## E2E 실증 3회 (전부 `--dry`, 레포 무변동)
+`gh workflow run pipeline.yml --ref <branch> -f test_band=afterglow -f test_video=09B-WljIiTo` (ON YOUR MARK, 확실히 받아지는 영상).
+- **run `28789165878`(main)**: 기본 클라이언트 → `[youtube] Downloading android vr player API JSON`에서 `hard-block(block)` rc=2. **다운로드 직전까지 전 스텝 green**(checkout·python·node·오디오스택 설치·git identity) → 벽은 오직 다운로드. demucs/pulse/좌표는 wav 없어 **미도달**(process_song이 다운로드 실패 시 즉시 return None).
+- **run `28789906761`(feature/ci-download-client-rotation, 커밋 `dfdb1e5`)**: orchestrate.py fetch_audio 호출에 `--extractor-args youtube:player_client=tv,web_safari,ios` 주입. 로테이션 **작동 확인**(로그가 web safari→ios 시도) **그러나 셋 다 hard-block**.
+- **run `28791454189`(같은 브랜치, 커밋 `6e861ed`)**: PO 토큰 — pipeline.yml에 bgutil provider Docker 기동(127.0.0.1:4416, 헬스체크 ✅), requirements `bgutil-ytdlp-pot-provider` 플러그인, 클라 `web_safari,tv,mweb`. provider 정상·클라 전환 확인됐으나 **셋 다 hard-block**.
+
+## 결론 (확정)
+- **벽 = 클라이언트가 아니라 데이터센터 IP 평판.** spec §4 카드 ①(yt-dlp 최신, CI가 이미 2026.7.4)·②(로테이션)·PO토큰(익명 visitor)까지 소진. bgutil=계정無 익명 토큰이라 안전하나 약함.
+- **Render 등 다른 클라우드도 동일**(전부 AWS/GCP/Azure 데이터센터 IP; Discord 음악봇 PaaS 사례 다수). 클라우드로는 도망 불가.
+- **본계정 PO토큰/쿠키는 부적합**: 데이터센터 IP 플래그 리스크 + PO토큰 수시간 만료(일일 cron 부적합) + 매칭 쿠키 필요 + IP가 여전히 벽. 버너 쿠키는 최후 수단으로 보류.
+- ★**핵심 확증**: 다운로드 이후(demucs·pulse·좌표·커밋·배포)는 네트워크 게이트 없음 → **다운로드만 레지덴셜(집) IP로 빼면 나머지 100% 자동.** 집 IP 다운로드는 전곡 660 벌크로 이미 실증.
+
+## 채택 = 반자동 (계획 `~/.claude/plans/floofy-tickling-corbato.md`)
+1. **(Actions, 매일 23:00 KST)** `orchestrate.py --detect-only --notify` → 미처리 신곡 요약 Telegram 1건(다운로드 안 함).
+2. **(Local, 원커맨드)** 전용 클론에서 다운로드(집 IP)→demucs/pulse→좌표 append→push main→deploy 자동.
+- 격리: 전용 로컬 클론(데브 핫픽스 워킹트리와 분리). 코드 = `src/tools/pipeline/`(run_local.py·notify.py) + orchestrate `--notify` 신설. pipeline.yml은 감지+알림 전용으로 재작성. 구현/검증 = 진행 중(HANDOFF 작업 3).
+- 폐기: 실험 브랜치 `feature/ci-download-client-rotation`(로테이션·PO토큰 커밋) — CI 다운로드 포기로 무용.
