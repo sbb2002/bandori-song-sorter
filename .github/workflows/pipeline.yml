@@ -37,6 +37,12 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          # /pause 로 일시정지된 경우 감지·알림 스킵(bot_state.json, telegram-bot.yml 이 토글).
+          if [ -f actions/bot_state.json ] && \
+             python -c "import json,sys; sys.exit(0 if json.load(open('actions/bot_state.json')).get('paused') else 1)"; then
+            echo "⏸ 일시정지 상태 — 감지·알림 스킵(/resume 로 재개)"
+            exit 0
+          fi
           python -m pip install --upgrade pip
           pip install pyyaml
           if [ "${{ github.event.inputs.notify_test }}" = "true" ]; then
