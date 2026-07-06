@@ -632,3 +632,34 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 - **방안 B(구간 tempo period)**: 프로토타입만(`section_pulse_proto.py`, tmp). millsage 172↔112 구간 검출까진 확인. 필요시 재개.
 - 볼륨 정규화 max→p95(아웃라이어 완화) 옵션.
 - onset 기본 subdivision 예외 큐레이션(`CL_ONSET_DEFDIV`).
+
+---
+
+# 세션 26 — 자동화 파이프라인(신곡 로더) 구축 + Pages 아티팩트 배포 전환 (feature/new-song-loader → main)
+
+**작업 3 인프라 완성·배포.** 리팩터로 깨진 RSS 자동화를 복구하고, full-auto **신곡 로더**(감지→데이터→emoi-map/pulse 증분→라이브)를 GitHub Actions 2워크플로우로 구축. **index.html을 Pages 아티팩트 배포로 전환(Option A)** → 자동화의 데이터-only 커밋과 사용자 핫픽스가 생성물에서 충돌하는 것을 원천 차단. deploy·감지·게이트 실증 green. **남은 것 = 오디오 경로 E2E 검증 1회**(HANDOFF 작업 3).
+
+## 버그 원인 (깨진 자동화)
+- `rss.yml`이 `db0771c`(레이아웃 리팩터 `tools/`→`src/tools/`, `data/`→`src/content/songs/`) 후 **스크립트 경로 미갱신** → `python tools/collect/youtube_rss.py` 없음으로 잡 실패(정적파일 분할 `d9f3b1b`은 무관·오해). 스크립트 내부 경로는 이미 마이그레이션됨 → **rss.yml 은퇴**(PR `--propose` 코드는 `youtube_rss.py`에 수동용 보존), `pipeline.yml`로 대체.
+
+## 5단계 배선 (기존 모듈 재사용 = 얇은 오케스트레이터, spec §3)
+- 신규 **`actions/orchestrate.py`**: ① `youtube_rss.collect_candidates()`(감지, dedup=커밋 YAML=idempotent) → ② `insert_track`(songs/*.yaml 수술삽입) → ③ `append_song_map`(좌표) → ④ `separate_drums`→`build_beat_track`→`build_dynamics`(pulse) → ⑤ **데이터-only 커밋·rebase-retry push**. **곡별 fail-soft**(공유파일 스냅샷 복원, 실패곡=흔적없이 스킵→다음 실행 재감지). fetch_audio는 단곡 인자 없어 **임시 매니페스트 1행**으로 호출, build_dynamics도 그 임시 매니페스트 `--start 0`.
+- 신규 **`src/tools/cluster/append_song_map.py`**: `build_perceptual_map.feats()` + `audio_map.json.norm`(동결) → 신곡 raw contrast/mode를 동결 공식으로 z변환 → **재다운로드 없이** `songs[]` append + **해당 밴드 centroid 재계산**(baked centroid라 focus/재생 HUD가 이 값을 읽음) + `metrics.n`. 4-space pretty-print 유지. ⚠️ **idx=전역 max+1로 CSV 끝 append** — `build_manifest` 재실행은 전역 재번호=커밋된 onset 파일명 붕괴, **금지**. **검증: `afterglow__000` 동결 norm 재현 = x16.57 y33.52 bpm123.0 = 커밋값 정확 일치.**
+
+## 워크플로우 2개
+- **`pipeline.yml`**(cron 04:00 KST + dispatch): **감지 게이트** — `pyyaml`만으로 `--detect-only` 실행, `$GITHUB_OUTPUT`의 candidates>0일 때만 setup-node+오디오스택(torch CPU·demucs·librosa…) 설치+처리 → 0곡 날 무거운 설치 스킵. `contents/issues: write`. **실증: 첫 실행 152 dedup·0곡→스킵→green.**
+- **`deploy.yml`**(main push `src/**·static/**·assets/**` + dispatch): `build.py`→루트 index.html 생성 → `_site`에 index.html+static+assets+**onsets**(런타임 lazy-fetch) 스테이징 → **upload-pages-artifact→deploy-pages**. `pages/id-token: write`. 커밋 안 하므로 push 루프 없음. **실증: 아티팩트 24.9MB 배포 성공·라이브 재배포**(https://sbb2002.github.io/bandori-song-sorter/).
+
+## Option A 전환 (사용자 조치 완료)
+- repo Settings→Pages→Source=**"GitHub Actions"** 전환 + 첫 배포 성공 확인. `.gitignore`에 `/index.html` 추가(커밋 해제 `git rm --cached`는 선택, 현재 index.html은 무해한 vestigial).
+
+## E2E dry-run 테스트 모드 (레포 무변동 검증 수단)
+- `orchestrate.py --test-band --test-video`(+`--dry` 필수): 감지 건너뛰고 지정 곡 1개 **다운로드→demucs→pulse→좌표** end-to-end 실행하되 **커밋/푸시 없음** → CI 러너 폐기로 레포 무변동. `pipeline.yml` workflow_dispatch inputs(`test_band`/`test_video`)로 트리거. **용도: CI 다운로드 봇월 여부(spec §4 미검증 리스크) 안전 관측.** 테스트법 = HANDOFF 작업 3.
+
+## 산출물
+- 신규: `actions/orchestrate.py` · `actions/requirements.txt` · `src/tools/cluster/append_song_map.py` · `.github/workflows/pipeline.yml` · `.github/workflows/deploy.yml`. 삭제: `.github/workflows/rss.yml`. 수정: `.gitignore`(+`/index.html`) · `HANDOFF.md`.
+- 로컬 env: 오디오 스택=`hummingbird` conda env(librosa/scipy/soundfile), 경량=base(pyyaml/jinja2) — 단일 env로 전체 e2e 불가, CI가 검증 무대(memory `python-envs`).
+
+## 남은 것 (HANDOFF 작업 3)
+- **E2E dry-run 테스트 1회** → CI 다운로드 봇월 여부 판명 → 막히면 대책(버너 쿠키/클라이언트 로테이션/셀프호스티드, spec §4).
+- DRM `競宴Red×Violet` 자동 불가(fail-soft 스킵). 영구실패 재시도 상한 가드 = 후속.

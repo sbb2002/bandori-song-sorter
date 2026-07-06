@@ -2,8 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-06(세션 26)** — **작업 3 착수(자동화 파이프라인 = 신곡 로더)**: 브랜치 `feature/new-song-loader`. 깨진 `rss.yml`(리팩터 `db0771c` 후 경로 `tools/`→`src/tools/` 미갱신) 복구 + **full-auto 5단계**(감지→songs/ 반영→emoi-map 좌표·centroid 증분 append→pulse-onset 프리셋→main). **자동화=데이터 파일만 커밋** + **index.html은 Pages 아티팩트 배포(Option A)**로 핫픽스 충돌 회피. 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md) + 세션 플랜.
-> **⏭ 진행 중 = 작업 3.** 신규 `append_song_map.py`(동결 `norm` 증분 좌표+centroid) + `actions/orchestrate.py` + `.github/workflows/{pipeline,deploy}.yml`. 세부 = § 작업 3.
+마지막 갱신: **2026-07-06(세션 26)** — **작업 3 인프라 완성·배포**(→ [done.md](done.md) 세션 26): full-auto 신곡 로더(감지→songs/→emoi-map 좌표·centroid→pulse→main) + **Pages 아티팩트 배포 전환(Option A)** 구축·**라이브 확인**. 깨진 `rss.yml`(리팩터 `db0771c` 후 경로 미갱신) 은퇴→`pipeline.yml`, 신규 `deploy.yml`·`actions/orchestrate.py`·`append_song_map.py`. deploy·감지·게이트 실증 green. **남은 것 = E2E dry-run 테스트 1회로 CI 다운로드 봇월 여부 판명 + (막히면) 대책.**
+> **⏭ 다음 = 작업 3 검증(§ 작업 3의 'E2E 테스트법').** `pipeline.yml` workflow_dispatch(`test_band`/`test_video`)로 dry-run E2E 실행 → 레포 무변동으로 다운로드→demucs→pulse→좌표 전 과정 관측.
 이전: (2026-07-05 세션 25) 음원맵 클러스터링/재생펄스 완결 + main 머지: 전곡 **660곡** 좌표·펄스 + 렌더 lazy-fetch(index.html 0.30MB) + 에너지 동적 subdivision(음량→박/8분) + 볼륨 프리셋 4단계. done 24~25 · [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
 이전: (2026-07-04) 재생 펄스 파일럿 → 세션 23 방안 A 완성. (2026-07-03 17:00) 작업 1(D) 레이아웃 확정 + 정적파일 분할 main 머지(done 22).
 
@@ -28,7 +28,7 @@
 |------|------|------|
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
-| 3. 자동화 파이프라인 | 🚧 **진행 중**(세션 26 · `feature/new-song-loader`) | § 작업 3 · [spec](spec/pipeline-automation.md) |
+| 3. 자동화 파이프라인 | 🔬 **인프라 완성·배포**(세션 26, done 26) → **E2E 검증 대기** | § 작업 3 · [spec](spec/pipeline-automation.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -83,30 +83,24 @@
 - ✅ 완료: UX 센트로이드 클릭 비활성+반투명(done 23), HUD·펄스 연출.
 - (선택) 구 미사용 폐기: `keywords_2d.json` · `build_embeddings.py` · `build_audio_map.py`.
 
-## 작업 3. 자동화 파이프라인 — 신곡 로더 (🚧 진행 중, 세션 26)
-**브랜치 `feature/new-song-loader`.** RSS 감지→데이터 반영→emoi-map/pulse 증분→라이브를 full-auto로. **설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md)**(필독) + 세션 플랜. 작업 2(전곡 빌드+`norm` 동결)에 의존 — 완료됨.
+## 작업 3. 자동화 파이프라인 — 신곡 로더 (🔬 인프라 완성·배포, E2E 검증 대기)
+**상세 구현·배선 = [done.md](done.md) 세션 26.** full-auto 신곡 로더(감지→songs/→emoi-map 좌표·centroid→pulse→main) + Pages 아티팩트 배포(Option A) **구축·라이브 확인 완료.** 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md). 작업 2(전곡 빌드+`norm` 동결)에 의존 — 완료됨.
 
-### 확정 방향 (세션 26)
-- **full-auto(auto-merge, PR 게이트 없음)** + **전부 GitHub Actions**(신곡 월 2~4곡, fail-soft; 봇월 막히면 그때 대책).
-- **자동화 = 데이터 파일만 커밋**(songs/·songs_full.csv·audio_map.json·onsets/) + **index.html은 레포서 빼고 Pages 아티팩트 배포(Option A)** → 자동화 커밋 ↔ 사용자 핫픽스 충돌 원천 차단 + `[skip ci]` 루프 불필요. ⚠️ **사용자 1회 조치**: repo Settings→Pages→Source="GitHub Actions".
+### 배포·검증 현황
+- ✅ **deploy.yml**: `build.py`→Pages **아티팩트 배포 실증 성공**(라이브 재배포). Pages Source="GitHub Actions" 전환됨. index.html은 레포서 커밋 안 함(gitignore) = 핫픽스 충돌 회피.
+- ✅ **pipeline.yml**: 감지+게이트 실증(첫 실행 0곡→오디오스택 설치 스킵→green).
+- ⏳ **미검증**: 오디오 다운로드→demucs→pulse→좌표 경로(신곡 0곡이라 아직 안 밟힘) = **CI 다운로드 봇월 여부**(spec §4 리스크).
 
-### 5단계 배선 (기존 모듈 재사용 = 얇은 오케스트레이터)
-1. **감지**: `youtube_rss.collect_candidates()` 재사용(dedup=커밋된 YAML, idempotent recompute).
-2. **songs/ 반영**: `youtube_rss.insert_track`로 `<band>.yaml` 수술 삽입.
-3. **emoi-map 증분**: 신규 `append_song_map.py` — `build_perceptual_map.feats()`+동결 `norm`(audio_map.json에 이미 저장)으로 좌표 산출 → `songs[]` append → **해당 밴드 centroid 재계산**(focus/재생 HUD 자동 반영). ⚠️ **idx=max+1로 CSV 끝에 append** — `build_manifest` 재실행은 전역 재번호=onset 파일명 붕괴, **금지**.
-4. **pulse 프리셋**: `separate_drums`→`build_beat_track`→`build_dynamics --start<행> --count1` (전역 정규화 상수 `DB_LO/HI`라 단곡 고립 처리 가능).
-5. **반영**: 데이터-only 커밋 → push(rebase-retry) → `deploy.yml`이 `build.py`+Pages 배포.
+### ⭐ E2E dry-run 테스트법 (레포 무변동)
+`pipeline.yml` **Actions→Run workflow**(workflow_dispatch) → inputs:
+- `test_band` = `afterglow` · `test_video` = `09B-WljIiTo`(ON YOUR MARK, 확실히 받아지는 영상)
+→ `orchestrate.py --test-band … --test-video … --dry`: 감지 건너뛰고 그 곡만 **다운로드→demucs→pulse→좌표** end-to-end 실행하되 **커밋/푸시 없음**(CI 러너 폐기 → 레포 무변동). "Load new songs" 로그에서 `✅ 성공` / `✗ 실패(다운로드 봇월)` 판정. (입력창이 뜨려면 `pipeline.yml`이 main에 있어야 함.)
 
-### 산출물
-- 신규: `src/tools/cluster/append_song_map.py` · `actions/orchestrate.py` · `.github/workflows/pipeline.yml`(rss.yml 대체) · `.github/workflows/deploy.yml`.
-- 수정: `.gitignore`(+`/index.html`; 안전순서=Pages 전환·첫 배포 성공 후 `git rm index.html`) · rss.yml 은퇴(PR `--propose` 코드는 수동용 보존).
-- **버그 원인**: rss.yml이 `db0771c`(tools/→src/tools/) 후 경로 미갱신 → `tools/collect/youtube_rss.py` 없음으로 잡 실패. 스크립트 내부 경로는 이미 마이그레이션됨.
-
-### 리스크/보류
-- 다운로드 봇월(spec §4): CI IP 차단 시 fail-soft 스킵·재시도. 대책(버너 쿠키/클라이언트 로테이션/셀프호스티드)은 **막힌 것 확인 후**.
+### 남은 것
+- [ ] **위 E2E 테스트 1회** → CI 다운로드 봇월 여부 판명.
+- [ ] 봇월 시 대책(버너 쿠키/클라이언트 로테이션/셀프호스티드) — spec §4, **막힌 것 확인 후**.
 - DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(자동 불가, 필요 시 수동).
-- torch/demucs CI 설치 무게(저볼륨 허용) · 영구실패 재시도 상한 가드 = 후속 TODO.
-- (정리) 옛 프로토타입 untracked 잔재 `rss_seen.json`·`rss_inbox.csv`·`verify_cache.json` 삭제 가능.
+- (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화, vestigial 제거) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
 
 ---
 
