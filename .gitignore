@@ -35,5 +35,11 @@ src/content/cluster/_*
 # 오디오 수집 진행상태(로컬 실시간 조회용, fetch_audio.py 매 곡 갱신) — 비커밋
 src/content/cluster/fetch_progress.json
 
+# 배포 산출물 — index.html 은 build.py 생성물(Pages 아티팩트로 배포, Option A).
+# 자동화는 데이터 파일만 커밋 → 핫픽스와 생성물 충돌 회피.
+# ⚠️ 커밋 해제(git rm --cached index.html)는 Pages Source="GitHub Actions" 전환 +
+#    deploy.yml 첫 배포 성공 확인 후에(그 전엔 deploy-from-branch 가 이 파일을 서빙).
+/index.html
+
 # Secrets
 .env

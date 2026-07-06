@@ -1,0 +1,63 @@
+name: New-song loader
+
+# 매일 04:00 KST(=19:00 UTC) + 수동. rss.yml(PR 제안, db0771c 후 경로깨짐)을 대체하는
+# full-auto 파이프라인: 감지 → 오디오 수집 → emoi-map 좌표·centroid + pulse 증분 → main.
+# **데이터 파일만 커밋**(index.html 재빌드·배포는 deploy.yml 이 Pages 아티팩트로 담당).
+on:
+  schedule:
+    - cron: '0 19 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write        # songs/·cluster 데이터 파일 커밋
+  issues: write          # 파싱 이상 헬스 알람(open_health_issue)
+
+concurrency:
+  group: new-song-loader
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # 데이터 커밋을 origin/main 최신 위로 rebase 하려면 전체 ref
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: actions/requirements.txt
+
+      # 감지는 pyyaml 만으로 가볍게 → 신곡 0곡이면 무거운 오디오 스택(torch/demucs) 설치를 건너뛴다.
+      - name: Detect new songs (light)
+        id: detect
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+          python actions/orchestrate.py --detect-only
+
+      - uses: actions/setup-node@v4
+        if: steps.detect.outputs.candidates != '0' && steps.detect.outputs.candidates != ''
+        with:
+          node-version: '20'    # yt-dlp nsig 서명 해독(없으면 403 다발)
+
+      - name: Install audio stack
+        if: steps.detect.outputs.candidates != '0' && steps.detect.outputs.candidates != ''
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r actions/requirements.txt
+
+      - name: Configure git identity
+        if: steps.detect.outputs.candidates != '0' && steps.detect.outputs.candidates != ''
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # 곡별 fail-soft: 다운로드가 CI IP 봇월에 막히면 그 곡만 스킵·다음 실행 재시도(감지는 멱등).
+      - name: Load new songs (audio → map/pulse → commit)
+        if: steps.detect.outputs.candidates != '0' && steps.detect.outputs.candidates != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python actions/orchestrate.py

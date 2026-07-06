@@ -1,0 +1,11 @@
+# 신곡 로더 오케스트레이터(actions/orchestrate.py) CI 의존성.
+# torch(CPU)는 워크플로우에서 별도 index-url 로 먼저 설치(demucs 가 이를 재사용).
+# 오디오 원본=저작물 → 분석 후 폐기(캐시 gitignore), 커밋되는 건 파생 좌표/onset 뿐.
+pyyaml           # youtube_rss / append 데이터 로드
+yt-dlp           # 신곡 오디오 수집(fetch_audio)
+imageio-ffmpeg   # ffmpeg 바이너리(PATH 없을 때)
+numpy
+scipy            # build_dynamics(intensity 곡선 평활)
+librosa          # feats / beat 그리드 / RMS
+soundfile        # 드럼 스템 write
+demucs           # 드럼 스템 분리(separate_drums; torch 의존)

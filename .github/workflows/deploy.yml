@@ -1,0 +1,59 @@
+name: Build & deploy (Pages)
+
+# main push(소스/데이터 변경) 또는 수동 시 build.py 로 index.html 을 생성해 GitHub Pages
+# **아티팩트로 배포**한다. index.html 은 레포에 커밋하지 않음(Option A) → 자동화 데이터 커밋과
+# 사용자 핫픽스가 생성물에서 충돌하지 않고, 배포가 커밋을 안 하므로 push 루프도 없다.
+# ⚠️ 최초 1회: repo Settings → Pages → Source = "GitHub Actions" 로 전환해야 함.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'         # build.py · templates · content(songs/wordcloud/cluster/onsets)
+      - 'static/**'      # css · js
+      - 'assets/**'      # 앨범 이미지 · 아이콘
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build deps
+        run: pip install pyyaml jinja2
+
+      - name: Build index.html
+        run: python src/build.py
+
+      # 서빙 트리만 스테이징: index.html + static + assets + onsets(런타임 lazy-fetch).
+      # cluster/wordcloud/song 데이터는 index.html 에 인라인되므로 별도 포함 불필요.
+      - name: Stage site
+        run: |
+          mkdir -p _site/src/content/cluster
+          cp index.html _site/
+          cp -r static _site/
+          cp -r assets _site/
+          cp -r src/content/cluster/onsets _site/src/content/cluster/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
