@@ -128,6 +128,7 @@ python src/tools/pipeline/run_local.py --test-band afterglow --test-video 09B-Wl
 - DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(수동).
 - (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
 - (미검증) `/pause`·`/resume`의 상태 커밋 경로(bot_state.json push) — 실사용 시 확인.
+- (사용자 코멘트) 다운로드 이후 분석 및 데이터 푸쉬 작업을 진행하는 별도의 파일도 필요함. 왜냐하면 일부 로컬에서 분석 라이브러리를 구동할 환경이 안될 수도 있기 때문임. 현재 만든 파일도 유지할 것.
 
 ---
 
