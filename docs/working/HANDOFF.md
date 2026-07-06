@@ -111,15 +111,23 @@ E2E dry-run으로 CI 오디오 다운로드를 검증한 결과 **GitHub Actions
 python src/tools/pipeline/run_local.py                       # 감지→다운로드~push (실제 반영)
 python src/tools/pipeline/run_local.py --test-band afterglow --test-video 09B-WljIiTo  # E2E 검증(dry)
 ```
-사전조건: 오디오 스택 env(yt-dlp·node·torch/demucs·librosa·ffmpeg = `hummingbird` conda) + git push 자격.
+사전조건: 오디오 스택 env(yt-dlp·node·torch/demucs·librosa·ffmpeg, 이 장치는 base miniconda에 전부 있음) + git push 자격.
 
-### 남은 것
-- [ ] pipeline.yml 재작성 + run_local.py·notify.py + orchestrate `--notify` 구현.
-- [ ] 검증: Telegram 배선 · **로컬 다운로드 실증**(CI ✗였던 곡이 로컬 ✅) · 데브 레포 무접촉.
-- [ ] repo secrets `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` 등록(사용자 보유).
+### Telegram 명령 봇 (라이브)
+상시 서버 없이 Telegram 명령을 **Actions 5분 폴링**(`telegram-bot.yml` cron `*/5`, public 레포=무료)으로 처리. `src/tools/pipeline/telegram_bot.py`가 `getUpdates`+ack(무상태)·**인가 chat_id만**. 응답 지연 ~5~15분(GitHub 크론 best-effort).
+- `/help` · `/detect`(감지 수동+결과·예외 응답) · `/status`(주기·상태) · `/pause` · `/resume`.
+- 일시정지 = `actions/bot_state.json {paused}`(deploy 경로 밖, 봇이 [skip ci] 커밋). `pipeline.yml`이 읽어 paused면 감지·알림 skip. `/pause`는 **일일 감지만** 멈춤(봇 폴러는 계속 = `/resume` 수신).
+- 브릿지는 **폴링 채택**(웹훅+Cloudflare Worker 대안은 즉시 응답이나 인프라+1). 즉시 실행 = `gh workflow run telegram-bot.yml`.
+
+### 상태 — ✅ 반자동 + 봇 완료·라이브
+- ✅ 구현·머지: pipeline.yml(감지+알림) · run_local.py · notify.py · orchestrate `--notify` · telegram_bot.py (main).
+- ✅ 검증: 로컬 다운로드 실증(CI ✗ 곡이 로컬 ✅) · 데브 레포 격리 · Telegram 알림/명령 전송(run 28796418124·28798948000).
+- ✅ secrets `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` 등록.
+
+### 남은 것 (선택·후순위)
 - DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(수동).
 - (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
-- (폐기) 실험 브랜치 `feature/ci-download-client-rotation`(로테이션·PO토큰) — CI 다운로드 포기로 무용, 삭제 예정.
+- (미검증) `/pause`·`/resume`의 상태 커밋 경로(bot_state.json push) — 실사용 시 확인.
 
 ---
 
