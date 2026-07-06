@@ -165,8 +165,8 @@ def main() -> int:
     except (urllib.error.URLError, OSError, ValueError) as e:
         print(f"[bot] getUpdates 실패: {e}")
         return 1
+    print(f"[bot] getUpdates: {len(updates)}건 수신", flush=True)
     if not updates:
-        print("[bot] 새 명령 없음")
         return 0
 
     state_changed = False
@@ -180,6 +180,7 @@ def main() -> int:
             print(f"[bot] 무시(비인가 chat={chat})")
             continue
         if not text.startswith("/"):
+            print(f"[bot] 비명령 메시지 skip: {text[:20]!r}")
             continue
         cmd = _cmd_of(text)
         print(f"[bot] 명령: {cmd}")
