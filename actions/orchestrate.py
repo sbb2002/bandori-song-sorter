@@ -265,7 +265,32 @@ def main(argv=None) -> int:
     ap.add_argument("--dry", action="store_true", help="처리까지 하되 git 커밋/푸시 안 함")
     ap.add_argument("--detect-only", action="store_true", help="감지 목록만(오디오·git 없음)")
     ap.add_argument("--limit", type=int, default=0, help="이번 실행 처리 최대 곡 수(0=전체)")
+    ap.add_argument("--test-band", default=None, help="[테스트] 감시 밴드 중 하나")
+    ap.add_argument("--test-video", default=None,
+                    help="[테스트] video_id 또는 URL — 감지 건너뛰고 이 곡만 강제 처리(--dry 필수)")
     a = ap.parse_args(argv)
+
+    # ── [테스트] 강제 처리: 감지를 건너뛰고 지정 곡 1개를 end-to-end 실행(다운로드·demucs·
+    #    펄스·좌표). --dry 강제 → 커밋/푸시 없음. CI 러너는 작업트리를 폐기하므로 레포 무변동.
+    if a.test_video:
+        if not a.dry:
+            print("‼️ 테스트 모드는 안전을 위해 --dry 필수(레포 데이터 커밋 안 함).")
+            return 1
+        band = a.test_band
+        if band not in rss.BAND_CHANNELS:
+            print(f"‼️ --test-band 는 감시 밴드 중 하나여야 함: {list(rss.BAND_CHANNELS)}")
+            return 1
+        vid = rss.video_id(a.test_video) or a.test_video       # URL이면 id 추출
+        _, _, band_file = rss.load_existing()
+        cand = {"band": band, "video_id": vid, "name": f"[TEST] {vid}",
+                "published": datetime.date.today().isoformat(), "variant": "",
+                "length_s": None, "url": rss.WATCH_PAGE.format(vid), "is_cover": False}
+        idx = next_idx(csv_rows())
+        print(f"▶ [TEST/dry] {band} · {vid} → idx {idx}  "
+              f"(커밋 없음 · 작업트리 변경은 러너 폐기 시 소멸)")
+        res = process_song(cand, idx, band_file)
+        print(f"\n테스트 결과: {'✅ 성공(다운로드·펄스·좌표 전 과정 통과)' if res else '✗ 실패 — 위 로그 확인(다운로드 봇월 등)'}")
+        return 0
 
     # ── 감지(dedup=커밋된 YAML, idempotent) ──
     candidates, drops, health, band_file = rss.collect_candidates(set(), scrape_length=True)
