@@ -32,7 +32,7 @@
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(단일 크론 봇+감지+알림 · 로컬 처리·결과 Telegram) | § 작업 3 · [spec](spec/pipeline-automation.md) |
-| 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | § 작업 4 |
+| 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | [done 29](done.md) |
 | 5. EMOI-MAP 좌표계 고찰 | 🚧 **계획·다음 세션**(feature/emoi-map-starfield) | § 작업 5 · [260708](../idea/260708-final_comment.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
@@ -137,14 +137,10 @@ python src/tools/semiauto-loader/run_local.py --test-band afterglow --test-video
 
 ---
 
-## 작업 4. EMOI-MAP 딥스페이스/별 시각화 — ✅ 완료·main 머지 (104e709, 세션 29)
-**상세 = [done.md](done.md) 세션 29.** 곡 점=에너지 비례 글로우 별 + 뒤 canvas 별밭(`#cl-starfield`) + 밴드 성운 + Ave Mujica EMOI-MAP 전용 색(`#e64c8c`, 전역 `BAND_COLORS` 불변). 별 밝기 = onset `dyn.v` percentile(`add_energy.py` → `audio_map.json songs[].energy`, base env). 핵심 = `songMark`·`_clSky*`/`_clBuildStarfield`·`_clSetNebula`(`16-audiomap.js`) · `.cluster-wrap` 딥스페이스+z-index 스택(`desktop.css`). 롤백 = `songMark` 고정 size/op·`.cluster-wrap` 배경 복귀·`_clBuildStarfield` 미호출. 계획 원본 `~/.claude/plans/emoi-map-proud-valley.md`.
-
----
-
 ## 작업 5. EMOI-MAP 좌표계 고찰 — 🚧 계획 (다음 세션 · feature/emoi-map-starfield)
 Millsage·Ikka 1곡 밴드 좌표가 귀와 어긋남 → 근본 원인 = **실질 1.x차원**(contrast가 밝음·거칢 양쪽 지배) + **energy/tempo 지각축 feature 부재**(cluster-correlation 보고서).
 - **문서(실행 기준)** = `docs/idea/260708-final_comment.md`(fable×opus 통합). 원 문제 `260708.md` · 개별 코멘트 `260708-{fable,opus}_comment.md`.
+- **참고(작업 4 연계 · done 29)**: 별 시각화가 베이스 — `16-audiomap.js`(`songMark`·`_clSky*`/`_clBuildStarfield`·`_clSetNebula`) + 곡 `energy`가 `add_energy.py`로 `songs[].energy`에 이미 baked(660/660). Phase A(범례·라벨)·B(`y_energy` 토글)가 이 위에 얹힘.
 - **Phase A**(즉시·base env): 축 라벨 정직화(`axes.{x,y}` 괄호 한정) + energy 범례/툴팁 + n=1 처방(overrides·잠정 별). **Phase B0**: onset 파생 후보(E1~E3) × 기존 n=28 라벨 스크리닝 검정. **Phase B**: y축 에너지 토글(raw dyn.v z-score → `y_energy`, `_clYMode`). **Phase C**(완비 로컬·hummingbird env): 정식 LRA·tempogram 추출 + 라벨 확대 확정검정 → report(`report/cluster-energy-axis/`).
 - **편집 규칙 동일**: `16-audiomap.js`·`desktop.css` 직접수정(리빌드 ✗) · `audio_map.json` 변경만 `python src/build.py`.
 - ⚠️ **오디오 캐시 폐기 보류**: Phase C 전까지 완비 로컬 `audio_full`(285/660 이 로컬 · 660 완비 로컬) 유지 — 정식 LRA/tempogram 원본 필요.
