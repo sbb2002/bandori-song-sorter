@@ -2,7 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-07(세션 29)** — **작업 4(EMOI-MAP 딥스페이스/별 시각화) 완료·main 머지(`104e709` · done 29)**: 곡 점=곡 에너지 비례 글로우 별 + 뒤 canvas 별밭 + 밴드 성운 + Ave Mujica EMOI-MAP 전용 색(`#e64c8c`). **작업 5 신규 등록**: EMOI-MAP 좌표계 고찰(`docs/idea/260708-final_comment.md`) — 라벨 정직화·y축 에너지 토글·새 지각축(LRA/tempogram) 연구, **다음 세션 `feature/emoi-map-starfield`에서 이어감**.
+마지막 갱신: **2026-07-07(세션 30)** — **작업 5(EMOI-MAP 좌표계 고찰) 완료·main 머지(`172684e` · done 30)**: Phase A(맵 정직화 — 축 라벨 괄호 한정·energy 명도/툴팁/범례·n=1 override·ave_mujica 원색) 라이브 + B0·C 정서축 연구 = **timbre×valence 확정, arousal 독립축 불가 확증**("실질 1.x차원": contrast가 rough·energy·tempo·valence 4라벨 지배, 측정 템포≠지각 템포). **결정: x=timbre·y=valence 유지, arousal 새 축 없음.** 논문 [emotion-axes-extraction.md](../research/emotion-axes-extraction.md). 두 조사 데이터 보관(onset_features 660·phasec_features 30·audio_full 15GB 로컬). **밴드 시각화 본류 = 일단락.**
+이전: **2026-07-07(세션 29)** — 작업 4(EMOI-MAP 딥스페이스/별 시각화) 완료·main 머지(`104e709` · done 29): 곡 점=곡 에너지 비례 글로우 별 + 뒤 canvas 별밭 + 밴드 성운 + Ave Mujica 전용 색.
 이전: (세션 28) **작업 3 반자동 파이프라인 운영화·라이브**(done 28): 봇 정리(`/detect` deprecated·제거 · `/pause`+`/resume` 순서쌍 상쇄 · 감지 0곡도 알림) + **5분 폴러 폐지→단일 23:00 크론 통합**(`telegram-bot.yml` 제거, 명령 처리를 `pipeline.yml` 맨 앞으로 흡수 → 명령→감지→알림이 한 실행) + `src/tools/pipeline`·루트 `actions/` → **`src/tools/semiauto-loader/`** 통합(+폴더 README) + run_local 결과 실시간 로그·0건/반영/실패 구분·**로컬 처리 결과 텔레그램 통지**(notify가 repo 루트 `.env` 자동 로드).
 > **⏭ 다음 = (선택) 분석-only 로컬 스크립트**(다운로드 이후 분석·push만 — 분석 라이브러리 없는 로컬 대비, § 작업 3 '남은 것') · DRM 1곡 수동. **반자동 본류는 완료·라이브.**
 > ⏭ **작업 5 = EMOI-MAP 좌표계 고찰**(260708): 라벨 정직화·y축 에너지 토글·새 지각축 연구 — **다음 세션 `feature/emoi-map-starfield`에서 이어감**(문서 `docs/idea/260708-final_comment.md`, Phase A→B0→B→C). § 작업 5.

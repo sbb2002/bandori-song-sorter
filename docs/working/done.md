@@ -747,3 +747,31 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 
 ## 상태
 ✅ 완료·main 머지·푸시(104e709). 후속 = **작업 5 EMOI-MAP 좌표계 고찰**(260708, HANDOFF § 작업 5) — 다음 세션 `feature/emoi-map-starfield`에서.
+
+---
+
+# 세션 30 — 작업 5: EMOI-MAP 좌표계 고찰 (Phase A 정직화 + B0·C 정서축 연구) · main 머지 172684e (2026-07-07)
+
+작업 5 완결. 브랜치 사슬 A(`feature/emoi-map-starfield`) → B0(`feature/emoi-cluster-energy-tempo`) → C(`feature/emoi-starfield-timbre-valence`) → main(`--no-ff` 172684e, Pages 배포). 상세·판정·재현은 논문 [../research/emotion-axes-extraction.md](../research/emotion-axes-extraction.md).
+
+## Phase A — 맵 정직화 (라이브, 커밋 a6ad2bf)
+- **축 라벨 괄호 한정**: x `거칢(음색)`/`매끄러움(음색)`, y `밝음(장조)`/`어두움(단조)` — "리듬의 거칢"·"경쾌=밝음" 오독 차단.
+- **energy 노출**: 툴팁 `· 에너지 NN%`(`songMark._e`) + 헤더 범례 칩 `★ 밝기·크기 = 곡 에너지`(`_clBuildEnergyLegend`·`.am-legend`) + **코어 색 명도 = energy**(`_clEnergyColor` L 0.40~0.82, hue/채도 유지, `_clPulseColor` L오버라이드 재사용).
+- **n=1 override**: millsage `dx=−18`(x 13.93→−4.07), ikka `dy=+18`(y −9.28→+8.72). 근거 1지각점≈18좌표(norm k=25·좌표 σ≈24·r회귀). `overrides`+`norm.overrides`+baked 좌표+`BAND_OVERRIDES` 일관 기록, **만료=n≥5**. 잠정 별 = centroid n<3 반투명(×0.5)+툴팁 `n=1·잠정`.
+- **ave_mujica** EMOI-MAP 색 오버라이드(#e64c8c) 제거 → 원 지정색 `#881144`(와인) 복귀(명도 변조가 가시성 보정 대체, `CL_COLOR_OVERRIDE={}`).
+- 파일: `audio_map.json`(+build.py)·`16-audiomap.js`·`desktop/mobile.css`·`build_perceptual_map.py`. 브라우저 실검수 통과.
+
+## Phase B0 — onset 파생 arousal 스크리닝 (전멸, 커밋 98290d9)
+- onset JSON 파생 9종(E1 mean·E2 LRA근사·E3 온셋밀도·dyn std/p90/p10·ACF pulse_bpm·librosa tempo) × 손라벨 energy/tempo(n=30) → **PASS 0/9**. 원인 = `dyn.v`가 재생펄스용 곡별 정규화값이라 절대 에너지 씻김.
+- 산출 `report/cluster-energy-axis/`(onset_features.csv 660·correlation·screening.png). 도구 `b0_{onset_features,correlate,plot}.py`.
+
+## Phase C — 정식 오디오 feature 3정서축 (timbre×valence 확정 / arousal 불가, 커밋 c4031b0)
+- `audio_full` 원본에서 정식 feature 18종(LUFS·LRA·rms변동·tempogram·VBL·HPSS + `timbre()`·`mode_valence()` 재사용) × 손라벨 4축(rough/valence/energy/tempo, n=30, 곡당 ~4.4s).
+- **Timbre** `contrast`×rough r=**−0.815** PASS · **Valence** `mode`×valence r=**+0.576** PASS(합성 mode+centroid+harmonic R=0.595 미개선 → mode 유지).
+- **Arousal 탈락**: 전용 feature(LUFS·LRA·tempo_acf·VBL·rms변동) 전멸 · **측정 템포 tempo_acf×지각 tempo r=0.087**(측정≠지각) · 지각 energy/tempo는 스펙트럴 밝기(centroid·rolloff r≈0.6)가 잡으나 **contrast와 collinear(r≈0.52)라 독립 축 아님**.
+- **"실질 1.x차원" 확증**(contrast가 rough·energy·tempo·valence 4라벨 지배). **결정**: x=timbre·y=valence 유지, arousal 새 축 없음, Millsage·Ikka는 Phase A override가 최종.
+- 논문 `docs/research/emotion-axes-extraction.md`. 산출 `report/emotion-axes/`. 도구 `phasec_{features,correlate,plot}.py`(`--full`로 전곡 추출 가능·진행률/pause·resume).
+
+## 데이터 보관 (사용자 요청 — 폐기 금지)
+- 두 조사 데이터 커밋 보존: `onset_features.csv`(660) · `phasec_features.csv`(30) · 각 correlation/png.
+- `audio_full`(660·15GB) 로컬 보존(gitignore). 전환성 `*_progress.json`·`*_control.json`만 gitignore.
