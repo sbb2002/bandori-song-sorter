@@ -775,3 +775,30 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 ## 데이터 보관 (사용자 요청 — 폐기 금지)
 - 두 조사 데이터 커밋 보존: `onset_features.csv`(660) · `phasec_features.csv`(30) · 각 correlation/png.
 - `audio_full`(660·15GB) 로컬 보존(gitignore). 전환성 `*_progress.json`·`*_control.json`만 gitignore.
+
+---
+
+# 세션 31 — done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix (2026-07-08, fix/emoi-map-labels-pulse → main)
+
+작업 1·2·3·5의 본류 완료를 git·done 대조로 확인하고, HANDOFF의 완료 상세 절을 done 참조로 축약(readme 규칙 적용).
+
+## 완료 확인
+- **작업 1**(워드클라우드) = 완전 완료(done 20·22), 잔여 없음.
+- **작업 2**(음원맵 전곡) = 완결·동결(done 23), v3b→main 머지됨. 잔여는 선택적 구파일 폐기뿐.
+- **작업 3**(반자동 파이프라인) = 운영화 완료·라이브(done 26·27·28).
+- **작업 5**(좌표계 고찰) = A·B0·C 완료·머지(`172684e`, done 30).
+
+## 부분 미완 1건 (본류 밖 · 백로그 이동)
+- **작업 3 분석-only 로컬 스크립트**: HANDOFF에 `(사용자 요청)`으로 명시됐으나 **미구현**. 반자동 본류(감지→알림→`run_local.py` 일체형 처리)는 라이브지만, 다운로드/분석 역할 분리 편의 스크립트는 아직 없음. 본류 밖이라 § 보류·백로그로 이동.
+- 기타 잔여(DRM 1곡·구파일 정리·재시도 가드 등)도 전부 선택 → § 보류·백로그로 통합.
+
+## 문서 변경
+- HANDOFF: 갱신선 세션 31 추가 + § 작업 1·2·3·5 상세 절을 요약+done/spec/논문 링크로 축약 · 완료된 과거 실행 기록(구 '병렬 실행 계획' 블록) 제거 · 선택 잔여를 § 보류·백로그로 집약.
+- done: 본 세션 31 항목 append.
+
+## EMOI-MAP minor fix (사용자 요청 3건 + research 규칙)
+- **축 라벨 표현 개선**(`audio_map.json` axes): x `거칢(음색)/매끄러움(음색)` → `음색이 거친/음색이 부드러운`, y `밝음(장조)/어두움(단조)` → `발랄한 느낌/진지한 느낌`. `python src/build.py`로 index.html(CLUSTER_DATA baked) 재생성 → 4모서리 축 라벨(`_clAxisLabels`)·방향 화살표 라벨 자동 반영. (index.html=gitignore, deploy가 CI 재빌드.)
+- **재생 HUD 밴드평균 기준화**(`16-audiomap.js` `_clUpdateHud`): 재생곡 절대좌표 표시 → 밴드 평균점(centroid) 대비 편차로 변경. `밴드 평균점으로부터 거리 r` · `밴드 평균보다 |dx|만큼 거침(부드러움)` · `밴드 평균보다 |dy|만큼 발랄함(진지함)`(편차 부호로 거침↔부드러움·발랄↔진지 단어 선택).
+- **펄스 16분 주석 비활성**(`_clDynLevel`·상수): 이미 `CL_DYN_MAX=1`로 16분(레벨2)이 clamp돼 박/8분만 표시되던 상태 → 계산 경로는 유지하고 주석으로 "clamp 비활성" 명확화(사용자 지시=제거 말고 주석 정도). `CL_DYN_MAX=2`로 올리면 16분 부활.
+- **research 작성 규칙**(`docs/research/README.md`): 논문 양식(초록→동기→방법→실험여정[판정 이모지]→전환점→최종방법→한계→재현)·승격 기준(report에서 "고민한 탐색"만)·문체 원칙(시간순 서사·음의결과 보존·절대날짜) 명문화 + emotion-axes-extraction.md 등재.
+- 밴드 포커스 HUD·부제·주석의 옛 용어(거침/밝음)는 요청 범위 외라 미변경.
