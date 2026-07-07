@@ -6,7 +6,7 @@ name: New-song loader (commands + detect + notify)
 # 않았음 — 폴러 제거, 명령 처리를 이 크론 맨 앞으로 흡수.)
 # CI(데이터센터 IP)에서 YouTube 다운로드는 봇월로 불가함이 실증됨(세션 27, E2E 3회 hard-block)
 # → 이 워크플로우는 **명령 처리 + 감지 + Telegram 알림만** 한다.
-# 실제 다운로드~main 반영은 로컬 원커맨드(src/tools/pipeline/run_local.py)가 집(레지덴셜) IP에서 수행.
+# 실제 다운로드~main 반영은 로컬 원커맨드(src/tools/semiauto-loader/run_local.py)가 집(레지덴셜) IP에서 수행.
 on:
   schedule:
     - cron: '0 14 * * *'      # 23:00 KST
@@ -46,7 +46,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python src/tools/pipeline/telegram_bot.py
+        run: python src/tools/semiauto-loader/telegram_bot.py
 
       # /pause·/resume 로 상태가 바뀐 경우만 커밋.
       - name: Commit pause state (if changed)

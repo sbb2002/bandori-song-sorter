@@ -32,8 +32,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]          # src/tools/pipeline/<file> → repo root
-sys.path.insert(0, str(ROOT / "src" / "tools" / "pipeline"))
+ROOT = Path(__file__).resolve().parents[3]          # src/tools/semiauto-loader/<file> → repo root
+sys.path.insert(0, str(ROOT / "src" / "tools" / "semiauto-loader"))
 
 import notify                                        # noqa: E402  (Telegram 전송, urllib 무의존)
 
