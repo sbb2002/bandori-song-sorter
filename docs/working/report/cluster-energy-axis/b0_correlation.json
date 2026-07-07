@@ -1,0 +1,367 @@
+{
+  "labels": {
+    "energy_calm1_intense5": {
+      "e1_mean_dyn": {
+        "pearson": -0.233,
+        "p": 0.2148,
+        "spearman": -0.112,
+        "sp": 0.5575,
+        "n": 30
+      },
+      "e2_lra_dyn": {
+        "pearson": -0.204,
+        "p": 0.2795,
+        "spearman": -0.048,
+        "sp": 0.8009,
+        "n": 30
+      },
+      "e3_onset_rate": {
+        "pearson": 0.171,
+        "p": 0.3652,
+        "spearman": 0.223,
+        "sp": 0.2357,
+        "n": 30
+      },
+      "onset_rate_fine": {
+        "pearson": 0.171,
+        "p": 0.3656,
+        "spearman": 0.223,
+        "sp": 0.2357,
+        "n": 30
+      },
+      "dyn_std": {
+        "pearson": -0.397,
+        "p": 0.0299,
+        "spearman": -0.369,
+        "sp": 0.0446,
+        "n": 30
+      },
+      "dyn_p90": {
+        "pearson": -0.305,
+        "p": 0.1008,
+        "spearman": -0.281,
+        "sp": 0.1329,
+        "n": 30
+      },
+      "dyn_p10": {
+        "pearson": -0.033,
+        "p": 0.8608,
+        "spearman": -0.06,
+        "sp": 0.7519,
+        "n": 30
+      },
+      "pulse_bpm": {
+        "pearson": -0.0,
+        "p": 0.9982,
+        "spearman": 0.068,
+        "sp": 0.722,
+        "n": 30
+      },
+      "tempo_json": {
+        "pearson": 0.119,
+        "p": 0.53,
+        "spearman": 0.184,
+        "sp": 0.3314,
+        "n": 30
+      }
+    },
+    "tempo_slow1_fast5": {
+      "e1_mean_dyn": {
+        "pearson": -0.169,
+        "p": 0.3728,
+        "spearman": -0.174,
+        "sp": 0.3568,
+        "n": 30
+      },
+      "e2_lra_dyn": {
+        "pearson": -0.037,
+        "p": 0.8445,
+        "spearman": 0.215,
+        "sp": 0.2545,
+        "n": 30
+      },
+      "e3_onset_rate": {
+        "pearson": 0.207,
+        "p": 0.2723,
+        "spearman": 0.266,
+        "sp": 0.1555,
+        "n": 30
+      },
+      "onset_rate_fine": {
+        "pearson": 0.207,
+        "p": 0.2728,
+        "spearman": 0.266,
+        "sp": 0.1555,
+        "n": 30
+      },
+      "dyn_std": {
+        "pearson": -0.234,
+        "p": 0.2124,
+        "spearman": -0.147,
+        "sp": 0.4385,
+        "n": 30
+      },
+      "dyn_p90": {
+        "pearson": -0.19,
+        "p": 0.3135,
+        "spearman": -0.22,
+        "sp": 0.2426,
+        "n": 30
+      },
+      "dyn_p10": {
+        "pearson": -0.095,
+        "p": 0.6171,
+        "spearman": -0.204,
+        "sp": 0.2804,
+        "n": 30
+      },
+      "pulse_bpm": {
+        "pearson": 0.121,
+        "p": 0.525,
+        "spearman": 0.222,
+        "sp": 0.2395,
+        "n": 30
+      },
+      "tempo_json": {
+        "pearson": 0.155,
+        "p": 0.4122,
+        "spearman": 0.246,
+        "sp": 0.1905,
+        "n": 30
+      }
+    },
+    "rough_smooth1_rough5": {
+      "e1_mean_dyn": {
+        "pearson": -0.13,
+        "p": 0.4922,
+        "spearman": 0.047,
+        "sp": 0.8067,
+        "n": 30
+      },
+      "e2_lra_dyn": {
+        "pearson": 0.182,
+        "p": 0.3354,
+        "spearman": 0.262,
+        "sp": 0.1619,
+        "n": 30
+      },
+      "e3_onset_rate": {
+        "pearson": -0.004,
+        "p": 0.9844,
+        "spearman": 0.04,
+        "sp": 0.8328,
+        "n": 30
+      },
+      "onset_rate_fine": {
+        "pearson": -0.003,
+        "p": 0.9855,
+        "spearman": 0.04,
+        "sp": 0.8328,
+        "n": 30
+      },
+      "dyn_std": {
+        "pearson": -0.006,
+        "p": 0.9753,
+        "spearman": -0.048,
+        "sp": 0.8029,
+        "n": 30
+      },
+      "dyn_p90": {
+        "pearson": -0.14,
+        "p": 0.4617,
+        "spearman": -0.016,
+        "sp": 0.935,
+        "n": 30
+      },
+      "dyn_p10": {
+        "pearson": -0.243,
+        "p": 0.1958,
+        "spearman": -0.222,
+        "sp": 0.2379,
+        "n": 30
+      },
+      "pulse_bpm": {
+        "pearson": 0.032,
+        "p": 0.866,
+        "spearman": 0.043,
+        "sp": 0.8223,
+        "n": 30
+      },
+      "tempo_json": {
+        "pearson": 0.002,
+        "p": 0.9929,
+        "spearman": 0.057,
+        "sp": 0.7666,
+        "n": 30
+      }
+    },
+    "valence_dark1_bright5": {
+      "e1_mean_dyn": {
+        "pearson": 0.309,
+        "p": 0.0961,
+        "spearman": 0.068,
+        "sp": 0.7203,
+        "n": 30
+      },
+      "e2_lra_dyn": {
+        "pearson": -0.016,
+        "p": 0.934,
+        "spearman": -0.17,
+        "sp": 0.3677,
+        "n": 30
+      },
+      "e3_onset_rate": {
+        "pearson": -0.026,
+        "p": 0.8929,
+        "spearman": 0.002,
+        "sp": 0.9921,
+        "n": 30
+      },
+      "onset_rate_fine": {
+        "pearson": -0.026,
+        "p": 0.8918,
+        "spearman": 0.002,
+        "sp": 0.9921,
+        "n": 30
+      },
+      "dyn_std": {
+        "pearson": 0.098,
+        "p": 0.6048,
+        "spearman": 0.039,
+        "sp": 0.8386,
+        "n": 30
+      },
+      "dyn_p90": {
+        "pearson": 0.319,
+        "p": 0.0858,
+        "spearman": 0.058,
+        "sp": 0.7598,
+        "n": 30
+      },
+      "dyn_p10": {
+        "pearson": 0.224,
+        "p": 0.2338,
+        "spearman": 0.166,
+        "sp": 0.3814,
+        "n": 30
+      },
+      "pulse_bpm": {
+        "pearson": 0.177,
+        "p": 0.35,
+        "spearman": 0.175,
+        "sp": 0.3553,
+        "n": 30
+      },
+      "tempo_json": {
+        "pearson": -0.053,
+        "p": 0.7821,
+        "spearman": -0.01,
+        "sp": 0.9583,
+        "n": 30
+      }
+    }
+  },
+  "independence": {
+    "e1_mean_dyn": {
+      "r_x": 0.4,
+      "r_y": -0.062
+    },
+    "e2_lra_dyn": {
+      "r_x": -0.286,
+      "r_y": -0.021
+    },
+    "e3_onset_rate": {
+      "r_x": -0.034,
+      "r_y": -0.045
+    },
+    "onset_rate_fine": {
+      "r_x": -0.034,
+      "r_y": -0.045
+    },
+    "dyn_std": {
+      "r_x": -0.2,
+      "r_y": -0.029
+    },
+    "dyn_p90": {
+      "r_x": 0.259,
+      "r_y": -0.072
+    },
+    "dyn_p10": {
+      "r_x": 0.384,
+      "r_y": -0.014
+    },
+    "pulse_bpm": {
+      "r_x": -0.067,
+      "r_y": 0.015
+    },
+    "tempo_json": {
+      "r_x": -0.126,
+      "r_y": -0.029
+    }
+  },
+  "verdict": {
+    "e1_mean_dyn": {
+      "best_label": "energy_calm1_intense5",
+      "best_r": -0.233,
+      "best_p": 0.2148,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "e2_lra_dyn": {
+      "best_label": "energy_calm1_intense5",
+      "best_r": -0.204,
+      "best_p": 0.2795,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "e3_onset_rate": {
+      "best_label": "tempo_slow1_fast5",
+      "best_r": 0.207,
+      "best_p": 0.2723,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "onset_rate_fine": {
+      "best_label": "tempo_slow1_fast5",
+      "best_r": 0.207,
+      "best_p": 0.2728,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "dyn_std": {
+      "best_label": "energy_calm1_intense5",
+      "best_r": -0.397,
+      "best_p": 0.0299,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "dyn_p90": {
+      "best_label": "energy_calm1_intense5",
+      "best_r": -0.305,
+      "best_p": 0.1008,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "dyn_p10": {
+      "best_label": "tempo_slow1_fast5",
+      "best_r": -0.095,
+      "best_p": 0.6171,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "pulse_bpm": {
+      "best_label": "tempo_slow1_fast5",
+      "best_r": 0.121,
+      "best_p": 0.525,
+      "independent": true,
+      "verdict": "탈락"
+    },
+    "tempo_json": {
+      "best_label": "tempo_slow1_fast5",
+      "best_r": 0.155,
+      "best_p": 0.4122,
+      "independent": true,
+      "verdict": "탈락"
+    }
+  }
+}
