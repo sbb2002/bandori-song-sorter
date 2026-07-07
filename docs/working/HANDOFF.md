@@ -4,6 +4,7 @@
 
 마지막 갱신: **2026-07-07(세션 28)** — **작업 3 반자동 파이프라인 운영화·라이브**(done 28): 봇 정리(`/detect` deprecated·제거 · `/pause`+`/resume` 순서쌍 상쇄 · 감지 0곡도 알림) + **5분 폴러 폐지→단일 23:00 크론 통합**(`telegram-bot.yml` 제거, 명령 처리를 `pipeline.yml` 맨 앞으로 흡수 → 명령→감지→알림이 한 실행) + `src/tools/pipeline`·루트 `actions/` → **`src/tools/semiauto-loader/`** 통합(+폴더 README) + run_local 결과 실시간 로그·0건/반영/실패 구분·**로컬 처리 결과 텔레그램 통지**(notify가 repo 루트 `.env` 자동 로드).
 > **⏭ 다음 = (선택) 분석-only 로컬 스크립트**(다운로드 이후 분석·push만 — 분석 라이브러리 없는 로컬 대비, § 작업 3 '남은 것') · DRM 1곡 수동. **반자동 본류는 완료·라이브.**
+> 🚧 **작업 4 진행(브랜치 `feature/emoi-map-starfield`)**: EMOI-MAP 딥스페이스/별 시각화 — 곡 점=곡 에너지 비례 글로우 별 + 뒤 canvas 별밭 + 밴드 성운. § 작업 4.
 이전: (2026-07-06 세션 26~27) 작업 3 인프라 구축(감지→좌표→pulse→main + Pages 아티팩트 배포) + CI 다운로드 봇월 확정(E2E 3회) → 반자동(다운로드만 로컬 IP) 전환 결정. done 26~27.
 이전: (2026-07-05 세션 25) 음원맵 클러스터링/재생펄스 완결 + main 머지: 전곡 **660곡** 좌표·펄스 + 렌더 lazy-fetch(index.html 0.30MB) + 에너지 동적 subdivision(음량→박/8분) + 볼륨 프리셋 4단계. done 24~25 · [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
 이전: (2026-07-04) 재생 펄스 파일럿 → 세션 23 방안 A 완성. (2026-07-03 17:00) 작업 1(D) 레이아웃 확정 + 정적파일 분할 main 머지(done 22).
@@ -30,6 +31,7 @@
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(단일 크론 봇+감지+알림 · 로컬 처리·결과 Telegram) | § 작업 3 · [spec](spec/pipeline-automation.md) |
+| 4. EMOI-MAP 딥스페이스/별 시각화 | 🚧 **진행**(feature/emoi-map-starfield) | § 작업 4 |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -130,6 +132,16 @@ python src/tools/semiauto-loader/run_local.py --test-band afterglow --test-video
 - **(사용자 요청) 분석-only 로컬 스크립트**: 다운로드는 다른 로컬/수단으로 받고, 분석~push만 하는 별도 파일. 일부 로컬은 분석 라이브러리(torch/demucs 등) 구동 환경이 안 될 수 있어 다운로드/분석 역할 분리가 필요. **현재 `run_local.py`(다운로드+분석 일체형)는 유지**하고 추가.
 - DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(수동).
 - (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
+
+---
+
+## 작업 4. EMOI-MAP 딥스페이스/별 시각화 — 🚧 진행 (feature/emoi-map-starfield)
+음원맵 곡 점(660)을 **딥스페이스에 떠 있는 별**처럼 표현. 곡 점 = 밝힌 밴드색 코어 + 흰 림 + **에너지 비례 글로우**(shadowBlur), 배경 = 딥스페이스 그라데이션, 데이터 뒤 canvas(`#cl-starfield`, JS 동적 생성)에 **반짝이는 별밭 + 느린 드리프트**, 밴드 포커스 시 밴드색 **성운**(구 `_clBandBg` 배경 틴트 대체). 기존 HUD·격자·펄스·클릭 재생·줌/팬·툴팁 전부 유지.
+- **별 밝기 = 곡 에너지**: onset `dyn.v`(2Hz 정규화 RMS) 평균 → 전곡 percentile rank(0~1) → `src/tools/cluster/add_energy.py`가 `audio_map.json songs[].energy`에 baked. 재분석·재다운로드 불필요(순수 파생, base env). 없으면 프론트 0.5 폴백.
+- **편집 규칙**: JS(`16-audiomap.js`)·CSS(`desktop.css`)는 **분할파일 직접수정 = 리빌드 불필요** · 별밭 캔버스는 `_clBuildSensTabs` 패턴으로 **JS 생성**(새 파일·템플릿 무변경) · **energy 반영만** `python src/build.py`(index.html은 gitignore = deploy CI가 재생성). 커밋 대상 = `audio_map.json` + `16-audiomap.js` + `desktop.css` + `add_energy.py`.
+- **핵심 구현**: `songMark`(곡 점 별화·energy 구동) · `_clSky*`/`_clBuildStarfield`(별밭 canvas rAF, 탭 숨김 시 정지) · `_clSetNebula`(포커스 성운) · `_clDraw` 배경줄 → 성운 호출로 교체 · `desktop.css` `.cluster-wrap` 딥스페이스+`isolation`, `#cluster-chart` z-index:1, `#cl-starfield` z-index:0.
+- **롤백**: `songMark` 고정 size/op 복귀 · `.cluster-wrap` 배경 `var(--surface2)` · `_clBuildStarfield` 미호출. energy 필드는 남아도 무해.
+- 계획 원본: `~/.claude/plans/emoi-map-proud-valley.md`.
 
 ---
 
