@@ -389,7 +389,7 @@
 .am-axis {
   position: absolute; z-index: 12; pointer-events: none; white-space: nowrap;
   font-family: 'Consolas','SF Mono',ui-monospace,monospace;
-  font-size: 0.56rem; color: var(--hud, #66e0e6); opacity: 0.85; letter-spacing: 0.5px;
+  font-size: 0.68rem; color: var(--hud, #66e0e6); opacity: 0.85; letter-spacing: 0.5px;
   text-shadow: 0 0 4px #000, 0 0 6px rgba(102,224,230,0.4);
 }
 .am-axis-top { top: 4px; left: 50%; transform: translateX(-50%); }
