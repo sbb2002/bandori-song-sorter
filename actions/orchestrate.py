@@ -33,7 +33,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]                  # actions/<file> → repo root
 sys.path.insert(0, str(ROOT / "src" / "tools" / "collect"))
 sys.path.insert(0, str(ROOT / "src" / "tools" / "cluster"))
-sys.path.insert(0, str(ROOT / "src" / "tools" / "pipeline"))
+sys.path.insert(0, str(ROOT / "src" / "tools" / "semiauto-loader"))
 
 import youtube_rss as rss                                    # noqa: E402
 import notify                                                # noqa: E402  (Telegram, urllib 무의존)
@@ -263,7 +263,7 @@ def _notify_text(candidates: list[dict], anomalies: list[str]) -> str:
     if anomalies:
         lines += ["", f"⚠️ 파싱 이상 밴드: {', '.join(anomalies)}"]
     if candidates:
-        lines += ["", "→ 로컬에서 `python src/tools/pipeline/run_local.py` 실행"]
+        lines += ["", "→ 로컬에서 `python src/tools/semiauto-loader/run_local.py` 실행"]
     return "\n".join(lines)
 
 
