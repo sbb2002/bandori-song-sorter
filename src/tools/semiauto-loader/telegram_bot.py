@@ -14,7 +14,7 @@
 ※ /detect 는 deprecated(제거). 감지는 pipeline.yml 일일 크론이 처리 후(= 봇이 미리 받은
 pause/resume 등을 반영한 뒤) 자동 수행하므로 수동 트리거가 필요 없다.
 
-일시정지 상태 = actions/bot_state.json {"paused": bool}. 변경 시 pipeline.yml 이 [skip ci]
+일시정지 상태 = bot_state.json(이 폴더) {"paused": bool}. 변경 시 pipeline.yml 이 [skip ci]
 커밋한다. 같은 실행의 감지 단계는 이 파일을 읽어 paused 면 감지·알림을 건너뛴다.
 
 offset 은 로컬에 저장하지 않는다 — 처리 후 getUpdates(offset=last+1) 로 Telegram 서버에 ack →
@@ -42,7 +42,7 @@ try:
 except Exception:
     pass
 
-STATE_PATH = ROOT / "actions" / "bot_state.json"
+STATE_PATH = ROOT / "src" / "tools" / "semiauto-loader" / "bot_state.json"
 CRON_DESC = "매일 23:00 KST (cron 0 14 * * *) — 명령 처리·감지·알림 단일 실행"
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")

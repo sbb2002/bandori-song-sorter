@@ -101,9 +101,9 @@ E2E dry-run으로 CI 오디오 다운로드를 검증한 결과 **GitHub Actions
 
 ### 컴포넌트
 - `.github/workflows/pipeline.yml` — **감지+알림 전용으로 재작성**(오디오/PO/node 스텝 제거, cron 23:00 KST). `TELEGRAM_BOT_TOKEN`·`TELEGRAM_CHAT_ID` secrets.
-- `src/tools/semiauto-loader/run_local.py`(신규) — 사용자 원커맨드. 전용 클론(기본 `../bandori-pipeline`)을 `origin/main`로 reset → cwd=클론에서 `actions/orchestrate.py` 실행. 인자 `--repo-path/--limit/--dry/--test-band/--test-video`.
+- `src/tools/semiauto-loader/run_local.py`(신규) — 사용자 원커맨드. 전용 클론(기본 `../bandori-pipeline`)을 `origin/main`로 reset → cwd=클론에서 `orchestrate.py` 실행. 인자 `--repo-path/--limit/--dry/--test-band/--test-video`.
 - `src/tools/semiauto-loader/notify.py`(신규) — `send_telegram()`(urllib, 무의존). Actions·로컬 공용.
-- `actions/orchestrate.py` — `--notify`/`--notify-test`만 신설. process_song·commit_and_push·`--test-*`는 **무수정 재사용**(로컬 엔진).
+- `src/tools/semiauto-loader/orchestrate.py`(2026-07-07 `actions/`에서 이동) — `--notify`/`--notify-test`만 신설. process_song·commit_and_push·`--test-*`는 **무수정 재사용**(로컬 엔진).
 - `deploy.yml` **무변경**(로컬 push가 트리거).
 
 ### 로컬 사용법
@@ -116,7 +116,7 @@ python src/tools/semiauto-loader/run_local.py --test-band afterglow --test-video
 ### Telegram 명령 봇 (라이브)
 상시 서버 없이 Telegram 명령을 **Actions 5분 폴링**(`telegram-bot.yml` cron `*/5`, public 레포=무료)으로 처리. `src/tools/semiauto-loader/telegram_bot.py`가 `getUpdates`+ack(무상태)·**인가 chat_id만**. 응답 지연 ~5~15분(GitHub 크론 best-effort).
 - `/help` · `/detect`(감지 수동+결과·예외 응답) · `/status`(주기·상태) · `/pause` · `/resume`.
-- 일시정지 = `actions/bot_state.json {paused}`(deploy 경로 밖, 봇이 [skip ci] 커밋). `pipeline.yml`이 읽어 paused면 감지·알림 skip. `/pause`는 **일일 감지만** 멈춤(봇 폴러는 계속 = `/resume` 수신).
+- 일시정지 = `src/tools/semiauto-loader/bot_state.json {paused}`(deploy 경로 밖, 봇이 [skip ci] 커밋). `pipeline.yml`이 읽어 paused면 감지·알림 skip. `/pause`는 **일일 감지만** 멈춤(봇 폴러는 계속 = `/resume` 수신).
 - 브릿지는 **폴링 채택**(웹훅+Cloudflare Worker 대안은 즉시 응답이나 인프라+1). 즉시 실행 = `gh workflow run telegram-bot.yml`.
 
 ### 상태 — ✅ 반자동 + 봇 완료·라이브
