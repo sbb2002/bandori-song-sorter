@@ -6,16 +6,21 @@
 
 명령:
   /help    — 명령어 설명
-  /detect  — 신곡 감지 수동 트리거(결과·예외 포함 응답). 다운로드 없이 감지만.
   /status  — 크론 주기 + 트리거 가능(활성/일시정지) 상태
   /pause   — 일일 감지 크론 일시정지(봇 폴러는 계속 동작 → /resume 수신 가능)
   /resume  — 일시정지 해제
+
+※ /detect 는 deprecated(제거). 감지는 pipeline.yml 일일 크론이 처리 후(= 봇이 미리 받은
+pause/resume 등을 반영한 뒤) 자동 수행하므로 수동 트리거가 필요 없다.
 
 일시정지 상태 = actions/bot_state.json {"paused": bool}. 변경 시 telegram-bot.yml 이 [skip ci]
 커밋한다. 일일 감지(pipeline.yml)는 이 파일을 읽어 paused 면 감지·알림을 건너뛴다.
 
 offset 은 로컬에 저장하지 않는다 — 처리 후 getUpdates(offset=last+1) 로 Telegram 서버에 ack →
 다음 실행은 새 명령만 받는다(무상태 재개; 크래시로 재처리돼도 모든 명령은 멱등).
+
+한 폴링에 여러 명령이 밀려 들어온 경우, 아직 처리 안 한 명령들 중 /pause 뒤에 /resume 이
+순서대로 1쌍을 이루면 서로 상쇄되는 조작이므로 둘 다 무효 처리(응답·상태변경 없이 skip)한다.
 """
 from __future__ import annotations
 
@@ -28,7 +33,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]          # src/tools/pipeline/<file> → repo root
 sys.path.insert(0, str(ROOT / "src" / "tools" / "pipeline"))
-sys.path.insert(0, str(ROOT / "src" / "tools" / "collect"))
 
 import notify                                        # noqa: E402  (Telegram 전송, urllib 무의존)
 
@@ -47,7 +51,6 @@ HELP = (
     "🤖 밴도리 신곡 로더 봇\n"
     "\n"
     "/help — 이 도움말\n"
-    "/detect — 신곡 감지 수동 실행(결과 응답, 다운로드 없음)\n"
     "/status — 크론 주기·트리거 상태\n"
     "/pause — 일일 감지 크론 일시정지\n"
     "/resume — 일시정지 해제\n"
@@ -88,27 +91,6 @@ def cmd_help() -> None:
     reply(HELP)
 
 
-def cmd_detect() -> None:
-    try:
-        import youtube_rss as rss
-        candidates, _drops, health, _bf = rss.collect_candidates(set(), scrape_length=True)
-        anomalies = [b for b, h in health.items() if (not h["ok"]) or h["valid"] == 0]
-        if not candidates:
-            msg = "🔍 /detect — 신곡 없음(멱등)."
-        else:
-            lines = [f"🔍 /detect — 신곡 {len(candidates)}곡:"]
-            for c in candidates:
-                tag = f" [{c['variant']}]" if c["variant"] else ""
-                lines.append(f"· {c['band']} — {c['name']}{tag} ({c['published']})\n  {c['url']}")
-            lines.append("\n→ 로컬 run_local.py 로 반영")
-            msg = "\n".join(lines)
-        if anomalies:
-            msg += f"\n\n⚠️ 파싱 이상 밴드: {', '.join(anomalies)}"
-        reply(msg)
-    except Exception as e:                           # noqa: BLE001  (예외를 사용자에게 전달)
-        reply(f"❌ /detect 실패: {type(e).__name__}: {e}")
-
-
 def cmd_status() -> None:
     paused = load_state().get("paused", False)
     trig = "⏸ 일시정지(감지 크론 대기)" if paused else "▶ 활성"
@@ -139,12 +121,12 @@ def cmd_resume() -> bool:
     return True
 
 
-HANDLERS = {"/help": cmd_help, "/detect": cmd_detect, "/status": cmd_status}
+HANDLERS = {"/help": cmd_help, "/status": cmd_status}
 STATE_HANDLERS = {"/pause": cmd_pause, "/resume": cmd_resume}
 
 
 def _cmd_of(text: str) -> str:
-    """'/detect@BotName arg' → '/detect'."""
+    """'/pause@BotName arg' → '/pause'."""
     return text.strip().split()[0].lower().split("@", 1)[0]
 
 
@@ -169,8 +151,8 @@ def main() -> int:
     if not updates:
         return 0
 
-    state_changed = False
     last_id = 0
+    queue: list[str] = []
     for u in updates:
         last_id = max(last_id, u.get("update_id", 0))
         msg = u.get("message") or u.get("edited_message") or {}
@@ -182,7 +164,24 @@ def main() -> int:
         if not text.startswith("/"):
             print(f"[bot] 비명령 메시지 skip: {text[:20]!r}")
             continue
-        cmd = _cmd_of(text)
+        queue.append(_cmd_of(text))
+
+    # 미처리 명령 중 /pause → /resume 이 순서대로 1쌍을 이루면 서로 상쇄(무효 처리).
+    cancelled: set[int] = set()
+    pending_pause: list[int] = []
+    for i, cmd in enumerate(queue):
+        if cmd == "/pause":
+            pending_pause.append(i)
+        elif cmd == "/resume" and pending_pause:
+            j = pending_pause.pop()
+            cancelled.add(j)
+            cancelled.add(i)
+
+    state_changed = False
+    for i, cmd in enumerate(queue):
+        if i in cancelled:
+            print(f"[bot] 명령: {cmd} (pause/resume 상쇄 — skip)")
+            continue
         print(f"[bot] 명령: {cmd}")
         if cmd in HANDLERS:
             HANDLERS[cmd]()
