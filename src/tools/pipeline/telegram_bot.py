@@ -168,6 +168,7 @@ def main() -> int:
 
     # 미처리 명령 중 /pause → /resume 이 순서대로 1쌍을 이루면 서로 상쇄(무효 처리).
     cancelled: set[int] = set()
+    cancelled_pairs = 0
     pending_pause: list[int] = []
     for i, cmd in enumerate(queue):
         if cmd == "/pause":
@@ -176,6 +177,11 @@ def main() -> int:
             j = pending_pause.pop()
             cancelled.add(j)
             cancelled.add(i)
+            cancelled_pairs += 1
+
+    for _ in range(cancelled_pairs):
+        reply("⏸▶ /pause·/resume 이 함께 도착해 서로 상쇄되어 무효 처리했습니다"
+              "(상태 변경 없음).")
 
     state_changed = False
     for i, cmd in enumerate(queue):

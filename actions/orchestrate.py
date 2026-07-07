@@ -249,15 +249,21 @@ def _emit_github_output(key: str, val) -> None:
 
 
 def _notify_text(candidates: list[dict], anomalies: list[str]) -> str:
-    """미처리 신곡 전체를 요약한 Telegram 본문(곡당 개별 알림 아님 — 매일 1건 요약)."""
-    lines = [f"🎵 밴도리 신곡 감지 {len(candidates)}곡 (미처리)", ""]
-    for c in candidates:
-        tag = f" [{c['variant']}]" if c["variant"] else ""
-        lines.append(f"· {c['band']} — {c['name']}{tag}  ({c['published']})")
-        lines.append(f"  {c['url']}")
+    """미처리 신곡 전체를 요약한 Telegram 본문(곡당 개별 알림 아님 — 매일 1건 요약).
+
+    0곡이어도 매 실행 전송(무응답이면 실행 자체를 의심하게 됨 → 감지 성공을 명시)."""
+    if not candidates:
+        lines = ["🎵 밴도리 신곡 감지 — 신곡 0곡 발견(미처리 없음)."]
+    else:
+        lines = [f"🎵 밴도리 신곡 감지 {len(candidates)}곡 (미처리)", ""]
+        for c in candidates:
+            tag = f" [{c['variant']}]" if c["variant"] else ""
+            lines.append(f"· {c['band']} — {c['name']}{tag}  ({c['published']})")
+            lines.append(f"  {c['url']}")
     if anomalies:
         lines += ["", f"⚠️ 파싱 이상 밴드: {', '.join(anomalies)}"]
-    lines += ["", "→ 로컬에서 `python src/tools/pipeline/run_local.py` 실행"]
+    if candidates:
+        lines += ["", "→ 로컬에서 `python src/tools/pipeline/run_local.py` 실행"]
     return "\n".join(lines)
 
 
@@ -284,7 +290,7 @@ def main(argv=None) -> int:
     ap.add_argument("--test-video", default=None,
                     help="[테스트] video_id 또는 URL — 감지 건너뛰고 이 곡만 강제 처리(--dry 필수)")
     ap.add_argument("--notify", action="store_true",
-                    help="감지된 미처리 신곡 요약을 Telegram 1건 전송(candidates>0 시). 다운로드/처리와 무관")
+                    help="감지 결과 요약을 Telegram 1건 전송(0곡이어도 전송). 다운로드/처리와 무관")
     ap.add_argument("--notify-test", action="store_true",
                     help="배선 확인용 캔드 Telegram 메시지 1건 전송 후 종료(secrets 점검)")
     a = ap.parse_args(argv)
@@ -326,7 +332,7 @@ def main(argv=None) -> int:
 
     anomalies = [b for b, h in health.items() if (not h["ok"]) or h["valid"] == 0]
     _emit_github_output("candidates", len(candidates))       # 워크플로우 감지 게이트
-    if a.notify and candidates:                              # 미처리 신곡 요약 1건 → Telegram
+    if a.notify:                                              # 감지 결과 1건 → Telegram(0곡도 전송)
         notify.send_telegram(_notify_text(candidates, anomalies))
     if a.detect_only:
         if anomalies:
