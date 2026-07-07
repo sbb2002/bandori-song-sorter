@@ -1,0 +1,114 @@
+# Phase C — 정식 feature × 손라벨(4정서축) 상관
+조인 곡수: 30
+
+## [rough(매1↔거5) · Timbre]
+  후보                pearson r       p  spearman    n
+  contrast             -0.815   0.000    -0.808   30 ◀PASS
+  flatness             +0.597   0.001    +0.617   30 ◀PASS
+  onset_rate           -0.523   0.003    -0.543   30 ◀PASS
+  pulse_clarity        -0.431   0.017    -0.518   30 
+  mode_score           -0.375   0.041    -0.385   30 
+  centroid             +0.340   0.066    +0.351   30 
+  rolloff              +0.334   0.071    +0.358   30 
+  zcr                  +0.262   0.162    +0.266   30 
+  flux                 -0.242   0.198    -0.257   30 
+  harmonic_ratio       -0.129   0.496    -0.151   30 
+  lufs                 -0.117   0.539    +0.074   30 
+  rms_std              +0.090   0.635    -0.094   30 
+  rms                  -0.082   0.667    +0.061   30 
+  tempo_acf            +0.076   0.688    +0.120   30 
+  lra                  +0.044   0.817    +0.118   30 
+  tempo_librosa        +0.034   0.857    +0.078   30 
+  crest                -0.021   0.914    -0.027   30 
+  vbl                  -0.001   0.996    +0.050   30 
+
+## [valence(어1↔밝5) · Valence]
+  후보                pearson r       p  spearman    n
+  contrast             +0.589   0.001    +0.582   30 ◀PASS
+  mode_score           +0.576   0.001    +0.544   30 ◀PASS
+  flatness             -0.523   0.003    -0.381   30 ◀PASS
+  onset_rate           +0.344   0.063    +0.401   30 
+  lufs                 +0.320   0.085    +0.048   30 
+  rms_std              -0.276   0.140    +0.041   30 
+  rms                  +0.235   0.212    +0.053   30 
+  tempo_acf            -0.231   0.218    -0.233   30 
+  tempo_librosa        -0.181   0.339    -0.205   30 
+  pulse_clarity        +0.148   0.434    +0.250   30 
+  harmonic_ratio       +0.111   0.558    +0.145   30 
+  flux                 +0.097   0.610    +0.199   30 
+  rolloff              -0.060   0.751    -0.164   30 
+  centroid             -0.057   0.766    -0.134   30 
+  zcr                  -0.035   0.854    -0.085   30 
+  crest                +0.019   0.919    +0.022   30 
+  lra                  -0.010   0.959    -0.103   30 
+  vbl                  +0.005   0.979    +0.019   30 
+
+## [energy(잔1↔강5) · Arousal]
+  후보                pearson r       p  spearman    n
+  contrast             -0.677   0.000    -0.662   30 ◀PASS
+  flatness             +0.671   0.000    +0.694   30 ◀PASS
+  centroid             +0.630   0.000    +0.622   30 ◀PASS
+  rolloff              +0.625   0.000    +0.608   30 ◀PASS
+  mode_score           -0.493   0.006    -0.474   30 
+  zcr                  +0.461   0.010    +0.462   30 
+  onset_rate           -0.338   0.068    -0.482   30 
+  harmonic_ratio       -0.335   0.071    -0.359   30 
+  lra                  -0.247   0.188    -0.183   30 
+  lufs                 -0.232   0.218    -0.123   30 
+  rms                  -0.218   0.247    -0.112   30 
+  pulse_clarity        -0.189   0.316    -0.284   30 
+  crest                +0.180   0.342    +0.175   30 
+  tempo_acf            +0.157   0.408    +0.125   30 
+  rms_std              +0.128   0.500    -0.037   30 
+  flux                 +0.106   0.576    +0.249   30 
+  tempo_librosa        +0.099   0.604    +0.063   30 
+  vbl                  -0.057   0.763    +0.098   30 
+
+## [tempo(느1↔빠5) · Arousal]
+  후보                pearson r       p  spearman    n
+  rolloff              +0.554   0.001    +0.483   30 ◀PASS
+  contrast             -0.537   0.002    -0.509   30 ◀PASS
+  centroid             +0.527   0.003    +0.463   30 ◀PASS
+  flatness             +0.474   0.008    +0.484   30 
+  zcr                  +0.351   0.057    +0.304   30 
+  harmonic_ratio       -0.351   0.057    -0.353   30 
+  mode_score           -0.293   0.116    -0.267   30 
+  flux                 +0.230   0.221    +0.250   30 
+  crest                +0.191   0.313    +0.176   30 
+  lufs                 -0.168   0.375    -0.179   30 
+  rms                  -0.165   0.383    -0.137   30 
+  lra                  -0.131   0.490    -0.011   30 
+  tempo_acf            +0.087   0.649    +0.076   30 
+  rms_std              +0.072   0.704    -0.005   30 
+  pulse_clarity        -0.061   0.750    -0.268   30 
+  vbl                  +0.057   0.764    +0.175   30 
+  onset_rate           -0.055   0.773    -0.148   30 
+  tempo_librosa        +0.039   0.836    +0.013   30 
+
+## 독립성 — 후보 ↔ 기존 축 x(거칢)·y(밝음)  (arousal 후보는 |r|≲0.4 여야 새 축 자격)
+  후보                   r(x)     r(y)
+  lufs               -0.171   +0.299
+  lra                -0.249   +0.119
+  rms_std            +0.118   -0.184
+  crest              +0.067   -0.060
+  tempo_acf          +0.149   -0.253
+  pulse_clarity      -0.251   +0.176
+  vbl                -0.017   +0.146
+  onset_rate         -0.273   +0.247
+  mode_score         -0.419   +0.986
+  harmonic_ratio     -0.329   +0.144
+  centroid           +0.520   -0.270
+  rolloff            +0.546   -0.301
+
+## 합성 Valence 검정 (md: mode+centroid+harmonicity) — valence 라벨과 R
+  mode 단독 r = +0.576  →  합성(z) R = +0.595  (n=30)
+  가중치(z): mode_score=+0.65 · centroid=+0.16 · harmonic_ratio=+0.12
+  판정: 합성이 미개선
+
+## 축별 판정
+  Timbre           최고 contrast       r=-0.815(p=0.000)  → PASS
+  Valence          최고 mode_score     r=+0.576(p=0.001)  → PASS
+  Arousal-energy   최고 onset_rate     r=-0.338(p=0.068) 독립=O → 탈락
+  Arousal-tempo    최고 crest          r=+0.191(p=0.313) 독립=O → 탈락
+
+해석: Arousal PASS 있으면 새 축 성립(전곡 확대 근거). 없으면 valence 강화·timbre 확정만 취함.
