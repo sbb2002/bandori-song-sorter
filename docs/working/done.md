@@ -802,3 +802,7 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 - **펄스 16분 주석 비활성**(`_clDynLevel`·상수): 이미 `CL_DYN_MAX=1`로 16분(레벨2)이 clamp돼 박/8분만 표시되던 상태 → 계산 경로는 유지하고 주석으로 "clamp 비활성" 명확화(사용자 지시=제거 말고 주석 정도). `CL_DYN_MAX=2`로 올리면 16분 부활.
 - **research 작성 규칙**(`docs/research/README.md`): 논문 양식(초록→동기→방법→실험여정[판정 이모지]→전환점→최종방법→한계→재현)·승격 기준(report에서 "고민한 탐색"만)·문체 원칙(시간순 서사·음의결과 보존·절대날짜) 명문화 + emotion-axes-extraction.md 등재.
 - 밴드 포커스 HUD·부제·주석의 옛 용어(거침/밝음)는 요청 범위 외라 미변경.
+
+## 문서화 경로 규칙 확립 + 축 라벨 버그 수정 (후속)
+- **문서화 경로 규칙**(`working/readme.md` 「구현 유형별 문서화 경로」): 작업을 분석 시도 횟수로 분류 — 단순구현(0회)=done · 분석 필요(1회)=+report(수치·표·플롯·그림 + 간단 해석) · 2회 이상 분석 후 종결=+research(논문화, 그림·표·플롯 전부). research/README 승격 기준도 "2회+분석·종결"로 일치·상호링크.
+- **축 라벨 버그 수정**(`16-audiomap.js`·`desktop.css` · 단순): ALL 개요는 auto scale이라 원점(0,0)이 화면 중앙이 아닌데 축 방향 라벨은 CSS 50% 고정 → 축선(markLine x=0·y=0)과 어긋남. `_clPositionAxisLabels()` 신설(`convertToPixel`로 x=0·y=0 픽셀 위치를 구해 top/bottom 라벨은 `left`, left/right 라벨은 `top`에 정렬) → `_clDraw` 끝·`dataZoom`·`resize`·초기화에서 호출. #cluster-chart가 .cluster-wrap(relative)을 100% 채워 캔버스 픽셀=라벨 부모 좌표(offset 무). + 축 라벨 폰트 0.56→0.68rem.
