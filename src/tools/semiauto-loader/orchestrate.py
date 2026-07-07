@@ -15,9 +15,9 @@ deploy.yml(Pages 아티팩트)이 담당하므로 여기선 손대지 않는다(
 ⚠️ separate_drums/build_beat_track 은 CWD-상대경로 → 모든 subprocess 를 cwd=ROOT 로 실행.
 
 사용:
-  python actions/orchestrate.py            # 감지→처리→커밋·푸시(CI/실계정)
-  python actions/orchestrate.py --dry       # 감지·처리까지 하되 커밋/푸시 안 함(로컬 검증)
-  python actions/orchestrate.py --detect-only  # 감지 목록만(오디오·git 없음)
+  python src/tools/semiauto-loader/orchestrate.py            # 감지→처리→커밋·푸시(CI/실계정)
+  python src/tools/semiauto-loader/orchestrate.py --dry       # 감지·처리까지 하되 커밋/푸시 안 함(로컬 검증)
+  python src/tools/semiauto-loader/orchestrate.py --detect-only  # 감지 목록만(오디오·git 없음)
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ import tempfile
 import time
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]                  # actions/<file> → repo root
+ROOT = Path(__file__).resolve().parents[3]          # src/tools/semiauto-loader/<file> → repo root
 sys.path.insert(0, str(ROOT / "src" / "tools" / "collect"))
 sys.path.insert(0, str(ROOT / "src" / "tools" / "cluster"))
 sys.path.insert(0, str(ROOT / "src" / "tools" / "semiauto-loader"))

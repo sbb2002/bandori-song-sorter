@@ -18,7 +18,7 @@ on:
         default: 'false'
 
 permissions:
-  contents: write              # /pause·/resume 상태(actions/bot_state.json) 커밋
+  contents: write              # /pause·/resume 상태(src/tools/semiauto-loader/bot_state.json) 커밋
 
 concurrency:
   group: new-song-loader
@@ -54,7 +54,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add actions/bot_state.json
+          git add src/tools/semiauto-loader/bot_state.json
           git diff --cached --quiet && exit 0
           git commit -m "chore(bot): 감지 크론 상태 변경 [skip ci]"
           git pull --rebase origin ${{ github.ref_name }}
@@ -67,13 +67,13 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ -f actions/bot_state.json ] && \
-             python -c "import json,sys; sys.exit(0 if json.load(open('actions/bot_state.json')).get('paused') else 1)"; then
+          if [ -f src/tools/semiauto-loader/bot_state.json ] && \
+             python -c "import json,sys; sys.exit(0 if json.load(open('src/tools/semiauto-loader/bot_state.json')).get('paused') else 1)"; then
             echo "⏸ 일시정지 상태 — 감지·알림 스킵(/resume 로 재개)"
             exit 0
           fi
           if [ "${{ github.event.inputs.notify_test }}" = "true" ]; then
-            python actions/orchestrate.py --notify-test
+            python src/tools/semiauto-loader/orchestrate.py --notify-test
           else
-            python actions/orchestrate.py --detect-only --notify
+            python src/tools/semiauto-loader/orchestrate.py --detect-only --notify
           fi
