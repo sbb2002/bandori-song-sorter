@@ -458,7 +458,7 @@ function renderCluster() {
 
     if (!_clusterChart) {
         _clusterChart = echarts.init(el);
-        window.addEventListener('resize', () => { _clusterChart && _clusterChart.resize(); _clSkyResize(); });
+        window.addEventListener('resize', () => { if (_clusterChart) { _clusterChart.resize(); _clPositionAxisLabels(); } _clSkyResize(); });
         _clusterChart.setOption({                 // 정적 베이스(1회)
             backgroundColor: 'transparent',
             animation: true, animationDuration: 0,        // 초기=즉시 / 클릭 이동=애니메이션
@@ -508,6 +508,7 @@ function renderCluster() {
                 if (px) _clPlayGlow.attr({ shape: { cx: px[0], cy: px[1], r: 17 } });
             }
             _clUpdateHud(_clFocus());
+            _clPositionAxisLabels();               // 줌/팬: 축선 이동 → 라벨 재정렬
         });
         _clusterChart.getZr().on('click', e => {   // 포커스 모드에서 빈 영역 클릭 = ALL(개요)로 복귀
             if (!e.target && currentBand !== 'ALL') selectBand('ALL');
@@ -519,6 +520,7 @@ function renderCluster() {
     _clHover = null;                // 재진입 시 호버 초기화(포커스는 currentBand 따라감)
     _clDraw();
     _clusterChart.resize();
+    _clPositionAxisLabels();                // 초기 크기 확정 후 축 라벨 정렬
 }
 
 /** 센트로이드(0,0) 기준 x·y 축선 점선 — 밴드 포커스 모드에서만 표시. */
@@ -668,6 +670,7 @@ function _clDraw() {
     _clSetPlayGlow();                       // 선택 곡 상시 글로우(느린 점멸)
     _clSimList(focus);
     _clUpdateHud(focus);                    // HUD readout(밴드·센트로이드·재생곡·메타) 갱신
+    _clPositionAxisLabels();                // 축 라벨을 x=0·y=0 축선에 정렬(ALL 개요 원점 오프셋 대응)
 }
 
 /** HUD readout: 밴드명·센트로이드 좌표(포커스), 재생곡 거리·좌표·원점 방향 화살표·곡 메타. */
@@ -729,6 +732,20 @@ function _clAxisLabels(axes) {
     set('cl-ax-bottom', y ? `↓ ${y.neg}` : '');
     set('cl-ax-left', x ? `← ${x.neg}` : '');
     set('cl-ax-right', x ? `${x.pos} →` : '');
+}
+
+/** 축 방향 라벨(cl-ax-*)을 x=0·y=0 축선의 현재 픽셀 위치에 붙인다.
+ *  ALL 개요는 auto scale이라 원점이 화면 중앙이 아님 → CSS 50% 고정으로는 축선과 어긋난다. */
+function _clPositionAxisLabels() {
+    if (!_clusterChart) return;
+    const px0 = _clusterChart.convertToPixel({ xAxisIndex: 0 }, 0);   // x=0 세로선의 화면 x
+    const py0 = _clusterChart.convertToPixel({ yAxisIndex: 0 }, 0);   // y=0 가로선의 화면 y
+    if (px0 == null || py0 == null) return;
+    const set = (id, prop, val) => { const e = document.getElementById(id); if (e) e.style[prop] = val + 'px'; };
+    set('cl-ax-top', 'left', px0);       // 세로축(y) 라벨 = x=0 세로선 위/아래에 정렬
+    set('cl-ax-bottom', 'left', px0);
+    set('cl-ax-left', 'top', py0);       // 가로축(x) 라벨 = y=0 가로선 좌/우에 정렬
+    set('cl-ax-right', 'top', py0);
 }
 
 /** #cl-similar 목록: 포커스 밴드면 그 밴드 곡 전체 / 개요면 안내. */
