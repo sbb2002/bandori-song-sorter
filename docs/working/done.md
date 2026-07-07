@@ -719,3 +719,31 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 
 ## 상태
 ✅ 반자동 파이프라인 운영화 완료·라이브. 남은 것 = (선택) 다운로드 이후 분석-only 스크립트(분석 라이브러리 없는 로컬용, run_local은 유지) · DRM 1곡 수동.
+
+---
+
+# 세션 29 — EMOI-MAP 딥스페이스/별 시각화: 곡=에너지 별 + canvas 별밭 + 밴드 성운 (2026-07-07, feature/emoi-map-starfield → main 104e709)
+
+음원맵 곡 점(660)을 **딥스페이스에 떠 있는 별**처럼 표현(HANDOFF 작업 4). 기존 HUD·격자·펄스·클릭 재생·줌/팬·툴팁은 전부 유지, 별 표현은 그 위에 얹음.
+
+## 1) 곡 점 = 빛나는 별 (energy 구동)
+- `songMark`(`16-audiomap.js`): 곡 점 = 밝힌 밴드색 코어 + 흰 림 + **에너지 비례 글로우**(shadowBlur). 재생 곡=가장 밝은 별(테두리+글로우 강조) · ALL 개요=작게(엉겨붙음 완화, 색 유지) · 호버 흐림=글로우 억제. dim(0.62)·3상태 로직 보존.
+- **별 밝기 = 곡 에너지**: onset `dyn.v`(2Hz 정규화 RMS) 평균 → 전곡 percentile rank(0~1) → `src/tools/cluster/add_energy.py`(신규, base env)가 `audio_map.json songs[].energy`에 baked(660/660). 재분석·재다운로드 불필요(순수 파생). 없으면 프론트 0.5 폴백.
+
+## 2) 딥스페이스 배경 + 별밭 canvas + 밴드 성운
+- 배경 = `.cluster-wrap` 딥스페이스 그라데이션 + `isolation`(스택 컨텍스트). `#cluster-chart` z-index:1(투명 ECharts 캔버스라 뒤가 비침), `#cl-starfield` z-index:0. (`desktop.css`)
+- 데이터 뒤 canvas `#cl-starfield`(JS 동적 생성, `_clBuildSensTabs` 패턴 = 새 파일·템플릿 무변경) = **반짝이는 별밭 + 느린 드리프트**(rAF 루프, 가산합성 `lighter`, 면적 비례 개수, 탭 숨김 시 정지). `_clSky*`/`_clSkyTick`/`_clBuildStarfield`.
+- 밴드 포커스 시 밴드색 **성운**(`_clSetNebula` → 루프가 부드럽게 lerp) — 구 `_clBandBg` 배경 통째 교체 대신 `_clDraw`가 성운 색만 갱신. ALL/various_artists는 성운 off.
+
+## 3) Ave Mujica EMOI-MAP 전용 색
+- Ave Mujica 색(`#881144` 다크 와인)이 딥스페이스 배경과 톤이 겹쳐 강조 안 됨 → `CL_COLOR_OVERRIDE={ave_mujica:'#e64c8c'}`(밝은 로즈 마젠타) + `_clBandColor()` 헬퍼. **EMOI-MAP 내부에서만** 적용(곡 색·글로우·성운·화살표·유사곡 점), 전역 `BAND_COLORS`(워드클라우드·리스트 공유)는 **불변**.
+
+## 편집 규칙 / 커밋
+- JS(`16-audiomap.js`)·CSS(`desktop.css`) 분할파일 직접수정 = 리빌드 불필요 · 별밭 캔버스 JS 생성 · **energy 반영만** `python src/build.py`(index.html은 gitignore = deploy CI 재생성).
+- 커밋: `a8e5367`(별밭+energy+add_energy.py+HANDOFF) → `1af855c`(좌표계 고찰 핸드오프 docs) → **`104e709` main 머지**(--no-ff). 계획 원본 = `~/.claude/plans/emoi-map-proud-valley.md`.
+
+## 롤백
+- `songMark` 고정 size/op 복귀 · `.cluster-wrap` 배경 `var(--surface2)` · `_clBuildStarfield` 미호출. energy 필드는 남아도 무해.
+
+## 상태
+✅ 완료·main 머지·푸시(104e709). 후속 = **작업 5 EMOI-MAP 좌표계 고찰**(260708, HANDOFF § 작업 5) — 다음 세션 `feature/emoi-map-starfield`에서.
