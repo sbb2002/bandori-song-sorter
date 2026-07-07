@@ -1,8 +1,9 @@
-"""Telegram 명령 봇 — GitHub Actions 폴링(getUpdates) 기반 파이프라인 제어.
+"""Telegram 명령 봇 — GitHub Actions getUpdates 기반 파이프라인 제어.
 
-상시 서버가 없어(반자동) Telegram 명령을 CI에서 5분 주기로 수신·처리한다
-(.github/workflows/telegram-bot.yml). **인가된 chat_id(TELEGRAM_CHAT_ID) 메시지만** 처리한다
-(그 외 무시 = 보안). public 레포라 Actions 분(minutes)은 무제한·무료.
+상시 서버가 없어(반자동) Telegram 명령을 CI에서 수신·처리한다(.github/workflows/pipeline.yml
+맨 앞 단계 — 매일 23:00 KST 단일 크론에서 "명령 수신·처리 → 감지 → 알림"을 한 실행으로 수행,
+2026-07-07 통합: 이전의 별도 5분 폴러는 제거됨). **인가된 chat_id(TELEGRAM_CHAT_ID) 메시지만**
+처리한다(그 외 무시 = 보안). public 레포라 Actions 분(minutes)은 무제한·무료.
 
 명령:
   /help    — 명령어 설명
@@ -13,8 +14,8 @@
 ※ /detect 는 deprecated(제거). 감지는 pipeline.yml 일일 크론이 처리 후(= 봇이 미리 받은
 pause/resume 등을 반영한 뒤) 자동 수행하므로 수동 트리거가 필요 없다.
 
-일시정지 상태 = actions/bot_state.json {"paused": bool}. 변경 시 telegram-bot.yml 이 [skip ci]
-커밋한다. 일일 감지(pipeline.yml)는 이 파일을 읽어 paused 면 감지·알림을 건너뛴다.
+일시정지 상태 = actions/bot_state.json {"paused": bool}. 변경 시 pipeline.yml 이 [skip ci]
+커밋한다. 같은 실행의 감지 단계는 이 파일을 읽어 paused 면 감지·알림을 건너뛴다.
 
 offset 은 로컬에 저장하지 않는다 — 처리 후 getUpdates(offset=last+1) 로 Telegram 서버에 ack →
 다음 실행은 새 명령만 받는다(무상태 재개; 크래시로 재처리돼도 모든 명령은 멱등).
@@ -42,8 +43,7 @@ except Exception:
     pass
 
 STATE_PATH = ROOT / "actions" / "bot_state.json"
-CRON_DESC = "매일 23:00 KST (cron 0 14 * * *)"
-POLL_DESC = "5분 주기 폴링"
+CRON_DESC = "매일 23:00 KST (cron 0 14 * * *) — 명령 처리·감지·알림 단일 실행"
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
@@ -93,8 +93,8 @@ def cmd_help() -> None:
 
 def cmd_status() -> None:
     paused = load_state().get("paused", False)
-    trig = "⏸ 일시정지(감지 크론 대기)" if paused else "▶ 활성"
-    reply(f"📊 상태\n· 감지 크론: {CRON_DESC}\n· 봇: {POLL_DESC}\n· 트리거: {trig}")
+    trig = "⏸ 일시정지(감지 대기)" if paused else "▶ 활성"
+    reply(f"📊 상태\n· 트리거: {CRON_DESC}\n· 감지: {trig}")
 
 
 # ── 상태 변경 핸들러 (True = bot_state.json 변경됨) ──

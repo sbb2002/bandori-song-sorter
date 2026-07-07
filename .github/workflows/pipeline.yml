@@ -1,7 +1,11 @@
-name: New-song loader (detect + notify)
+name: New-song loader (commands + detect + notify)
 
-# 매일 23:00 KST(=14:00 UTC) + 수동. CI(데이터센터 IP)에서 YouTube 다운로드는 봇월로 불가함이
-# 실증됨(세션 27, E2E 3회 hard-block) → 이 워크플로우는 **감지 + Telegram 알림만** 한다.
+# 매일 23:00 KST(=14:00 UTC) + 수동, 단일 흐름: 텔레그램 명령 수신·처리(help/status/pause/resume)
+# → paused 아니면 감지 → Telegram 알림. (2026-07-07 통합: 이전엔 5분 폴러(telegram-bot.yml)와
+# 이 크론이 분리돼 있어 "명령 수신 → 파이프라인 기동 → 결과 알림"이 한 실행으로 이어지지
+# 않았음 — 폴러 제거, 명령 처리를 이 크론 맨 앞으로 흡수.)
+# CI(데이터센터 IP)에서 YouTube 다운로드는 봇월로 불가함이 실증됨(세션 27, E2E 3회 hard-block)
+# → 이 워크플로우는 **명령 처리 + 감지 + Telegram 알림만** 한다.
 # 실제 다운로드~main 반영은 로컬 원커맨드(src/tools/pipeline/run_local.py)가 집(레지덴셜) IP에서 수행.
 on:
   schedule:
@@ -14,14 +18,14 @@ on:
         default: 'false'
 
 permissions:
-  contents: read              # 감지는 체크아웃 파일만 읽음(커밋 없음)
+  contents: write              # /pause·/resume 상태(actions/bot_state.json) 커밋
 
 concurrency:
   group: new-song-loader
   cancel-in-progress: false
 
 jobs:
-  detect:
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,21 +34,44 @@ jobs:
         with:
           python-version: '3.12'
 
-      # 감지 = pyyaml 만으로 가볍게(collect_candidates: RSS 피드 + 커밋 YAML dedup, idempotent).
-      # 신곡 있으면 미처리 곡 전체를 요약한 Telegram 1건 전송(0곡이면 무송신). 다운로드 안 함.
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      # 1) 대기 중이던 Telegram 명령 처리(help/status/pause/resume). /detect 는 deprecated —
+      #    바로 아래 감지 단계가 자동 수행하므로 수동 트리거 불필요.
+      - name: Handle Telegram commands
+        id: bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python src/tools/pipeline/telegram_bot.py
+
+      # /pause·/resume 로 상태가 바뀐 경우만 커밋.
+      - name: Commit pause state (if changed)
+        if: steps.bot.outputs.state_changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add actions/bot_state.json
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(bot): 감지 크론 상태 변경 [skip ci]"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
+
+      # 2) 명령 처리 후(= 방금 반영된 pause 상태 기준) 감지 + 알림. 신곡 있으면 미처리 곡
+      #    전체를 요약한 Telegram 1건 전송(0곡이면 무송신). 다운로드 안 함.
       - name: Detect new songs + notify
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          # /pause 로 일시정지된 경우 감지·알림 스킵(bot_state.json, telegram-bot.yml 이 토글).
           if [ -f actions/bot_state.json ] && \
              python -c "import json,sys; sys.exit(0 if json.load(open('actions/bot_state.json')).get('paused') else 1)"; then
             echo "⏸ 일시정지 상태 — 감지·알림 스킵(/resume 로 재개)"
             exit 0
           fi
-          python -m pip install --upgrade pip
-          pip install pyyaml
           if [ "${{ github.event.inputs.notify_test }}" = "true" ]; then
             python actions/orchestrate.py --notify-test
           else
