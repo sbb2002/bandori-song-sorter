@@ -33,7 +33,7 @@
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(단일 크론 봇+감지+알림 · 로컬 처리·결과 Telegram) | § 작업 3 · [spec](spec/pipeline-automation.md) |
 | 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | [done 29](done.md) |
-| 5. EMOI-MAP 좌표계 고찰 | 🚧 **계획·다음 세션**(feature/emoi-map-starfield) | § 작업 5 · [260708](../idea/260708-final_comment.md) |
+| 5. EMOI-MAP 좌표계 고찰 | ✅ **A·B0·C 완료** — timbre×valence 확정·arousal 불가(실질 1.x차원) | § 작업 5 · [논문](../research/emotion-axes-extraction.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -137,13 +137,17 @@ python src/tools/semiauto-loader/run_local.py --test-band afterglow --test-video
 
 ---
 
-## 작업 5. EMOI-MAP 좌표계 고찰 — 🚧 계획 (다음 세션 · feature/emoi-map-starfield)
+## 작업 5. EMOI-MAP 좌표계 고찰 — ✅ Phase A·B0·C 완료 (timbre×valence 확정 · arousal 독립축 불가)
+> **브랜치 분리**: Phase A(맵 정직화·energy 노출·n=1 처방) = `feature/emoi-map-starfield`(커밋 a6ad2bf, 푸시됨). Phase B0(onset 스크리닝) = `feature/emoi-cluster-energy-tempo`(커밋 98290d9, 푸시됨). **Phase C(정식 오디오 3정서축) = `feature/emoi-starfield-timbre-valence`**(현재).
 Millsage·Ikka 1곡 밴드 좌표가 귀와 어긋남 → 근본 원인 = **실질 1.x차원**(contrast가 밝음·거칢 양쪽 지배) + **energy/tempo 지각축 feature 부재**(cluster-correlation 보고서).
 - **문서(실행 기준)** = `docs/idea/260708-final_comment.md`(fable×opus 통합). 원 문제 `260708.md` · 개별 코멘트 `260708-{fable,opus}_comment.md`.
 - **참고(작업 4 연계 · done 29)**: 별 시각화가 베이스 — `16-audiomap.js`(`songMark`·`_clSky*`/`_clBuildStarfield`·`_clSetNebula`) + 곡 `energy`가 `add_energy.py`로 `songs[].energy`에 이미 baked(660/660). Phase A(범례·라벨)·B(`y_energy` 토글)가 이 위에 얹힘.
-- **Phase A**(즉시·base env): 축 라벨 정직화(`axes.{x,y}` 괄호 한정) + energy 범례/툴팁 + n=1 처방(overrides·잠정 별). **Phase B0**: onset 파생 후보(E1~E3) × 기존 n=28 라벨 스크리닝 검정. **Phase B**: y축 에너지 토글(raw dyn.v z-score → `y_energy`, `_clYMode`). **Phase C**(완비 로컬·hummingbird env): 정식 LRA·tempogram 추출 + 라벨 확대 확정검정 → report(`report/cluster-energy-axis/`).
+- **✅ Phase A 완료**(2026-07-07 · 미커밋): ① 축 라벨 괄호 한정 — `axes.x` 거칢(음색)/매끄러움(음색), `axes.y` 밝음(장조)/어두움(단조)(리듬거칢·경쾌=밝음 오독 차단). ② energy 노출 — 툴팁 `· 에너지 NN%`(`songMark._e`) + 헤더 범례 칩 `★ 밝기·크기 = 곡 에너지`(`_clBuildEnergyLegend`, `.am-legend`) + **코어 색 명도 = energy**(고=밝게·저=어둡게, `_clEnergyColor` L 0.40~0.82·hue/채도 유지, `_clPulseColor` L오버라이드 재사용). ↳ ave_mujica EMOI-MAP 색 오버라이드(#e64c8c 로즈) 제거 → 원 지정색 #881144(와인) 복귀(명도 변조가 가시성 보정 대체, `CL_COLOR_OVERRIDE={}`). ③ n=1 처방 — **millsage dx=−18**(x 13.93→−4.07, 매끄러움), **ikka dy=+18**(y −9.28→+8.72, 밝음/경쾌); nudge=1지각점≈18좌표(k=25·σ≈24·r회귀). overrides+norm.overrides+baked좌표(곡·centroid)+`BAND_OVERRIDES` 상수 일관 기록, **만료=n≥5 시 제거**. 잠정 별 = centroid n<3 반투명(×0.5)+툴팁 `n=1 · 잠정`. 변경: `audio_map.json`(+build.py)·`16-audiomap.js`·`desktop.css`·`mobile.css`·`build_perceptual_map.py`. 브라우저 실검수 통과(축4·범례·잠정별·재배치·회귀 격자/HUD/별밭).
+- **✅ Phase B0 완료**(2026-07-07 · 전멸): onset 파생 후보 9종(E1 mean·E2 LRA근사·E3 온셋밀도·dyn std/p90/p10·ACF pulse_bpm·librosa tempo) × 손라벨 energy/tempo(n=30) 상관 — **PASS 0/9**. 최강 `dyn_std`×energy r=−0.40(임계 미만·부호반대)·`pulse_bpm`×tempo r=+0.12. 원인 = **dyn.v가 곡별 정규화값**(펄스 연출용)이라 곡 간 절대에너지 씻김(doc §2 '뭉침' 예측 확증) + 온셋/ACF는 지각 템포 아님. → **Phase C 직행 확정**(정식 LUFS·tempogram, 오디오 원본 필요). 산출: `report/cluster-energy-axis/`(README·onset_features.csv 660·b0_correlation.{txt,json}·b0_screening.png). 도구: `src/tools/cluster/b0_{onset_features,correlate,plot}.py`. 진행관측 = `b0_progress.json`(곡마다 진행률·ETA·마지막곡, `b0_control.json`{command:pause}로 협조적 중단·재개). **⚠️ audio_full 폐기 금지**(C가 원본 재필요).
+- **✅ Phase C 완료**(2026-07-07 · **timbre×valence 확정 / arousal 불가**): 원본 audio_full에서 정식 feature 18종(lufs·lra·rms_std·crest·tempo_acf·pulse_clarity·vbl·onset_rate·mode·harmonic·centroid·rolloff·contrast·flatness·flux·zcr·rms·tempo) 추출(라벨 30곡, 곡당 ~4.4s) × 손라벨 4축 상관. 결과: **Timbre `contrast`×rough r=−0.815 PASS · Valence `mode`×valence r=+0.576 PASS**(합성 mode+centroid+harmonic R=0.595 미개선→mode 유지). **Arousal 탈락** — 전용 feature(LUFS·LRA·tempo_acf·VBL·rms변동) 전멸, **측정 템포 tempo_acf×지각tempo r=0.087(측정≠지각)**, 지각 energy/tempo는 스펙트럴 밝기(centroid·rolloff r≈0.6)가 잡으나 **contrast와 collinear(r≈0.52)라 독립 축 아님**. → **"실질 1.x차원" 확증**(contrast가 rough·energy·tempo·valence 4라벨 지배). **결정: x=timbre·y=valence 유지·변경없음, arousal 새 축 도입 안 함(전곡 추출 불요), Millsage·Ikka는 Phase A override가 최종**. 논문 `docs/research/emotion-axes-extraction.md`. 산출 `report/emotion-axes/`(phasec_features.csv 30·correlation.{txt,json}·screening.png). 도구 `phasec_{features,correlate,plot}.py`(--full로 전곡 추출 가능·진행/pause).
+- **⏭ 남은 선택지(모두 optional)**: (a) 현 2축으로 확정 종료(권장·가장 정합) · (b) 전곡 660 정식 feature 부기(축 아님, 파생 보관용, ~46분) · (c) 라벨 확대 재검 · (d) 장르 밖 대조군. **Phase B(y 토글)는 B0·C 모두 arousal 부재라 보류/불요.**
+- **데이터 보관(사용자 요청)**: 두 조사 데이터 폐기 금지 — B0 `cluster-energy-axis/onset_features.csv`(660)·C `emotion-axes/phasec_features.csv`(30) 커밋 보존, `audio_full`(660·15GB) 로컬 보존(gitignore). 전환성 progress/control JSON만 gitignore.
 - **편집 규칙 동일**: `16-audiomap.js`·`desktop.css` 직접수정(리빌드 ✗) · `audio_map.json` 변경만 `python src/build.py`.
-- ⚠️ **오디오 캐시 폐기 보류**: Phase C 전까지 완비 로컬 `audio_full`(285/660 이 로컬 · 660 완비 로컬) 유지 — 정식 LRA/tempogram 원본 필요.
 
 ---
 
