@@ -47,6 +47,9 @@
   .yt-bottom-split .bandinfo-panel.dock-wc { flex: none; height: 300px; border-left: none; border-top: 1px solid var(--border); }
   /* 모바일 스택에선 음원맵 차트 최소 높이 회복(데스크톱 min-height:0 상쇄) */
   .yt-bottom-split .audiomap-area .cluster-wrap { min-height: 0; }
+  /* 좁은 폭: 범례 칩이 헤더에서 밀려나지 않게 줄바꿈 허용(우측 정렬 해제) */
+  .am-head { flex-wrap: wrap; }
+  .am-legend { margin-left: 0; }
   .song-list-panel { border-bottom: none; }
   .song-list { max-height: 60vh; }
 

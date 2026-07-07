@@ -379,6 +379,10 @@
 .am-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-shrink: 0; }
 .am-title { font-size: 0.78rem; font-weight: 700; color: var(--text); }
 .am-sub { font-size: 0.6rem; color: var(--text-sub); }
+/* 범례 칩: ★ 밝기·크기 = 곡 에너지 (헤더 우측 정렬, _clBuildEnergyLegend 가 주입) */
+.am-legend { margin-left: auto; font-size: 0.56rem; color: var(--text-sub);
+  white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
+.am-legend-star { color: #ffe14d; text-shadow: 0 0 5px rgba(255,225,77,0.6); }
 .audiomap-area .cluster-wrap { min-height: 0; }
 .audiomap-area #cluster-chart { min-height: 0; }
 /* 음원맵 축 +/- 방향 의미 라벨(4모서리, 화면 고정) */

@@ -46,9 +46,18 @@ X_SHIFT, Y_SHIFT = 0.0, 10.0
 # morfonica: 바이올린 음색의 '밝음'이 mode·음향 feature로 안 잡힘(곡별 mode가 −27~+29로
 #   퍼져 상수 통용 불가, HPSS 선율밝기도 valence 무상관 — docs/working/report/cluster-correlation).
 #   사용자 판단(밴드 B안)으로 밴드를 밝은 쪽에 배치. audio_map.json.overrides 에 투명 기록.
+# millsage·ikka: n=1 밴드(곡 1개 = 대표값, 노이즈 미세척) + 축 프록시 한계가 겹쳐 좌표가 귀와
+#   어긋남(작업 5, docs/idea/260708-final_comment.md). nudge 크기 = 1지각점≈18좌표(norm k=25·좌표 σ≈24,
+#   r 기반 회귀기울기). ★만료 규칙: 신곡 파이프라인으로 n≥5 도달 시 재검토·제거(측정이 대체).
 BAND_OVERRIDES = {
     "morfonica": {"dx": 0.0, "dy": 15.0,
                   "why": "violin 음색 밝음 미측정 → 밴드 밝기 큐레이션(측정 아님)"},
+    "millsage": {"dx": -18.0, "dy": 0.0,
+                 "why": "키보드 편곡의 '매끄러움'이 spectral contrast(음색 대비, 리듬 아님)로 미측정 "
+                        "→ n=1 좌표 큐레이션(측정 아님, ≈1지각점). n≥5 도달 시 제거"},
+    "ikka_dumb_rock": {"dx": 0.0, "dy": 18.0,
+                       "why": "펑크 '경쾌함'(에너지축 energy=0.92 상위8%)이 mode(조성만)로 미측정 "
+                              "→ n=1 좌표 큐레이션(측정 아님, ≈1.5지각점). n≥5 도달 시 제거"},
 }
 
 
