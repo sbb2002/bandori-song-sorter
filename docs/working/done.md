@@ -687,3 +687,35 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 2. **(Local, 원커맨드)** 전용 클론에서 다운로드(집 IP)→demucs/pulse→좌표 append→push main→deploy 자동.
 - 격리: 전용 로컬 클론(데브 핫픽스 워킹트리와 분리). 코드 = `src/tools/pipeline/`(run_local.py·notify.py) + orchestrate `--notify` 신설. pipeline.yml은 감지+알림 전용으로 재작성. 구현/검증 = 진행 중(HANDOFF 작업 3).
 - 폐기: 실험 브랜치 `feature/ci-download-client-rotation`(로테이션·PO토큰 커밋) — CI 다운로드 포기로 무용.
+
+# 세션 28 — 신곡 로더 반자동 파이프라인 운영화: 봇 통합·상쇄·리네이밍·로컬 Telegram 통지 (2026-07-07, main 직접 머지)
+
+세션 27 반자동 아키텍처를 실운영 형태로 다듬음. 6개 독립 변경을 브랜치별 커밋 후 main 머지.
+
+## 1) telegram 명령 봇 정리 (docs/idea/260707.md 고찰 반영)
+- `/detect` deprecated·제거 — 감지는 일일 크론이 자동 수행하므로 수동 트리거 불필요.
+- 한 실행에 밀린 명령 중 `/pause`→`/resume`이 순서쌍이면 서로 상쇄(무효 처리, 상태변경·응답 없이 skip) + "함께 도착해 상쇄" 안내 1건. 2-패스(큐 수집→상쇄 판정→실행).
+- 커밋 030d796. 실운영 검증: run 28835461588(status/pause/resume)·28835571685(pause/status/resume) 로그에서 상쇄 skip 확인.
+
+## 2) 5분 폴러 → 단일 23:00 크론 통합
+- 문제: `telegram-bot.yml`(5분 폴링)과 `pipeline.yml`(일일 감지)이 분리 → "명령 수신→파이프라인 기동→결과 알림"이 한 실행으로 안 이어짐.
+- `telegram-bot.yml` 제거, 명령 처리 단계를 `pipeline.yml` 맨 앞으로 흡수 → 매일 23:00 KST 한 실행에서 [명령 처리(help/status/pause/resume) → paused 아니면 감지 → 알림] 순차. permissions `contents:write`(상태 커밋). 트레이드오프: 명령 응답은 최대 하루 지연이나 인프라 단순화.
+
+## 3) 감지 알림 개선
+- `orchestrate.py --notify`가 candidates>0 조건 없이 매 실행 전송 → 신곡 0곡도 "신곡 0곡 발견(미처리 없음)" Telegram 1건. 감지가 실제로 돌았는지 무응답으로 의심할 일 제거.
+
+## 4) 리네이밍·디렉터리 정리
+- `src/tools/pipeline/` → `src/tools/semiauto-loader/`(역할 명확화) + 폴더 README.md 신설(상황별 실행 파일 표).
+- 루트 `actions/`(orchestrate.py·bot_state.json·requirements.txt) → `src/tools/semiauto-loader/` 흡수. 'actions'는 GitHub 예약어와 이름만 겹칠 뿐 특별 역할 없음. ⚠️ orchestrate.py ROOT `parents[1]`→`parents[3]` 재계산(안 고치면 레포 루트 오인 → 데이터 경로 붕괴).
+
+## 5) run_local.py 결과 로그·메시지 개선
+- orchestrate 내부 subprocess가 성공 시 출력을 통째 삼키던 것 → 기본 스트리밍(터미널에 실시간 노출, quiet=True만 억제).
+- run_local이 orchestrate 출력을 tee하며 종료 후 [신곡 0건 / N곡 반영 / 전부 실패 / 오류]를 구분된 한 문장으로 정리(기존엔 rc==0이면 무조건 "완료" 문구라 0건도 배포된 듯 오해).
+
+## 6) 로컬 처리 결과 Telegram 통지 + notify .env 자동 로드
+- run_local이 결과 문장을 터미널과 동일하게 `notify.send_telegram`로 1건 전송(다운로드+demucs가 곡당 수 분 → 자리 비워도 완료/실패 수신). --dry·--test-video는 통지 안 함.
+- notify.py에 repo 루트 `.env` 자동 로드(환경변수 우선, python-dotenv 무의존 = youtube_api.load_env_key 규약). CI는 secrets로 no-op, 로컬은 `.env`의 TELEGRAM_BOT_TOKEN·TELEGRAM_CHAT_ID.
+- 로컬 통지 라이브 확인: `.env` 키 오타(`TLEGRAM_CHAT_ID`→`TELEGRAM_CHAT_ID`) 수정 후 send 성공. (.env는 gitignore·비커밋.)
+
+## 상태
+✅ 반자동 파이프라인 운영화 완료·라이브. 남은 것 = (선택) 다운로드 이후 분석-only 스크립트(분석 라이브러리 없는 로컬용, run_local은 유지) · DRM 1곡 수동.

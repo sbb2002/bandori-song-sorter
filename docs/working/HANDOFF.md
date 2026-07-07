@@ -2,8 +2,9 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`.
 
-마지막 갱신: **2026-07-06(세션 26)** — **작업 3 = CI 다운로드 봇월 확정 → 반자동 전환**: E2E dry-run 3회로 GitHub Actions(데이터센터 IP)에서 YouTube 다운로드가 봇월에 막힘 실증(기본·클라이언트 로테이션·PO토큰 전부 hard-block). 벽은 IP 평판 → 클라우드로는 불가. **다운로드만 레지덴셜(집) IP로 빼는 반자동 채택**: (1)Actions가 매일 감지+Telegram 알림 (2)로컬에서 원커맨드로 다운로드~main push→deploy 자동. 계획 = `~/.claude/plans/floofy-tickling-corbato.md`. **현재 = 구현 중**(작업 브랜치 `feature/new-song-semiauto`).
-> **⏭ 다음 = 작업 3 구현·검증(§ 작업 3):** pipeline.yml 재작성(감지+알림) + `src/tools/semiauto-loader/run_local.py`·`notify.py` + orchestrate `--notify`. 검증 = 로컬 다운로드 실증(CI ✗였던 곡이 로컬 ✅).
+마지막 갱신: **2026-07-07(세션 28)** — **작업 3 반자동 파이프라인 운영화·라이브**(done 28): 봇 정리(`/detect` deprecated·제거 · `/pause`+`/resume` 순서쌍 상쇄 · 감지 0곡도 알림) + **5분 폴러 폐지→단일 23:00 크론 통합**(`telegram-bot.yml` 제거, 명령 처리를 `pipeline.yml` 맨 앞으로 흡수 → 명령→감지→알림이 한 실행) + `src/tools/pipeline`·루트 `actions/` → **`src/tools/semiauto-loader/`** 통합(+폴더 README) + run_local 결과 실시간 로그·0건/반영/실패 구분·**로컬 처리 결과 텔레그램 통지**(notify가 repo 루트 `.env` 자동 로드).
+> **⏭ 다음 = (선택) 분석-only 로컬 스크립트**(다운로드 이후 분석·push만 — 분석 라이브러리 없는 로컬 대비, § 작업 3 '남은 것') · DRM 1곡 수동. **반자동 본류는 완료·라이브.**
+이전: (2026-07-06 세션 26~27) 작업 3 인프라 구축(감지→좌표→pulse→main + Pages 아티팩트 배포) + CI 다운로드 봇월 확정(E2E 3회) → 반자동(다운로드만 로컬 IP) 전환 결정. done 26~27.
 이전: (2026-07-05 세션 25) 음원맵 클러스터링/재생펄스 완결 + main 머지: 전곡 **660곡** 좌표·펄스 + 렌더 lazy-fetch(index.html 0.30MB) + 에너지 동적 subdivision(음량→박/8분) + 볼륨 프리셋 4단계. done 24~25 · [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
 이전: (2026-07-04) 재생 펄스 파일럿 → 세션 23 방안 A 완성. (2026-07-03 17:00) 작업 1(D) 레이아웃 확정 + 정적파일 분할 main 머지(done 22).
 
@@ -28,7 +29,7 @@
 |------|------|------|
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm, done 23) | § 작업 2 |
-| 3. 자동화 파이프라인 | 🔧 **반자동 전환·구현 중**(CI 다운로드 봇월 확정 → Actions 감지·알림 + 로컬 처리) | § 작업 3 · [spec](spec/pipeline-automation.md) |
+| 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(단일 크론 봇+감지+알림 · 로컬 처리·결과 Telegram) | § 작업 3 · [spec](spec/pipeline-automation.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -83,8 +84,8 @@
 - ✅ 완료: UX 센트로이드 클릭 비활성+반투명(done 23), HUD·펄스 연출.
 - (선택) 구 미사용 폐기: `keywords_2d.json` · `build_embeddings.py` · `build_audio_map.py`.
 
-## 작업 3. 자동화 파이프라인 — 신곡 로더 (🔧 반자동 전환 · 구현 중)
-**상세 구현·배선 = [done.md](done.md) 세션 26.** 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md). 작업 2(전곡 빌드+`norm` 동결)에 의존 — 완료됨.
+## 작업 3. 자동화 파이프라인 — 신곡 로더 (✅ 반자동 · 운영화 완료·라이브)
+**상세 구현·배선 = [done.md](done.md) 세션 26·27·28.** 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md). 작업 2(전곡 빌드+`norm` 동결)에 의존 — 완료됨.
 
 ### ⛔ 결론 — CI 다운로드는 봇월로 불가(실증 확정, 2026-07-06)
 E2E dry-run으로 CI 오디오 다운로드를 검증한 결과 **GitHub Actions(데이터센터 IP)에서 YouTube 다운로드가 봇월("Sign in to confirm you're not a bot")에 막힘**이 확정:
@@ -94,41 +95,41 @@ E2E dry-run으로 CI 오디오 다운로드를 검증한 결과 **GitHub Actions
 
 ### 🔧 채택 아키텍처 — 반자동(Actions 감지·알림 + 로컬 원커맨드 처리)
 계획 원본 = `~/.claude/plans/floofy-tickling-corbato.md`. 흐름:
-1. **(Actions, 매일 23:00 KST = cron `0 14 * * *`)** `orchestrate.py --detect-only --notify` → 신곡 있으면 **미처리 신곡 전체를 요약한 Telegram 메시지 1건** 전송(다운로드 안 함).
-2. **(Local, 사용자 트리거)** 알림 받고 **명령어 한 줄** → 다운로드(집 IP)→demucs/pulse→좌표 append→`push origin main` → `deploy.yml` 자동 배포.
+1. **(Actions, 매일 23:00 KST = cron `0 14 * * *`, 단일 실행)** ① 대기 중이던 Telegram 명령 처리(help/status/pause/resume) → ② paused 아니면 `orchestrate.py --detect-only --notify` 감지 → **감지 결과 Telegram 1건(신곡 N곡 요약 / 0곡이면 "0곡 발견" 도 전송)**. 다운로드 안 함.
+2. **(Local, 사용자 트리거)** 알림 받고 `run_local.py` → 다운로드(집 IP)→demucs/pulse→좌표 append→`push origin main` → `deploy.yml` 자동 배포. **결과(0건/N곡 반영/실패)를 터미널 + Telegram 통지.**
 
 **격리 원칙**: 자동화 git 활동(main 커밋·푸시)이 데브 핫픽스와 안 얽히도록 **전용 로컬 클론에서만 실행**(별개 브랜치로는 워킹트리 공유라 격리 안 됨 / 별도 GitHub 레포는 과함 — 데이터는 이 레포로 push돼야 deploy됨). 코드는 `src/tools/semiauto-loader/`에 두어 버전관리.
 
-### 컴포넌트
-- `.github/workflows/pipeline.yml` — **감지+알림 전용으로 재작성**(오디오/PO/node 스텝 제거, cron 23:00 KST). `TELEGRAM_BOT_TOKEN`·`TELEGRAM_CHAT_ID` secrets.
-- `src/tools/semiauto-loader/run_local.py`(신규) — 사용자 원커맨드. 전용 클론(기본 `../bandori-pipeline`)을 `origin/main`로 reset → cwd=클론에서 `orchestrate.py` 실행. 인자 `--repo-path/--limit/--dry/--test-band/--test-video`.
-- `src/tools/semiauto-loader/notify.py`(신규) — `send_telegram()`(urllib, 무의존). Actions·로컬 공용.
-- `src/tools/semiauto-loader/orchestrate.py`(2026-07-07 `actions/`에서 이동) — `--notify`/`--notify-test`만 신설. process_song·commit_and_push·`--test-*`는 **무수정 재사용**(로컬 엔진).
+### 컴포넌트 (전부 `src/tools/semiauto-loader/`, 세션 28에 `pipeline`→개명 + 루트 `actions/` 흡수)
+- `.github/workflows/pipeline.yml` — **단일 23:00 크론**: 명령 처리 → 감지 → 알림. `contents:write`(pause 상태 커밋). `TELEGRAM_BOT_TOKEN`·`TELEGRAM_CHAT_ID` secrets. (구 `telegram-bot.yml` 5분 폴러는 세션 28에 제거·흡수.)
+- `orchestrate.py`(루트 `actions/`에서 이동, ROOT `parents[3]` 재계산) — 감지·처리·커밋 엔진. `--detect-only`/`--notify`(0곡도 전송)/`--notify-test`/`--dry`/`--test-*`.
+- `run_local.py` — 사용자 원커맨드. 전용 클론(기본 `../bandori-pipeline`)을 `origin/main`로 reset → cwd=클론에서 `orchestrate.py` 실행. 결과를 실시간 스트리밍 + 종료 후 0건/반영/실패 구분 메시지 + `notify.send_telegram`. 인자 `--repo-path/--limit/--dry/--test-band/--test-video`.
+- `notify.py` — `send_telegram()`(urllib 무의존). **repo 루트 `.env` 자동 로드**(환경변수 우선, python-dotenv 무의존): CI는 secrets로 no-op, 로컬은 `.env`의 토큰 사용. 토큰 없으면 조용히 스킵.
+- `telegram_bot.py` — 명령 봇(아래). `bot_state.json` — pause 상태(이 폴더). `requirements.txt` — 오디오 스택 의존성(로컬 `pip install -r`).
 - `deploy.yml` **무변경**(로컬 push가 트리거).
 
 ### 로컬 사용법
 ```
-python src/tools/semiauto-loader/run_local.py                       # 감지→다운로드~push (실제 반영)
-python src/tools/semiauto-loader/run_local.py --test-band afterglow --test-video 09B-WljIiTo  # E2E 검증(dry)
+python src/tools/semiauto-loader/run_local.py                       # 감지→다운로드~push (실제 반영, 결과 Telegram)
+python src/tools/semiauto-loader/run_local.py --dry                 # 처리하되 push 안 함(검증, Telegram 안 함)
+python src/tools/semiauto-loader/run_local.py --test-band afterglow --test-video 09B-WljIiTo  # E2E 1곡(dry 강제)
 ```
-사전조건: 오디오 스택 env(yt-dlp·node·torch/demucs·librosa·ffmpeg, 이 장치는 base miniconda에 전부 있음) + git push 자격.
+사전조건: **한 env**에 오디오 스택(`pip install -r src/tools/semiauto-loader/requirements.txt` = yt-dlp·demucs/torch·librosa·soundfile·numpy·scipy·imageio-ffmpeg) + **node**(PATH, nsig 서명) + git push 자격. 로컬 Telegram 통지는 `.env`에 `TELEGRAM_BOT_TOKEN`·`TELEGRAM_CHAT_ID`(없으면 통지만 스킵). 상세 = 폴더 README.
 
 ### Telegram 명령 봇 (라이브)
-상시 서버 없이 Telegram 명령을 **Actions 5분 폴링**(`telegram-bot.yml` cron `*/5`, public 레포=무료)으로 처리. `src/tools/semiauto-loader/telegram_bot.py`가 `getUpdates`+ack(무상태)·**인가 chat_id만**. 응답 지연 ~5~15분(GitHub 크론 best-effort).
-- `/help` · `/detect`(감지 수동+결과·예외 응답) · `/status`(주기·상태) · `/pause` · `/resume`.
-- 일시정지 = `src/tools/semiauto-loader/bot_state.json {paused}`(deploy 경로 밖, 봇이 [skip ci] 커밋). `pipeline.yml`이 읽어 paused면 감지·알림 skip. `/pause`는 **일일 감지만** 멈춤(봇 폴러는 계속 = `/resume` 수신).
-- 브릿지는 **폴링 채택**(웹훅+Cloudflare Worker 대안은 즉시 응답이나 인프라+1). 즉시 실행 = `gh workflow run telegram-bot.yml`.
+상시 서버 없이 Telegram 명령을 **`pipeline.yml` 일일 크론 맨 앞 단계**에서 처리(`telegram_bot.py`, `getUpdates`+ack 무상태·**인가 chat_id만**). 세션 28에 5분 폴러 폐지 → 명령 응답은 최대 하루 지연이지만 pause/resume은 다음 감지 실행에 확실히 반영됨.
+- `/help` · `/status`(주기·상태) · `/pause` · `/resume`. **`/detect`는 deprecated·제거**(감지는 크론이 자동 수행).
+- **`/pause`→`/resume` 순서쌍 상쇄**: 한 실행에 둘 다 밀려오면 서로 상쇄되는 조작이라 무효 처리(상태변경·응답 없이 skip) + "함께 도착해 상쇄" 안내 1건.
+- 일시정지 = `bot_state.json {paused}`(이 폴더, deploy 경로 밖, 봇이 [skip ci] 커밋). 같은 실행의 감지 단계가 읽어 paused면 감지·알림 skip.
 
-### 상태 — ✅ 반자동 + 봇 완료·라이브
-- ✅ 구현·머지: pipeline.yml(감지+알림) · run_local.py · notify.py · orchestrate `--notify` · telegram_bot.py (main).
-- ✅ 검증: 로컬 다운로드 실증(CI ✗ 곡이 로컬 ✅) · 데브 레포 격리 · Telegram 알림/명령 전송(run 28796418124·28798948000).
-- ✅ secrets `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` 등록.
+### 상태 — ✅ 반자동 + 봇 운영화 완료·라이브
+- ✅ 구현·머지(main): 단일 크론 통합 pipeline.yml · run_local.py(실시간 로그·결과 Telegram) · notify.py(.env 자동로드) · orchestrate(0곡 알림) · telegram_bot.py(/detect 제거·상쇄).
+- ✅ 검증: 상쇄 실운영(run 28835461588·28835571685) · 로컬 Telegram 통지(`.env` 키 오타 수정 후 send 성공) · secrets 등록.
 
 ### 남은 것 (선택·후순위)
+- **(사용자 요청) 분석-only 로컬 스크립트**: 다운로드는 다른 로컬/수단으로 받고, 분석~push만 하는 별도 파일. 일부 로컬은 분석 라이브러리(torch/demucs 등) 구동 환경이 안 될 수 있어 다운로드/분석 역할 분리가 필요. **현재 `run_local.py`(다운로드+분석 일체형)는 유지**하고 추가.
 - DRM `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → fail-soft 스킵(수동).
 - (선택) 영구실패 재시도 상한 가드 · index.html `git rm --cached`(Option A 완전화) · 옛 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제.
-- (미검증) `/pause`·`/resume`의 상태 커밋 경로(bot_state.json push) — 실사용 시 확인.
-- (사용자 코멘트) 다운로드 이후 분석 및 데이터 푸쉬 작업을 진행하는 별도의 파일도 필요함. 왜냐하면 일부 로컬에서 분석 라이브러리를 구동할 환경이 안될 수도 있기 때문임. 현재 만든 파일도 유지할 것.
 
 ---
 
