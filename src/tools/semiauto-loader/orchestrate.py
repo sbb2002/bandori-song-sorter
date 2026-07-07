@@ -68,12 +68,13 @@ DATA_PATHS = [
 # ──────────────────────────────────────────────
 
 def run(cmd: list[str], *, check: bool = False, quiet: bool = False) -> subprocess.CompletedProcess:
-    """cwd=ROOT 로 실행. 실패해도 예외 안 냄(fail-soft) — check=True 일 때만 raise."""
-    p = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True,
+    """cwd=ROOT 로 실행. 기본은 stdout/stderr 를 그대로 터미널에 흘려보낸다(quiet=True 면
+    캡처해서 억제 — git diff --quiet 상태 체크처럼 결과가 무의미한 호출용).
+    실패해도 예외 안 냄(fail-soft) — check=True 일 때만 raise."""
+    p = subprocess.run(cmd, cwd=str(ROOT), capture_output=quiet, text=True,
                        encoding="utf-8", errors="replace")
-    if not quiet and (p.returncode != 0):
-        tail = "\n     ".join((p.stderr or p.stdout or "").strip().splitlines()[-8:])
-        print(f"  [rc={p.returncode}] {' '.join(cmd[:3])}…\n     {tail}")
+    if not quiet and p.returncode != 0:
+        print(f"  ✗ [rc={p.returncode}] 실패: {' '.join(cmd[:3])}… (위 로그 참고)")
     if check and p.returncode != 0:
         raise RuntimeError(f"{' '.join(cmd)} 실패(rc={p.returncode})")
     return p
