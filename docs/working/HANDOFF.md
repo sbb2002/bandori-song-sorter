@@ -2,7 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`. 작성 규칙은 [readme.md](readme.md).
 
-마지막 갱신: **2026-07-08(세션 33)** — **오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 완료**(`analysis/audio-feats`, main 미머지): 전곡 캐시 로컬에서 N=15 밴드 균등 게이트(통과) → 전곡 660 확장 재실행. **부분 캐시 3대 결론(스펙트럼 형태 지표군 중복→PI 붕괴 · `energy_proxy` 3성분 · `acousticness`=`harmonic_ratio` 주도) 전부 확증·강화**, `tempo_excerpt`는 비유의로 강등, 메탈/전자(roselia·RAS) 포함으로 "메탈 vs 어쿠스틱" 대비 확인. 이후 = **EMOI-MAP 시각화 실험**(재생 펄스 음색 시그니처 = Idea A 등, 리스크순 브랜치 비교). done 33 · 작업 6 참조.
+마지막 갱신: **2026-07-08(세션 34)** — **EMOI-MAP 재생펄스 음색 시그니처 시각화 설계·데모 아티팩트 발행**(아직 브랜치 미생성): Idea A(펄스 모양=음색) 채택 · Idea B(PCA) 기각 · 4모양(neutral/acoustic/bright/shimmer) 인터랙티브 데모 아티팩트 발행 · Exp1~4 리스크순 브랜치 플랜(Exp1·2 병행 확정). 단일 출처 memory `pulse_signature_shapes.md` · 작업 6 "다음 단계" 참조. ⚠️ 이 논의는 방향키 네비게이션으로 대화 분기가 유실됐다가 세션 jsonl에서 복구함.
+이전: **2026-07-08(세션 33)** — **오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 완료**(`analysis/audio-feats`, main 미머지): 전곡 캐시 로컬에서 N=15 밴드 균등 게이트(통과) → 전곡 660 확장 재실행. **부분 캐시 3대 결론(스펙트럼 형태 지표군 중복→PI 붕괴 · `energy_proxy` 3성분 · `acousticness`=`harmonic_ratio` 주도) 전부 확증·강화**, `tempo_excerpt`는 비유의로 강등, 메탈/전자(roselia·RAS) 포함으로 "메탈 vs 어쿠스틱" 대비 확인. 이후 = **EMOI-MAP 시각화 실험**(재생 펄스 음색 시그니처 = Idea A 등, 리스크순 브랜치 비교). done 33 · 작업 6 참조.
 이전: **2026-07-08(세션 32)** — **오디오 피처 유효성 3중 렌즈 분석(단·이·다변량) + 우리 샘플 교차검증**(Spotify 114,000곡 side-project + 로컬 285/660곡, `analysis/audio-feats`, main 미머지): acousticness_proxy가 morfonica(바이올린 밴드) 최고치로 가설 일치 + 다변량(VIF+RF)에서 loudness↔energy 중복·popularity 반전 확인, energy_proxy 3성분 사후 검증. research 승격([feature-validity-extraction.md](../research/feature-validity-extraction.md)). 전곡 확대는 다른 로컬. done 32 · 작업 6 참조.
 이전: **2026-07-08(세션 31)** — **작업 1·2·3·5 done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix**: 네 작업 본류 완료 확인 → 작업 절을 요약+링크로 축약(선택 잔여는 § 보류·백로그로 이동, 구 '병렬 실행 계획' 제거). **+minor fix(fix/emoi-map-labels-pulse)**: 축 라벨 '음색이 거친/부드러운'·'발랄한/진지한 느낌', 재생 HUD를 밴드 평균점 대비 편차 기준으로, 펄스 16분 주석 비활성(CL_DYN_MAX=1 유지) + research 작성 규칙(README 양식·승격기준). done 31 참조.
 이전: **2026-07-07(세션 30)** — 작업 5(EMOI-MAP 좌표계 고찰) 완료·main 머지(`172684e` · done 30): Phase A(맵 정직화) 라이브 + B0·C 정서축 연구 = **timbre×valence 확정, arousal 독립축 불가**("실질 1.x차원"). 결정: x=timbre·y=valence 유지. 논문 [emotion-axes-extraction.md](../research/emotion-axes-extraction.md).
@@ -86,9 +87,18 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 
 **다음 단계**: ✅ 전곡 660·13밴드 재검증 완료(세션 33, done 33) — 3대 결론(스펙트럼 형태 지표 중복 ·
 `energy_proxy` 3성분 · `acousticness`=`harmonic_ratio` 주도) 전부 확증·강화, `tempo_excerpt`는 비유의로
-강등. **이후 = EMOI-MAP 시각화 실험**(재생 펄스에 음색 시그니처 표현 — Idea A[곡별 대표 파형] 채택 +
-Demucs 스템 펄스[킥/스네어·멜로디밴드 미약파동] 검토, **리스크 작은 순서대로 각각 브랜치 만들어 비교**).
-손라벨 상관검정·EMOI-MAP 축 실제 개편은 그 이후 별도 결정(아직 미적용).
+강등. **이후 = EMOI-MAP 재생펄스 음색 시그니처 시각화**(단일 출처 memory `pulse_signature_shapes.md`):
+- **Idea A 채택**(데이터 지지 71% 뚜렷·29% neutral) · **Idea B(PCA 지도) 기각**(silhouette −0.18).
+- **펄스 4모양 데모 아티팩트 발행됨**(눈으로 비교용): `neutral` 매끈원 · `acoustic` 6엽 물결링(harmonic↑) ·
+  `bright` 톱니링(밝기군↑) · `shimmer` 이중 명멸링(flux↑, "electric"→개명).
+  → https://claude.ai/code/artifact/b177e3e3-5965-4b62-9070-bfd76f479005
+- **리스크순 실험 브랜치**(전부 main 분기·미생성): ①`feature/emoi-pulse-signature`(위 모양, 비용0·피처만)
+  ②`feature/emoi-pulse-drums`(킥/스네어 대역분리, 기존 `audio_drums` 660 재사용·새 Demucs 불필요·~15분, 프론트
+  `lv.kick`/`lv.snare` 훅 기존재) ③`feature/emoi-pulse-melodic`(Demucs `other` 미약파동·~하룻밤 CPU)
+  ④`feature/emoi-pulse-bass`(선택). **확정=Exp1·2 병행.**
+- **다음 결정(사용자)**: 아티팩트 보고 (a)4모양 그대로 / (b)특정 모양 조정 / (c)다른 시각언어 → Exp1·2 브랜치 잘라 구현.
+- 손라벨 상관검정·**EMOI-MAP 축 실제 개편은 그 이후 별도 결정**(이건 펄스 모양만, 축 무변경).
+- ⚠️ 세션 34: 이 논의가 방향키 네비로 대화분기 유실→세션 jsonl에서 복구(done.md/HANDOFF에 3모양·아티팩트 없었음).
 
 ---
 
