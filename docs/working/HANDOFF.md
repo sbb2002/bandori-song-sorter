@@ -51,19 +51,27 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 [report/genre-features/README.md](report/genre-features/README.md), Spotify 쪽 분석은
 [side-project/spotify-tracks-dataset/report.md](../../side-project/spotify-tracks-dataset/report.md).
 
-**다른 로컬에서 이어받는 법**(전곡 660 확대):
+**다른 로컬에서 이어받는 법**(전곡 660을 한 번에 받지 말고 **밴드별 N곡 샘플링으로 먼저 유효성 검증** →
+유효하면 그때 전곡 확대 — 사용자 결정, 2026-07-08):
 1. `git fetch && git checkout analysis/audio-feats`
-2. 전곡 오디오 확보: `audio_full/`에 660곡 전체 필요(이 로컬은 285곡뿐 — 나머지는 기존 수집 경로(`fetch_audio.py` 등)로 확보하거나 다른 로컬의 캐시 병합)
-3. 추출(hummingbird env — librosa/soundfile, pandas/matplotlib 불필요, 체크포인트 재개): `python src/tools/cluster/genre_features_extract.py`
+2. **0단계(샘플링)**: `python src/tools/cluster/genre_features_sample.py --n 15 --download`
+   — songs_full.csv **13개 밴드 전체**(이 로컬엔 없던 roselia·poppin_party·raise_a_suilen 하드록/대형유닛
+   포함)에서 밴드당 최대 15곡 랜덤 샘플링(seed=42, 재현 가능) → `audio_full/`에 다운로드(yt-dlp) →
+   `sample_manifest.csv`에 목록 기록. 부족한 밴드(ikka_dumb_rock·millsage=1곡, various_artists=5곡)는 전량.
+3. 추출(hummingbird env — librosa/soundfile, pandas/matplotlib 불필요, 체크포인트 재개):
+   `python src/tools/cluster/genre_features_extract.py` (audio_full에 있는 파일만 처리 — 샘플된 것만 자동 반영)
 4. 분석(base env — pandas/matplotlib/scipy, librosa 불필요): `python src/tools/cluster/genre_features_analyze.py`
 5. 결과는 `docs/working/report/genre-features/`에 갱신(같은 파일 덮어씀)
+6. **13밴드·샘플 규모에서 프록시가 여전히 유효(η² 유지·특히 roselia 등 메탈 밴드에서 acousticness_proxy가
+   낮게 나오는지)하면 그때** `genre_features_sample.py --n 9999`(사실상 전곡) 또는 기존 전곡 확보 경로로 확장.
 
-**유효했던 변수(η² 우선순위, 전곡 분석 시 이 순서로 주목)**:
+**유효했던 변수 — 모두 계속 분석**(사용자 확인: 일부만 추리지 말고 유의했던 변수는 전부 유지):
+14개 전부 p<0.05(밴드 간 유의)였고, 효과크기(η²)는 아래 순서로 갈렸다 — 샘플 검증 때도 이 순서가
+유지되는지 그대로 확인.
 - 강함(η²>0.19): `rms`(0.453)·`harmonic_ratio`(0.452)·`contrast`(0.330)·`flux`(0.316)·`acousticness_proxy`(0.291)·`zcr`(0.286)·`centroid`(0.214)·`energy_proxy`(0.211)·`rolloff`(0.198)
-- 중간(0.13~0.15, 유의하나 약함): `instrumentalness_proxy`/`voiced_frac_mix`(0.149)·`flatness`(0.140)·`mode_score`(0.130)
-- 약함(그래도 p<0.05): `tempo_excerpt`(0.064)
-- 14개 전부 p<0.05(밴드 간 유의)지만 효과크기는 위 순서로 갈림 — 전곡 확대 시 표본 불균형(현재 밴드당
-  1~65곡) 영향인지 재검증 필요.
+- 중간(0.13~0.15): `instrumentalness_proxy`/`voiced_frac_mix`(0.149)·`flatness`(0.140)·`mode_score`(0.130)
+- 약함(그래도 유의): `tempo_excerpt`(0.064)
+- 위 순서가 표본 불균형(당시 밴드당 1~65곡) 때문이었는지, 13밴드 균등 샘플(N=15)에서 재확인 필요.
 
 **알려진 한계**: instrumentalness_proxy는 Demucs 보컬분리 없이 믹스 pyin으로 근사한 약한 프록시(Demucs
 설치 후 vocal/mix 에너지비로 재정의 권장). 헤비메탈 계열 밴드(Roselia 등)가 이 로컬 캐시에 없어 "메탈 vs
