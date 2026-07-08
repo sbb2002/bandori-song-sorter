@@ -51,19 +51,22 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 [report/genre-features/README.md](report/genre-features/README.md), Spotify 쪽 분석은
 [side-project/spotify-tracks-dataset/report.md](../../side-project/spotify-tracks-dataset/report.md).
 
-**다른 로컬에서 이어받는 법**(전곡 660을 한 번에 받지 말고 **밴드별 N곡 샘플링으로 먼저 유효성 검증** →
-유효하면 그때 전곡 확대 — 사용자 결정, 2026-07-08):
+**다른 로컬에서 이어받는 법**(전곡 660을 한 번에 처리하지 말고 **밴드별 N곡 샘플링으로 먼저 유효성 검증** →
+유효하면 그때 전곡 확대 — 사용자 결정, 2026-07-08. **그 로컬은 오디오 660곡 전곡이 이미 로컬에 확보돼
+있어 다운로드 불필요** — `--download` 플래그 쓰지 말 것):
 1. `git fetch && git checkout analysis/audio-feats`
-2. **0단계(샘플링)**: `python src/tools/cluster/genre_features_sample.py --n 15 --download`
+2. **0단계(샘플링, manifest만 생성)**: `python src/tools/cluster/genre_features_sample.py --n 15`
    — songs_full.csv **13개 밴드 전체**(이 로컬엔 없던 roselia·poppin_party·raise_a_suilen 하드록/대형유닛
-   포함)에서 밴드당 최대 15곡 랜덤 샘플링(seed=42, 재현 가능) → `audio_full/`에 다운로드(yt-dlp) →
-   `sample_manifest.csv`에 목록 기록. 부족한 밴드(ikka_dumb_rock·millsage=1곡, various_artists=5곡)는 전량.
+   포함)에서 밴드당 최대 15곡 랜덤 샘플링(seed=42, 재현 가능) → `sample_manifest.csv`에 목록만 기록(오디오는
+   이미 있으니 다운로드 안 함, 존재 여부만 확인). 부족한 밴드(ikka_dumb_rock·millsage=1곡, various_artists=5곡)는 전량.
 3. 추출(hummingbird env — librosa/soundfile, pandas/matplotlib 불필요, 체크포인트 재개):
-   `python src/tools/cluster/genre_features_extract.py` (audio_full에 있는 파일만 처리 — 샘플된 것만 자동 반영)
+   `python src/tools/cluster/genre_features_extract.py` — **`sample_manifest.csv`가 있으면 그 목록만 자동
+   처리**(전곡 660 중 샘플된 것만, `--all`로 전곡 강제 가능)
 4. 분석(base env — pandas/matplotlib/scipy, librosa 불필요): `python src/tools/cluster/genre_features_analyze.py`
 5. 결과는 `docs/working/report/genre-features/`에 갱신(같은 파일 덮어씀)
 6. **13밴드·샘플 규모에서 프록시가 여전히 유효(η² 유지·특히 roselia 등 메탈 밴드에서 acousticness_proxy가
-   낮게 나오는지)하면 그때** `genre_features_sample.py --n 9999`(사실상 전곡) 또는 기존 전곡 확보 경로로 확장.
+   낮게 나오는지)하면 그때** `genre_features_extract.py --all`로 전곡 660 확장(오디오가 이미 있으니 샘플링
+   단계 없이 바로 가능).
 
 **유효했던 변수 — 모두 계속 분석**(사용자 확인: 일부만 추리지 말고 유의했던 변수는 전부 유지):
 14개 전부 p<0.05(밴드 간 유의)였고, 효과크기(η²)는 아래 순서로 갈렸다 — 샘플 검증 때도 이 순서가

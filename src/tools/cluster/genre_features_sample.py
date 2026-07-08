@@ -6,14 +6,15 @@
 poppin_party·raise_a_suilen(하드록/메탈·대형 유닛)도 포함돼, "메탈 vs 어쿠스틱"
 대비를 이번에는 볼 수 있다.
 
-이 스크립트는 (1) 샘플 목록을 정하고 `sample_manifest.csv`에 기록, (2) `--download`
-시 `perceptual_features.ensure_full()`(기존 yt-dlp 다운로드 로직) 재사용해 audio_full/에
-확보한다. 다운로드 없이 목록만 볼 때는 `--dry-run`.
+이 스크립트는 (1) 샘플 목록을 정해 `sample_manifest.csv`에 기록하고, (2) 기본적으로 audio_full/에
+이미 있는지만 확인한다(다운로드 안 함). **오디오가 이미 전곡 확보된 로컬**(다운로드 불필요)이면
+그냥 기본 실행으로 충분 — manifest만 만들면 `genre_features_extract.py`가 그 목록만 처리한다.
+오디오가 없는 로컬에서만 `--download`로 yt-dlp 다운로드(`perceptual_features.ensure_full()` 재사용).
 
 사용:
-  python src/tools/cluster/genre_features_sample.py --n 15 --dry-run   # 목록만 확인
-  python src/tools/cluster/genre_features_sample.py --n 15 --download  # 실제 다운로드(yt-dlp 필요)
-그 다음: <hummingbird-python> src/tools/cluster/genre_features_extract.py (audio_full에 있는 파일만 처리)
+  python src/tools/cluster/genre_features_sample.py --n 15            # manifest만 생성(오디오 기확보 시 이걸로 충분)
+  python src/tools/cluster/genre_features_sample.py --n 15 --download # 오디오 없는 로컬 — yt-dlp 다운로드까지
+그 다음: <hummingbird-python> src/tools/cluster/genre_features_extract.py (manifest 목록만 자동 처리)
 """
 from __future__ import annotations
 
@@ -50,8 +51,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=15, help="밴드당 샘플 곡 수(기본 15, 부족하면 전량)")
     ap.add_argument("--seed", type=int, default=42, help="재현용 랜덤 시드")
-    ap.add_argument("--dry-run", action="store_true", help="목록만 출력·기록, 다운로드 안 함")
-    ap.add_argument("--download", action="store_true", help="누락 파일 yt-dlp로 다운로드")
+    ap.add_argument("--dry-run", action="store_true", help="manifest만 기록, 로컬 존재 여부도 확인 안 함")
+    ap.add_argument("--download", action="store_true", help="누락 파일 yt-dlp로 다운로드(오디오 미확보 로컬 전용)")
     args = ap.parse_args(argv)
 
     selected = sample_rows(args.n, args.seed)

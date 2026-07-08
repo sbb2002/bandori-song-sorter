@@ -11,8 +11,12 @@ spotify-tracks-dataset/report.md 결론). 대신 phasec_features.py·perceptual_
 환경: librosa/soundfile 필요(hummingbird conda env). matplotlib/pandas 불필요(이 단계는
 stdlib csv만 사용) — 2단계(genre_features_analyze.py)는 반대로 pandas/matplotlib env(base)에서 실행.
 
+기본 동작: `genre_features_sample.py`가 만든 `sample_manifest.csv`가 있으면 **그 목록에 있는
+곡만** 처리(전곡 660이 로컬에 있어도 먼저 샘플만 검증하기 위함). 전곡을 처리하려면 `--all`.
+
 사용:
-  <hummingbird-python> src/tools/cluster/genre_features_extract.py         # 전체
+  <hummingbird-python> src/tools/cluster/genre_features_extract.py           # manifest 있으면 샘플만
+  <hummingbird-python> src/tools/cluster/genre_features_extract.py --all     # audio_full 전체
   <hummingbird-python> src/tools/cluster/genre_features_extract.py --limit 10   # 디버그
 """
 from __future__ import annotations
@@ -33,6 +37,7 @@ AUDIO = ROOT / "src/content/cluster/audio_full"
 SONGS_FULL = ROOT / "src/content/cluster/songs_full.csv"
 OUTDIR = ROOT / "docs/working/report/genre-features"
 OUT = OUTDIR / "song_features.csv"
+MANIFEST = OUTDIR / "sample_manifest.csv"
 PROGRESS = OUTDIR / "extract_progress.json"
 
 SR = 22050
@@ -91,14 +96,30 @@ def load_done() -> set:
     return done
 
 
+def load_manifest_keys() -> set | None:
+    """sample_manifest.csv가 있으면 (band,idx) 집합 반환, 없으면 None(=제한 없음)."""
+    if not MANIFEST.exists():
+        return None
+    rows = csv.DictReader(open(MANIFEST, encoding="utf-8"))
+    return {(r["band"], str(int(r["idx"]))) for r in rows}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0, help="앞 N곡만(디버그)")
+    ap.add_argument("--all", action="store_true", help="sample_manifest 무시하고 audio_full 전체 처리")
     args = ap.parse_args(argv)
 
     OUTDIR.mkdir(parents=True, exist_ok=True)
     songs = load_songs_full()
     files = sorted(AUDIO.glob("*.wav"))
+
+    manifest_keys = None if args.all else load_manifest_keys()
+    if manifest_keys is not None:
+        files = [p for p in files
+                 if (p.stem.rsplit("__", 1)[0], str(int(p.stem.rsplit("__", 1)[1]))) in manifest_keys]
+        print(f"[genre-features] sample_manifest.csv 적용 — {len(files)}/{len(manifest_keys)}곡 로컬에 존재", flush=True)
+
     if args.limit:
         files = files[:args.limit]
     done = load_done()
