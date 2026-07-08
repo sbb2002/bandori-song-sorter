@@ -1,0 +1,6 @@
+n_classes=114
+chance_level=0.0088
+test_accuracy=0.3234
+test_top5_accuracy=0.6749
+n_train=91199
+n_test=22800

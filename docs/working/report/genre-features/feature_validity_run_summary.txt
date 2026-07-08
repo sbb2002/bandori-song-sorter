@@ -1,0 +1,7 @@
+kept_bands=['afterglow', 'hello_happy_world', 'morfonica', 'mygo', 'ave_mujica', 'mugendai_mutype']
+dropped_bands={'pastel_palettes': np.int64(8), 'various_artists': np.int64(5), 'ikka_dumb_rock': np.int64(1), 'millsage': np.int64(1)}
+n_classes=6
+chance_level=0.1667
+test_accuracy=0.7206
+n_train=202
+n_test=68

@@ -9,6 +9,7 @@
 | [**cluster-map-extraction.md**](cluster-map-extraction.md) | 음원맵 **좌표** 추출 | 가사 의미로는 밴드가 안 갈린다 → 음원 밴드중심(LOO 61%) → 해석 가능한 지각축(x=contrast, y=mode) 발굴 |
 | [**pulse-onset-extraction.md**](pulse-onset-extraction.md) | 재생 **펄스** 온셋 추출 | BPM등간격→onset검출→beat그리드, 그리고 "정확 tempo가 아니라 지각 pulse rate"라는 재정의(ACF 옥타브 비율) |
 | [**emotion-axes-extraction.md**](emotion-axes-extraction.md) | 정서축(**arousal**) 추출 시도 | Russell V-A로 재해석 → 정식 오디오 feature로도 arousal 독립축 불가("실질 1.x차원") → x=timbre·y=valence 확정 |
+| [**feature-validity-extraction.md**](feature-validity-extraction.md) | 프록시 피처 **유효성** 검증 | Spotify 114,000곡 단변량/이변량으로는 못 가르던 loudness↔energy 중복을 VIF+RF permutation importance로 확인 → 로컬 285곡 교차검증까지 → harmonic_ratio·energy_proxy(rms+contrast+flux) 우선순위 확정(축 개편은 전곡 재검증 후) |
 
 ---
 
@@ -57,6 +58,11 @@
 - `pulse_fig2_acf_octave.png` — ACF 옥타브 편향(afterglow vs morfonica, 같은 tempo 다른 pulse) ★
 - `pulse_fig3_ratio_threshold.png` — τ=0.96 파일럿 검증
 - (emotion-axes 그림은 `../working/report/emotion-axes/phasec_screening.png`에 원본 보관 — figures 미승격)
+- `featval_fig1_loudness_energy_scatter.png` — Spotify loudness↔energy 전체 산점도(r=0.762, "당연한 상관"의 출발점)
+- `featval_fig2_genre_anova_univariate.png` — Spotify 단변량 η² 랭킹(acousticness 1위)
+- `featval_fig3_perm_importance_spotify.png` — Spotify 다변량 permutation importance(energy/loudness 하락·popularity 반전) ★
+- `featval_fig4_perm_importance_local.png` — 로컬 285곡 다변량 permutation importance(스펙트럼 형태 지표군 중복) ★
+- `featval_fig5_simpsons_paradox_loudness_danceability.png` — loudness↔danceability 장르별 부호반전(39/114, Simpson's paradox)
 
 ## 원자료 (상세 데이터·표)
 
@@ -67,7 +73,8 @@
 - [`../working/report/cluster_audio_clap.md`](../working/report/cluster_audio_clap.md) — librosa vs CLAP 백엔드 비교
 - [`../working/report/emoi-cluster-pulse/README.md`](../working/report/emoi-cluster-pulse/README.md) — 재생 펄스 방법론 진화
 - [`../working/report/cluster-energy-axis/README.md`](../working/report/cluster-energy-axis/README.md) — B0 onset 스크리닝(전멸) · [`../working/report/emotion-axes/`](../working/report/emotion-axes/) — Phase C 정식 feature 검증
+- [`../../side-project/spotify-tracks-dataset/`](../../side-project/spotify-tracks-dataset/) — Spotify 114,000곡 단변량(`report-genre_audio_features.md`)·이변량(`report-pairwise_scatter.md`)·다변량(`report-feature_validity.md`) 전체 분석 · [`../working/report/genre-features/README.md`](../working/report/genre-features/README.md) — 로컬 285곡 프록시 재정의·다변량 교차검증
 
 ---
 
-*작성 2026-07-04 · 갱신 2026-07-08(작성 규칙·양식 추가 · emotion-axes 등재) · 브랜치 `fix/emoi-map-labels-pulse`*
+*작성 2026-07-04 · 갱신 2026-07-08(feature-validity-extraction 등재) · 브랜치 `analysis/audio-feats`*
