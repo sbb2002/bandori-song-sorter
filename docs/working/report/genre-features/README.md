@@ -168,3 +168,51 @@ permutation importance의 표준편차가 상대적으로 크다(`feature_validi
 - 도구: `src/tools/cluster/genre_features_extract.py`(hummingbird env) ·
   `src/tools/cluster/genre_features_analyze.py`(base env) ·
   `src/tools/cluster/genre_features_validity_rf.py`(base env)
+
+## 전곡 660·13밴드 재검증 결과 (2026-07-08, 세션 33)
+
+> [../../../research/feature-validity-extraction.md](../../../research/feature-validity-extraction.md) §5 "최종 결정 유보"를 실행. 전곡 캐시(660곡·13밴드, 부분 캐시에 없던 **roselia·raise_a_suilen·poppin_party** = 하드록/전자/대형유닛 포함)를 보유한 로컬에서 동일 파이프라인 재실행 — 부분 캐시(285곡·10밴드, 다변량 6밴드) 3대 결론이 **메탈 포함 전곡에서 유지되는지** 검증.
+> **절차**: N=15 밴드 균등 샘플(13밴드·157곡) 게이트 → 통과 후 전곡 660 확장. base env(librosa/soundfile/sklearn 전부 설치)로 4단계 전부 실행(별도 hummingbird env 불필요).
+
+### 단변량 η² — 상위 핵심 안정, tempo 탈락
+
+| feature | 부분 285(6→10밴드) | 균등 157(13밴드) | 전곡 660(13밴드) |
+|---|---:|---:|---:|
+| `rms` | 0.453 | 0.433 | **0.314** |
+| `harmonic_ratio` | 0.452 | 0.313 | 0.287 |
+| `contrast` | 0.330 | 0.338 | 0.284 |
+| `flux` | 0.316 | 0.286 | 0.217 |
+| `acousticness_proxy` | 0.291 | 0.258 | 0.228 |
+| `energy_proxy` | 0.211 | 0.259 | 0.229 |
+| `tempo_excerpt` | 0.064(유의) | 0.065(p=0.61) | 0.026(p=0.15) |
+
+- `rms`·`harmonic_ratio`·`contrast` = 세 데이터셋 모두 top-3(순위 안정). η² 절대값은 밴드↑·표본↑로 하락(정상 — 클래스가 늘고 표본이 균형화되면 그룹내 분산↑).
+- **`tempo_excerpt`는 균등·전곡에서 비유의**(p>0.05). 부분 캐시의 "약하지만 유의(0.064)"는 표본 불균형 산물이었음 — 새 발견, 강등.
+
+### 다변량 (VIF + RF permutation importance) — 10밴드·653곡, test acc 0.439(chance 0.10의 4.4배)
+
+| feature | VIF | perm. importance | 판정 |
+|---|---:|---:|---|
+| `centroid` | 48.8 | 0.000 | 중복(스펙트럼 형태) |
+| `rolloff` | 25.3 | 0.034 | 중복(단 전자밴드로 약간 고유) |
+| `zcr` | 16.3 | −0.013 | 중복 |
+| `flatness` | 12.3 | −0.011 | 중복 |
+| `contrast` | 2.71 | **0.102** | 고유(1위) |
+| `harmonic_ratio` | 2.70 | **0.082** | 고유(2위) |
+| `flux` | 1.82 | 0.038 | 고유 |
+| `rms` | 1.46 | **0.058** | 고유 |
+
+**부분 캐시 3대 결론 = 전부 확증·강화:**
+1. **스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`) 중복 → 저평가**: VIF 12~49로 여전히 강한 상호중복, PI가 부분 캐시(0.017~0.022)보다 더 내려가 **0 근처/음수로 붕괴**(표본↑로 고유기여 소멸이 더 선명). `rolloff`만 전자밴드(RAS의 극단적 rolloff) 덕에 PI +0.034로 살짝 양수 — 밝기군 중 유일하게 약간의 고유 신호.
+2. **`energy_proxy` 3성분(`rms`+`contrast`+`flux`)**: 셋 다 PI 상위 4위 안(`contrast` 0.102·`rms` 0.058·`flux` 0.038) — 성분 선택 사후검증 유지.
+3. **`acousticness_proxy` ≈ `harmonic_ratio` 주도**: `harmonic_ratio` PI 0.082 vs `flatness` PI −0.011 — 비대칭이 부분 캐시(0.148 vs 0.022)보다 더 극단. `flatness`는 밴드 분류에 기여 없음(음수).
+
+### 메탈/전자 대비 — 이제 보임(부분 캐시엔 없던 축의 음의 끝)
+
+밴드별 `acousticness_proxy` 평균(전곡): morfonica **+1.87**(최고, 바이올린) · mygo +1.30 · ave_mujica +0.80 · poppin_party +0.05 · **roselia −0.08**(심포닉메탈, 중간 — 오케스트라 하모닉) · afterglow −0.27 · hello_happy_world −0.44 · pastel_palettes −0.48 · mugendai_mutype −0.60 · **raise_a_suilen −1.03**(최저, 전자/하드) · ikka_dumb_rock −1.37(n=1). RAS의 낮은 acousticness는 `harmonic_ratio`(중간 0.72)가 아니라 **`flatness`(노이즈) 극단**이 구동 — morfonica는 하모닉이 많아서, RAS는 노이즈가 많아서 축 양끝에 서며 **다른 성분이 각 끝을 만든다.**
+
+**결론**: 부분 캐시 3대 결론이 메탈 포함 전곡에서 유지·강화됨 → EMOI-MAP 프록시 우선순위(`harmonic_ratio`·`energy_proxy` 3성분)는 **데이터로 확증**. **단 EMOI-MAP 축/시각화의 실제 개편은 여전히 별도 결정** — 세션 33 이후 재생 펄스의 음색 시그니처 표현(Idea A 등) 시각화 실험으로 진행.
+
+### 추가 산출물
+- `band_anova_summary_sample15.csv` · `song_features_with_proxies_sample15.csv` — N=15 밴드 균등 샘플 게이트 스냅샷(13밴드·157곡).
+- 이전 부분 캐시(285곡·10밴드) `song_features*.csv`는 git 이력(세션 32 커밋)에 보존 — 재생성 전 별도 백업 파일은 남기지 않음.

@@ -115,6 +115,14 @@ python src/tools/cluster/genre_features_validity_rf.py
 
 그림 `featval_fig1~7`은 위 산출 CSV(`_genre_anova_summary.csv`·`_overall_correlation_summary.csv`·`vif_summary.csv`·`feature_importance_summary.csv` 및 로컬 `feature_validity_*.csv`)에서 생성. slope(fig6)·VIF-PI 산점(fig7)은 두 데이터셋 결과를 합쳐 이 논문용으로 새로 플롯.
 
+## 8. 후속 — 전곡 660·13밴드 재검증 (2026-07-08 추가, 세션 33)
+
+§5의 "최종 결정 유보"를 실행했다. 전곡 캐시(660곡·13밴드, 부분 캐시에 없던 **roselia·raise_a_suilen·poppin_party** = 하드록/전자/대형유닛 포함)를 보유한 로컬에서 동일 3중 렌즈를 재실행(N=15 밴드 균등 샘플 게이트 → 통과 → 전곡 확장, base env로 4단계 전부). 상세 수치·표는 [로컬 리포트](../working/report/genre-features/README.md) "전곡 660 재검증" 절.
+
+**부분 캐시 3대 결론이 전부 확증·강화됐다**: ① 스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`)의 다중공선(VIF 12~49)으로 permutation importance가 부분 캐시(0.017~0.022)보다 더 내려가 **0 근처/음수로 붕괴**(표본↑로 더 선명), ② `energy_proxy` 3성분(`rms`+`contrast`+`flux`)이 다변량 상위 4위 안 유지, ③ `acousticness_proxy`는 `harmonic_ratio` 주도(PI 0.082 vs `flatness` −0.011, 비대칭 심화). 단변량 top-3(`rms`·`harmonic_ratio`·`contrast`)도 세 데이터셋 공통 안정. **새 발견**: `tempo_excerpt`는 균등/전곡에서 **비유의**(p>0.05) — 부분 캐시의 미약한 유의는 표본 불균형 산물. 메탈/전자 밴드가 채워지며 "메탈/전자 vs 어쿠스틱" 대비가 acousticness 축 음의 끝에 나타났다(morfonica +1.87 … raise_a_suilen −1.03; RAS의 음의 끝은 `harmonic_ratio` 저하가 아니라 `flatness` 극단이 구동).
+
+**따라서 §5의 프록시 우선순위는 전곡·메탈 포함에서 데이터로 확증됐다.** EMOI-MAP 축/시각화의 실제 개편은 여전히 별도 결정 사안이며, 이후 세션에서 시각화 실험(재생 펄스의 음색 시그니처 표현 등)으로 이어진다. 이 재검증에서도 EMOI-MAP 소스는 변경하지 않았다.
+
 ---
 
-*작성 2026-07-08 · 브랜치 `analysis/audio-feats`*
+*작성 2026-07-08 · 브랜치 `analysis/audio-feats` · §8 재검증 세션 33 추가*

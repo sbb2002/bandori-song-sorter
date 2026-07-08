@@ -837,3 +837,33 @@ EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰
 - 로컬: `src/tools/cluster/genre_features_validity_rf.py` · `report/genre-features/{README.md,feature_validity_*.csv}`
 - research: `feature-validity-extraction.md` · `figures/featval_fig1~7`
 - 커밋(analysis/audio-feats): 21f6631 · 77986f9 · c268a31 · 2189bc7 · 3f9145b
+
+# 세션 33 — 오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 (2026-07-08, analysis/audio-feats · main 미머지)
+
+세션 32 부분 캐시(285곡·10밴드, 다변량 6밴드) 잠정 결론을, 전곡 오디오(660곡·13밴드)를 보유한 이 로컬에서 재검증. **부분 캐시 3대 결론이 메탈/전자 밴드 포함 전곡에서 유지되는지** 확인이 목표. EMOI-MAP 소스 미변경. 상세 수치는 [report/genre-features/README.md](report/genre-features/README.md) "전곡 660 재검증" 절 · 논문 §8.
+
+## 환경·절차
+- **`hummingbird` env 불필요**: 이 로컬 base(`C:/Users/User/miniconda3`)에 librosa·soundfile·numpy·pandas·scipy·sklearn·matplotlib·yt_dlp 전부 설치 확인 → 4단계(sample→extract→analyze→validity_rf) 전부 base python으로 실행.
+- **오디오 이미 로컬 확보**(`audio_full` 660): `--download` 미사용. 스테일 285행 `song_features.csv`는 제거(git 이력에 보존)하고 빈 상태에서 extract append/resume 시작.
+- **게이트 먼저**(사용자 결정): N=15 밴드 균등 샘플(13밴드·157곡, seed=42) → `analyze` η²·프록시로 판정 → 통과 후 `extract --all`로 전곡 660 확장(resume append). 스냅샷 `band_anova_summary_sample15.csv`·`song_features_with_proxies_sample15.csv`.
+- 주의: `validity_rf.py` `MIN_BAND_N=20`이라 N=15 균등 샘플에선 전 밴드 탈락 → 다변량은 전곡 단계 전용(게이트는 단변량 η² 중심 — 명세와 일치).
+
+## 게이트(N=15 균등 13밴드) — 통과
+- η² 상위군(`rms`·`contrast`·`harmonic_ratio`·`flux`) 유지, `tempo_excerpt` 비유의(p=0.61). 밴드별 `acousticness_proxy`: morfonica 최고(+1.83, 바이올린)·raise_a_suilen 최저(−1.20, 전자) → 가설 방향 확인(roselia는 심포닉메탈이라 중간 +0.14).
+
+## 전곡 660·13밴드 결과 — 3대 결론 확증·강화
+- **단변량 η²**(13밴드): `rms` 0.314·`harmonic_ratio` 0.287·`contrast` 0.284가 top-3(세 데이터셋 공통 안정). η² 절대값은 밴드↑·표본↑로 하락(정상). **`tempo_excerpt` 비유의**(p=0.15) → 강등(새 발견).
+- **다변량**(VIF+RF PI, 10밴드·653곡, test acc 0.439 = chance 0.10의 4.4배): ① 스펙트럼 형태 지표군(`centroid` VIF48.8·`rolloff` 25.3·`zcr` 16.3·`flatness` 12.3) 상호중복 → PI가 0 근처/음수로 **붕괴**(부분 캐시보다 더 선명; `rolloff`만 RAS 극단 밝기로 +0.034 살짝 양수). ② `energy_proxy` 3성분(`contrast` 0.102·`rms` 0.058·`flux` 0.038) 전부 PI 상위 4위 안. ③ `acousticness_proxy`는 `harmonic_ratio`(0.082) 주도, `flatness`(−0.011) 기여 0.
+- **메탈/전자 대비 등장**: `acousticness_proxy` morfonica +1.87 … roselia −0.08 … mugendai −0.60 … raise_a_suilen −1.03. RAS 음의 끝은 `flatness`(노이즈) 극단이 구동(harmonic 저하 아님).
+
+## 결정·다음
+- **프록시 우선순위(harmonic_ratio·energy_proxy 3성분)는 데이터로 확증.** 단 EMOI-MAP 축/시각화 실제 개편은 여전히 별도 결정.
+- **다음 = EMOI-MAP 시각화 실험**: Idea A(곡별 대표 파형 — harmonic→acoustic wave·밝기→sawtooth·flux→busy) 채택(사용자, flux는 pop도 잡아 "electric" 명명 재고). + Demucs 스템 펄스(킥 1·3박/스네어 2·4박 분리 시도, 멜로디밴드[other]는 정박 에너지를 미약 파동으로, 베이스는 애매하면 skip). **리스크 작은 순서대로 각각 브랜치 만들어 UX 비교.**
+
+## 데이터 검증
+- 게이트 추출 157곡·13밴드 균등(실패 0). 전곡 추출 660곡·13밴드(밴드별 수 = 오디오 파일 수와 일치, 실패 0). validity_rf kept_bands 10(roselia·poppin_party·raise_a_suilen 포함), dropped {various_artists 5·millsage 1·ikka_dumb_rock 1}.
+
+## 파일
+- 재생성(전곡 660): `report/genre-features/{song_features.csv, song_features_with_proxies.csv, band_anova_summary.csv, *_violin.png, feature_validity_{vif,importance}.csv, feature_validity_run_summary.txt, sample_manifest.csv}`
+- 신규 스냅샷: `band_anova_summary_sample15.csv` · `song_features_with_proxies_sample15.csv`(N=15 게이트)
+- 산문: `report/genre-features/README.md`(전곡 재검증 절) · `research/feature-validity-extraction.md`(§8) · `HANDOFF.md`(작업 6·마커) · `done.md`(본 항목)
