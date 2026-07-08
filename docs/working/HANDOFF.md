@@ -2,7 +2,7 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`. 작성 규칙은 [readme.md](readme.md).
 
-마지막 갱신: **2026-07-08(세션 32)** — **Spotify 데이터셋 장르 피처 분석(side-project) + 밴드 오디오 피처 재정의 프록시 검증**(로컬 285/660곡, 브랜치 `analysis/audio-feats`, main 미머지): acousticness_proxy가 morfonica(바이올린 밴드)에서 최고치로 가설과 일치 확인. 전곡 확대는 다른 로컬에서 이어감. 작업 6 참조.
+마지막 갱신: **2026-07-08(세션 32)** — **오디오 피처 유효성 3중 렌즈 분석(단·이·다변량) + 우리 샘플 교차검증**(Spotify 114,000곡 side-project + 로컬 285/660곡, `analysis/audio-feats`, main 미머지): acousticness_proxy가 morfonica(바이올린 밴드) 최고치로 가설 일치 + 다변량(VIF+RF)에서 loudness↔energy 중복·popularity 반전 확인, energy_proxy 3성분 사후 검증. research 승격([feature-validity-extraction.md](../research/feature-validity-extraction.md)). 전곡 확대는 다른 로컬. done 32 · 작업 6 참조.
 이전: **2026-07-08(세션 31)** — **작업 1·2·3·5 done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix**: 네 작업 본류 완료 확인 → 작업 절을 요약+링크로 축약(선택 잔여는 § 보류·백로그로 이동, 구 '병렬 실행 계획' 제거). **+minor fix(fix/emoi-map-labels-pulse)**: 축 라벨 '음색이 거친/부드러운'·'발랄한/진지한 느낌', 재생 HUD를 밴드 평균점 대비 편차 기준으로, 펄스 16분 주석 비활성(CL_DYN_MAX=1 유지) + research 작성 규칙(README 양식·승격기준). done 31 참조.
 이전: **2026-07-07(세션 30)** — 작업 5(EMOI-MAP 좌표계 고찰) 완료·main 머지(`172684e` · done 30): Phase A(맵 정직화) 라이브 + B0·C 정서축 연구 = **timbre×valence 확정, arousal 독립축 불가**("실질 1.x차원"). 결정: x=timbre·y=valence 유지. 논문 [emotion-axes-extraction.md](../research/emotion-axes-extraction.md).
 이전: **2026-07-07(세션 29)** — 작업 4(EMOI-MAP 딥스페이스/별 시각화) 완료·main 머지(`104e709` · done 29): 곡 에너지 글로우 별 + canvas 별밭 + 밴드 성운 + Ave Mujica 전용 색.
@@ -33,7 +33,7 @@
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브** | [done 26·27·28](done.md) · [spec](spec/pipeline-automation.md) |
 | 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | [done 29](done.md) |
 | 5. EMOI-MAP 좌표계 고찰 | ✅ **A·B0·C 완료**(172684e) — timbre×valence 확정 | [done 30](done.md) · [논문](../research/emotion-axes-extraction.md) |
-| 6. 장르(밴드) 오디오 피처 재정의 | 🚧 로컬 부분(285/660) 검증 완료 · 전곡 확대는 별도 로컬 | [report/genre-features](report/genre-features/README.md) · [side-project report](../../side-project/spotify-tracks-dataset/report.md) |
+| 6. 장르(밴드) 오디오 피처 재정의 | 🚧 로컬 부분(285/660) 단·이·다변량 검증 완료 · 전곡 확대는 별도 로컬 | [done 32](done.md) · [논문](../research/feature-validity-extraction.md) · [report/genre-features](report/genre-features/README.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -47,9 +47,12 @@
 Spotify Tracks Dataset(side-project)에서 `acousticness`·`energy`·`instrumentalness` 같은 합성 변수가
 장르 구분력이 가장 강함을 확인했으나 블랙박스라 값을 이식할 수 없음 → 자체 신호처리(harmonic_ratio/HPSS·
 flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부분 캐시 285/660곡, 10밴드)에서 밴드별 분포를
-검증. **acousticness_proxy가 morfonica(바이올린 채용 밴드)에서 전체 최고치**로 가설과 일치. 상세는
-[report/genre-features/README.md](report/genre-features/README.md), Spotify 쪽 분석은
-[side-project/spotify-tracks-dataset/report.md](../../side-project/spotify-tracks-dataset/report.md).
+검증. **acousticness_proxy가 morfonica(바이올린 채용 밴드)에서 전체 최고치**로 가설과 일치. 이어 **단·이·다변량
+3중 렌즈**(VIF+RF+permutation importance)를 Spotify·로컬 양쪽에 적용 → loudness↔energy 중복이 다변량에서
+저평가되는 패턴을 두 데이터셋에서 확인, `energy_proxy` 3성분(rms+contrast+flux) 사후 검증. 종합 논문
+[../research/feature-validity-extraction.md](../research/feature-validity-extraction.md) · 로컬 상세
+[report/genre-features/README.md](report/genre-features/README.md) · Spotify 3보고서
+[단변량](../../side-project/spotify-tracks-dataset/report-genre_audio_features.md)·[이변량](../../side-project/spotify-tracks-dataset/report-pairwise_scatter.md)·[다변량](../../side-project/spotify-tracks-dataset/report-feature_validity.md).
 
 **다른 로컬에서 이어받는 법**(전곡 660을 한 번에 처리하지 말고 **밴드별 N곡 샘플링으로 먼저 유효성 검증** →
 유효하면 그때 전곡 확대 — 사용자 결정, 2026-07-08. **그 로컬은 오디오 660곡 전곡이 이미 로컬에 확보돼
@@ -80,8 +83,10 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 설치 후 vocal/mix 에너지비로 재정의 권장). 헤비메탈 계열 밴드(Roselia 등)가 이 로컬 캐시에 없어 "메탈 vs
 어쿠스틱" 대비가 아직 안 보임 — 전곡 확보로 해소될 것.
 
-**다음 단계**: 전곡 확대 검증 → 프록시가 여전히 유효하면 손라벨 상관검정(`phasec_correlate.py` 방식) →
-EMOI-MAP 축 적용 여부는 그 이후 별도 결정(아직 미적용).
+**다음 단계**: 전곡 660 확대 검증(0단계 샘플링 → 추출 → 분석) + **단·이·다변량 3중 렌즈 재실행**
+(`genre_features_validity_rf.py`도 전곡으로) — 이번 부분 캐시 결론(스펙트럼 형태 지표 중복 · `energy_proxy`
+3성분 · `acousticness`=`harmonic_ratio` 주도)이 13밴드·메탈 포함에서도 유지되는지 확인 → 유효하면 손라벨
+상관검정(`phasec_correlate.py` 방식) → EMOI-MAP 축 적용 여부는 그 이후 별도 결정(아직 미적용).
 
 ---
 

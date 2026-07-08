@@ -806,3 +806,34 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 ## 문서화 경로 규칙 확립 + 축 라벨 버그 수정 (후속)
 - **문서화 경로 규칙**(`working/readme.md` 「구현 유형별 문서화 경로」): 작업을 분석 시도 횟수로 분류 — 단순구현(0회)=done · 분석 필요(1회)=+report(수치·표·플롯·그림 + 간단 해석) · 2회 이상 분석 후 종결=+research(논문화, 그림·표·플롯 전부). research/README 승격 기준도 "2회+분석·종결"로 일치·상호링크.
 - **축 라벨 버그 수정**(`16-audiomap.js`·`desktop.css` · 단순): ALL 개요는 auto scale이라 원점(0,0)이 화면 중앙이 아닌데 축 방향 라벨은 CSS 50% 고정 → 축선(markLine x=0·y=0)과 어긋남. `_clPositionAxisLabels()` 신설(`convertToPixel`로 x=0·y=0 픽셀 위치를 구해 top/bottom 라벨은 `left`, left/right 라벨은 `top`에 정렬) → `_clDraw` 끝·`dataZoom`·`resize`·초기화에서 호출. #cluster-chart가 .cluster-wrap(relative)을 100% 채워 캔버스 픽셀=라벨 부모 좌표(offset 무). + 축 라벨 폰트 0.56→0.68rem.
+
+## HANDOFF 병합 충돌 마커 제거 + 완료 절 완전 삭제 (추가 슬림화)
+- **버그 발견**: `docs/working/HANDOFF.md`에 git 병합 충돌 마커(`<<<<<<< Updated upstream`/`=======`/`>>>>>>> Stashed changes`)가 3곳 그대로 커밋돼 있었음(직전 커밋 `c3bdf76`이 "Solved: Conflict"라 되어 있었으나 실제로는 마커 미제거). 세션 31 최신본("Updated upstream")과 `feature/emoi-map-starfield`의 구버전("Stashed changes")을 대조 → 구버전 내용이 이미 § 보류·백로그에 전부 반영돼 있어 유실 없이 구버전 블록 삭제, 마커 제거(`e94c93d`).
+- 관련해 stale `stash@{0}`(같은 브랜치의 구 HANDOFF WIP, main이 이미 앞질러 무의미) 삭제. `src/content/cluster/onsets/afterglow__000.json`의 unstaged 변경(pretty-print 차이뿐, 데이터 동일 — 사용자 확인)은 `git checkout --`로 되돌림.
+- **readme.md 규칙보다 한 단계 더 슬림화**: 완료된 작업(잔여 없음)은 "done N 참조" 한 줄도 남기지 않고 **§ 작업 N 절 자체를 삭제** — 우선순위 표(✅ + done 링크)만으로 충분하고, 상세 절 내용은 어차피 done.md·spec·research에 이미 있어 3중 중복이었음(작업 1·2·3·5 전부 해당, 작업 4는애초 절 없이 표만 있었음). 남기는 값어치가 있던 "16-audiomap.js·desktop.css 직접수정" 편집 컨벤션만 § 참고(TODO 아님)로 이전.
+- **readme.md 갱신**: HANDOFF.md 규칙에 "잔여 없는 작업은 절 자체 삭제(표+done 링크로 충분)" 명문화.
+
+# 세션 32 — 오디오 피처 유효성 3중 렌즈 분석: Spotify 벤치마크 + 우리 샘플 교차검증 (2026-07-08, analysis/audio-feats · main 미머지)
+
+EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰 공개 데이터로 교차검증 → **단·이·다변량 3중 렌즈** 방법을 확립하고 우리 로컬 샘플에 이식. 2회+ 분석·종결로 research 승격. **EMOI-MAP 소스 미변경**(축 개편은 전곡 재검증 후 별도 세션). 깊은 서사·수치·그림은 논문 [../research/feature-validity-extraction.md](../research/feature-validity-extraction.md).
+
+## Phase 1 — Spotify Tracks Dataset(side-project) 3중 렌즈
+- **단변량**(장르별 ANOVA η², [report-genre_audio_features.md](../../side-project/spotify-tracks-dataset/report-genre_audio_features.md)): 합성 변수(`acousticness` 0.488·`energy`·`instrumentalness`·`loudness`)가 장르 구분 상위, `key`/`mode`/`time_signature`는 무관.
+- **이변량**(변수쌍 Pearson r, [report-pairwise_scatter.md](../../side-project/spotify-tracks-dataset/report-pairwise_scatter.md)): `loudness`↔`energy` r=+0.762(중복 정황) · `popularity`는 오디오와 무상관 · `loudness`↔`danceability` 등 여러 쌍에서 장르별 부호반전 = 집계 역설(Simpson's paradox).
+- **다변량**(VIF+RF+permutation importance, [report-feature_validity.md](../../side-project/spotify-tracks-dataset/report-feature_validity.md)): `energy`/`loudness` 다변량 기여도 급락(중복→저평가) · `popularity` 다변량 1위 반전(비오디오·이식 불가) · `acousticness`/`instrumentalness`는 고유 정보 유지. RF 파라미터 과대(300트리·max_depth=None → 37분 미완)를 규제(150트리·depth15·leaf10)로 해결.
+
+## Phase 2 — 우리 샘플 285곡 교차검증
+- 로컬 프록시(genre-features)에 동일 다변량 방법 적용(`src/tools/cluster/genre_features_validity_rf.py`, 표본 20↑ 6밴드·270곡): 프록시+원재료 동시 투입 시 VIF=inf(정확한 선형결합) → 원본 12피처만 검증. 스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`) VIF 9~52 상호중복 → PI 최하위(Spotify `loudness`↔`energy` 패턴 재현). `contrast`/`rms`/`harmonic_ratio`/`flux`가 고유 상위. `energy_proxy` 3성분(rms+contrast+flux)이 상위권과 일치 = 성분 선택 사후 검증. 상세 [report/genre-features/README.md](report/genre-features/README.md).
+
+## Phase 3 — research 승격
+- [../research/feature-validity-extraction.md](../research/feature-validity-extraction.md)(3중 렌즈 종합 논문, Spotify+우리 샘플) + 그림 `featval_fig1~7`(신규 slope·VIF-PI 산점 2종). `../research/README.md` 등재.
+
+## 결정
+- 프록시 우선순위: **`harmonic_ratio`(acousticness 축) 확정 → `energy_proxy` 3성분 유지 → `instrumentalness`는 Demucs 측정 개선 후 재판단.** `popularity`류 비오디오 변수 제외.
+- 최종 축 개편은 전곡 660 캐시로 3중 렌즈 재검증 후 별도 결정(작업 6 진행 중).
+
+## 파일
+- side-project: `report-{genre_audio_features,pairwise_scatter,feature_validity}.md` · `{scatter_pairwise,feature_validity_rf}.py` · `fig/{scatter-pairwise,feature-validity}/`
+- 로컬: `src/tools/cluster/genre_features_validity_rf.py` · `report/genre-features/{README.md,feature_validity_*.csv}`
+- research: `feature-validity-extraction.md` · `figures/featval_fig1~7`
+- 커밋(analysis/audio-feats): 21f6631 · 77986f9 · c268a31 · 2189bc7 · 3f9145b

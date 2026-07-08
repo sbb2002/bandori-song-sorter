@@ -1,6 +1,6 @@
 # 밴드별 오디오 피처 재정의 — 로컬 285곡 분포 관찰
 
-> 출처: [side-project/spotify-tracks-dataset/report.md](../../../../side-project/spotify-tracks-dataset/report.md) 결론 3.
+> 출처: [side-project/spotify-tracks-dataset/report-genre_audio_features.md](../../../../side-project/spotify-tracks-dataset/report-genre_audio_features.md) 결론 3.
 > Spotify `acousticness`/`instrumentalness`/`energy`가 장르 구분력이 가장 강했으나 블랙박스라 값을 이식할 수 없어,
 > 우리 파이프라인의 신호처리 산출물로 유사 개념을 재정의해 로컬 오디오에서 분포부터 확인한다.
 > **EMOI-MAP 축에는 아직 적용하지 않음** — 분포 관찰 단계.
