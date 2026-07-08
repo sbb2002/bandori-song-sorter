@@ -12,9 +12,9 @@
 ---
 
 ## 시작 전 체크 (다른 로컬·세션)
-> 1. `git pull origin main`(660곡). 작업은 **새 feature 브랜치**에서.
+> 1. `git pull origin main`(660곡). 작업은 **feature 브랜치**에서(작업 5 = `feature/emoi-map-starfield`).
 > 2. `.env`의 `YOUTUBE_API_KEY` = **장치별·비커밋**(gitignore) — 백필/지역락 점검 시 재추가(없으면 `insert_backfill.py`·`check_embeddable.py` 즉시 중단).
-> 3. **node 필수**(yt-dlp nsig 서명해독 → 없으면 오디오 수집 403 다발 · `node --check` · `npm test`). 설치 = `conda install -c conda-forge nodejs`(세션 23에 이 장치 설치 완료).
+> 3. **node 필수**(yt-dlp nsig 서명해독 → 없으면 오디오 수집 403 다발 · `node --check` · `npm test`). 설치 = `conda install -c conda-forge nodejs`.
 > 4. 가사 원문 `assets/lyrics/<band>.md` = 로컬 전용(gitignore). 커밋된 `wordcloud/<band>.yaml`로 검수·렌더는 가능하나 `build_keywords.py` **재생성은 원문 .md 필요**.
 > 5. 로컬 브랜치(2026-06-30 정리): `main` + 백업 3(`backup/main-20260620·22·30`) + `feature/ux-02-opt-a`(옵션A 유일본, 미머지·원격없음 — 삭제 금지).
 
@@ -22,12 +22,18 @@
 
 ## 현황
 - 데이터 **677 트랙 / 화면 660곡(dedup) / 13밴드**. 워드클라우드 **라이브**, 백필(1-a/1-b)·지역락 처리 완료(done 14~20, 화면 526→660).
+<<<<<<< Updated upstream
 - **레이아웃 확정 + 정적파일 분할 완료**(done 22, main 반영): 편집 시 CSS=`common/desktop/mobile.css`·JS=`static/js/functions/01~19-*.js` **분할 파일 직접 수정**(참조식 → 리빌드 불필요), 템플릿 변경만 `python src/build.py`.
 - **밴드 시각화 본류 = 일단락**(작업 1·2·3·4·5 완료). 남은 것은 전부 선택·백로그(§ 보류·백로그).
+=======
+- **레이아웃 확정 + 정적파일 분할 완료**(done 22): 편집 시 CSS=`common/desktop/mobile.css`·JS=`static/js/functions/01~19-*.js` **분할 파일 직접 수정**(참조식 → 리빌드 불필요), 템플릿 변경만 `python src/build.py`.
+- **음원맵**: 전곡 660 좌표·`norm` 동결 + HUD·재생펄스 + 딥스페이스 별 시각화 = main 라이브(done 23·24~25·29). **자동화**: 반자동 파이프라인(감지·알림 Actions + 로컬 원커맨드 처리) 운영화·라이브(done 26~28).
+>>>>>>> Stashed changes
 
 ## 우선순위
 | 작업 | 상태 | 상세 |
 |------|------|------|
+<<<<<<< Updated upstream
 | 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 20·22) | § 작업 1 |
 | 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm · done 23) | § 작업 2 |
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(done 26·27·28) | § 작업 3 · [spec](spec/pipeline-automation.md) |
@@ -61,6 +67,33 @@
 - **데이터 보관(사용자 요청)**: onset_features.csv(660)·phasec_features.csv(30) 커밋 보존 · `audio_full`(660·15GB) 로컬 보존(gitignore).
 - **잔여(모두 optional → § 보류·백로그)**: 전곡 660 정식 feature 부기(~46분) · 라벨 확대 재검 · 장르 밖 대조군. Phase B(y 토글)는 arousal 부재라 불요.
 - 편집 규칙: `16-audiomap.js`·`desktop.css` 직접수정(리빌드 ✗) · `audio_map.json` 변경만 `python src/build.py`.
+=======
+| 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D) | done 17·20·22 |
+| 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm) | done 23 |
+| 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(단일 크론 봇+감지+알림 · 로컬 처리·결과 Telegram) | done 26~28 · [spec](spec/pipeline-automation.md) |
+| 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | done 29 |
+| 5. EMOI-MAP 좌표계 고찰 | 🚧 **계획·다음 세션**(feature/emoi-map-starfield) | § 작업 5 · [260708](../idea/260708-final_comment.md) |
+| 남은 소소 작업 · 보류·백로그 | 선택·후순위 | § 남은 소소 작업 · § 보류·백로그 |
+
+원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
+
+---
+
+## 작업 5. EMOI-MAP 좌표계 고찰 — 🚧 계획 (다음 세션 · feature/emoi-map-starfield)
+Millsage·Ikka 1곡 밴드 좌표가 귀와 어긋남 → 근본 원인 = **실질 1.x차원**(contrast가 밝음·거칢 양쪽 지배) + **energy/tempo 지각축 feature 부재**(cluster-correlation 보고서).
+- **문서(실행 기준)** = `docs/idea/260708-final_comment.md`(fable×opus 통합). 원 문제 `260708.md` · 개별 코멘트 `260708-{fable,opus}_comment.md`.
+- **참고(작업 4 연계 · done 29)**: 별 시각화가 베이스 — `16-audiomap.js`(`songMark`·`_clSky*`/`_clBuildStarfield`·`_clSetNebula`) + 곡 `energy`가 `add_energy.py`로 `songs[].energy`에 이미 baked(660/660). Phase A(범례·라벨)·B(`y_energy` 토글)가 이 위에 얹힘.
+- **Phase A**(즉시·base env): 축 라벨 정직화(`axes.{x,y}` 괄호 한정) + energy 범례/툴팁 + n=1 처방(overrides·잠정 별). **Phase B0**: onset 파생 후보(E1~E3) × 기존 n=28 라벨 스크리닝 검정. **Phase B**: y축 에너지 토글(raw dyn.v z-score → `y_energy`, `_clYMode`). **Phase C**(완비 로컬·hummingbird env): 정식 LRA·tempogram 추출 + 라벨 확대 확정검정 → report(`report/cluster-energy-axis/`).
+- **편집 규칙 동일**: `16-audiomap.js`·`desktop.css` 직접수정(리빌드 ✗) · `audio_map.json` 변경만 `python src/build.py`.
+- ⚠️ **오디오 캐시 폐기 보류**: Phase C 전까지 완비 로컬 `audio_full`(285/660 이 로컬 · 660 완비 로컬) 유지 — 정식 LRA/tempogram 원본 필요. (수집·재개·안티봇 절차 = done 23 · `docs/idea/260703.md`.)
+
+---
+
+## 남은 소소 작업 (완료 작업 2·3 잔여 — 상세 done 23·26~28)
+- **DRM 1곡** `roselia 競宴Red×Violet`: yt-dlp 취득 불가 → 수동 처리(작업 3 증분 파이프라인으로). done 23·28에서 이어짐.
+- **(선택) 분석-only 로컬 스크립트**: 다운로드는 다른 로컬/수단, 분석~push만 하는 별도 파일(torch/demucs 구동 안 되는 로컬 대비). 현 `run_local.py`(다운로드+분석 일체형)는 유지하고 추가. done 28에서 이어짐.
+- **(선택) 잔재 정리**: 구 미사용 파일(`keywords_2d.json`·`build_embeddings.py`·`build_audio_map.py`) · 프로토타입 잔재(`rss_seen.json`·`rss_inbox.csv`·`verify_cache.json`) 삭제 · 영구실패 재시도 상한 가드 · `index.html git rm --cached`(Option A 완전화). done 26~28에서 이어짐.
+>>>>>>> Stashed changes
 
 ---
 
