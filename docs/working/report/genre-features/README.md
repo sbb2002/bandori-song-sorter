@@ -216,3 +216,4 @@ permutation importance의 표준편차가 상대적으로 크다(`feature_validi
 ### 추가 산출물
 - `band_anova_summary_sample15.csv` · `song_features_with_proxies_sample15.csv` — N=15 밴드 균등 샘플 게이트 스냅샷(13밴드·157곡).
 - 이전 부분 캐시(285곡·10밴드) `song_features*.csv`는 git 이력(세션 32 커밋)에 보존 — 재생성 전 별도 백업 파일은 남기지 않음.
+- **`pulse-shapes-demo.html`** — 세션 34 재생펄스 음색 시그니처 4모양(neutral/acoustic/bright/shimmer) 인터랙티브 데모(브라우저로 직접 열기). 발행 아티팩트 원본: https://claude.ai/code/artifact/b177e3e3-5965-4b62-9070-bfd76f479005 · 설계 맥락 memory `pulse_signature_shapes`.
