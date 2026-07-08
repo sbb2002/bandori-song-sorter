@@ -2,7 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`. 작성 규칙은 [readme.md](readme.md).
 
-마지막 갱신: **2026-07-08(세션 31)** — **작업 1·2·3·5 done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix**: 네 작업 본류 완료 확인 → 작업 절을 요약+링크로 축약(선택 잔여는 § 보류·백로그로 이동, 구 '병렬 실행 계획' 제거). **+minor fix(fix/emoi-map-labels-pulse)**: 축 라벨 '음색이 거친/부드러운'·'발랄한/진지한 느낌', 재생 HUD를 밴드 평균점 대비 편차 기준으로, 펄스 16분 주석 비활성(CL_DYN_MAX=1 유지) + research 작성 규칙(README 양식·승격기준). done 31 참조.
+마지막 갱신: **2026-07-08(세션 32)** — **Spotify 데이터셋 장르 피처 분석(side-project) + 밴드 오디오 피처 재정의 프록시 검증**(로컬 285/660곡, 브랜치 `analysis/audio-feats`, main 미머지): acousticness_proxy가 morfonica(바이올린 밴드)에서 최고치로 가설과 일치 확인. 전곡 확대는 다른 로컬에서 이어감. 작업 6 참조.
+이전: **2026-07-08(세션 31)** — **작업 1·2·3·5 done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix**: 네 작업 본류 완료 확인 → 작업 절을 요약+링크로 축약(선택 잔여는 § 보류·백로그로 이동, 구 '병렬 실행 계획' 제거). **+minor fix(fix/emoi-map-labels-pulse)**: 축 라벨 '음색이 거친/부드러운'·'발랄한/진지한 느낌', 재생 HUD를 밴드 평균점 대비 편차 기준으로, 펄스 16분 주석 비활성(CL_DYN_MAX=1 유지) + research 작성 규칙(README 양식·승격기준). done 31 참조.
 이전: **2026-07-07(세션 30)** — 작업 5(EMOI-MAP 좌표계 고찰) 완료·main 머지(`172684e` · done 30): Phase A(맵 정직화) 라이브 + B0·C 정서축 연구 = **timbre×valence 확정, arousal 독립축 불가**("실질 1.x차원"). 결정: x=timbre·y=valence 유지. 논문 [emotion-axes-extraction.md](../research/emotion-axes-extraction.md).
 이전: **2026-07-07(세션 29)** — 작업 4(EMOI-MAP 딥스페이스/별 시각화) 완료·main 머지(`104e709` · done 29): 곡 에너지 글로우 별 + canvas 별밭 + 밴드 성운 + Ave Mujica 전용 색.
 이전: (세션 28) 작업 3 반자동 파이프라인 운영화·라이브(done 28): 5분 폴러 폐지→단일 23:00 크론 통합 + `src/tools/semiauto-loader/` 통합 + run_local 결과 Telegram 통지.
@@ -27,39 +28,49 @@
 ## 우선순위
 | 작업 | 상태 | 상세 |
 |------|------|------|
-| 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D · done 20·22) | § 작업 1 |
-| 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm · done 23) | § 작업 2 |
-| 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브**(done 26·27·28) | § 작업 3 · [spec](spec/pipeline-automation.md) |
-| 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709 · done 29) | [done 29](done.md) |
-| 5. EMOI-MAP 좌표계 고찰 | ✅ **A·B0·C 완료**(172684e · done 30) — timbre×valence 확정 | § 작업 5 · [논문](../research/emotion-axes-extraction.md) |
+| 1. 워드클라우드 | ✅ **완전 완료**(품질+배치 D) | [done 20·22](done.md) |
+| 2. 음원맵 전곡 확대 | ✅ **완결·동결**(659곡·norm) | [done 23](done.md) · [spec](spec/audio-map-axes.md) |
+| 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브** | [done 26·27·28](done.md) · [spec](spec/pipeline-automation.md) |
+| 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | [done 29](done.md) |
+| 5. EMOI-MAP 좌표계 고찰 | ✅ **A·B0·C 완료**(172684e) — timbre×valence 확정 | [done 30](done.md) · [논문](../research/emotion-axes-extraction.md) |
+| 6. 장르(밴드) 오디오 피처 재정의 | 🚧 로컬 부분(285/660) 검증 완료 · 전곡 확대는 별도 로컬 | [report/genre-features](report/genre-features/README.md) · [side-project report](../../side-project/spotify-tracks-dataset/report.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
 
-> 작업 2·3의 **과거 실행 상세**(오디오 수집 659/660·전곡 빌드·`norm` 동결·반자동 배선·CI 봇월 실증)는 done 23·26·27·28에 있음. (구 '병렬 실행 계획' 블록은 완료되어 제거.)
+> 작업 1·2·3·5의 **완료 상세**(품질·배치·오디오 수집 659/660·전곡 빌드·`norm` 동결·반자동 배선·CI 봇월 실증·좌표계 연구)는 전부 done.md(17·20·22·23·26·27·28·30)로 이관 완료. 잔여 작업은 전부 § 보류·백로그.
 
 ---
 
-## 작업 1. 워드클라우드 — ✅ 완전 완료 (done 20·22)
-품질(2-c A·B·C + 키워드 색상) + (D) 배치(음원맵 슬롯 세로 분할 좌=음원맵/우=워드클라우드, 대안 B, 상시 렌더). **잔여 없음.** 재생성 명령·큐레이션 주의(`weight:0`은 렌더 `||1`로 부활 → 제거는 yaml 줄 삭제 / `ko`는 재생성 시 덮어써짐)는 memory `wordcloud_quality_plan.md`·done 17·20.
+## 작업 6 — 장르(밴드) 오디오 피처 재정의
 
-## 작업 2. 음원맵 전곡 확대 — ✅ 완결·동결 (done 23)
-**채택 축**: x=contrast(거칢↔매끄러움 r−0.81) · y=mode(밝음↔어두움 r+0.51). 전곡 659곡/13밴드 빌드·동결·main 머지 완료(+ `norm` 파라미터). 렌더 = `16-audiomap.js _clDraw`(+HUD·펄스). 근거·상세 = fullscale §4·§6 · pipeline §5 · [spec/audio-map-axes.md](spec/audio-map-axes.md).
-- **잔여(선택 → § 보류·백로그)**: 구 미사용 폐기(`keywords_2d.json`·`build_embeddings.py`·`build_audio_map.py`) · DRM `roselia 競宴Red×Violet` 1곡(작업 3 증분 대상).
+Spotify Tracks Dataset(side-project)에서 `acousticness`·`energy`·`instrumentalness` 같은 합성 변수가
+장르 구분력이 가장 강함을 확인했으나 블랙박스라 값을 이식할 수 없음 → 자체 신호처리(harmonic_ratio/HPSS·
+flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부분 캐시 285/660곡, 10밴드)에서 밴드별 분포를
+검증. **acousticness_proxy가 morfonica(바이올린 채용 밴드)에서 전체 최고치**로 가설과 일치. 상세는
+[report/genre-features/README.md](report/genre-features/README.md), Spotify 쪽 분석은
+[side-project/spotify-tracks-dataset/report.md](../../side-project/spotify-tracks-dataset/report.md).
 
-## 작업 3. 자동화 파이프라인 — 신곡 로더 — ✅ 반자동 운영화 완료·라이브 (done 26·27·28)
-**상세 구현·배선·CI 봇월 실증 = done 26·27·28.** 설계 = [spec/pipeline-automation.md](spec/pipeline-automation.md).
-- **결론(2026-07-06 실증)**: CI(데이터센터 IP) YouTube 다운로드는 봇월로 불가(클라이언트 로테이션·PO토큰까지 소진, 벽은 IP 평판). 다운로드 이후(demucs·pulse·좌표·커밋·배포)는 네트워크 게이트 없음 → **다운로드만 집 IP로 빼는 반자동** 채택.
-- **아키텍처(라이브)**: (Actions 매일 23:00 KST 단일 크론) Telegram 명령 처리 → 감지 → 결과 Telegram 1건. (Local) `run_local.py` 원커맨드 = 전용 클론에서 다운로드→분석→좌표 append→push→`deploy.yml` 자동 배포 + 결과 Telegram. 명령 봇 `/help`·`/status`·`/pause`·`/resume`(`pipeline.yml` 크론 맨 앞에서 처리). 코드 전부 `src/tools/semiauto-loader/`.
-- 로컬 사용: `python src/tools/semiauto-loader/run_local.py` (`--dry` 검증 / `--test-band X --test-video Y` E2E 1곡). 사전조건·상세 = 폴더 README.
-- **잔여(선택 → § 보류·백로그)**: **분석-only 로컬 스크립트**(사용자 요청·미구현 — 다운로드/분석 역할 분리) · DRM 1곡 수동 · 영구실패 재시도 상한 가드 · index.html `git rm --cached` · 옛 프로토타입 잔재 삭제.
+**다른 로컬에서 이어받는 법**(전곡 660 확대):
+1. `git fetch && git checkout analysis/audio-feats`
+2. 전곡 오디오 확보: `audio_full/`에 660곡 전체 필요(이 로컬은 285곡뿐 — 나머지는 기존 수집 경로(`fetch_audio.py` 등)로 확보하거나 다른 로컬의 캐시 병합)
+3. 추출(hummingbird env — librosa/soundfile, pandas/matplotlib 불필요, 체크포인트 재개): `python src/tools/cluster/genre_features_extract.py`
+4. 분석(base env — pandas/matplotlib/scipy, librosa 불필요): `python src/tools/cluster/genre_features_analyze.py`
+5. 결과는 `docs/working/report/genre-features/`에 갱신(같은 파일 덮어씀)
 
-## 작업 5. EMOI-MAP 좌표계 고찰 — ✅ Phase A·B0·C 완료 (done 30 · timbre×valence 확정, arousal 독립축 불가)
-정서축(Russell/Thayer V-A) 관점 재해석·검증. **결정: x=timbre(contrast)·y=valence(mode) 유지, arousal 새 축 도입 안 함**("실질 1.x차원": contrast가 rough·energy·tempo·valence 4라벨 지배, 측정 템포≠지각 템포 r=0.087). Millsage·Ikka n=1은 Phase A override가 최종.
-- **상세 = done 30**(Phase A 맵 정직화 라이브 · B0 onset 스크리닝 전멸 · C 정식 오디오 18feature 검증). 방법·수치 논문 = [emotion-axes-extraction.md](../research/emotion-axes-extraction.md). 데이터 = report/[cluster-energy-axis](report/cluster-energy-axis/README.md)(B0 660)·[emotion-axes](report/emotion-axes/)(C 30).
-- **데이터 보관(사용자 요청)**: onset_features.csv(660)·phasec_features.csv(30) 커밋 보존 · `audio_full`(660·15GB) 로컬 보존(gitignore).
-- **잔여(모두 optional → § 보류·백로그)**: 전곡 660 정식 feature 부기(~46분) · 라벨 확대 재검 · 장르 밖 대조군. Phase B(y 토글)는 arousal 부재라 불요.
-- 편집 규칙: `16-audiomap.js`·`desktop.css` 직접수정(리빌드 ✗) · `audio_map.json` 변경만 `python src/build.py`.
+**유효했던 변수(η² 우선순위, 전곡 분석 시 이 순서로 주목)**:
+- 강함(η²>0.19): `rms`(0.453)·`harmonic_ratio`(0.452)·`contrast`(0.330)·`flux`(0.316)·`acousticness_proxy`(0.291)·`zcr`(0.286)·`centroid`(0.214)·`energy_proxy`(0.211)·`rolloff`(0.198)
+- 중간(0.13~0.15, 유의하나 약함): `instrumentalness_proxy`/`voiced_frac_mix`(0.149)·`flatness`(0.140)·`mode_score`(0.130)
+- 약함(그래도 p<0.05): `tempo_excerpt`(0.064)
+- 14개 전부 p<0.05(밴드 간 유의)지만 효과크기는 위 순서로 갈림 — 전곡 확대 시 표본 불균형(현재 밴드당
+  1~65곡) 영향인지 재검증 필요.
+
+**알려진 한계**: instrumentalness_proxy는 Demucs 보컬분리 없이 믹스 pyin으로 근사한 약한 프록시(Demucs
+설치 후 vocal/mix 에너지비로 재정의 권장). 헤비메탈 계열 밴드(Roselia 등)가 이 로컬 캐시에 없어 "메탈 vs
+어쿠스틱" 대비가 아직 안 보임 — 전곡 확보로 해소될 것.
+
+**다음 단계**: 전곡 확대 검증 → 프록시가 여전히 유효하면 손라벨 상관검정(`phasec_correlate.py` 방식) →
+EMOI-MAP 축 적용 여부는 그 이후 별도 결정(아직 미적용).
 
 ---
 
@@ -82,6 +93,9 @@
 
 ### ⏪ 롤백 지점
 `backup/main-20260630-emoicloud`(local·origin) = emoi-cloud(워드클라우드 색·품질) 머지 **직전 main = `cebbce4`**. 문제 시 `git reset --hard cebbce4`(+force-push) 또는 `git revert -m 1 961ab93 && git push origin main`(라이브 안전·권장). 이전 백업 `backup/main-20260630` = `d586ffb`(1-b 커버 머지 직전).
+
+### 편집 규칙 — EMOI-MAP
+`16-audiomap.js`·`desktop/mobile.css` **직접수정**(참조식 → 리빌드 불필요) · `audio_map.json` 변경 시에만 `python src/build.py`.
 
 ### 지역락 — 정책 확립 (done 15·16, 절차만 재사용)
 - **감지**: `check_embeddable.py`(Data API `regionRestriction` + 한국 IP `playabilityStatus` 2신호). 신규 백필은 `new_songs.csv` 대상 동일 로직.
