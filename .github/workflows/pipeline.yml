@@ -66,6 +66,9 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # 핫픽스(2026-07-09): YouTube legacy RSS(/feeds/videos.xml) 외부 장애 대응 —
+          # RSS 실패 시 Data API 폴백(youtube_rss.fetch_feed_with_fallback)에 필요.
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
           if [ -f src/tools/semiauto-loader/bot_state.json ] && \
              python -c "import json,sys; sys.exit(0 if json.load(open('src/tools/semiauto-loader/bot_state.json')).get('paused') else 1)"; then
