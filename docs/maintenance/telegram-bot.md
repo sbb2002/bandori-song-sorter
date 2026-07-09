@@ -1,8 +1,5 @@
 # Telegram Bot API
 
-사용자가 나열한 4개 서비스(GitHub Pages·Actions·Umami·YouTube Data API)에는 없었지만, 파이프라인의
-핵심 알림·제어 채널이라 함께 기록한다(README의 "등"에 해당).
-
 ## 역할
 - 신곡 감지 결과를 매일 Telegram 메시지로 알림(`src/tools/semiauto-loader/notify.py`).
 - 원격 명령 처리: `/help`·`/status`·`/pause`(감지 크론 일시정지)·`/resume`
