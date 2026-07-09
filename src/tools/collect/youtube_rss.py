@@ -37,6 +37,11 @@ Modes
   python src/tools/collect/youtube_rss.py --report    precision dashboard (events + PR state)
   python src/tools/collect/youtube_rss.py --audit     heuristic drops only (FN review)
   python src/tools/collect/youtube_rss.py --show      dump latest feed entries per band
+
+핫픽스(2026-07-09, urgent.md): YouTube legacy RSS 엔드포인트(/feeds/videos.xml)가 전 채널에서
+404를 반환하는 외부 장애 확인(레포 내부 원인 아님 — 무관 채널로도 재현). "무료·키 불필요"
+원칙은 유지하되(RSS가 1순위), RSS가 실패하면 YOUTUBE_API_KEY가 있을 때만 youtube_api.fetch_uploads()로
+폴백한다(fetch_feed_with_fallback). 키 없으면 기존과 동일하게 동작(ok=False로 anomaly 처리).
 """
 
 import sys
@@ -51,6 +56,9 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from collections import Counter
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))   # 같은 디렉터리(src/tools/collect) 보장
+from youtube_api import load_env_key, fetch_uploads, APIError   # 핫픽스: RSS 실패 시 API 폴백용
 
 try:
     import yaml
@@ -200,6 +208,24 @@ def fetch_feed(channel_id: str, retries: int = 4):
             time.sleep(2 * (attempt + 1))
     print(f"  [feed error] {channel_id}: {last!r}")
     return [], False
+
+
+def fetch_feed_with_fallback(channel_id: str, api_key: str | None):
+    """RSS 우선(fetch_feed) → 실패 시 api_key 있으면 Data API(fetch_uploads)로 재시도.
+    핫픽스(2026-07-09): legacy RSS 엔드포인트 외부 장애 대응. 반환 형태는 fetch_feed와 동일
+    (entries, ok). API 폴백 성공도 ok=True — health/anomaly 판정 로직 변경 불필요."""
+    entries, ok = fetch_feed(channel_id)
+    if ok:
+        return entries, True
+    if not api_key:
+        return entries, False
+    try:
+        entries = fetch_uploads(channel_id, api_key)
+        print(f"  [feed fallback] {channel_id}: RSS 실패 → API 성공({len(entries)}건)")
+        return entries, True
+    except APIError as exc:
+        print(f"  [feed fallback] {channel_id}: RSS 실패 → API도 실패: {exc!r}")
+        return [], False
 
 
 def fetch_length_seconds(vid: str):
@@ -411,17 +437,18 @@ def _drop(band, e, reason, variant=None, length_s=None):
     }
 
 
-def collect_candidates(existing_pr_ids, scrape_length=True):
+def collect_candidates(existing_pr_ids, scrape_length=True, api_key=None):
     """Returns (candidates, drops, health, band_file).
 
     candidates: songs to propose. drops: per-entry drop records (for the log).
     health: per-band {ok, entries, valid} for the format watch.
+    api_key: 있으면 RSS 실패 시 Data API로 폴백(fetch_feed_with_fallback, 핫픽스 2026-07-09).
     """
     names_by_band, ids_by_band, band_file = load_existing()
     candidates, drops, health = [], [], {}
 
     for band, channel_id in BAND_CHANNELS.items():
-        entries, ok = fetch_feed(channel_id)
+        entries, ok = fetch_feed_with_fallback(channel_id, api_key)
         valid = [e for e in entries if e["video_id"] and e["title"]]
         health[band] = {"ok": ok, "entries": len(entries), "valid": len(valid)}
         if not ok:
@@ -642,7 +669,7 @@ def cmd_detect(propose):
         print("  [warn] gh PR 조회 실패 → 기존 PR을 제외하지 못함(로컬 미인증?).")
     existing_pr_ids = set(states.keys())
 
-    candidates, drops, health, band_file = collect_candidates(existing_pr_ids)
+    candidates, drops, health, band_file = collect_candidates(existing_pr_ids, api_key=load_env_key())
     _print_table(health, candidates)
 
     if candidates:

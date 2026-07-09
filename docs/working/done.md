@@ -806,3 +806,59 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 ## 문서화 경로 규칙 확립 + 축 라벨 버그 수정 (후속)
 - **문서화 경로 규칙**(`working/readme.md` 「구현 유형별 문서화 경로」): 작업을 분석 시도 횟수로 분류 — 단순구현(0회)=done · 분석 필요(1회)=+report(수치·표·플롯·그림 + 간단 해석) · 2회 이상 분석 후 종결=+research(논문화, 그림·표·플롯 전부). research/README 승격 기준도 "2회+분석·종결"로 일치·상호링크.
 - **축 라벨 버그 수정**(`16-audiomap.js`·`desktop.css` · 단순): ALL 개요는 auto scale이라 원점(0,0)이 화면 중앙이 아닌데 축 방향 라벨은 CSS 50% 고정 → 축선(markLine x=0·y=0)과 어긋남. `_clPositionAxisLabels()` 신설(`convertToPixel`로 x=0·y=0 픽셀 위치를 구해 top/bottom 라벨은 `left`, left/right 라벨은 `top`에 정렬) → `_clDraw` 끝·`dataZoom`·`resize`·초기화에서 호출. #cluster-chart가 .cluster-wrap(relative)을 100% 채워 캔버스 픽셀=라벨 부모 좌표(offset 무). + 축 라벨 폰트 0.56→0.68rem.
+
+---
+
+# 세션 32 — 🚨 핫픽스: 신곡 감지 파이프라인 RSS 전면 404 (2026-07-09, `hotfix/auto-loader`)
+
+`docs/working/urgent.md`에 기록된 긴급사항 처리(지시대로 done.md로 이관). GitHub Actions
+`orchestrate.py --detect-only --notify`가 **13밴드 채널 중 10개 전부**에서
+`[feed error] <channel_id>: <HTTPError 404: 'Not Found'>`를 냈고 "파싱 이상 밴드"가 사실상 전
+밴드로 잡힘 — 반자동 파이프라인(done 26~28) 사실상 마비. 최초 신고(7/7)는 raise_a_suilen 단일
+밴드 GitHub 이슈였는데 7/9 workflow_dispatch 재현 시 전체로 확산.
+
+## 원인 분석
+- `src/tools/collect/youtube_rss.py`의 `FEED_URL`(legacy `https://www.youtube.com/feeds/videos.xml?channel_id=`)·
+  `BAND_CHANNELS` 코드·데이터 무결성 확인: 6월 작성 이후 로직 불변, 채널ID 10개 전부 로그와 문자
+  단위 일치 — **레포 내부 원인 아님**.
+- 조사 중 로그에 없던 밴드(hello_happy_world) 및 완전 무관한 대형 채널(Google Developers)까지
+  동일 URL 패턴으로 **전부 404**(진짜 Google 404 페이지) 재현 → **YouTube legacy RSS 엔드포인트
+  자체의 외부 장애/변경**으로 강하게 추정. 다만 이후 로컬에서 재확인하니 **RSS가 다시 정상 응답**
+  (entries=15) — **일시적/간헐적 장애**였을 가능성. 7/7 단일 밴드→7/9 전체 확산 패턴과도 부합
+  (단계적 문제 발생 후 회복).
+- `open_health_issue()`가 동일 제목 이슈 중복 생성은 막아줘서 스팸은 아니었으나, 실제 장애 스코프
+  파악이 이슈 제목(raise_a_suilen만)만으론 안 됐음 — 원 이슈 제목이 실제 스코프를 과소대표.
+
+## 핫픽스 (전면 교체 아닌 폴백 추가)
+RSS가 간헐적임이 확인돼 **완전 교체 대신 안전망**으로 설계:
+- `src/tools/collect/youtube_rss.py`: 신규 `fetch_feed_with_fallback(channel_id, api_key)` —
+  RSS(`fetch_feed`) 우선, 실패 시 `api_key` 있으면 기존 `youtube_api.fetch_uploads()`(Data API
+  v3, `backfill.py`/`insert_backfill.py`가 이미 쓰던 검증된 함수, 반환 형태 `[{video_id,title,published}]`
+  동일해 드롭인)로 재시도. `collect_candidates(..., api_key=None)` 파라미터 추가, 호출부
+  (`cmd_detect`·`orchestrate.py` L328)에서 `load_env_key()`로 전달. 키 없으면 기존과 동일하게
+  `ok=False`(회귀 없음).
+- `.github/workflows/pipeline.yml`: "Detect new songs + notify" 스텝 env에
+  `YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}` 추가(기존 `TELEGRAM_*` 배선과 동일 패턴).
+- **트레이드오프**: `youtube_api.py` 모듈 docstring의 "RSS는 CI 무료·키 불필요 원칙, API는 저빈도
+  전용" 설계를 일부 뒤집음(감지 CI가 이제 조건부로 API 키에 의존) — RSS가 살아있으면 API 호출
+  자체가 안 되므로(1순위 유지) 쿼터 영향은 실패 시에만 발생, 무시 가능한 수준(13밴드×소수 call/day
+  ≪ 무료 10,000/day).
+
+## 검증
+- 로컬에서 `fetch_feed_with_fallback` 3가지 시나리오 직접 테스트(몽키패치로 RSS 실패 시뮬레이션):
+  ① RSS 정상 → API 안 타고 그대로 통과(entries=15) ② RSS 강제실패+키있음 → API 폴백 성공
+  (entries=149, `[feed fallback]` 로그 확인) ③ RSS 강제실패+키없음 → 기존과 동일 `ok=False`(회귀 없음).
+- `python -m py_compile`로 `youtube_rss.py`·`orchestrate.py` 구문 확인, `pipeline.yml` YAML 파싱 확인.
+
+## ⚠️ 남은 수동 조치(코드로 불가·사용자 필요)
+1. **GitHub 저장소 시크릿 `YOUTUBE_API_KEY` 등록**(Settings → Secrets and variables → Actions) —
+   로컬 `.env`의 값 사용. 미등록 시 CI에서는 여전히 RSS만 쓰고(현재와 동일) 안전망이 작동 안 함.
+2. 기존에 열려있는 GitHub 이슈(`🔔 RSS 포맷 변경 의심: raise_a_suilen`)는 핫픽스 배포·검증 후
+   닫아야 함(`gh issue close` 또는 웹에서).
+3. `hotfix/auto-loader`는 main으로 아직 머지 안 됨(사용자 확인 후 별도 진행).
+
+## 파일
+- 수정: `src/tools/collect/youtube_rss.py`(`fetch_feed_with_fallback` 신규 · `collect_candidates`
+  `api_key` 파라미터 · 모듈 docstring 갱신) · `src/tools/semiauto-loader/orchestrate.py`(호출부
+  `api_key=rss.load_env_key()`) · `.github/workflows/pipeline.yml`(`YOUTUBE_API_KEY` env 배선)
+- 문서: `docs/working/urgent.md`(처리 완료, 비움) · `done.md`(본 항목)
