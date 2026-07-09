@@ -13,6 +13,9 @@
 
 - `HANDOFF.md` — **앞으로 할 일** 단일 출처(진입점). `done.md` — 완료 기록 아카이브. `urgent.md` — 서비스 차질 수준 긴급사항(있으면 HANDOFF보다 우선).
 - `spec/` — 활성 구현 스펙. `audio-map-fullscale.md`(음원맵 전곡 확대 = 다음 작업), `audio-map-axes.md`(축 설계 근거), `audio-map-axes-comment.md`(축 자문·검토).
-- `report/` — 클러스터 실험 보고서(재현·인용 근거). `cluster_experiment.md`, `cluster_audio_clap.md`, `cluster-correlation/`.
+- `report/`는 더 이상 없음(2026-07-09 세션 37: `../../side-project/<주제>/`로 전부 이관 — 연구항목별
+  재분류. `cluster_experiment.md`·`cluster_audio_clap.md` → `emoi-map-axis-correlation/`, `genre-features` →
+  `genre-features/`, `emoi-cluster-pulse` → `emoi-map-pulse/`, `cluster-energy-axis`+`emotion-axes` →
+  `emoi-map-emotion-axes/{phase-b0,phase-c}/`).
 
 > 참고: `done.md`는 세션별 날짜 스냅샷 아카이브라 당시 경로 표기를 그대로 보존한다(구 `docs/spec/`·`docs/archive/` 등 문자열은 그 시점 기록).

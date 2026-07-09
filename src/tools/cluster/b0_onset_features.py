@@ -1,7 +1,7 @@
 """Phase B0 — onset 파생 후보 feature 산출 (오디오 없이, base env). 작업 5.
 
 660곡 onset JSON(src/content/cluster/onsets/<band>__<idx>.json)에서 energy/tempo 지각축
-후보 feature 를 뽑아 CSV(docs/working/report/cluster-energy-axis/onset_features.csv)로 남긴다.
+후보 feature 를 뽑아 CSV(side-project/emoi-map-emotion-axes/phase-b0/onset_features.csv)로 남긴다.
 후속 b0_correlate.py 가 이 CSV 를 n=28 손라벨(energy/tempo)과 상관 검정한다.
 
 후보(260708-final_comment.md §2):
@@ -31,7 +31,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[3]
 MASTER = ROOT / "src/content/cluster/songs_full.csv"
 ONSETS = ROOT / "src/content/cluster/onsets"
-OUTDIR = ROOT / "docs/working/report/cluster-energy-axis"
+OUTDIR = ROOT / "side-project/emoi-map-emotion-axes/phase-b0"
 FEATURES = OUTDIR / "onset_features.csv"
 PROGRESS = OUTDIR / "b0_progress.json"
 CONTROL = OUTDIR / "b0_control.json"

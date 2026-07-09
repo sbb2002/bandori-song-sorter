@@ -13,7 +13,7 @@
 //   x = spectral contrast → 거칢↔매끄러움 (검증 r=−0.81)
 //   y = mode(장/단조)     → 어두움↔밝음  (검증 r=+0.51)
 // PCA가 아니라 두 지각축을 직접 좌표로 사용(원점=평균 곡). 축 재정의 실험:
-// docs/working/report/cluster-correlation, 이전 PCA/식별 실험: docs/working/report/cluster_experiment.md.
+// side-project/emoi-map-axis-correlation, 이전 PCA/식별 실험: side-project/emoi-map-axis-correlation/cluster_experiment.md.
 // 곡 클릭=재생(곡 리스트 선택과 동일)·밴드 원 클릭=그 밴드 곡 강조. CLAP 유사곡 데이터
 // (songs[i].sim)는 JSON에 보존하되 표시는 하지 않음(근접=유사가 이 지도엔 더 자연스러움).
 
@@ -130,7 +130,7 @@ function _clEnergyColor(hex, e) {
     return _clPulseColor(hex, CL_E_LMIN + (CL_E_LMAX - CL_E_LMIN) * t);
 }
 
-// 음색 시그니처 펄스 모양(세션 34/35, docs/working/report/genre-features/pulse-shapes-demo.html 채택안):
+// 음색 시그니처 펄스 모양(세션 34/35, side-project/genre-features/pulse-shapes-demo.html 채택안):
 // neutral(매끈한 원)·acoustic(6엽 파동링, harmonic_ratio↑)·bright(톱니링, 밝기군↑)·shimmer(이중링, flux↑).
 // unit(반지름 1) 점열을 한 번만 만들어 두고 실제 펄스는 scaleX/scaleY 변환으로 키운다(매 프레임 재계산 없음).
 // echarts.graphic.makePath(SVG 문자열)는 아이콘용 뷰박스 보정이 들어가 좌표가 의도대로 안 나와 —

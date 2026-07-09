@@ -29,9 +29,9 @@ except Exception:
 
 ROOT = Path(__file__).resolve().parents[3]
 WS = ROOT / "src/content/cluster/legacy/axis_labels_worksheet.csv"
-FEAT = ROOT / "docs/working/report/emotion-axes/phasec_features.csv"
+FEAT = ROOT / "side-project/emoi-map-emotion-axes/phase-c/phasec_features.csv"
 AMAP = ROOT / "src/content/cluster/audio_map.json"
-OUTDIR = ROOT / "docs/working/report/emotion-axes"
+OUTDIR = ROOT / "side-project/emoi-map-emotion-axes/phase-c"
 
 AROUSAL = ["lufs", "lra", "rms_std", "crest", "tempo_acf", "pulse_clarity", "vbl", "onset_rate"]
 VALENCE = ["mode_score", "harmonic_ratio", "centroid", "rolloff"]

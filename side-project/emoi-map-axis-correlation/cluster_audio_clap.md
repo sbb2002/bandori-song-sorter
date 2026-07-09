@@ -89,5 +89,5 @@ python tools/cluster/build_audio_map.py --backend librosa            # 채택본
 python tools/cluster/build_audio_map.py --backend clap --no-download --out cluster/_audio_map_clap.json
 ```
 
-비교 산점도: `docs/working/report/cluster_audio_backends.png` (좌 librosa / 우 CLAP).
+비교 산점도: `cluster_audio_backends.png` (좌 librosa / 우 CLAP).
 음원 캐시(`cluster/audio_cache/`)·CLAP 비교본(`_audio_map_clap.json`)은 저작물/파생물로 비커밋(gitignore).

@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 ROOT = Path(__file__).resolve().parents[3]
-OUTDIR = ROOT / "docs/working/report/genre-features"
+OUTDIR = ROOT / "side-project/genre-features"
 SRC = OUTDIR / "song_features.csv"
 
 BASE_FEATURES = ["harmonic_ratio", "flatness", "contrast", "rms", "flux",

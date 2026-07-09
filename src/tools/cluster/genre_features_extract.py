@@ -35,7 +35,7 @@ from perceptual_features import timbre, mode_valence, f0_p95   # noqa: E402 (재
 
 AUDIO = ROOT / "src/content/cluster/audio_full"
 SONGS_FULL = ROOT / "src/content/cluster/songs_full.csv"
-OUTDIR = ROOT / "docs/working/report/genre-features"
+OUTDIR = ROOT / "side-project/genre-features"
 OUT = OUTDIR / "song_features.csv"
 MANIFEST = OUTDIR / "sample_manifest.csv"
 PROGRESS = OUTDIR / "extract_progress.json"

@@ -4,9 +4,9 @@
 >
 > 프로젝트: `bandori-song-sorter` · 브랜치 `feature/emoi-cluster → v2 → v3 → v3b`
 > 기간: 2026-06-30 ~ 2026-07-04 · 대상: BanG Dream 13밴드 660곡
-> 상세 원자료: [`cluster_experiment.md`](../working/report/cluster_experiment.md) ·
-> [`cluster-correlation/README.md`](../working/report/cluster-correlation/README.md) ·
-> [`cluster_audio_clap.md`](../working/report/cluster_audio_clap.md)
+> 상세 원자료: [`cluster_experiment.md`](../../side-project/emoi-map-axis-correlation/cluster_experiment.md) ·
+> [`cluster-correlation/README.md`](../../side-project/emoi-map-axis-correlation/README.md) ·
+> [`cluster_audio_clap.md`](../../side-project/emoi-map-axis-correlation/cluster_audio_clap.md)
 
 ---
 

@@ -3,7 +3,7 @@
 ave_mujica(헤비메탈 성향)가 펄스 acoustic 채널로 48% 과다분류된 이상을 발견한 뒤(세션 36),
 "채널 판정이 밴드 특성과 어긋나는" 사례가 다른 밴드에도 있는지 확인하기 위한 분석.
 오디오 재추출 불필요 — 이미 레포에 커밋된 두 산출물만 읽는다:
-  - docs/working/report/genre-features/song_features_with_proxies.csv (전곡 660, 원시 피처)
+  - side-project/genre-features/song_features_with_proxies.csv (전곡 660, 원시 피처)
   - src/content/cluster/audio_map.json (energy·bpm·펄스 shape, add_energy.py/add_pulse_shape.py 산출)
 
 환경: pandas/matplotlib/scipy만 필요(base env, librosa 불필요) — genre_features_analyze.py와 동일.
@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 ROOT = Path(__file__).resolve().parents[2]
 OUTDIR = Path(__file__).resolve().parent
 FIGDIR = OUTDIR / "fig"
-FEATURES_CSV = ROOT / "docs/working/report/genre-features/song_features_with_proxies.csv"
+FEATURES_CSV = ROOT / "side-project/genre-features/song_features_with_proxies.csv"
 AUDIO_MAP = ROOT / "src/content/cluster/audio_map.json"
 SONGS_FULL = ROOT / "src/content/cluster/songs_full.csv"
 

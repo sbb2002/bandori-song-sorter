@@ -87,14 +87,14 @@ chance 대비 약 37배 — 14개 변수만으로도 장르를 상당히 잘 가
 
 ## 5. 로컬 교차검증 종합 (Spotify × 로컬 285곡)
 
-이 방법(VIF + RF + permutation importance)을 [docs/working/report/genre-features/README.md](../../docs/working/report/genre-features/README.md)의 로컬 285곡(6밴드·270곡, `src/tools/cluster/genre_features_validity_rf.py`)에도 그대로 적용했다. 두 데이터셋·두 관점(단변량/다변량)을 겹쳐 최종 후보를 다음 세 그룹으로 정리한다.
+이 방법(VIF + RF + permutation importance)을 [side-project/genre-features/README.md](../genre-features/README.md)의 로컬 285곡(6밴드·270곡, `src/tools/cluster/genre_features_validity_rf.py`)에도 그대로 적용했다. 두 데이터셋·두 관점(단변량/다변량)을 겹쳐 최종 후보를 다음 세 그룹으로 정리한다.
 
 **① 양쪽에서 모두 강한 신호 — 가장 신뢰할 후보**
 - **`acousticness`(실 신호: `harmonic_ratio`)**: Spotify 단변량 η²=0.488(1위)·다변량 permutation importance 0.058(3위, VIF 2.28로 낮음) / 로컬 `harmonic_ratio` permutation importance 0.148(3위, VIF 3.89로 낮음) — 두 데이터셋·두 방법 전부에서 일관되게 상위권인 유일한 후보. 단, 로컬에서 `acousticness_proxy`의 두 성분(harmonic_ratio − flatness) 중 flatness는 기여가 거의 없어(perm. importance 0.022, 최하위권) **harmonic_ratio 단독을 핵심 신호로, flatness는 보조/재검토 대상으로** 낮춰야 한다.
 - **`energy` — 단, "합쳐진 하나의 지표"가 아니라 "분해된 성분"으로**: Spotify에서는 `energy`가 `loudness`와 다중공선(VIF 4.05/3.09, r=0.762)이라 다변량 기여도가 낮다(7위, 0.029) — "라우드니스 하나로 뭉친 에너지" 개념 자체는 정보가 얇다는 뜻. 로컬에서는 그 대신 `rms`·`contrast`·`flux`(=`energy_proxy`의 세 성분)가 서로 VIF 1.7~2.7로 낮으면서 permutation importance 1·2·4위를 독식했다 — 세 성분이 서로 겹치지 않는 독립적 정보를 각각 나른다는 뜻. 종합하면 **`energy_proxy`는 지금처럼 rms+contrast+flux 3성분을 유지하는 게 근거 있는 설계**이고, 단일 loudness/rms 스칼라로 축소하면 안 된다.
 
 **② 개념은 유망하지만 지금 측정이 약한 후보**
-- **`instrumentalness`**: Spotify에서는 permutation importance 2위(0.068, VIF 1.43로 고유 정보)로 강했지만, 로컬 프록시 원재료 `voiced_frac_mix`는 중간 수준(0.035, 5위)에 그친다. 이 차이는 개념이 약해서가 아니라 **로컬 프록시 측정 방법 자체가 약해서**일 가능성이 크다(Demucs 미설치로 보컬분리 없이 믹스에서 직접 측정 → 리드 악기에 오염, [genre-features README](../../docs/working/report/genre-features/README.md) 한계 절 참고). 기각하지 말고 **Demucs 도입 후 재검증이 필요한 후보**로 남겨둔다.
+- **`instrumentalness`**: Spotify에서는 permutation importance 2위(0.068, VIF 1.43로 고유 정보)로 강했지만, 로컬 프록시 원재료 `voiced_frac_mix`는 중간 수준(0.035, 5위)에 그친다. 이 차이는 개념이 약해서가 아니라 **로컬 프록시 측정 방법 자체가 약해서**일 가능성이 크다(Demucs 미설치로 보컬분리 없이 믹스에서 직접 측정 → 리드 악기에 오염, [genre-features README](../genre-features/README.md) 한계 절 참고). 기각하지 말고 **Demucs 도입 후 재검증이 필요한 후보**로 남겨둔다.
 
 **③ 양쪽에서 일관되게 약한 후보 — 우선순위 낮음**
 - 스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`): 로컬에서 서로 VIF 9~52로 심하게 겹치고 4개 다 permutation importance 최하위권 — 새 프록시 설계에 넷을 다 넣을 필요 없음.
@@ -112,5 +112,5 @@ chance 대비 약 37배 — 14개 변수만으로도 장르를 상당히 잘 가
 - `fig/feature-validity/vif_summary.csv` — 14개 피처 VIF, 내림차순
 - `fig/feature-validity/feature_importance_summary.csv` — permutation importance·RF impurity importance, 내림차순
 - `fig/feature-validity/run_summary.txt` — 분류기 성능 요약(n_classes, chance-level, test accuracy, top-5 accuracy, train/test 크기)
-- `src/tools/cluster/genre_features_validity_rf.py` · `docs/working/report/genre-features/feature_validity_{vif,importance}.csv`, `feature_validity_run_summary.txt` — 로컬 교차검증 산출물
+- `src/tools/cluster/genre_features_validity_rf.py` · `side-project/genre-features/feature_validity_{vif,importance}.csv`, `feature_validity_run_summary.txt` — 로컬 교차검증 산출물
 - 종합 그림·서사: [docs/research/feature-validity-extraction.md](../../docs/research/feature-validity-extraction.md)

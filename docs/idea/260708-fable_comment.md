@@ -1,7 +1,7 @@
 # 260708 「EMOI-MAP 좌표계에 대한 고찰」 — 돌파 방안 (Fable comment)
 
 > 원 문제 제기: [260708.md](260708.md)
-> 근거 문서: [cluster-map-extraction.md](../research/cluster-map-extraction.md)(연구 요약, 이하 *research*) · [cluster_experiment.md](../working/report/cluster_experiment.md)(원자료, 이하 *report*)
+> 근거 문서: [cluster-map-extraction.md](../research/cluster-map-extraction.md)(연구 요약, 이하 *research*) · [cluster_experiment.md](../../side-project/emoi-map-axis-correlation/cluster_experiment.md)(원자료, 이하 *report*)
 > 작성 2026-07-07 · 브랜치 `feature/emoi-map-starfield` · 현재 지도: 660곡+신규 2곡 / x=contrast(r=−0.81) · y=mode(r=+0.51)
 
 ---

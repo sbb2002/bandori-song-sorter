@@ -60,7 +60,7 @@
 
 ## 검토 의견 (Claude, 2026-07-02) — fable-5 제안 vs 현행 축
 
-> 검토 자료: 현행 채택본([audio-map-axes.md](audio-map-axes.md) §7.3, [../report/cluster-correlation/README.md](../report/cluster-correlation/README.md))
+> 검토 자료: 현행 채택본([audio-map-axes.md](audio-map-axes.md) §7.3, [../../../side-project/emoi-map-axis-correlation/README.md](../../../side-project/emoi-map-axis-correlation/README.md))
 > + fable-5 핵심 주장을 **파일럿 28곡으로 직접 재검증**(기존 `axis_pilot_features.csv`).
 
 ### 전제 — 두 제안은 다른 목적을 최적화한다

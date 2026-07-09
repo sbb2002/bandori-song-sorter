@@ -539,7 +539,7 @@ HANDOFF 1순위(난이도 최저·리스크 없음) 작업. 곡을 짧게 클릭
 - `tools/cluster/build_perceptual_map.py`(신규 채택본) — contrast·mode만·z-score 직접좌표(**PCA/f0/Demucs 불필요**), `cluster/songs_top10.csv` → `cluster/audio_map.json`. `carry_sim()`으로 v2 CLAP sim 승계, songs에 url 포함.
 - `tools/cluster/perceptual_features.py`(Demucs+f0+mode/timbre, mode_valence=Krumhansl KS 프로파일) · `tools/cluster/axis_correlation.py`(피어슨/스피어만) · `cluster/axis_labels_worksheet.csv`(손 라벨 30행) · `cluster/axis_pilot_features.csv`.
 - **튜닝**: `Y_SHIFT=+10`(데이터 평균이 밝은팝 치우침 → RAS '약간 마이너' 앵커) · `BAND_OVERRIDES morfonica dy+15`(★측정 아님★ 바이올린 음색 밝음이 어떤 feature로도 안 잡힘 → 밴드 큐레이션, `audio_map.json.overrides` 투명 기록). ave는 미보정(y 정확·x만 프록시 한계).
-- 보고서 `docs/report/cluster-correlation/README.md`(§7 x축 재검정·§8 구현·§8.1 morfonica).
+- 보고서 `../../side-project/emoi-map-axis-correlation/README.md`(§7 x축 재검정·§8 구현·§8.1 morfonica).
 
 ## UI (script.js `_clDraw` 재작성 — 두 모드)
 - **ALL 개요**: 완전 정적(호버=타밴드 흐림만, 이동 없음 → 센트로이드 클릭 안정) · 곡 s=0.5로 밴드 중심 뭉침 · **밴드 센트로이드=`assets/icons/<band>.png` 아이콘** · zero-line 없음.
@@ -586,7 +586,7 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 - 환경: node를 conda(`conda install -c conda-forge nodejs`)로 이 장치 설치(nsig 서명해독=403 회피). librosa/numpy/imageio-ffmpeg 등 기설치.
 
 ## 재생 펄스 방안 A(지각 pulse 추정) (`39c82f3`)
-- `build_beat_track.py` **`perceptual_pulse()`**: onset ACF로 base(beat_track) vs ×2 비교, **ratio=ACF(fast)/ACF(slow)≥τ(0.96)면 8분** 채택. onsets json에 `pulse{}` 저장. 파일럿 7곡 **6/7 선호 일치**(afterglow 0.976→8분·morfonica 0.837→박 — 실제 tempo 둘다 185 동일한데 구분). **τ 0.9→0.96**(mygo 0.941 반례로 재튜닝). mugendai만 난곡 실패. 상세 [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
+- `build_beat_track.py` **`perceptual_pulse()`**: onset ACF로 base(beat_track) vs ×2 비교, **ratio=ACF(fast)/ACF(slow)≥τ(0.96)면 8분** 채택. onsets json에 `pulse{}` 저장. 파일럿 7곡 **6/7 선호 일치**(afterglow 0.976→8분·morfonica 0.837→박 — 실제 tempo 둘다 185 동일한데 구분). **τ 0.9→0.96**(mygo 0.941 반례로 재튜닝). mugendai만 난곡 실패. 상세 [../../side-project/emoi-map-pulse](../../side-project/emoi-map-pulse/README.md).
 - **펄스 프리셋 5→3단계**: 볼륨 경계 [0.2,0.6], 1단계=펄스없음/2=구3단계/3=구5단계(`CL_PULSE_R3`·`CL_PULSE_SPEED3`). **박 고정 확정**(`CL_ONSET_DEFDIV={}`).
 - **펄스색 가시성 보정** `_clPulseColor`(HSL 밝기 하한 L≥0.62): 어두운 밴드색(ave_mujica `#881144`→`#e95393`)이 어두운 배경에 묻히던 문제 해소 + 두께 3·글로우.
 
@@ -614,7 +614,7 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 - onsets 전곡 ≈42MB → index.html 인라인 불가. `build.py` `load_onsets`(전곡 인라인) → **`load_onset_list`(경량 [band,song,id] 매니페스트)**, 데이터는 런타임 곡별 fetch(`16-audiomap.js _clFetchOnset`, `./src/content/cluster/onsets/<id>.json`, 캐시·file://→BPM폴백). **index.html 0.30MB**. `.nojekyll`로 Pages가 src/ 서빙.
 
 ## 재생 펄스 = 에너지 기반 동적 subdivision (핵심 결정)
-- **진단**: `diagnose_pulse_variability.py`(full-mix tempogram → **circular octave% spread**; linear std는 90 fold경계 위양성). 전곡 스캔 `report/emoi-cluster-pulse/pulse_variability.csv` — ~70% 안정, ~22%만 곡내 pulse 변동(방안 B 후보).
+- **진단**: `diagnose_pulse_variability.py`(full-mix tempogram → **circular octave% spread**; linear std는 90 fold경계 위양성). 전곡 스캔 `../../side-project/emoi-map-pulse/pulse_variability.csv` — ~70% 안정, ~22%만 곡내 pulse 변동(방안 B 후보).
 - **방안 B(구간 tempo) 대신 '에너지 동적 subdivision' 채택**(사용자): 구조(intro/verse) 판별 없이 **에너지(음량)로 subdivision 제어**. `build_dynamics.py`가 full-mix **절대 음량(RMS dB)을 글로벌 앵커(−22~−7dB)로 정규화**(★곡별 아님 → 곡 간 절대 energy 보존: Symbol I=시종 dense·軌跡 1절=박)한 `dyn` 곡선(2Hz)을 onset JSON에 추가. `16-audiomap.js _clDynLevel`이 매 프레임 dyn으로 **박/8분** 선택(`CL_DYN_T1/T2`, `CL_DYN_MAX=1`=16분 끔, 히스테리시스).
 - **볼륨 프리셋 4단계**(v 0.2/0.4/0.6 경계, `_clVolStep`): 1·2=발생안함 · 3(0.6~0.9)=24px·3px · 4(0.9~1.0)=48px·7px(`CL_PULSE_R3/LW3/SPEED3`). **경계는 곡 최대볼륨(`_clOnsetVmax`)에 상대화**(`CL_VOL_ADAPTIVE`).
 
@@ -625,7 +625,7 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 
 ## 산출물
 - 도구: `build_pulse_all.py`·`separate_drums.py`·`build_beat_track.py`·`diagnose_pulse_variability.py`·`build_dynamics.py`(`src/tools/cluster/`).
-- 문서: `docs/research/`(cluster-map-extraction·pulse-onset-extraction 논문) · `report/emoi-cluster-pulse/README.md`(방법론+프로브+구현) · `pulse_variability.csv`.
+- 문서: `docs/research/`(cluster-map-extraction·pulse-onset-extraction 논문) · `../../side-project/emoi-map-pulse/README.md`(방법론+프로브+구현) · `pulse_variability.csv`.
 - 커밋(v4): 진단 `5dfbc42` · 광고펄스+박기본 `fb4ffba` · 동적subdiv `334a0eb` · 글로벌음량 `03a5dc1` · 프리셋튜닝 다수 · 볼륨적응 `afc9a75` · ikka색 `8602392`.
 
 ## 보류(향후, 착수 안 함)
@@ -763,14 +763,14 @@ HANDOFF "열린 결정(레이아웃 묶음)"을 확정하고, 비대해진 `styl
 
 ## Phase B0 — onset 파생 arousal 스크리닝 (전멸, 커밋 98290d9)
 - onset JSON 파생 9종(E1 mean·E2 LRA근사·E3 온셋밀도·dyn std/p90/p10·ACF pulse_bpm·librosa tempo) × 손라벨 energy/tempo(n=30) → **PASS 0/9**. 원인 = `dyn.v`가 재생펄스용 곡별 정규화값이라 절대 에너지 씻김.
-- 산출 `report/cluster-energy-axis/`(onset_features.csv 660·correlation·screening.png). 도구 `b0_{onset_features,correlate,plot}.py`.
+- 산출 `../../side-project/emoi-map-emotion-axes/phase-b0/`(onset_features.csv 660·correlation·screening.png). 도구 `b0_{onset_features,correlate,plot}.py`.
 
 ## Phase C — 정식 오디오 feature 3정서축 (timbre×valence 확정 / arousal 불가, 커밋 c4031b0)
 - `audio_full` 원본에서 정식 feature 18종(LUFS·LRA·rms변동·tempogram·VBL·HPSS + `timbre()`·`mode_valence()` 재사용) × 손라벨 4축(rough/valence/energy/tempo, n=30, 곡당 ~4.4s).
 - **Timbre** `contrast`×rough r=**−0.815** PASS · **Valence** `mode`×valence r=**+0.576** PASS(합성 mode+centroid+harmonic R=0.595 미개선 → mode 유지).
 - **Arousal 탈락**: 전용 feature(LUFS·LRA·tempo_acf·VBL·rms변동) 전멸 · **측정 템포 tempo_acf×지각 tempo r=0.087**(측정≠지각) · 지각 energy/tempo는 스펙트럴 밝기(centroid·rolloff r≈0.6)가 잡으나 **contrast와 collinear(r≈0.52)라 독립 축 아님**.
 - **"실질 1.x차원" 확증**(contrast가 rough·energy·tempo·valence 4라벨 지배). **결정**: x=timbre·y=valence 유지, arousal 새 축 없음, Millsage·Ikka는 Phase A override가 최종.
-- 논문 `docs/research/emotion-axes-extraction.md`. 산출 `report/emotion-axes/`. 도구 `phasec_{features,correlate,plot}.py`(`--full`로 전곡 추출 가능·진행률/pause·resume).
+- 논문 `docs/research/emotion-axes-extraction.md`. 산출 `../../side-project/emoi-map-emotion-axes/phase-c/`. 도구 `phasec_{features,correlate,plot}.py`(`--full`로 전곡 추출 가능·진행률/pause·resume).
 
 ## 데이터 보관 (사용자 요청 — 폐기 금지)
 - 두 조사 데이터 커밋 보존: `onset_features.csv`(660) · `phasec_features.csv`(30) · 각 correlation/png.
@@ -823,7 +823,7 @@ EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰
 - **다변량**(VIF+RF+permutation importance, [report-feature_validity.md](../../side-project/spotify-tracks-dataset/report-feature_validity.md)): `energy`/`loudness` 다변량 기여도 급락(중복→저평가) · `popularity` 다변량 1위 반전(비오디오·이식 불가) · `acousticness`/`instrumentalness`는 고유 정보 유지. RF 파라미터 과대(300트리·max_depth=None → 37분 미완)를 규제(150트리·depth15·leaf10)로 해결.
 
 ## Phase 2 — 우리 샘플 285곡 교차검증
-- 로컬 프록시(genre-features)에 동일 다변량 방법 적용(`src/tools/cluster/genre_features_validity_rf.py`, 표본 20↑ 6밴드·270곡): 프록시+원재료 동시 투입 시 VIF=inf(정확한 선형결합) → 원본 12피처만 검증. 스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`) VIF 9~52 상호중복 → PI 최하위(Spotify `loudness`↔`energy` 패턴 재현). `contrast`/`rms`/`harmonic_ratio`/`flux`가 고유 상위. `energy_proxy` 3성분(rms+contrast+flux)이 상위권과 일치 = 성분 선택 사후 검증. 상세 [report/genre-features/README.md](report/genre-features/README.md).
+- 로컬 프록시(genre-features)에 동일 다변량 방법 적용(`src/tools/cluster/genre_features_validity_rf.py`, 표본 20↑ 6밴드·270곡): 프록시+원재료 동시 투입 시 VIF=inf(정확한 선형결합) → 원본 12피처만 검증. 스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`) VIF 9~52 상호중복 → PI 최하위(Spotify `loudness`↔`energy` 패턴 재현). `contrast`/`rms`/`harmonic_ratio`/`flux`가 고유 상위. `energy_proxy` 3성분(rms+contrast+flux)이 상위권과 일치 = 성분 선택 사후 검증. 상세 [../../side-project/genre-features/README.md](../../side-project/genre-features/README.md).
 
 ## Phase 3 — research 승격
 - [../research/feature-validity-extraction.md](../research/feature-validity-extraction.md)(3중 렌즈 종합 논문, Spotify+우리 샘플) + 그림 `featval_fig1~7`(신규 slope·VIF-PI 산점 2종). `../research/README.md` 등재.
@@ -834,13 +834,13 @@ EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰
 
 ## 파일
 - side-project: `report-{genre_audio_features,pairwise_scatter,feature_validity}.md` · `{scatter_pairwise,feature_validity_rf}.py` · `fig/{scatter-pairwise,feature-validity}/`
-- 로컬: `src/tools/cluster/genre_features_validity_rf.py` · `report/genre-features/{README.md,feature_validity_*.csv}`
+- 로컬: `src/tools/cluster/genre_features_validity_rf.py` · `../../side-project/genre-features/{README.md,feature_validity_*.csv}`
 - research: `feature-validity-extraction.md` · `figures/featval_fig1~7`
 - 커밋(analysis/audio-feats): 21f6631 · 77986f9 · c268a31 · 2189bc7 · 3f9145b
 
 # 세션 33 — 오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 (2026-07-08, analysis/audio-feats · main 미머지)
 
-세션 32 부분 캐시(285곡·10밴드, 다변량 6밴드) 잠정 결론을, 전곡 오디오(660곡·13밴드)를 보유한 이 로컬에서 재검증. **부분 캐시 3대 결론이 메탈/전자 밴드 포함 전곡에서 유지되는지** 확인이 목표. EMOI-MAP 소스 미변경. 상세 수치는 [report/genre-features/README.md](report/genre-features/README.md) "전곡 660 재검증" 절 · 논문 §8.
+세션 32 부분 캐시(285곡·10밴드, 다변량 6밴드) 잠정 결론을, 전곡 오디오(660곡·13밴드)를 보유한 이 로컬에서 재검증. **부분 캐시 3대 결론이 메탈/전자 밴드 포함 전곡에서 유지되는지** 확인이 목표. EMOI-MAP 소스 미변경. 상세 수치는 [../../side-project/genre-features/README.md](../../side-project/genre-features/README.md) "전곡 660 재검증" 절 · 논문 §8.
 
 ## 환경·절차
 - **`hummingbird` env 불필요**: 이 로컬 base(`C:/Users/User/miniconda3`)에 librosa·soundfile·numpy·pandas·scipy·sklearn·matplotlib·yt_dlp 전부 설치 확인 → 4단계(sample→extract→analyze→validity_rf) 전부 base python으로 실행.
@@ -864,9 +864,9 @@ EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰
 - 게이트 추출 157곡·13밴드 균등(실패 0). 전곡 추출 660곡·13밴드(밴드별 수 = 오디오 파일 수와 일치, 실패 0). validity_rf kept_bands 10(roselia·poppin_party·raise_a_suilen 포함), dropped {various_artists 5·millsage 1·ikka_dumb_rock 1}.
 
 ## 파일
-- 재생성(전곡 660): `report/genre-features/{song_features.csv, song_features_with_proxies.csv, band_anova_summary.csv, *_violin.png, feature_validity_{vif,importance}.csv, feature_validity_run_summary.txt, sample_manifest.csv}`
+- 재생성(전곡 660): `../../side-project/genre-features/{song_features.csv, song_features_with_proxies.csv, band_anova_summary.csv, *_violin.png, feature_validity_{vif,importance}.csv, feature_validity_run_summary.txt, sample_manifest.csv}`
 - 신규 스냅샷: `band_anova_summary_sample15.csv` · `song_features_with_proxies_sample15.csv`(N=15 게이트)
-- 산문: `report/genre-features/README.md`(전곡 재검증 절) · `research/feature-validity-extraction.md`(§8) · `HANDOFF.md`(작업 6·마커) · `done.md`(본 항목)
+- 산문: `../../side-project/genre-features/README.md`(전곡 재검증 절) · `research/feature-validity-extraction.md`(§8) · `HANDOFF.md`(작업 6·마커) · `done.md`(본 항목)
 
 ---
 
@@ -992,3 +992,51 @@ HANDOFF "열린 결정" § 세션 36 참조.
 ## 파일
 - 신규: `side-project/band-audio-analysis/`(`analyze_features.py` · `README.md` ·
   `shape_distribution_by_band.csv` · `fig/*.png` 10개)
+
+---
+
+# 세션 38 — Demucs other 스템 재측정 실험(가설 기각) + docs/working/report 전체 재분류 이관 (2026-07-09)
+
+## 실험: other 스템 밝기 재측정
+세션 37 가설("어두운 믹스가 밝기군을 끌어내린다, other 스템만 재면 완화될 것")을 hummingbird env에
+demucs 신규 설치 후 실측(mygo 4·ave_mujica 4·morfonica 대조군 3곡, htdemucs CPU 분리 곡당 ~3.5분).
+**결과 = 가설 기각, 방향이 정반대**: 11곡 전부(대조군 포함 예외 없이) other 스템에서 밝기군
+(centroid/rolloff/zcr/flatness)이 오히려 하락 — 드럼 심벌·보컬 치찰음이 믹스 고주파 에너지의
+상당 부분을 차지하고 있었던 것으로 추정. ave_mujica·mygo는 harmonic_ratio까지 더 상승해 acoustic
+쏠림이 **완화가 아니라 악화**됨. 표본은 작지만(11곡·3밴드) 방향이 예외 없이 일치해 이 결론
+(접근 폐기)에는 충분하다고 판단(순수 잡음이면 11/11 동일방향 확률 ≈0.05%). 상세·플롯·통계적
+타당성 논의 = `side-project/band-audio-analysis/report-other-stem-experiment.md`.
+
+**다음 결정 갱신**: (d) other 스템 재측정은 기각 확정. vocals만 뺀 스템(drums+bass+other 합성)은
+미검증 후속 후보로 남김. (a)(b)(c) 옵션은 세션 37 그대로 미확정.
+
+## docs/working/report/ 전체를 side-project/로 재분류 이관
+`docs/working/report/`의 5개 항목(cluster-correlation·cluster-energy-axis·emoi-cluster-pulse·
+emotion-axes·genre-features + 느슨한 파일 3개)을 연구 주제별로 재분류해 `side-project/`로 이관,
+`docs/working/report/`는 삭제(빈 디렉터리):
+- `cluster-correlation/` + `cluster_experiment.md` + `cluster_audio_clap.md` + `cluster_audio_backends.png`
+  → **`side-project/emoi-map-axis-correlation/`**(cluster-map-extraction.md 연구 원자료)
+- `cluster-energy-axis/` → **`side-project/emoi-map-emotion-axes/phase-b0/`**,
+  `emotion-axes/` → **`side-project/emoi-map-emotion-axes/phase-c/`**(emotion-axes-extraction.md
+  연구 원자료, Phase B0·C로 하위폴더 통합)
+- `emoi-cluster-pulse/` → **`side-project/emoi-map-pulse/`**(pulse-onset-extraction.md 연구 원자료)
+- `genre-features/` → **`side-project/genre-features/`**(feature-validity-extraction.md 연구
+  원자료, `band-audio-analysis/`가 바로 이 데이터를 씀)
+
+**참조 전수 수정**: 코드 14개 Python 스크립트(`OUTDIR`/`DATA`/`FEATURES_CSV` 등 함수적 경로 상수)
++ `static/js/functions/16-audiomap.js`(주석) + 문서 15개(`HANDOFF.md`·`done.md`·`readme.md`·
+`docs/README.md`·`docs/research/*.md` 4편·`docs/idea/*.md`·`spec/*.md`·`side-project/spotify-tracks-dataset/*.md`)
+의 상대/절대 경로를 전부 grep으로 찾아 재계산해 수정, 최종 grep으로 잔여 참조 0건 확인.
+`docs/working/readme.md`·`docs/research/README.md`의 "report 산출물은 report/<주제>/에" 문서화
+규칙 자체도 `side-project/<주제>/`로 갱신(향후 세션이 헷갈리지 않도록).
+
+**부작용 처리**: 경로 검증 중 `genre_features_validity_rf.py`를 실수로 import해 결과 CSV 3개가
+재계산·덮어써짐(값은 부동소수점 마지막 자리 잡음뿐, `test_accuracy=0.4390` 등 실질 변화 없음) —
+`git checkout --`으로 원상 복구.
+
+## 파일
+- 이동(git mv, 5개 디렉터리 + 3개 파일 → `side-project/` 4개 신규 디렉터리).
+- 신규: `side-project/band-audio-analysis/{extract_other_stem_features.py, compare_stem_vs_mix.py,
+  plot_stem_comparison.py, other_stem_features.csv, stem_vs_mix_comparison.csv,
+  report-other-stem-experiment.md, fig/{bright,harmonic_ratio,centroid}_mix_vs_other.png}`.
+- 수정: 위 "참조 전수 수정" 대상 코드 14개 + 문서 15개.

@@ -29,9 +29,9 @@ except Exception:
 ROOT = Path(__file__).resolve().parents[3]
 WS = ROOT / "src/content/cluster/legacy/axis_labels_worksheet.csv"
 SF = ROOT / "src/content/cluster/songs_full.csv"
-FEAT = ROOT / "docs/working/report/cluster-energy-axis/onset_features.csv"
+FEAT = ROOT / "side-project/emoi-map-emotion-axes/phase-b0/onset_features.csv"
 AMAP = ROOT / "src/content/cluster/audio_map.json"
-OUTDIR = ROOT / "docs/working/report/cluster-energy-axis"
+OUTDIR = ROOT / "side-project/emoi-map-emotion-axes/phase-b0"
 
 CANDIDATES = ["e1_mean_dyn", "e2_lra_dyn", "e3_onset_rate", "onset_rate_fine",
               "dyn_std", "dyn_p90", "dyn_p10", "pulse_bpm", "tempo_json"]

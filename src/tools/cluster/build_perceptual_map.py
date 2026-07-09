@@ -1,6 +1,6 @@
 """src/content/cluster/songs_full.csv → 지각 축 음원맵 (cluster/audio_map.json). v3 채택본.
 
-축 재정의 결과(docs/working/report/cluster-correlation) 채택:
+축 재정의 결과(side-project/emoi-map-axis-correlation) 채택:
   x = spectral contrast  → 거칢↔매끄러움 (검증 r=−0.81)
   y = mode_score(장/단조) → 어두움↔밝음  (검증 r=+0.51)
 
@@ -44,7 +44,7 @@ X_SHIFT, Y_SHIFT = 0.0, 10.0
 # 밴드 큐레이션 보정(★측정 아님★): feature가 지각을 못 잡는 밴드만 밴드 단위로 nudge.
 # 전곡에 균일 적용 → 개별 곡의 실제 장/단조 스프레드는 보존, 밴드 위치만 이동.
 # morfonica: 바이올린 음색의 '밝음'이 mode·음향 feature로 안 잡힘(곡별 mode가 −27~+29로
-#   퍼져 상수 통용 불가, HPSS 선율밝기도 valence 무상관 — docs/working/report/cluster-correlation).
+#   퍼져 상수 통용 불가, HPSS 선율밝기도 valence 무상관 — side-project/emoi-map-axis-correlation).
 #   사용자 판단(밴드 B안)으로 밴드를 밝은 쪽에 배치. audio_map.json.overrides 에 투명 기록.
 # millsage·ikka: n=1 밴드(곡 1개 = 대표값, 노이즈 미세척) + 축 프록시 한계가 겹쳐 좌표가 귀와
 #   어긋남(작업 5, docs/idea/260708-final_comment.md). nudge 크기 = 1지각점≈18좌표(norm k=25·좌표 σ≈24,

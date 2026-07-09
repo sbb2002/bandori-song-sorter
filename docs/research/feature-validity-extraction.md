@@ -14,7 +14,7 @@ EMOI-MAP은 밴드/곡을 2D(x=timbre/contrast, y=valence/mode)에 배치한다.
 
 ### 2.1 데이터
 - **공개 벤치마크 — Spotify Tracks Dataset**: `side-project/spotify-tracks-dataset/data/dataset.csv`, 114,000행 → 결측치/`duration_ms==0` 제거 후 **113,999행·114장르**. 21컬럼 중 오디오 관련 14개를 **저수준**(6: `duration_ms`·`key`·`mode`·`loudness`·`tempo`·`time_signature`) · **합성**(7: `danceability`·`energy`·`speechiness`·`acousticness`·`instrumentalness`·`liveness`·`valence`) · **모델예측**(1: `popularity`) 3그룹으로 분류([metadata.md](../../side-project/spotify-tracks-dataset/data/metadata.md)). 합성 변수는 Spotify의 블랙박스 ML 산출물이라 값 자체는 이식 불가, 개념만 참고.
-- **우리 샘플 — 로컬 오디오 프록시**: `docs/working/report/genre-features/song_features_with_proxies.csv`, 285곡·10밴드(전곡 660 중 로컬 부분 캐시). 밴드를 장르/편성의 대리 변수로 사용. 다변량 검증에는 표본수 20 미만 밴드(pastel_palettes 8·various_artists 5·millsage 1·ikka_dumb_rock 1)를 제외한 **6밴드·270곡**(afterglow 65·hello_happy_world 65·morfonica 50·mygo 41·ave_mujica 26·mugendai_mutype 23)만 사용.
+- **우리 샘플 — 로컬 오디오 프록시**: `side-project/genre-features/song_features_with_proxies.csv`, 285곡·10밴드(전곡 660 중 로컬 부분 캐시). 밴드를 장르/편성의 대리 변수로 사용. 다변량 검증에는 표본수 20 미만 밴드(pastel_palettes 8·various_artists 5·millsage 1·ikka_dumb_rock 1)를 제외한 **6밴드·270곡**(afterglow 65·hello_happy_world 65·morfonica 50·mygo 41·ave_mujica 26·mugendai_mutype 23)만 사용.
 
 ### 2.2 지표 (무엇으로 합격을 판정하는가)
 - **단변량 — 장르별 ANOVA η²**(`scipy.stats.f_oneway` + η²=SS_between/SS_total): "장르/밴드가 이 변수의 분산을 얼마나 설명하는가." 값이 클수록 단독으로 그룹을 잘 가른다.
@@ -61,7 +61,7 @@ VIF+RF+permutation importance를 붙이러 갔는데, 최초 파라미터(`n_est
 원본 12피처로 재실행(test accuracy 0.7206, chance 0.1667의 약 4.3배; `n_estimators=200, max_depth=6, min_samples_leaf=5`로 처음부터 가볍게 규제 — Exp 2의 교훈).
 - **다중공선 → 저평가 패턴 재현**: 스펙트럼 형태 지표군 `centroid`(VIF 51.65)·`rolloff`(27.61)·`zcr`(16.35)·`flatness`(9.16)가 서로 강하게 겹치고 permutation importance는 넷 다 최하위권(0.017~0.022). Spotify의 `loudness`↔`energy`(한 쌍)와 달리 로컬에선 스펙트럼 밝기 지표 **넷**이 한꺼번에 얽혔다(전부 "스펙트럼이 얼마나 밝고 납작한가"를 다르게 잰 것) — 데이터셋은 달라도 **"중복이면 다변량에서 저평가된다"는 메커니즘은 동일.**
 - **고유 신호**: `contrast`(0.179)·`rms`(0.154)·`harmonic_ratio`(0.148)·`flux`(0.068)가 VIF 낮으면서 압도적 상위 = 밴드 판별의 핵심 4개.
-- **프록시 설계의 사후 검증**: 우리가 임의 균등 결합으로 만든 `energy_proxy = z(rms)+z(contrast)+z(flux)`의 **세 성분이 정확히 이 상위 4개 중 셋과 일치**한다 — 가중치 최적화 여부와 별개로, 성분 선택 자체는 데이터로 뒷받침됐다. 반면 `acousticness_proxy = z(harmonic_ratio) − z(flatness)`는 두 성분 기여가 크게 비대칭(`harmonic_ratio` 0.148 vs `flatness` 0.022)이라 사실상 `harmonic_ratio` 단독이 이끈다. → [genre-features/README.md](../working/report/genre-features/README.md).
+- **프록시 설계의 사후 검증**: 우리가 임의 균등 결합으로 만든 `energy_proxy = z(rms)+z(contrast)+z(flux)`의 **세 성분이 정확히 이 상위 4개 중 셋과 일치**한다 — 가중치 최적화 여부와 별개로, 성분 선택 자체는 데이터로 뒷받침됐다. 반면 `acousticness_proxy = z(harmonic_ratio) − z(flatness)`는 두 성분 기여가 크게 비대칭(`harmonic_ratio` 0.148 vs `flatness` 0.022)이라 사실상 `harmonic_ratio` 단독이 이끈다. → [genre-features/README.md](../../side-project/genre-features/README.md).
 
 ![우리 샘플 285곡 다변량 permutation importance](figures/featval_fig4_perm_importance_local.png)
 
@@ -117,7 +117,7 @@ python src/tools/cluster/genre_features_validity_rf.py
 
 ## 8. 후속 — 전곡 660·13밴드 재검증 (2026-07-08 추가, 세션 33)
 
-§5의 "최종 결정 유보"를 실행했다. 전곡 캐시(660곡·13밴드, 부분 캐시에 없던 **roselia·raise_a_suilen·poppin_party** = 하드록/전자/대형유닛 포함)를 보유한 로컬에서 동일 3중 렌즈를 재실행(N=15 밴드 균등 샘플 게이트 → 통과 → 전곡 확장, base env로 4단계 전부). 상세 수치·표는 [로컬 리포트](../working/report/genre-features/README.md) "전곡 660 재검증" 절.
+§5의 "최종 결정 유보"를 실행했다. 전곡 캐시(660곡·13밴드, 부분 캐시에 없던 **roselia·raise_a_suilen·poppin_party** = 하드록/전자/대형유닛 포함)를 보유한 로컬에서 동일 3중 렌즈를 재실행(N=15 밴드 균등 샘플 게이트 → 통과 → 전곡 확장, base env로 4단계 전부). 상세 수치·표는 [로컬 리포트](../../side-project/genre-features/README.md) "전곡 660 재검증" 절.
 
 **부분 캐시 3대 결론이 전부 확증·강화됐다**: ① 스펙트럼 형태 지표군(`centroid`/`rolloff`/`zcr`/`flatness`)의 다중공선(VIF 12~49)으로 permutation importance가 부분 캐시(0.017~0.022)보다 더 내려가 **0 근처/음수로 붕괴**(표본↑로 더 선명), ② `energy_proxy` 3성분(`rms`+`contrast`+`flux`)이 다변량 상위 4위 안 유지, ③ `acousticness_proxy`는 `harmonic_ratio` 주도(PI 0.082 vs `flatness` −0.011, 비대칭 심화). 단변량 top-3(`rms`·`harmonic_ratio`·`contrast`)도 세 데이터셋 공통 안정. **새 발견**: `tempo_excerpt`는 균등/전곡에서 **비유의**(p>0.05) — 부분 캐시의 미약한 유의는 표본 불균형 산물. 메탈/전자 밴드가 채워지며 "메탈/전자 vs 어쿠스틱" 대비가 acousticness 축 음의 끝에 나타났다(morfonica +1.87 … raise_a_suilen −1.03; RAS의 음의 끝은 `harmonic_ratio` 저하가 아니라 `flatness` 극단이 구동).
 

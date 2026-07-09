@@ -1,7 +1,7 @@
 # 음원맵 축 재정의 (v3) — 지각 기반 좌표축
 
 > 상태: **설계 확정, 미구현**. 다음 세션이 이 문서대로 구현. 상위 작업 목록은 [../HANDOFF.md](../HANDOFF.md) §2.
-> 배경 실험(왜 가사로는 밴드가 안 갈리는지 등)은 [../report/cluster_experiment.md](../report/cluster_experiment.md).
+> 배경 실험(왜 가사로는 밴드가 안 갈리는지 등)은 [../../side-project/emoi-map-axis-correlation/cluster_experiment.md](../../side-project/emoi-map-axis-correlation/cluster_experiment.md).
 
 ## 0. 왜 재정의하나 (현 축의 괴리 진단)
 

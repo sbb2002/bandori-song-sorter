@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).parent))
 
 SONGS_FULL = ROOT / "src/content/cluster/songs_full.csv"
-OUTDIR = ROOT / "docs/working/report/genre-features"
+OUTDIR = ROOT / "side-project/genre-features"
 MANIFEST = OUTDIR / "sample_manifest.csv"
 
 

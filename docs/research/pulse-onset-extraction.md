@@ -4,7 +4,7 @@
 >
 > 프로젝트: `bandori-song-sorter` · 브랜치 `feature/emoi-cluster-v3b`
 > 기간: 2026-07-04 · 대상: 음원맵 재생 펄스(F2) · 파일럿 7밴드 대표곡 → 전곡 660
-> 상세 원자료: [`emoi-cluster-pulse/README.md`](../working/report/emoi-cluster-pulse/README.md)
+> 상세 원자료: [`emoi-cluster-pulse/README.md`](../../side-project/emoi-map-pulse/README.md)
 
 ---
 

@@ -233,7 +233,7 @@ def clap_similar(paths: list[str], topn: int = 6) -> list[list[int]]:
     """CLAP 임베딩 코사인으로 곡별 최근접 topn 인덱스(자기 제외).
 
     옵션3 유사곡 탐색용. 지도 좌표는 librosa지만 '소리·무드 유사'는 CLAP이 우수
-    (docs/working/report/cluster_audio_clap.md). 추출 실패 곡은 빈 리스트.
+    (side-project/emoi-map-axis-correlation/cluster_audio_clap.md). 추출 실패 곡은 빈 리스트.
     """
     vecs = [feat_clap(p) for p in paths]
     valid = [i for i, v in enumerate(vecs) if v is not None]

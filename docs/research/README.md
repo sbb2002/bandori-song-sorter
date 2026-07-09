@@ -19,7 +19,7 @@
 
 ### 언제 research로 쓰나
 - **한 아이템에 2회 이상 분석을 시도했고, 그 아이템이 종결됐을 때** done·report를 종합해 승격한다(문서화 경로 규칙 = [`../working/readme.md`](../working/readme.md) 「구현 유형별 문서화 경로」). 가설 → 여러 시도(실패 포함) → 전환 → 귀결의 서사가 대상. **1회 분석·단순 완료는 report/done에 남기고 승격하지 않는다.**
-- **1 논문 = 1 여정**(하나의 질문에서 출발해 하나의 결론으로). 진행 중인 조사는 `working/report/<주제>/`에 두고, **종결된 뒤** 종합·정제해 올린다. **그림·표·플롯은 모두 포함**한다.
+- **1 논문 = 1 여정**(하나의 질문에서 출발해 하나의 결론으로). 진행 중인 조사는 `side-project/<주제>/`에 두고(2026-07-09 세션 37부터 `working/report/<주제>/`에서 이관), **종결된 뒤** 종합·정제해 올린다. **그림·표·플롯은 모두 포함**한다.
 
 ### 파일·위치
 - `docs/research/<주제>-extraction.md` (kebab-case). 그림은 `figures/<주제>_figN_*.png`.
@@ -57,7 +57,7 @@
 - `cluster_fig4_label_matrix.png` — 지각 라벨 2D 붕괴 상관행렬
 - `pulse_fig2_acf_octave.png` — ACF 옥타브 편향(afterglow vs morfonica, 같은 tempo 다른 pulse) ★
 - `pulse_fig3_ratio_threshold.png` — τ=0.96 파일럿 검증
-- (emotion-axes 그림은 `../working/report/emotion-axes/phasec_screening.png`에 원본 보관 — figures 미승격)
+- (emotion-axes 그림은 `../../side-project/emoi-map-emotion-axes/phase-c/phasec_screening.png`에 원본 보관 — figures 미승격)
 - `featval_fig1_loudness_energy_scatter.png` — Spotify loudness↔energy 전체 산점도(r=0.762, "당연한 상관"의 출발점)
 - `featval_fig2_genre_anova_univariate.png` — Spotify 단변량 η² 랭킹(acousticness 1위)
 - `featval_fig3_perm_importance_spotify.png` — Spotify 다변량 permutation importance(energy/loudness 하락·popularity 반전)
@@ -70,12 +70,12 @@
 
 이 논문들은 아래 작업 리포트를 종합·요약한 것이다. 전체 표·중간 실험은 원자료 참조:
 
-- [`../working/report/cluster_experiment.md`](../working/report/cluster_experiment.md) — 가사→음원 P0~P5 전 단계
-- [`../working/report/cluster-correlation/README.md`](../working/report/cluster-correlation/README.md) — 축 재정의 상관분석 1·2차
-- [`../working/report/cluster_audio_clap.md`](../working/report/cluster_audio_clap.md) — librosa vs CLAP 백엔드 비교
-- [`../working/report/emoi-cluster-pulse/README.md`](../working/report/emoi-cluster-pulse/README.md) — 재생 펄스 방법론 진화
-- [`../working/report/cluster-energy-axis/README.md`](../working/report/cluster-energy-axis/README.md) — B0 onset 스크리닝(전멸) · [`../working/report/emotion-axes/`](../working/report/emotion-axes/) — Phase C 정식 feature 검증
-- [`../../side-project/spotify-tracks-dataset/`](../../side-project/spotify-tracks-dataset/) — Spotify 114,000곡 단변량(`report-genre_audio_features.md`)·이변량(`report-pairwise_scatter.md`)·다변량(`report-feature_validity.md`) 전체 분석 · [`../working/report/genre-features/README.md`](../working/report/genre-features/README.md) — 로컬 285곡 프록시 재정의·다변량 교차검증
+- [`../../side-project/emoi-map-axis-correlation/cluster_experiment.md`](../../side-project/emoi-map-axis-correlation/cluster_experiment.md) — 가사→음원 P0~P5 전 단계
+- [`../../side-project/emoi-map-axis-correlation/README.md`](../../side-project/emoi-map-axis-correlation/README.md) — 축 재정의 상관분석 1·2차
+- [`../../side-project/emoi-map-axis-correlation/cluster_audio_clap.md`](../../side-project/emoi-map-axis-correlation/cluster_audio_clap.md) — librosa vs CLAP 백엔드 비교
+- [`../../side-project/emoi-map-pulse/README.md`](../../side-project/emoi-map-pulse/README.md) — 재생 펄스 방법론 진화
+- [`../../side-project/emoi-map-emotion-axes/phase-b0/README.md`](../../side-project/emoi-map-emotion-axes/phase-b0/README.md) — B0 onset 스크리닝(전멸) · [`../../side-project/emoi-map-emotion-axes/phase-c/`](../../side-project/emoi-map-emotion-axes/phase-c/) — Phase C 정식 feature 검증
+- [`../../side-project/spotify-tracks-dataset/`](../../side-project/spotify-tracks-dataset/) — Spotify 114,000곡 단변량(`report-genre_audio_features.md`)·이변량(`report-pairwise_scatter.md`)·다변량(`report-feature_validity.md`) 전체 분석 · [`../../side-project/genre-features/README.md`](../../side-project/genre-features/README.md) — 로컬 285곡 프록시 재정의·다변량 교차검증
 
 ---
 

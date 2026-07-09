@@ -2,18 +2,12 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`. 작성 규칙은 [readme.md](readme.md).
 
-마지막 갱신: **2026-07-09(세션 37)** — **EMOI-MAP 7항목 밴드별 분포 분석 완료**(`feature/emoi-pulse-signature`, main 미머지): 오디오 재추출 없이(이미 커밋된 CSV·JSON만으로, "다른 로컬 필요"는 세션 36의 착오였음 — 정정) `side-project/band-audio-analysis/`에서 660곡 전부 분석. **ave_mujica(48.3%)보다 mygo(63.4% acoustic)가 더 극단**적임을 발견 — 원인은 장르가 아니라 **밝기군(centroid/rolloff/zcr/flatness) 중앙값이 낮은 밴드는 acoustic 채널로 구조적으로 쏠리는** 상대비교 구조(mygo·ave_mujica 둘 다 밝기군 최하위권으로 확인). raise_a_suilen(57.5% bright)·morfonica(84.2% acoustic)는 장르 기대와 일치(양성 대조군) — 채널 로직 자체는 안 틀렸고 믹스 밝기가 왜곡 요인. **다음 결정(사용자 미확정)**: `add_pulse_shape.py` 채널 판정 규칙 (a)유지 (b)bright 보정 (c)neutral 임계값 조정 중 선택. 상세 = `side-project/band-audio-analysis/README.md` · done 37.
+마지막 갱신: **2026-07-09(세션 38)** — **Demucs other 스템 실험(가설 기각) + docs/working/report 전체 재분류 이관**(`feature/emoi-pulse-signature`, main 미머지): 세션 37 가설("어두운 믹스가 밝기군을 가린다, other 스템만 재면 완화될 것")을 실측(mygo·ave_mujica·morfonica 대조군 11곡) → **정반대 결과**: other 스템에서 밝기군이 11곡 전부 오히려 하락(드럼 심벌·보컬 치찰음이 고주파 에너지원이었던 것으로 추정), ave_mujica·mygo는 harmonic_ratio까지 더 상승해 acoustic 쏠림이 **악화**됨 — 접근 폐기. 상세 = `side-project/band-audio-analysis/report-other-stem-experiment.md`. **+ `docs/working/report/`(5항목) 전체를 연구 주제별로 `side-project/`에 재분류 이관**(`emoi-map-axis-correlation`·`emoi-map-emotion-axes/{phase-b0,phase-c}`·`emoi-map-pulse`·`genre-features`), 코드 14개·문서 15개 경로 참조 전수 수정. done 38 참조. **다음 결정(사용자 미확정, 세션 37에서 이월)**: `add_pulse_shape.py` 채널 판정 규칙 (a)유지 (b)bright 보정 (c)neutral 임계값 조정.
+이전: **2026-07-09(세션 37)** — **EMOI-MAP 7항목 밴드별 분포 분석 완료**(`feature/emoi-pulse-signature`, main 미머지): 오디오 재추출 없이(이미 커밋된 CSV·JSON만으로, "다른 로컬 필요"는 세션 36의 착오였음 — 정정) `side-project/band-audio-analysis/`에서 660곡 전부 분석. **ave_mujica(48.3%)보다 mygo(63.4% acoustic)가 더 극단**적임을 발견 — 원인은 장르가 아니라 **밝기군(centroid/rolloff/zcr/flatness) 중앙값이 낮은 밴드는 acoustic 채널로 구조적으로 쏠리는** 상대비교 구조(mygo·ave_mujica 둘 다 밝기군 최하위권으로 확인). raise_a_suilen(57.5% bright)·morfonica(84.2% acoustic)는 장르 기대와 일치(양성 대조군) — 채널 로직 자체는 안 틀렸고 믹스 밝기가 왜곡 요인. 상세 = `side-project/band-audio-analysis/README.md` · done 37.
 이전: **2026-07-09(세션 36)** — **EMOI-MAP 밴드 네트워크 메시 추가 + 펄스 채널 이상 발견**(`feature/emoi-pulse-signature`, main 미머지): `quantum.html`(3D 뉴럴네트워크 데모)을 디자인 레퍼런스로 검토 → 풀 3D 전환은 보류(모바일 부담·UX 복잡도), "점선 네트워크 그래프"만 차용. 밴드 포커스 시에만(ALL 미표시) 곡별 k-최근접(`CL_MESH_K=3`) 점선 메시, 이후 가시성 요청으로 밝기 상향(opacity 0.22→0.55·lineWidth 1→1.4·`_clPulseColor` 밝기보정). **펄스 시그니처(세션 35) 점검 중 이상 발견**: ave_mujica(헤비메탈 성향)가 29곡 중 14곡(48%)이 acoustic 채널로 분류(전곡 평균 29.1%보다 훨씬 높음) — `harmonic_ratio`(HPSS 톤/타격비)는 높은데 `bright`(centroid/rolloff/zcr/flatness)가 극단적으로 낮아(z −2~−3대) 상대 비교에서 acoustic이 이김. done 36 참조.
 이전: **2026-07-09(세션 35)** — **EMOI-MAP 재생펄스 음색 시그니처 4모양 Exp1 구현 완료**(`feature/emoi-pulse-signature`, main 미머지): 세션 34 데모 아티팩트를 사용자가 그대로 채택 확정 → `add_pulse_shape.py` 신규(전곡 660 채널 분류, neutral 29.1%/acoustic 29.1%/bright 23.6%/shimmer 18.2%, 데모 예고치와 일치) + `16-audiomap.js`의 `_clEmitPulse` 4분기 확장(색은 유지, 모양만 채널화). 데이터 흐름·geometry는 정적 검증 완료, 애니메이션 스크린샷은 headless 환경 한계로 실사용자 육안 확인 필요. done 35 참조.
 이전: **2026-07-08(세션 34)** — **EMOI-MAP 재생펄스 음색 시그니처 시각화 설계·데모 아티팩트 발행**(아직 브랜치 미생성): Idea A(펄스 모양=음색) 채택 · Idea B(PCA) 기각 · 4모양(neutral/acoustic/bright/shimmer) 인터랙티브 데모 아티팩트 발행 · Exp1~4 리스크순 브랜치 플랜(Exp1·2 병행 확정). 단일 출처 memory `pulse_signature_shapes.md` · 작업 6 "다음 단계" 참조. ⚠️ 이 논의는 방향키 네비게이션으로 대화 분기가 유실됐다가 세션 jsonl에서 복구함.
 이전: **2026-07-08(세션 33)** — **오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 완료**(`analysis/audio-feats`, main 미머지): 전곡 캐시 로컬에서 N=15 밴드 균등 게이트(통과) → 전곡 660 확장 재실행. **부분 캐시 3대 결론(스펙트럼 형태 지표군 중복→PI 붕괴 · `energy_proxy` 3성분 · `acousticness`=`harmonic_ratio` 주도) 전부 확증·강화**, `tempo_excerpt`는 비유의로 강등, 메탈/전자(roselia·RAS) 포함으로 "메탈 vs 어쿠스틱" 대비 확인. 이후 = **EMOI-MAP 시각화 실험**(재생 펄스 음색 시그니처 = Idea A 등, 리스크순 브랜치 비교). done 33 · 작업 6 참조.
-이전: **2026-07-08(세션 32)** — **오디오 피처 유효성 3중 렌즈 분석(단·이·다변량) + 우리 샘플 교차검증**(Spotify 114,000곡 side-project + 로컬 285/660곡, `analysis/audio-feats`, main 미머지): acousticness_proxy가 morfonica(바이올린 밴드) 최고치로 가설 일치 + 다변량(VIF+RF)에서 loudness↔energy 중복·popularity 반전 확인, energy_proxy 3성분 사후 검증. research 승격([feature-validity-extraction.md](../research/feature-validity-extraction.md)). 전곡 확대는 다른 로컬. done 32 · 작업 6 참조.
-이전: **2026-07-08(세션 31)** — **작업 1·2·3·5 done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix**: 네 작업 본류 완료 확인 → 작업 절을 요약+링크로 축약(선택 잔여는 § 보류·백로그로 이동, 구 '병렬 실행 계획' 제거). **+minor fix(fix/emoi-map-labels-pulse)**: 축 라벨 '음색이 거친/부드러운'·'발랄한/진지한 느낌', 재생 HUD를 밴드 평균점 대비 편차 기준으로, 펄스 16분 주석 비활성(CL_DYN_MAX=1 유지) + research 작성 규칙(README 양식·승격기준). done 31 참조.
-이전: **2026-07-07(세션 30)** — 작업 5(EMOI-MAP 좌표계 고찰) 완료·main 머지(`172684e` · done 30): Phase A(맵 정직화) 라이브 + B0·C 정서축 연구 = **timbre×valence 확정, arousal 독립축 불가**("실질 1.x차원"). 결정: x=timbre·y=valence 유지. 논문 [emotion-axes-extraction.md](../research/emotion-axes-extraction.md).
-이전: **2026-07-07(세션 29)** — 작업 4(EMOI-MAP 딥스페이스/별 시각화) 완료·main 머지(`104e709` · done 29): 곡 에너지 글로우 별 + canvas 별밭 + 밴드 성운 + Ave Mujica 전용 색.
-이전: (세션 28) 작업 3 반자동 파이프라인 운영화·라이브(done 28): 5분 폴러 폐지→단일 23:00 크론 통합 + `src/tools/semiauto-loader/` 통합 + run_local 결과 Telegram 통지.
-이전: (2026-07-06 세션 26~27) 작업 3 인프라 구축 + CI 다운로드 봇월 확정(E2E 3회) → 반자동(다운로드만 로컬 IP) 전환. done 26~27.
-이전: (2026-07-05 세션 25) 음원맵 클러스터링/재생펄스 완결·main 머지: 660곡 좌표·펄스 + lazy-fetch + 동적 subdivision + 볼륨 프리셋. done 24~25 · [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md).
 
 ---
 
@@ -40,7 +34,7 @@
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브** | [done 26·27·28](done.md) · [spec](spec/pipeline-automation.md) |
 | 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | [done 29](done.md) |
 | 5. EMOI-MAP 좌표계 고찰 | ✅ **A·B0·C 완료**(172684e) — timbre×valence 확정 | [done 30](done.md) · [논문](../research/emotion-axes-extraction.md) |
-| 6. 장르(밴드) 오디오 피처 재정의 | ✅ 3중 렌즈 재검증 완료 · **펄스 시그니처 Exp1 구현 완료**(main 미머지, 육안확인 대기) | [done 32·33·35](done.md) · [논문](../research/feature-validity-extraction.md) · [report/genre-features](report/genre-features/README.md) |
+| 6. 장르(밴드) 오디오 피처 재정의 | ✅ 3중 렌즈 재검증 완료 · **펄스 시그니처 Exp1 구현 완료**(main 미머지, 육안확인 대기) | [done 32·33·35](done.md) · [논문](../research/feature-validity-extraction.md) · [side-project/genre-features](../../side-project/genre-features/README.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -58,7 +52,7 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 3중 렌즈**(VIF+RF+permutation importance)를 Spotify·로컬 양쪽에 적용 → loudness↔energy 중복이 다변량에서
 저평가되는 패턴을 두 데이터셋에서 확인, `energy_proxy` 3성분(rms+contrast+flux) 사후 검증. 종합 논문
 [../research/feature-validity-extraction.md](../research/feature-validity-extraction.md) · 로컬 상세
-[report/genre-features/README.md](report/genre-features/README.md) · Spotify 3보고서
+[side-project/genre-features/README.md](../../side-project/genre-features/README.md) · Spotify 3보고서
 [단변량](../../side-project/spotify-tracks-dataset/report-genre_audio_features.md)·[이변량](../../side-project/spotify-tracks-dataset/report-pairwise_scatter.md)·[다변량](../../side-project/spotify-tracks-dataset/report-feature_validity.md).
 
 **다른 로컬에서 이어받는 법**(전곡 660을 한 번에 처리하지 말고 **밴드별 N곡 샘플링으로 먼저 유효성 검증** →
@@ -73,7 +67,7 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
    `python src/tools/cluster/genre_features_extract.py` — **`sample_manifest.csv`가 있으면 그 목록만 자동
    처리**(전곡 660 중 샘플된 것만, `--all`로 전곡 강제 가능)
 4. 분석(base env — pandas/matplotlib/scipy, librosa 불필요): `python src/tools/cluster/genre_features_analyze.py`
-5. 결과는 `docs/working/report/genre-features/`에 갱신(같은 파일 덮어씀)
+5. 결과는 `side-project/genre-features/`에 갱신(같은 파일 덮어씀)
 6. **13밴드·샘플 규모에서 프록시가 여전히 유효(η² 유지·특히 roselia 등 메탈 밴드에서 acousticness_proxy가
    낮게 나오는지)하면 그때** `genre_features_extract.py --all`로 전곡 660 확장(오디오가 이미 있으니 샘플링
    단계 없이 바로 가능).
@@ -136,7 +130,7 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 - **(작업 5) 정서축 후속(optional)**: 전곡 660 정식 feature 부기(축 아님, 파생 보관용, ~46분 `phasec_features.py --full`) · 라벨 확대 확정검정 · 장르 밖 대조군.
 - **(보류) 백필 1-c namedup 403**: 기존 곡 url을 Topic 음원으로 교체(품질 개선, 새 곡 아님). 후순위. (1-b 커버 135곡은 완료 — done 18.)
 - **(보류) 진행도 Save/Load** (ux-02.md #4): 진행 json 백업/공유. ⚠️ Load = 기존 진행 덮어쓰기 → 손실 위험, 자동 백업·복구 경로 선설계 필수. 코멘트(`bandori-song-comments-v1`) 직렬화 포함 여부 확정 필요.
-- **✅ (완료, done 24~25) 재생 이퀄라이저 = 음원맵 재생 펄스** — 전곡 660 pulse + 렌더 lazy-fetch + 에너지 기반 동적 subdivision(음량→박/8분) + 볼륨 프리셋 4단계. 상세 = [report/emoi-cluster-pulse](report/emoi-cluster-pulse/README.md). 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. **(보류)** 방안 B(구간 tempo period) 프로토타입만(`section_pulse_proto.py`) · mugendai/난곡 예외 큐레이션(`CL_ONSET_DEFDIV`). 원안 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
+- **✅ (완료, done 24~25) 재생 이퀄라이저 = 음원맵 재생 펄스** — 전곡 660 pulse + 렌더 lazy-fetch + 에너지 기반 동적 subdivision(음량→박/8분) + 볼륨 프리셋 4단계. 상세 = [side-project/emoi-map-pulse](../../side-project/emoi-map-pulse/README.md). 롤백 = `16-audiomap.js` `CL_PULSE_BPM=false`. **(보류)** 방안 B(구간 tempo period) 프로토타입만(`section_pulse_proto.py`) · mugendai/난곡 예외 큐레이션(`CL_ONSET_DEFDIV`). 원안 = [spec/equalizer-animation.md](spec/equalizer-animation.md).
 
 ---
 

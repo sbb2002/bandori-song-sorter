@@ -1,6 +1,6 @@
 """x축 재정의(v3-2차) 보조 feature 를 axis_pilot_features.csv 에 병합.
 
-1차 x축(보컬 f0)이 검증 실패(docs/working/report/cluster-correlation) → 새 x 후보 축
+1차 x축(보컬 f0)이 검증 실패(side-project/emoi-map-axis-correlation) → 새 x 후보 축
 (에너지/밀도·템포·어쿠스틱↔일렉트로닉) 상관 재검정용. 기존 feature(rms·flux·tempo)는
 이미 있으므로, 부족한 것만 추가한다:
   - onset_rate     : 초당 onset 수(리듬 밀도, energy/density 후보)

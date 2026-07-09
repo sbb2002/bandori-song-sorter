@@ -149,7 +149,7 @@ CLAP      ●●○○○  (LOO 45%, 충돌)     ●●●●●  (무드 일관
   metrics:{ loo_acc, knn_ratio, knn_same, chance, silhouette, k } }
 ```
 - `songs[i].sim` = i번 곡과 **CLAP 코사인** 최근접 곡들의 **songs 배열 인덱스**(자기 제외, 최대 6). 옵션3 하이라이트용.
-- 그림: `docs/working/report/cluster_audio_backends.png`(좌 librosa / 우 CLAP 중심점 배치).
+- 그림: `cluster_audio_backends.png`(좌 librosa / 우 CLAP 중심점 배치).
 
 ---
 

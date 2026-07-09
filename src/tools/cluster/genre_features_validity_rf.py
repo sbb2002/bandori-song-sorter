@@ -25,8 +25,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "docs/working/report/genre-features/song_features_with_proxies.csv"
-OUT_DIR = ROOT / "docs/working/report/genre-features"
+DATA = ROOT / "side-project/genre-features/song_features_with_proxies.csv"
+OUT_DIR = ROOT / "side-project/genre-features"
 
 MIN_BAND_N = 20  # stratified split·유의미한 평가를 위한 최소 표본수
 

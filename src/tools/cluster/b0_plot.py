@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
-OUTDIR = ROOT / "docs/working/report/cluster-energy-axis"
+OUTDIR = ROOT / "side-project/emoi-map-emotion-axes/phase-b0"
 WS = ROOT / "src/content/cluster/legacy/axis_labels_worksheet.csv"
 SF = ROOT / "src/content/cluster/songs_full.csv"
 FEAT = OUTDIR / "onset_features.csv"

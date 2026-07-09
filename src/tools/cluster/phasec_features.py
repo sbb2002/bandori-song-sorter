@@ -39,7 +39,7 @@ from perceptual_features import timbre, mode_valence   # noqa: E402  (재사용)
 WORKSHEET = ROOT / "src/content/cluster/legacy/axis_labels_worksheet.csv"
 SONGS_FULL = ROOT / "src/content/cluster/songs_full.csv"
 AUDIO = ROOT / "src/content/cluster/audio_full"
-OUTDIR = ROOT / "docs/working/report/emotion-axes"
+OUTDIR = ROOT / "side-project/emoi-map-emotion-axes/phase-c"
 FEATURES = OUTDIR / "phasec_features.csv"
 PROGRESS = OUTDIR / "phasec_progress.json"
 CONTROL = OUTDIR / "phasec_control.json"

@@ -5,7 +5,7 @@ songs_full.csv 순회: audio_full 의 각 곡 →(demucs 드럼분리)→ audio_
 
 ⚠️ demucs 는 CPU 곡당 ~45s → 전곡(수백 곡)은 수 시간. 오디오 수집 완료 후 무인 배치 권장.
 ⚠️ 전곡이면 onsets 총량이 커진다 → index.html 인라인(build.py) 대신 **곡별 lazy fetch**
-   로 전환 필요(report/emoi-cluster-pulse 참조). 지금 파일럿(7곡)은 인라인.
+   로 전환 필요(side-project/emoi-map-pulse 참조). 지금 파일럿(7곡)은 인라인.
 
 사용: python src/tools/cluster/build_pulse_all.py [--limit N] [--force]
 """

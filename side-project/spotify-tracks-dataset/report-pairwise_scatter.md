@@ -73,7 +73,7 @@
 3. **여러 쌍(loudness-danceability, tempo-danceability, duration-instrumentalness 등)은 전체 상관이 약해 보이지만 장르 내부에서는 방향이 자주 뒤집힌다** — "전체 상관이 약하다"는 결론만으로 두 변수가 무관하다고 단정하면 안 된다는 방법론적 시사점.
 
 **우리 프로젝트(EMOI-MAP)에 대한 제안(적용은 아직 하지 않음)**:
-- [report-genre_audio_features.md](report-genre_audio_features.md)의 제안대로 `acousticness_proxy`/`instrumentalness_proxy`/`energy_proxy`를 재정의해 [docs/working/report/genre-features/](../../docs/working/report/genre-features/README.md)에서 이미 밴드별 분포를 관찰했다. 이번 분석은 거기 더해, **"밴드(장르 대리) 단위로 상관관계를 볼 때 전체 상관과 다르게 나올 수 있다"**는 점을 명심할 필요가 있음을 보여준다 — 예컨대 우리 프록시 코퍼스에서 `rms`(loudness 대응)와 `acousticness_proxy`의 전체 상관이 약하게 나오더라도, 밴드별로 쪼개보면 (morfonica처럼 바이올린이 뚜렷한 밴드에서) 훨씬 강한 관계가 숨어있을 수 있다.
+- [report-genre_audio_features.md](report-genre_audio_features.md)의 제안대로 `acousticness_proxy`/`instrumentalness_proxy`/`energy_proxy`를 재정의해 [side-project/genre-features/](../genre-features/README.md)에서 이미 밴드별 분포를 관찰했다. 이번 분석은 거기 더해, **"밴드(장르 대리) 단위로 상관관계를 볼 때 전체 상관과 다르게 나올 수 있다"**는 점을 명심할 필요가 있음을 보여준다 — 예컨대 우리 프록시 코퍼스에서 `rms`(loudness 대응)와 `acousticness_proxy`의 전체 상관이 약하게 나오더라도, 밴드별로 쪼개보면 (morfonica처럼 바이올린이 뚜렷한 밴드에서) 훨씬 강한 관계가 숨어있을 수 있다.
 - 다음에 밴드별 프록시 상관을 다시 볼 때는 **전체 상관 하나만 보지 말고, 이 스크립트처럼 밴드별로 쪼갠 상관계수도 함께 확인**하는 것을 권장한다(방법은 이미 검증됨 — `scatter_pairwise.py`의 `genre_correlation_bar()` 로직을 밴드 단위로 그대로 재사용 가능).
 - 여전히 EMOI-MAP 축(x=timbre/contrast, y=valence/mode) 자체에는 이번 분석으로도 변경을 제안하지 않는다 — 손라벨 상관검정 이전 단계의 분포/관계 관찰일 뿐.
 

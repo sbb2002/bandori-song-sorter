@@ -1,7 +1,7 @@
 # 음원맵 전곡 확대 — 구현 스펙
 
 > **이 파일 = 음원맵을 TOP10×10(현재) → 전 카탈로그로 확대할 때 볼 유일한 구현 문서.**
-> 축 재정의(30곡 파일럿 검증)는 **완료**(done 세션 21). 축·좌표 설계 근거는 [audio-map-axes.md](audio-map-axes.md) + `docs/working/report/cluster-correlation/README.md`. 여기는 **스케일업만** 다룸.
+> 축 재정의(30곡 파일럿 검증)는 **완료**(done 세션 21). 축·좌표 설계 근거는 [audio-map-axes.md](audio-map-axes.md) + `side-project/emoi-map-axis-correlation/README.md`. 여기는 **스케일업만** 다룸.
 
 마지막 갱신: **2026-07-02** (feature/emoi-cluster-v2)
 

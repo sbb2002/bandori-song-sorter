@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
-OUTDIR = ROOT / "docs/working/report/emotion-axes"
+OUTDIR = ROOT / "side-project/emoi-map-emotion-axes/phase-c"
 WS = ROOT / "src/content/cluster/legacy/axis_labels_worksheet.csv"
 
 
