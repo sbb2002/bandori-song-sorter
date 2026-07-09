@@ -2,7 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`. 작성 규칙은 [readme.md](readme.md).
 
-마지막 갱신: **2026-07-08(세션 34)** — **EMOI-MAP 재생펄스 음색 시그니처 시각화 설계·데모 아티팩트 발행**(아직 브랜치 미생성): Idea A(펄스 모양=음색) 채택 · Idea B(PCA) 기각 · 4모양(neutral/acoustic/bright/shimmer) 인터랙티브 데모 아티팩트 발행 · Exp1~4 리스크순 브랜치 플랜(Exp1·2 병행 확정). 단일 출처 memory `pulse_signature_shapes.md` · 작업 6 "다음 단계" 참조. ⚠️ 이 논의는 방향키 네비게이션으로 대화 분기가 유실됐다가 세션 jsonl에서 복구함.
+마지막 갱신: **2026-07-09(세션 35)** — **EMOI-MAP 재생펄스 음색 시그니처 4모양 Exp1 구현 완료**(`feature/emoi-pulse-signature`, main 미머지): 세션 34 데모 아티팩트를 사용자가 그대로 채택 확정 → `add_pulse_shape.py` 신규(전곡 660 채널 분류, neutral 29.1%/acoustic 29.1%/bright 23.6%/shimmer 18.2%, 데모 예고치와 일치) + `16-audiomap.js`의 `_clEmitPulse` 4분기 확장(색은 유지, 모양만 채널화). 데이터 흐름·geometry는 정적 검증 완료, 애니메이션 스크린샷은 headless 환경 한계로 실사용자 육안 확인 필요. done 35 참조.
+이전: **2026-07-08(세션 34)** — **EMOI-MAP 재생펄스 음색 시그니처 시각화 설계·데모 아티팩트 발행**(아직 브랜치 미생성): Idea A(펄스 모양=음색) 채택 · Idea B(PCA) 기각 · 4모양(neutral/acoustic/bright/shimmer) 인터랙티브 데모 아티팩트 발행 · Exp1~4 리스크순 브랜치 플랜(Exp1·2 병행 확정). 단일 출처 memory `pulse_signature_shapes.md` · 작업 6 "다음 단계" 참조. ⚠️ 이 논의는 방향키 네비게이션으로 대화 분기가 유실됐다가 세션 jsonl에서 복구함.
 이전: **2026-07-08(세션 33)** — **오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 완료**(`analysis/audio-feats`, main 미머지): 전곡 캐시 로컬에서 N=15 밴드 균등 게이트(통과) → 전곡 660 확장 재실행. **부분 캐시 3대 결론(스펙트럼 형태 지표군 중복→PI 붕괴 · `energy_proxy` 3성분 · `acousticness`=`harmonic_ratio` 주도) 전부 확증·강화**, `tempo_excerpt`는 비유의로 강등, 메탈/전자(roselia·RAS) 포함으로 "메탈 vs 어쿠스틱" 대비 확인. 이후 = **EMOI-MAP 시각화 실험**(재생 펄스 음색 시그니처 = Idea A 등, 리스크순 브랜치 비교). done 33 · 작업 6 참조.
 이전: **2026-07-08(세션 32)** — **오디오 피처 유효성 3중 렌즈 분석(단·이·다변량) + 우리 샘플 교차검증**(Spotify 114,000곡 side-project + 로컬 285/660곡, `analysis/audio-feats`, main 미머지): acousticness_proxy가 morfonica(바이올린 밴드) 최고치로 가설 일치 + 다변량(VIF+RF)에서 loudness↔energy 중복·popularity 반전 확인, energy_proxy 3성분 사후 검증. research 승격([feature-validity-extraction.md](../research/feature-validity-extraction.md)). 전곡 확대는 다른 로컬. done 32 · 작업 6 참조.
 이전: **2026-07-08(세션 31)** — **작업 1·2·3·5 done 이관·HANDOFF 슬림화 + EMOI-MAP minor fix**: 네 작업 본류 완료 확인 → 작업 절을 요약+링크로 축약(선택 잔여는 § 보류·백로그로 이동, 구 '병렬 실행 계획' 제거). **+minor fix(fix/emoi-map-labels-pulse)**: 축 라벨 '음색이 거친/부드러운'·'발랄한/진지한 느낌', 재생 HUD를 밴드 평균점 대비 편차 기준으로, 펄스 16분 주석 비활성(CL_DYN_MAX=1 유지) + research 작성 규칙(README 양식·승격기준). done 31 참조.
@@ -35,7 +36,7 @@
 | 3. 자동화 파이프라인 | ✅ **반자동 운영화 완료·라이브** | [done 26·27·28](done.md) · [spec](spec/pipeline-automation.md) |
 | 4. EMOI-MAP 딥스페이스/별 시각화 | ✅ **완료·main 머지**(104e709) | [done 29](done.md) |
 | 5. EMOI-MAP 좌표계 고찰 | ✅ **A·B0·C 완료**(172684e) — timbre×valence 확정 | [done 30](done.md) · [논문](../research/emotion-axes-extraction.md) |
-| 6. 장르(밴드) 오디오 피처 재정의 | ✅ **전곡 660·13밴드 3중 렌즈 재검증 완료**(3대 결론 확증) · 시각화 개편은 별도(진행 예정) | [done 32·33](done.md) · [논문](../research/feature-validity-extraction.md) · [report/genre-features](report/genre-features/README.md) |
+| 6. 장르(밴드) 오디오 피처 재정의 | ✅ 3중 렌즈 재검증 완료 · **펄스 시그니처 Exp1 구현 완료**(main 미머지, 육안확인 대기) | [done 32·33·35](done.md) · [논문](../research/feature-validity-extraction.md) · [report/genre-features](report/genre-features/README.md) |
 | 보류 · 백로그 | 후순위 | § 보류·백로그 |
 
 원칙: **밴드 시각화 마무리 → 후속 확장.** 보류·백로그는 별도 결정 사안.
@@ -92,11 +93,13 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 - **펄스 4모양 데모 아티팩트 발행됨**(눈으로 비교용): `neutral` 매끈원 · `acoustic` 6엽 물결링(harmonic↑) ·
   `bright` 톱니링(밝기군↑) · `shimmer` 이중 명멸링(flux↑, "electric"→개명).
   → https://claude.ai/code/artifact/b177e3e3-5965-4b62-9070-bfd76f479005
-- **리스크순 실험 브랜치**(전부 main 분기·미생성): ①`feature/emoi-pulse-signature`(위 모양, 비용0·피처만)
-  ②`feature/emoi-pulse-drums`(킥/스네어 대역분리, 기존 `audio_drums` 660 재사용·새 Demucs 불필요·~15분, 프론트
-  `lv.kick`/`lv.snare` 훅 기존재) ③`feature/emoi-pulse-melodic`(Demucs `other` 미약파동·~하룻밤 CPU)
-  ④`feature/emoi-pulse-bass`(선택). **확정=Exp1·2 병행.**
-- **다음 결정(사용자)**: 아티팩트 보고 (a)4모양 그대로 / (b)특정 모양 조정 / (c)다른 시각언어 → Exp1·2 브랜치 잘라 구현.
+- ✅ **(a)4모양 그대로 채택 확정**(사용자, 세션 35) → **Exp1(`feature/emoi-pulse-signature`) 구현 완료**:
+  `add_pulse_shape.py`(채널 분류·audio_map.json patch) + `16-audiomap.js` `_clEmitPulse` 4분기. 상세 = done 35.
+  아직 **main 미머지**(실사용자 육안 확인 대기 — headless 환경이라 애니메이션 스크린샷 자체 검증은 못 함,
+  데이터/geometry 정적 검증만 완료). 확인되면 main 머지.
+- **Exp2(`feature/emoi-pulse-drums`, 킥/스네어 대역분리)는 아직 미착수** — 기존 `audio_drums` 660 재사용·새
+  Demucs 불필요·~15분, 프론트 `lv.kick`/`lv.snare` 훅 기존재. Exp3(`feature/emoi-pulse-melodic`, Demucs `other`)·
+  Exp4(bass, 선택)도 미착수.
 - 손라벨 상관검정·**EMOI-MAP 축 실제 개편은 그 이후 별도 결정**(이건 펄스 모양만, 축 무변경).
 - ⚠️ 세션 34: 이 논의가 방향키 네비로 대화분기 유실→세션 jsonl에서 복구(done.md/HANDOFF에 3모양·아티팩트 없었음).
 

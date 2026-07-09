@@ -125,24 +125,89 @@ function _clEnergyColor(hex, e) {
     return _clPulseColor(hex, CL_E_LMIN + (CL_E_LMAX - CL_E_LMIN) * t);
 }
 
-// [실험] 커스텀 펄스: 박 타이밍마다 원 하나가 짧게(CL_PULSE_SPREAD_MS) 커지며 사라진다.
+// 음색 시그니처 펄스 모양(세션 34/35, docs/working/report/genre-features/pulse-shapes-demo.html 채택안):
+// neutral(매끈한 원)·acoustic(6엽 파동링, harmonic_ratio↑)·bright(톱니링, 밝기군↑)·shimmer(이중링, flux↑).
+// unit(반지름 1) 점열을 한 번만 만들어 두고 실제 펄스는 scaleX/scaleY 변환으로 키운다(매 프레임 재계산 없음).
+// echarts.graphic.makePath(SVG 문자열)는 아이콘용 뷰박스 보정이 들어가 좌표가 의도대로 안 나와 —
+// 대신 Path.extend + buildPath로 점을 직접 잇는다(zrender 표준 커스텀 도형 패턴).
+function _clRingPoints(radiusAt, steps) {
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+        const a = i / steps * Math.PI * 2, rr = radiusAt(a);
+        pts.push([Math.cos(a) * rr, Math.sin(a) * rr]);
+    }
+    return pts;
+}
+const CL_PULSE_POINTS = {
+    // 부드러운 6엽 파동(진폭 7.5%)
+    acoustic: _clRingPoints(a => 1 + 0.075 * Math.sin(6 * a), 96),
+    // 톱니(saw) 링: 22개 톱니, 깊이 19%
+    bright: _clRingPoints(a => { const frac = (a / (Math.PI * 2) * 22) % 1; return 1 - 0.19 * frac; }, 22 * 6),
+};
+const _clRingPathClass = echarts.graphic.extendShape({
+    type: 'cl-ring',
+    shape: { pts: [] },
+    buildPath(ctx, shape) {
+        const pts = shape.pts;
+        for (let i = 0; i < pts.length; i++) {
+            ctx[i === 0 ? 'moveTo' : 'lineTo'](pts[i][0], pts[i][1]);
+        }
+        ctx.closePath();
+    },
+});
+
+// [실험] 커스텀 펄스: 박 타이밍마다 도형 하나가 짧게(CL_PULSE_SPREAD_MS) 커지며 사라진다.
 // effectScatter의 연속 물결과 달리 '발생 간격(period)'과 '퍼지는 속도(spread)'를 분리 → 박자감.
 function _clEmitPulse(r, ms, lw) {
     if (!_clusterChart || !_clPlay) return;
     const px = _clusterChart.convertToPixel({ seriesIndex: 0 }, _clPlay.val);   // songs 좌표계 → 픽셀
     if (!px) return;
     const maxR = r || CL_PULSE_MAX_R, dur = ms || CL_PULSE_SPREAD_MS, lineW = lw || 3;
-    const circle = new echarts.graphic.Circle({
-        shape: { cx: px[0], cy: px[1], r: 4 }, silent: true, z: 100,
-        // stroke=밝기 보정 밴드색 · 두께(볼륨단계별) · 어두운 글로우로 밝은 배경(hello 노랑)에도 외곽 대비.
-        style: { stroke: _clPulseColor(_clPlay.color), fill: 'none', lineWidth: lineW, opacity: 0.95,
+    // stroke=밝기 보정 밴드색 · 두께(볼륨단계별) · 어두운 글로우로 밝은 배경(hello 노랑)에도 외곽 대비.
+    const stroke = _clPulseColor(_clPlay.color);
+    const zr = _clusterChart.getZr();
+    const shape = ['acoustic', 'bright', 'shimmer'].includes(_clPlay.shape) ? _clPlay.shape : 'neutral';
+
+    if (shape === 'neutral') {
+        const circle = new echarts.graphic.Circle({
+            shape: { cx: px[0], cy: px[1], r: 4 }, silent: true, z: 100,
+            style: { stroke, fill: 'none', lineWidth: lineW, opacity: 0.95,
+                     shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.55)' },
+        });
+        zr.add(circle);
+        circle.animateTo(
+            { shape: { r: maxR }, style: { opacity: 0 } },
+            { duration: dur, easing: 'cubicOut', done: () => { _clusterChart && zr.remove(circle); } });
+        return;
+    }
+
+    if (shape === 'shimmer') {                        // 이중 링(바깥 실선+안쪽 점선)
+        const mk = (rr0, rrT, lw0, dash, alpha) => {
+            const el = new echarts.graphic.Circle({
+                shape: { cx: px[0], cy: px[1], r: rr0 }, silent: true, z: 100,
+                style: { stroke, fill: 'none', lineWidth: lw0, opacity: 0.95 * alpha,
+                         lineDash: dash, shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.55)' },
+            });
+            zr.add(el);
+            el.animateTo({ shape: { r: rrT }, style: { opacity: 0 } },
+                { duration: dur, easing: 'cubicOut', done: () => { _clusterChart && zr.remove(el); } });
+        };
+        mk(4, maxR, lineW, null, 1);
+        mk(3, maxR * 0.62, Math.max(1.5, lineW - 1.5), [4, 4], 0.7);
+        return;
+    }
+
+    // acoustic / bright: unit(r=1) 점열을 scaleX/scaleY 로 확대(buildPath 재계산 불필요).
+    const path = new _clRingPathClass({
+        shape: { pts: CL_PULSE_POINTS[shape] },
+        x: px[0], y: px[1], scaleX: 4, scaleY: 4, silent: true, z: 100,
+        style: { stroke, fill: 'none', lineWidth: lineW, opacity: 0.95, strokeNoScale: true,
                  shadowBlur: 6, shadowColor: 'rgba(0,0,0,0.55)' },
     });
-    _clusterChart.getZr().add(circle);
-    circle.animateTo(
-        { shape: { r: maxR }, style: { opacity: 0 } },
-        { duration: dur, easing: 'cubicOut',
-          done: () => { _clusterChart && _clusterChart.getZr().remove(circle); } });
+    zr.add(path);
+    path.animateTo(
+        { scaleX: maxR, scaleY: maxR, style: { opacity: 0 } },
+        { duration: dur, easing: 'cubicOut', done: () => { _clusterChart && zr.remove(path); } });
 }
 function _clStopPulse() {
     if (_clPulseTimer) { clearInterval(_clPulseTimer); _clPulseTimer = null; }
@@ -555,7 +620,7 @@ function _clDraw() {
         const e = typeof s.energy === 'number' ? s.energy : 0.5;
         if (playKey && C.songKey(s.band, s.song) === playKey) {
             const bright = _clPulseColor(col);                     // 밝기 보정색
-            playingPt = { value: val, itemStyle: { color: col }, _bpm: s.bpm };
+            playingPt = { value: val, itemStyle: { color: col }, _bpm: s.bpm, _shape: s.shape };
             return {
                 value: val, name: s.song, symbolSize: Math.max(base.size, 14) + 2,
                 itemStyle: { color: bright, opacity: 1, borderColor: '#fff', borderWidth: 2,
@@ -665,7 +730,7 @@ function _clDraw() {
             },
         ],
     });
-    _clPlay = playingPt ? { val: playingPt.value, color: playingPt.itemStyle.color } : null;
+    _clPlay = playingPt ? { val: playingPt.value, color: playingPt.itemStyle.color, shape: playingPt._shape } : null;
     _clSyncPulse(playingPt ? _clPulsePeriod(playingPt._bpm) : null);
     _clSetPlayGlow();                       // 선택 곡 상시 글로우(느린 점멸)
     _clSimList(focus);

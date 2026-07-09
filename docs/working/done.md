@@ -867,3 +867,47 @@ EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰
 - 재생성(전곡 660): `report/genre-features/{song_features.csv, song_features_with_proxies.csv, band_anova_summary.csv, *_violin.png, feature_validity_{vif,importance}.csv, feature_validity_run_summary.txt, sample_manifest.csv}`
 - 신규 스냅샷: `band_anova_summary_sample15.csv` · `song_features_with_proxies_sample15.csv`(N=15 게이트)
 - 산문: `report/genre-features/README.md`(전곡 재검증 절) · `research/feature-validity-extraction.md`(§8) · `HANDOFF.md`(작업 6·마커) · `done.md`(본 항목)
+
+---
+
+# 세션 35 — EMOI-MAP 재생 펄스 음색 시그니처 4모양 반영 (2026-07-09, `feature/emoi-pulse-signature`)
+
+세션 34가 발행한 4모양 데모 아티팩트(neutral/acoustic/bright/shimmer)를 사용자가 그대로 채택 확정 →
+HANDOFF가 예고한 리스크순 실험 중 **Exp1(비용 0·피처만)을 실제 구현**. 색(밴드 정체성)은 유지, 펄스
+**모양**만 곡의 음색 채널로 갈린다. EMOI-MAP 좌표축은 무변경.
+
+## 구현
+- 신규 `src/tools/cluster/add_pulse_shape.py`(`add_energy.py`와 동일 패치 스타일): `song_features_with_proxies.csv`
+  (전곡 660)를 코퍼스 z-score로 표준화해 `acoustic=z(harmonic_ratio)` · `bright=mean z(centroid,rolloff,zcr,flatness)` ·
+  `shimmer=z(flux)` 중 최댓값 채택, 최댓값−2등 <0.4면 `neutral`. `audio_map.json`과는 **`(band,idx)` 키로 조인**
+  (`(band,song)`만으로는 660곡 중 2쌍이 제목 중복돼 충돌 — `raise_a_suilen/R・I・O・T`, `roselia/Neo-Aspect`).
+  결과: 660곡 전부 매칭(폴백 0), 분포 `neutral 29.1%·acoustic 29.1%·bright 23.6%·shimmer 18.2%`(neutral 비율이
+  데모 예고치 29%와 정확히 일치).
+- `static/js/functions/16-audiomap.js`: `songMark()`가 `playingPt._shape=s.shape` 보관 → `_clPlay.shape`로
+  프론트 전역 재생 상태에 전달. `_clEmitPulse()`를 4분기로 확장 — neutral(기존 Circle 그대로) · shimmer(바깥
+  실선+안쪽 점선 Circle 2개) · acoustic/bright(unit 반지름 점열을 `echarts.graphic.extendShape`+커스텀
+  `buildPath`로 등록한 뒤 `scaleX/scaleY` 변환으로 확대, `style.strokeNoScale`로 선굵기 유지). 호출부(BPM
+  폴백·onset 재생)는 수정 불필요(`_clPlay.shape`만 읽음).
+- 브랜치: `main`에서 분기 후 미머지 `analysis/audio-feats`를 병합(피처 CSV·research 문서 필요) → `feature/emoi-pulse-signature`.
+
+## 막힌 시도 (기록)
+- `echarts.graphic.makePath(svgString, opts)`로 6엽 파동/톱니 경로를 만들면 **좌표가 의도한 배율로 안 나옴**
+  (unit 반지름 1인 경로의 `getBoundingRect()`가 폭 7.1로 나옴 — SVG path 문자열 파싱 경로의 뷰박스 보정 때문으로
+  추정). `Path.extend`는 echarts.graphic에 미노출(`echarts.graphic.Path`가 undefined) → **`extendShape`+커스텀
+  `buildPath(ctx,{pts})`**로 대체해 해결.
+
+## 검증 한계
+- 이 로컬 환경엔 브라우저 자동화 도구가 없어 Playwright를 임시 설치(`npm install --no-save`, 세션 종료 후 제거)해
+  실제 EMOI-MAP(정적 서버+Edge headless)으로 확인. **데이터 흐름은 확인 완료**(660곡 전부 `shape` 필드 보유,
+  `_clPlay.shape`가 곡별로 올바르게 acoustic/bright 값을 가짐, 콘솔 에러 없음, 도형 geometry·색상·scale 변환
+  전부 정적 테스트로 검증). 단, **애니메이션 중인 펄스 자체의 스크린샷 캡처는 이 headless 환경의 한계로 실패**
+  — 원래부터 있던 손대지 않은 neutral Circle 펄스(`echarts.graphic.Circle`+`animateTo`)로 동일하게 재현해보니
+  그것도 캡처가 안 됨(값은 정상 갱신되는데 화면엔 안 잡힘) → 내 변경이 원인이 아니라 headless
+  Playwright/Edge의 rAF-canvas 스크린샷 타이밍 문제로 판단. **실제 브라우저 육안 확인은 사용자 몫으로 남음.**
+
+## 파일
+- 신규: `src/tools/cluster/add_pulse_shape.py`
+- 수정: `src/content/cluster/audio_map.json`(전곡 660 `shape` 필드 patch) · `index.html`(`build.py` 재생성) ·
+  `static/js/functions/16-audiomap.js`(`_clEmitPulse` 4분기 확장)
+- 문서: `HANDOFF.md`(작업 6 갱신) · `done.md`(본 항목) · memory `pulse_signature_shapes.md`(신규, HANDOFF가
+  "단일 출처"로 지칭했지만 실제로 없었던 파일 — 이번에 채움)
