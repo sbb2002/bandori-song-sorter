@@ -31,6 +31,11 @@ let _clRafId = null;               // onset 폴링 requestAnimationFrame id
 let _clOnsetVmax = 1;              // 현재 곡 onset 최대 볼륨 — 볼륨 프리셋 경계를 곡별 상대화
 let _clSensIdx = 0;                // 선택된 subdivision 레벨(0=박·1=8분·2=16분). 기본 박.
 const CL_SHRINK = 0.5;             // 곡을 밴드 중심으로 뭉치는 정도(고정). 곡별 y 노이즈 완화.
+// 밴드 포커스 전용 "네트워크 메시"(quantum.html 3D 데모의 노드-엣지 그래프를 2D 점선으로 차용, 세션 36):
+// 밴드 안에서 서로 가까운 곡끼리 얇은 점선으로 이어 하위 클러스터를 드러낸다. ALL 개요는 곡이 밴드
+// 중심으로 뭉쳐(CL_SHRINK) 있어 엉망이 되므로 표시 안 함(포커스 모드 전용). 연결 규칙 미확정 — 우선
+// k-최근접(곡당 CL_MESH_K개, 대칭 중복 제거)으로 시작, 필요하면 이 상수만 조정.
+const CL_MESH_K = 3;
 // various_artists = 여러 아티스트 묶음 → '밴드 중심점'이 의미 없음(이질적 곡 평균, y 폭주).
 // 센트로이드(중심 아이콘)만 숨기고 곡 점은 그대로 유지. score·신뢰도막대·최애 후보 제외와 일관(14-share.js).
 const clHideCentroid = b => b === 'various_artists';
@@ -598,6 +603,32 @@ function _clOriginCross() {
     };
 }
 
+/** 밴드 네트워크 메시 간선: 곡별 최근접 k개(CL_MESH_K)와 연결, 대칭 쌍 중복 제거.
+ *  list = 그 밴드 곡 배열, c = 센트로이드({x,y}) — 좌표는 songPts와 동일하게 c 기준 상대값. */
+function _clMeshEdges(list, c, k) {
+    const n = list.length;
+    const pts = list.map(s => [s.x - c.x, s.y - c.y]);
+    const edges = [];
+    const seen = new Set();
+    for (let i = 0; i < n; i++) {
+        const dists = [];
+        for (let j = 0; j < n; j++) {
+            if (i === j) continue;
+            const dx = pts[i][0] - pts[j][0], dy = pts[i][1] - pts[j][1];
+            dists.push([j, dx * dx + dy * dy]);
+        }
+        dists.sort((a, b) => a[1] - b[1]);
+        for (let m = 0; m < Math.min(k, dists.length); m++) {
+            const j = dists[m][0];
+            const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            edges.push([pts[i], pts[j]]);
+        }
+    }
+    return edges;
+}
+
 /** 두 모드: ALL 개요(정적, 호버=타밴드 흐림) / 특정 밴드 포커스(센트로이드=정중앙). */
 function _clDraw() {
     const data = window.CLUSTER_DATA || {};
@@ -652,7 +683,7 @@ function _clDraw() {
         };
     };
 
-    let songPts, centPts, xAxis, yAxis;
+    let songPts, centPts, xAxis, yAxis, meshEdges = [];
     if (focus) {
         // 포커스: 그 밴드만 · 센트로이드=원점 · 곡=센트로이드 기준 offset · 대칭범위로 정중앙
         const c = cById[focus];
@@ -662,6 +693,7 @@ function _clDraw() {
         list.forEach(s => { Mx = Math.max(Mx, Math.abs(s.x - c.x)); My = Math.max(My, Math.abs(s.y - c.y)); });
         xAxis = { min: -Mx * 1.3, max: Mx * 1.3 }; yAxis = { min: -My * 1.3, max: My * 1.3 };
         centPts = clHideCentroid(focus) ? [] : [centMark(focus, [0, 0], 46, 0.3)];   // 포커스: 반투명(데이터 안 가리게)
+        meshEdges = _clMeshEdges(list, c, CL_MESH_K);      // 네트워크 메시(포커스 전용, ALL은 빈 배열)
         if (subEl) subEl.textContent = `${bandDisplay(focus)} · 곡 ${list.length} · 곡 클릭=재생 · 빈 곳=개요로`;
     } else {
         // ALL 개요: 전 밴드 항상 뭉침(이동 없음). 호버 밴드만 부각, 나머지는 투명도만 낮춤.
@@ -694,6 +726,21 @@ function _clDraw() {
     _clusterChart.setOption({
         ...axisOpt,
         series: [
+            {
+                id: 'mesh', type: 'custom', z: 1, silent: true,           // 밴드 네트워크 메시(포커스 전용, quantum.html 레퍼런스)
+                data: meshEdges,
+                renderItem: (params, api) => {
+                    const e = meshEdges[params.dataIndex];
+                    if (!e) return;
+                    const p1 = api.coord(e[0]), p2 = api.coord(e[1]);
+                    return {
+                        type: 'line', silent: true,
+                        shape: { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1] },
+                        style: { stroke: focus ? _clPulseColor(_clBandColor(focus)) : '#fff', opacity: 0.55,
+                                 lineWidth: 1.4, lineDash: [3, 4] },
+                    };
+                },
+            },
             { id: 'songs', type: 'scatter', data: songPts, z: 2, emphasis: { scale: 1.3 },
               markLine: _clOriginCross() },                                        // 원점 십자선(항상)
             {
