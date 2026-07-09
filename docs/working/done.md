@@ -850,12 +850,16 @@ RSS가 간헐적임이 확인돼 **완전 교체 대신 안전망**으로 설계
   (entries=149, `[feed fallback]` 로그 확인) ③ RSS 강제실패+키없음 → 기존과 동일 `ok=False`(회귀 없음).
 - `python -m py_compile`로 `youtube_rss.py`·`orchestrate.py` 구문 확인, `pipeline.yml` YAML 파싱 확인.
 
-## ⚠️ 남은 수동 조치(코드로 불가·사용자 필요)
-1. **GitHub 저장소 시크릿 `YOUTUBE_API_KEY` 등록**(Settings → Secrets and variables → Actions) —
-   로컬 `.env`의 값 사용. 미등록 시 CI에서는 여전히 RSS만 쓰고(현재와 동일) 안전망이 작동 안 함.
-2. 기존에 열려있는 GitHub 이슈(`🔔 RSS 포맷 변경 의심: raise_a_suilen`)는 핫픽스 배포·검증 후
-   닫아야 함(`gh issue close` 또는 웹에서).
-3. `hotfix/auto-loader`는 main으로 아직 머지 안 됨(사용자 확인 후 별도 진행).
+## ⚠️ 남은 수동 조치 — 전부 완료(2026-07-09)
+1. ✅ **GitHub 저장소 시크릿 `YOUTUBE_API_KEY` 등록** 완료(`gh secret list`로 2026-07-09T05:40:50Z 확인).
+2. ✅ 기존 GitHub 이슈(`🔔 RSS 포맷 변경 의심: raise_a_suilen`) close 완료(사용자).
+3. ✅ `hotfix/auto-loader` → `main` 머지 완료(`f53281d`, 사용자 확인 후 진행). **주의**: `pipeline.yml`
+   크론은 scheduled 이벤트라 `main`의 워크플로 버전으로만 실행되므로, 머지 전까지는 이 안전망이
+   실제로 동작하지 않았음(브랜치에만 있던 코드는 cron에 영향 없음) — 이제 머지됐으니 다음 23:00 KST
+   크론부터 실제로 폴백이 적용됨.
+4. `docs/maintenance/`(외부 서비스 유지보수 문서, telegram-bot.md 포함 5개 파일)도 같은 세션에서
+   `main`·`hotfix/auto-loader`·`feature/emoi-pulse-signature`·`analysis/audio-feats` 4개 브랜치에
+   동일하게 반영(cherry-pick).
 
 ## 파일
 - 수정: `src/tools/collect/youtube_rss.py`(`fetch_feed_with_fallback` 신규 · `collect_candidates`
