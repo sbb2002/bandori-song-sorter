@@ -21,6 +21,9 @@
     <!-- App Styles (build.py 주입) · 로드 순서 고정: common → desktop → mobile -->
     {% for css in static_paths.css %}<link rel="stylesheet" href="{{ css }}">
     {% endfor %}
+
+    <!-- Umami User Tracking: for counting user -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="7185d432-2c87-41e5-8166-46125dc76e33"></script>
 </head>
 <body>
 
