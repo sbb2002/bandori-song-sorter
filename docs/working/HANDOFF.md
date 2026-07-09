@@ -2,7 +2,8 @@
 
 **이 문서 = 앞으로 할 일의 인덱스.** 각 작업은 요약 + 상세 레퍼런스 링크로만 구성한다. 완료 기록은 [done.md](done.md), 워드클라우드 품질 단일 출처는 memory `wordcloud_quality_plan.md`. 작성 규칙은 [readme.md](readme.md).
 
-마지막 갱신: **2026-07-09(세션 36)** — **EMOI-MAP 밴드 네트워크 메시 추가 + 펄스 채널 이상 발견**(`feature/emoi-pulse-signature`, main 미머지): `quantum.html`(3D 뉴럴네트워크 데모)을 디자인 레퍼런스로 검토 → 풀 3D 전환은 보류(모바일 부담·UX 복잡도), "점선 네트워크 그래프"만 차용. 밴드 포커스 시에만(ALL 미표시) 곡별 k-최근접(`CL_MESH_K=3`) 점선 메시, 이후 가시성 요청으로 밝기 상향(opacity 0.22→0.55·lineWidth 1→1.4·`_clPulseColor` 밝기보정). **펄스 시그니처(세션 35) 점검 중 이상 발견**: ave_mujica(헤비메탈 성향)가 29곡 중 14곡(48%)이 acoustic 채널로 분류(전곡 평균 29.1%보다 훨씬 높음) — `harmonic_ratio`(HPSS 톤/타격비)는 높은데 `bright`(centroid/rolloff/zcr/flatness)가 극단적으로 낮아(z −2~−3대) 상대 비교에서 acoustic이 이김. **다음 = EMOI-MAP이 쓰는 7항목(x축 `contrast`·y축 `mode_score`·`harmonic_ratio`·"밝기군"[`centroid`/`rolloff`/`zcr`/`flatness` 4개 서브피처]·`flux`·`energy`·`bpm`, 실제 컬럼 수는 10개) 밴드별 분포 분석**, 이 로컬은 오디오 없어 불가 → 다른 로컬에서 `side-project/band-audio-analysis/`에 산출(§ "다른 로컬에서 이어받는 법" 참조). done 36 참조.
+마지막 갱신: **2026-07-09(세션 37)** — **EMOI-MAP 7항목 밴드별 분포 분석 완료**(`feature/emoi-pulse-signature`, main 미머지): 오디오 재추출 없이(이미 커밋된 CSV·JSON만으로, "다른 로컬 필요"는 세션 36의 착오였음 — 정정) `side-project/band-audio-analysis/`에서 660곡 전부 분석. **ave_mujica(48.3%)보다 mygo(63.4% acoustic)가 더 극단**적임을 발견 — 원인은 장르가 아니라 **밝기군(centroid/rolloff/zcr/flatness) 중앙값이 낮은 밴드는 acoustic 채널로 구조적으로 쏠리는** 상대비교 구조(mygo·ave_mujica 둘 다 밝기군 최하위권으로 확인). raise_a_suilen(57.5% bright)·morfonica(84.2% acoustic)는 장르 기대와 일치(양성 대조군) — 채널 로직 자체는 안 틀렸고 믹스 밝기가 왜곡 요인. **다음 결정(사용자 미확정)**: `add_pulse_shape.py` 채널 판정 규칙 (a)유지 (b)bright 보정 (c)neutral 임계값 조정 중 선택. 상세 = `side-project/band-audio-analysis/README.md` · done 37.
+이전: **2026-07-09(세션 36)** — **EMOI-MAP 밴드 네트워크 메시 추가 + 펄스 채널 이상 발견**(`feature/emoi-pulse-signature`, main 미머지): `quantum.html`(3D 뉴럴네트워크 데모)을 디자인 레퍼런스로 검토 → 풀 3D 전환은 보류(모바일 부담·UX 복잡도), "점선 네트워크 그래프"만 차용. 밴드 포커스 시에만(ALL 미표시) 곡별 k-최근접(`CL_MESH_K=3`) 점선 메시, 이후 가시성 요청으로 밝기 상향(opacity 0.22→0.55·lineWidth 1→1.4·`_clPulseColor` 밝기보정). **펄스 시그니처(세션 35) 점검 중 이상 발견**: ave_mujica(헤비메탈 성향)가 29곡 중 14곡(48%)이 acoustic 채널로 분류(전곡 평균 29.1%보다 훨씬 높음) — `harmonic_ratio`(HPSS 톤/타격비)는 높은데 `bright`(centroid/rolloff/zcr/flatness)가 극단적으로 낮아(z −2~−3대) 상대 비교에서 acoustic이 이김. done 36 참조.
 이전: **2026-07-09(세션 35)** — **EMOI-MAP 재생펄스 음색 시그니처 4모양 Exp1 구현 완료**(`feature/emoi-pulse-signature`, main 미머지): 세션 34 데모 아티팩트를 사용자가 그대로 채택 확정 → `add_pulse_shape.py` 신규(전곡 660 채널 분류, neutral 29.1%/acoustic 29.1%/bright 23.6%/shimmer 18.2%, 데모 예고치와 일치) + `16-audiomap.js`의 `_clEmitPulse` 4분기 확장(색은 유지, 모양만 채널화). 데이터 흐름·geometry는 정적 검증 완료, 애니메이션 스크린샷은 headless 환경 한계로 실사용자 육안 확인 필요. done 35 참조.
 이전: **2026-07-08(세션 34)** — **EMOI-MAP 재생펄스 음색 시그니처 시각화 설계·데모 아티팩트 발행**(아직 브랜치 미생성): Idea A(펄스 모양=음색) 채택 · Idea B(PCA) 기각 · 4모양(neutral/acoustic/bright/shimmer) 인터랙티브 데모 아티팩트 발행 · Exp1~4 리스크순 브랜치 플랜(Exp1·2 병행 확정). 단일 출처 memory `pulse_signature_shapes.md` · 작업 6 "다음 단계" 참조. ⚠️ 이 논의는 방향키 네비게이션으로 대화 분기가 유실됐다가 세션 jsonl에서 복구함.
 이전: **2026-07-08(세션 33)** — **오디오 피처 유효성: 전곡 660·13밴드 3중 렌즈 재검증 완료**(`analysis/audio-feats`, main 미머지): 전곡 캐시 로컬에서 N=15 밴드 균등 게이트(통과) → 전곡 660 확장 재실행. **부분 캐시 3대 결론(스펙트럼 형태 지표군 중복→PI 붕괴 · `energy_proxy` 3성분 · `acousticness`=`harmonic_ratio` 주도) 전부 확증·강화**, `tempo_excerpt`는 비유의로 강등, 메탈/전자(roselia·RAS) 포함으로 "메탈 vs 어쿠스틱" 대비 확인. 이후 = **EMOI-MAP 시각화 실험**(재생 펄스 음색 시그니처 = Idea A 등, 리스크순 브랜치 비교). done 33 · 작업 6 참조.
@@ -107,22 +108,14 @@ flatness·voiced_frac 등)로 유사 개념을 재정의해 로컬 오디오(부
 - ⚠️ 세션 34: 이 논의가 방향키 네비로 대화분기 유실→세션 jsonl에서 복구(done.md/HANDOFF에 3모양·아티팩트 없었음).
 - **세션 36: 밴드 네트워크 메시 추가**(포커스 시 곡별 k-최근접 점선, `CL_MESH_K=3`) + 사용자 요청으로 밝기 상향.
   상세 = done 36.
-- **⚠️ 세션 36: 펄스 채널 이상 발견 → 7항목 밴드별 분포 분석 필요(다른 로컬)**:
-  ave_mujica(헤비메탈 성향)가 acoustic 채널로 48%(29곡 중 14곡, 전곡 평균 29.1%보다 훨씬 높음) 분류됨을
-  사용자가 육안으로 지적. 원인 추정 = HPSS `harmonic_ratio`가 "밝음/거칢"이 아니라 "톤(지속음) vs
-  타격(과도음) 비율"을 재기 때문에, 지속형 디스토션 파워코드가 청감상 거칠어도 하모닉 우세로 잡힐 수
-  있음 + 믹스가 어두우면(저음 위주) 밝기군(`centroid`/`rolloff`/`zcr`/`flatness`)이 극단적으로 낮아져
-  (z −2~−3대) 3채널 상대비교에서 acoustic이 default로 이김. **다음 로컬에서 이어받는 법**:
-  1. 오디오 재추출 불필요 — `docs/working/report/genre-features/song_features_with_proxies.csv`(전곡 660)에
-     이미 harmonic_ratio·centroid·rolloff·zcr·flatness·flux 다 있음. `energy`·`bpm`은
-     `src/content/cluster/audio_map.json`의 `songs[]`에 있음. x축(`contrast`)·y축(`mode_score`) 원값은
-     `build_perceptual_map.py`가 산출한 `songs_full.csv`류(정확한 파일은 그 스크립트의 출력 확인) 또는
-     같은 CSV에 없으면 `phasec_features.py` 계열 산출물 확인.
-  2. **산출물은 `side-project/band-audio-analysis/`에**: 밴드별 violin/box plot(7항목×13밴드, 기존
-     `genre_features_analyze.py`의 `*_violin.png` 패턴 참고 가능) + 분석 노트(README.md, ave_mujica 같은
-     "채널 판정과 밴드 특성이 어긋나는" 사례가 다른 밴드에도 있는지 확인이 목적).
-  3. 결과에 따라 pulse shape 채널 판정 규칙(현재 `add_pulse_shape.py`의 z-score 최댓값 방식)을 손볼지
-     결정 — 예: bright가 일정 이하로 낮으면 acoustic 승리를 막는 가드 등(사용자 미확정, 분포 보고 결정).
+- **✅ 세션 37: 7항목 밴드별 분포 분석 완료**(`side-project/band-audio-analysis/`) — 세션 36의
+  "다른 로컬 필요"는 착오였음(오디오 재추출 불필요, 이미 커밋된 CSV·JSON으로 이 로컬에서 바로 가능했음).
+  **ave_mujica(48.3%)보다 mygo(63.4% acoustic)가 더 극단적**임을 추가 발견. 원인은 장르가 아니라
+  **밝기군(centroid/rolloff/zcr/flatness) 중앙값이 낮은 밴드는 acoustic으로 구조적으로 쏠리는**
+  상대비교 구조(mygo·ave_mujica 둘 다 밝기군 최하위권 확인) — 세션 36 가설이 일반 패턴임을 확증.
+  raise_a_suilen(57.5% bright)·morfonica(84.2% acoustic)는 장르 기대와 일치(양성 대조군).
+  **다음 결정(사용자 미확정)**: `add_pulse_shape.py` 채널 판정 규칙 (a)유지 (b)bright 그룹 보정
+  (c)neutral 임계값(현재 0.4) 조정 — 상세·수치 = `side-project/band-audio-analysis/README.md` · done 37.
 
 ---
 

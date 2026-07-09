@@ -965,3 +965,30 @@ HANDOFF "열린 결정" § 세션 36 참조.
 
 ## 파일
 - 수정: `static/js/functions/16-audiomap.js`(`CL_MESH_K` 상수 · `_clMeshEdges` · `mesh` 시리즈 · 밝기 조정)
+
+---
+
+# 세션 37 — EMOI-MAP 7항목 밴드별 분포 분석: mygo가 ave_mujica보다 더 심함 (2026-07-09, `feature/emoi-pulse-signature`)
+
+세션 36이 남긴 인계 작업. **오디오 재추출 없이**(이미 커밋된 `song_features_with_proxies.csv`·
+`audio_map.json`만으로) `side-project/band-audio-analysis/analyze_features.py`로 EMOI-MAP 7항목
+(raw 컬럼 10개)의 밴드별 분포·펄스 채널 분포를 660곡 전부 조인해 분석.
+
+## 결과
+- **ave_mujica(48.3% acoustic)보다 mygo(63.4% acoustic)가 더 극단적** — 당초 발견보다 심한 사례를
+  추가 확인.
+- **원인 확증**: mygo·ave_mujica 둘 다 밝기군(`centroid`/`rolloff`/`zcr`/`flatness`) 중앙값이
+  코퍼스 최하위권 — 장르(메탈 vs 얼터너티브락)와 무관하게 **믹스가 어두운 밴드는 acoustic 채널로
+  구조적으로 쏠림**(채널 판정이 `acoustic=z(harmonic_ratio)` vs `bright=mean z(밝기군)` 상대
+  경쟁이라, bright가 낮으면 harmonic_ratio가 특별히 안 높아도 acoustic이 기본 승리).
+- **양성 대조군**: raise_a_suilen(57.5% bright, 하드록/일렉트로닉과 일치) · morfonica(84.2%
+  acoustic, 바이올린 편성과 일치) — 채널 로직 자체가 틀린 게 아니라 믹스 밝기가 강한 왜곡 요인.
+
+## 결정 필요(사용자 미확정)
+`add_pulse_shape.py` 채널 판정 규칙을 그대로 둘지/보정할지 3가지 옵션 제시(상세 =
+`side-project/band-audio-analysis/README.md` "다음 결정"): (a) 유지 (b) bright 그룹 보정
+(c) neutral 임계값 조정.
+
+## 파일
+- 신규: `side-project/band-audio-analysis/`(`analyze_features.py` · `README.md` ·
+  `shape_distribution_by_band.csv` · `fig/*.png` 10개)
