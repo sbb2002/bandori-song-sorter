@@ -1040,3 +1040,34 @@ emotion-axes·genre-features + 느슨한 파일 3개)을 연구 주제별로 재
   plot_stem_comparison.py, other_stem_features.csv, stem_vs_mix_comparison.csv,
   report-other-stem-experiment.md, fig/{bright,harmonic_ratio,centroid}_mix_vs_other.png}`.
 - 수정: 위 "참조 전수 수정" 대상 코드 14개 + 문서 15개.
+
+# 세션 39 — 신규 앱 setlist-maker 기획: PRD 작성 (2026-07-10)
+
+**브랜치**: `side-project/playlist-maker`(`experiment/other-stem-features` d341b70에서 분기 —
+PRD가 참조하는 `side-project/genre-features/` 경로가 세션 38 이관 이후에만 존재하기 때문).
+
+## 배경 — bandori-song-sorter 피벗 결정
+umami 실측(일 방문 0명)으로 "구경형 콘텐츠는 재방문이 안 붙는다"는 판단 → 기존 앱 고도화 중단,
+축적된 660곡 오디오 피처를 재활용하는 **별개 신규 앱**(하모닉 믹싱 + 자연어 감성 요청 기반
+세트리스트 메이커)으로 방향 전환. 사용자가 `side-project/setlist-maker/draft.md` 초안 작성.
+
+## PRD 작성 (`side-project/setlist-maker/PRD.md`)
+draft.md 대조 + 데이터 자산 실사(Explore로 스키마·컬럼 실확인) 기반 9절 구성:
+- **파일럿 범위(사용자 확정)**: 자연어 요청 → LLM(OpenRouter) 무드/에너지 분석 → 에너지 진행 ×
+  Camelot 하모닉 믹싱 선곡 → 유튜브 iframe 순차 재생까지만. 재생목록 계정 저장/공유(OAuth)는
+  다음 단계로 이월.
+- **정량 성공지표(신규)**: umami 커스텀 이벤트 3종(`playlist_created`/`song_advance`/
+  `playlist_half_played`) 기반 5지표 — 활성화율 ≥40% · 7일 재방문율 ≥15% · 세션당 생성 ≥1.2 ·
+  연속 재생률 ≥40% · 절반 완주율 ≥25%(공개 후 4주, 가설치·실측 후 보정).
+- **데이터 요구사항**: `songs_full.csv`(660곡 url 전부 youtu.be 포맷)·
+  `song_features_with_proxies.csv`(null 0건, `key` 24종 = Camelot 변환 가능)·`audio_map.json`
+  재사용. 신규 필요 = video_id 파서·key→Camelot 매핑·표본부족 밴드(n=1) 제외 정책.
+- **오디오 캐시 단서(사용자 지적 반영)**: 현 피처는 EMOI-MAP 펄스 용도로 추출된 것 — setlist
+  무드 매칭 적합성은 추가 조사 필요, 부족하면 원본 캐시에서 재추출(전곡 캐시는 별도 로컬).
+- **클린 아키텍처 명시(사용자 요청)**: 파일럿 이후 구현 시 LLM 호출을 포트/어댑터로 격리해
+  모델·벤더 교체가 어댑터 1개 교체로 끝나야 함. 선곡 규칙은 LLM 출력만 받는 순수 함수 유지.
+- draft.md 부수기능 1)~3)(설정 UI·요청 큐 제어·무료 백엔드/sleep 정책) 전부 "다음 단계"에 반영.
+
+## 파일
+- 신규: `side-project/setlist-maker/{draft.md(사용자 작성), PRD.md}`.
+- 수정: `docs/working/HANDOFF.md`(마지막 갱신 세션 39).
