@@ -867,3 +867,63 @@ EMOI-MAP 프록시가 "장르 구분에 유용한 종류의 신호인가"를 큰
 - 재생성(전곡 660): `report/genre-features/{song_features.csv, song_features_with_proxies.csv, band_anova_summary.csv, *_violin.png, feature_validity_{vif,importance}.csv, feature_validity_run_summary.txt, sample_manifest.csv}`
 - 신규 스냅샷: `band_anova_summary_sample15.csv` · `song_features_with_proxies_sample15.csv`(N=15 게이트)
 - 산문: `report/genre-features/README.md`(전곡 재검증 절) · `research/feature-validity-extraction.md`(§8) · `HANDOFF.md`(작업 6·마커) · `done.md`(본 항목)
+
+---
+
+# 세션 32 — 🚨 핫픽스: 신곡 감지 파이프라인 RSS 전면 404 (2026-07-09, `hotfix/auto-loader`)
+
+`docs/working/urgent.md`에 기록된 긴급사항 처리(지시대로 done.md로 이관). GitHub Actions
+`orchestrate.py --detect-only --notify`가 **13밴드 채널 중 10개 전부**에서
+`[feed error] <channel_id>: <HTTPError 404: 'Not Found'>`를 냈고 "파싱 이상 밴드"가 사실상 전
+밴드로 잡힘 — 반자동 파이프라인(done 26~28) 사실상 마비. 최초 신고(7/7)는 raise_a_suilen 단일
+밴드 GitHub 이슈였는데 7/9 workflow_dispatch 재현 시 전체로 확산.
+
+## 원인 분석
+- `src/tools/collect/youtube_rss.py`의 `FEED_URL`(legacy `https://www.youtube.com/feeds/videos.xml?channel_id=`)·
+  `BAND_CHANNELS` 코드·데이터 무결성 확인: 6월 작성 이후 로직 불변, 채널ID 10개 전부 로그와 문자
+  단위 일치 — **레포 내부 원인 아님**.
+- 조사 중 로그에 없던 밴드(hello_happy_world) 및 완전 무관한 대형 채널(Google Developers)까지
+  동일 URL 패턴으로 **전부 404**(진짜 Google 404 페이지) 재현 → **YouTube legacy RSS 엔드포인트
+  자체의 외부 장애/변경**으로 강하게 추정. 다만 이후 로컬에서 재확인하니 **RSS가 다시 정상 응답**
+  (entries=15) — **일시적/간헐적 장애**였을 가능성. 7/7 단일 밴드→7/9 전체 확산 패턴과도 부합
+  (단계적 문제 발생 후 회복).
+- `open_health_issue()`가 동일 제목 이슈 중복 생성은 막아줘서 스팸은 아니었으나, 실제 장애 스코프
+  파악이 이슈 제목(raise_a_suilen만)만으론 안 됐음 — 원 이슈 제목이 실제 스코프를 과소대표.
+
+## 핫픽스 (전면 교체 아닌 폴백 추가)
+RSS가 간헐적임이 확인돼 **완전 교체 대신 안전망**으로 설계:
+- `src/tools/collect/youtube_rss.py`: 신규 `fetch_feed_with_fallback(channel_id, api_key)` —
+  RSS(`fetch_feed`) 우선, 실패 시 `api_key` 있으면 기존 `youtube_api.fetch_uploads()`(Data API
+  v3, `backfill.py`/`insert_backfill.py`가 이미 쓰던 검증된 함수, 반환 형태 `[{video_id,title,published}]`
+  동일해 드롭인)로 재시도. `collect_candidates(..., api_key=None)` 파라미터 추가, 호출부
+  (`cmd_detect`·`orchestrate.py` L328)에서 `load_env_key()`로 전달. 키 없으면 기존과 동일하게
+  `ok=False`(회귀 없음).
+- `.github/workflows/pipeline.yml`: "Detect new songs + notify" 스텝 env에
+  `YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}` 추가(기존 `TELEGRAM_*` 배선과 동일 패턴).
+- **트레이드오프**: `youtube_api.py` 모듈 docstring의 "RSS는 CI 무료·키 불필요 원칙, API는 저빈도
+  전용" 설계를 일부 뒤집음(감지 CI가 이제 조건부로 API 키에 의존) — RSS가 살아있으면 API 호출
+  자체가 안 되므로(1순위 유지) 쿼터 영향은 실패 시에만 발생, 무시 가능한 수준(13밴드×소수 call/day
+  ≪ 무료 10,000/day).
+
+## 검증
+- 로컬에서 `fetch_feed_with_fallback` 3가지 시나리오 직접 테스트(몽키패치로 RSS 실패 시뮬레이션):
+  ① RSS 정상 → API 안 타고 그대로 통과(entries=15) ② RSS 강제실패+키있음 → API 폴백 성공
+  (entries=149, `[feed fallback]` 로그 확인) ③ RSS 강제실패+키없음 → 기존과 동일 `ok=False`(회귀 없음).
+- `python -m py_compile`로 `youtube_rss.py`·`orchestrate.py` 구문 확인, `pipeline.yml` YAML 파싱 확인.
+
+## ⚠️ 남은 수동 조치 — 전부 완료(2026-07-09)
+1. ✅ **GitHub 저장소 시크릿 `YOUTUBE_API_KEY` 등록** 완료(`gh secret list`로 2026-07-09T05:40:50Z 확인).
+2. ✅ 기존 GitHub 이슈(`🔔 RSS 포맷 변경 의심: raise_a_suilen`) close 완료(사용자).
+3. ✅ `hotfix/auto-loader` → `main` 머지 완료(`f53281d`, 사용자 확인 후 진행). **주의**: `pipeline.yml`
+   크론은 scheduled 이벤트라 `main`의 워크플로 버전으로만 실행되므로, 머지 전까지는 이 안전망이
+   실제로 동작하지 않았음(브랜치에만 있던 코드는 cron에 영향 없음) — 이제 머지됐으니 다음 23:00 KST
+   크론부터 실제로 폴백이 적용됨.
+4. `docs/maintenance/`(외부 서비스 유지보수 문서, telegram-bot.md 포함 5개 파일)도 같은 세션에서
+   `main`·`hotfix/auto-loader`·`feature/emoi-pulse-signature`·`analysis/audio-feats` 4개 브랜치에
+   동일하게 반영(cherry-pick).
+
+## 파일
+- 수정: `src/tools/collect/youtube_rss.py`(`fetch_feed_with_fallback` 신규 · `collect_candidates`
+  `api_key` 파라미터 · 모듈 docstring 갱신) · `src/tools/semiauto-loader/orchestrate.py`(호출부
+  `api_key=rss.load_env_key()`) · `.github/workflows/pipeline.yml`(`YOUTUBE_API_KEY` env 배선)
+- 문서: `docs/working/urgent.md`(처리 완료, 비움) · `done.md`(본 항목)

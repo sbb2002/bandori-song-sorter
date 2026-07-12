@@ -325,7 +325,9 @@ def main(argv=None) -> int:
         return 0
 
     # ── 감지(dedup=커밋된 YAML, idempotent) ──
-    candidates, drops, health, band_file = rss.collect_candidates(set(), scrape_length=True)
+    # api_key: RSS 실패 시 Data API 폴백(핫픽스 2026-07-09) — CI는 YOUTUBE_API_KEY 시크릿, 로컬은 .env.
+    candidates, drops, health, band_file = rss.collect_candidates(
+        set(), scrape_length=True, api_key=rss.load_env_key())
     print(f"감지: 신곡 후보 {len(candidates)}곡 (drop {len(drops)}, 밴드 {len(health)})")
     for c in candidates:
         tag = f" [{c['variant']}]" if c["variant"] else ""
