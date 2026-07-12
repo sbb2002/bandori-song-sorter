@@ -479,6 +479,15 @@
 .yt-now-playing #yt-song-name { overflow: hidden; text-overflow: ellipsis; }
 .yt-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tier-1); animation: pulse 1.5s infinite; flex-shrink: 0; }
 .yt-now-playing.muted .yt-dot { animation: none; background: var(--text-sub); }
+.yt-fallback-link {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--tier-1);
+  text-decoration: underline;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+.yt-fallback-link[hidden] { display: none; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* ===========================
