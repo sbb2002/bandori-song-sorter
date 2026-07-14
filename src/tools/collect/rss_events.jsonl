@@ -151,3 +151,6 @@
 {"ts": "2026-06-24T13:35:49.843980+00:00", "band": "roselia", "video_id": "xeBOEvFrWK8", "title": "Grateful Melting", "published": "2025-06-25", "length_s": null, "variant": null, "decision": "dropped", "drop_reason": "known_id", "pr": null}
 {"ts": "2026-06-24T13:35:49.843980+00:00", "band": "roselia", "video_id": "NBqwhhtVs9I", "title": "Dazzle the Destiny", "published": "2025-06-25", "length_s": null, "variant": null, "decision": "dropped", "drop_reason": "known_id", "pr": null}
 {"ts": "2026-06-24T20:28:52.696703+00:00", "band": "mugendai_mutype", "video_id": "4XbNBhZuBoA", "title": "これはぼくたちの生存のあらすじ", "published": "2026-06-21", "length_s": null, "variant": null, "decision": "dropped", "drop_reason": "known_id", "pr": null}
+{"ts": "2026-07-14T15:28:07.468611+00:00", "band": "mygo", "video_id": "uZSAArx6jKM", "title": "素寄曲", "published": "2026-07-14", "length_s": 239, "variant": "", "decision": "auto_added", "idx": 660}
+{"ts": "2026-07-14T15:28:07.468611+00:00", "band": "mygo", "video_id": "fwTsHwFzOlg", "title": "羅永線", "published": "2026-07-14", "length_s": 234, "variant": "", "decision": "auto_added", "idx": 661}
+{"ts": "2026-07-14T15:28:07.468611+00:00", "band": "mygo", "video_id": "GzbCOAHhwzM", "title": "騒混出", "published": "2026-07-14", "length_s": 227, "variant": "", "decision": "auto_added", "idx": 662}

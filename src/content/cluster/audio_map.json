@@ -6024,6 +6024,30 @@
             "y": 15.66,
             "bpm": 112.3,
             "energy": 0.49
+        },
+        {
+            "band": "mygo",
+            "song": "素寄曲",
+            "url": "https://youtu.be/uZSAArx6jKM",
+            "x": 9.03,
+            "y": 29.99,
+            "bpm": 117.5
+        },
+        {
+            "band": "mygo",
+            "song": "羅永線",
+            "url": "https://youtu.be/fwTsHwFzOlg",
+            "x": 9.04,
+            "y": 39.19,
+            "bpm": 129.2
+        },
+        {
+            "band": "mygo",
+            "song": "騒混出",
+            "url": "https://youtu.be/GzbCOAHhwzM",
+            "x": 22.28,
+            "y": 34.88,
+            "bpm": 117.5
         }
     ],
     "centroids": [
@@ -6071,9 +6095,9 @@
         },
         {
             "band": "mygo",
-            "n": 41,
-            "x": 7.4,
-            "y": 16.04
+            "n": 44,
+            "x": 7.82,
+            "y": 17.31
         },
         {
             "band": "pastel_palettes",
@@ -6111,7 +6135,7 @@
         "y_feature": "mode",
         "x_r": -0.81,
         "y_r": 0.51,
-        "n": 660,
+        "n": 663,
         "x_shift": 0.0,
         "y_shift": 10.0,
         "loo_acc": 0.133,
