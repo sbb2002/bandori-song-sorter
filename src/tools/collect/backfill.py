@@ -40,11 +40,17 @@ except Exception:
 # 메인 채널 설정 (歌ってみた 화이트리스트)
 # ──────────────────────────────────────────────
 
-# 밴드의 메인(공식) 채널 — Topic 채널과 별개. 현재 mugendai_mutype만 확인됨(2026-07-25,
-# 사용자 요청으로 조사). 나머지 11개 정식 밴드의 메인 채널 id는 미조사 상태 — 여기 추가하기
-# 전에 반드시 YouTube Data API channels.list 등으로 실제 채널이 맞는지 확인할 것(추측 금지,
-# 잘못된 채널을 넣으면 엉뚱한 콘텐츠가 그 밴드 데이터로 잘못 들어갈 위험).
+# 밴드의 메인(공식) 채널 — Topic 채널과 별개. mugendai_mutype(2026-07-25 확인)에 이어
+# mygo·ave_mujica 추가(2026-07-25, channels.list로 videoCount 실측 검증 완료 — 415/38개).
+# 나머지 8개 정식 밴드(afterglow·roselia·hello_happy_world·morfonica·poppin_party·
+# raise_a_suilen·pastel_palettes·ikka_dumb_rock)는 개별 메인 채널이 없고 통합 채널
+# "バンドリちゃんねる☆"(UCN-bFIdJM0gQlgX7h6LKcZA, 3699개 영상)에 콘텐츠를 올리는 구조라
+# 여기 추가하지 않았다(밴드·멤버 판별 로직이 별도로 필요 — 후속 작업).
+# 여기 추가하기 전에 반드시 YouTube Data API channels.list 등으로 실제 채널이 맞는지
+# 확인할 것(추측 금지, 잘못된 채널을 넣으면 엉뚱한 콘텐츠가 그 밴드 데이터로 잘못 들어갈 위험).
 BAND_MAIN_CHANNELS = {
+    "mygo": "UC80p_16pSSHA8YmtCVdX51w",
+    "ave_mujica": "UCrWC59UUMETuCp9IYUdjVbg",
     "mugendai_mutype": "UCxL_Vlnhfo46sN6vPHR_4hA",
 }
 
