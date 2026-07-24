@@ -144,6 +144,9 @@ def process_song(cand: dict, idx: int, band_file: dict) -> dict | None:
     oid = f"{band}__{idx:03d}"
     url = rss.WATCH_SHORT.format(cand["video_id"])
     song = cand["name"]
+    if cand["is_cover"] and not song.rstrip().lower().endswith("(cover)"):
+        song = song + " (Cover)"
+        cand["name"] = song
     wav = AUDIO_FULL / f"{oid}.wav"
     drum = AUDIO_DRUMS / f"{oid}.wav"
     onset = ONSETS / f"{oid}.json"
