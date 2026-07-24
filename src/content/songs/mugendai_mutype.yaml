@@ -84,3 +84,33 @@
     - track_number: '2026-06-21'
       name: 'これはぼくたちの生存のあらすじ'
       url: https://youtu.be/4XbNBhZuBoA
+
+- band: 'mugendai_mutype'
+  numbering: 'Cover'
+  album_title: 'Covers'
+  img_url: assets/icons/_fallback.png
+  tracks:
+    - track_number: 'X0'
+      name: '唱 (Cover)'
+      url: https://youtu.be/zVdR0urFjnc
+    - track_number: 'X0'
+      name: 'インキャのキャキャキャ (Cover)'
+      url: https://youtu.be/_jU3f42nbGs
+    - track_number: 'X0'
+      name: 'デビルじゃないもん (Cover)'
+      url: https://youtu.be/y-kKg3F7-TA
+    - track_number: 'X0'
+      name: 'エイリアンエイリアン (Cover)'
+      url: https://youtu.be/QmYpqqTvVHc
+    - track_number: 'X0'
+      name: 'ぼくたちいつでも しゅわっしゅわ！ (Cover)'
+      url: https://youtu.be/dvmoFIxT6D4
+    - track_number: 'X0'
+      name: '回レ!雪月花 (Cover)'
+      url: https://youtu.be/Nq2Sl4Ba44M
+    - track_number: 'X0'
+      name: 'ビッグマウス feat.りむる (Cover)'
+      url: https://youtu.be/i7vyrp_3an0
+    - track_number: 'X0'
+      name: 'KiLLKiSS (Cover)'
+      url: https://youtu.be/n4AUKXIjNeo
