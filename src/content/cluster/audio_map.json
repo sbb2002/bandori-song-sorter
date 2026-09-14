@@ -6822,6 +6822,22 @@
             "x": -6.5,
             "y": 23.48,
             "bpm": 123.0
+        },
+        {
+            "band": "ave_mujica",
+            "song": "A Song Of Romance (from EP \"神の名を\")",
+            "url": "https://youtu.be/4VpXO2CggJU",
+            "x": -13.74,
+            "y": -17.3,
+            "bpm": 117.5
+        },
+        {
+            "band": "mugendai_mutype",
+            "song": "にこいちミライ",
+            "url": "https://youtu.be/BaIPr07exA0",
+            "x": 20.01,
+            "y": -42.71,
+            "bpm": 112.3
         }
     ],
     "centroids": [
@@ -6833,9 +6849,9 @@
         },
         {
             "band": "ave_mujica",
-            "n": 29,
-            "x": 0.26,
-            "y": -6.88
+            "n": 30,
+            "x": -0.21,
+            "y": -7.23
         },
         {
             "band": "hello_happy_world",
@@ -6863,9 +6879,9 @@
         },
         {
             "band": "mugendai_mutype",
-            "n": 76,
-            "x": 4.19,
-            "y": 7.5
+            "n": 77,
+            "x": 4.4,
+            "y": 6.84
         },
         {
             "band": "mygo",
@@ -6909,7 +6925,7 @@
         "y_feature": "mode",
         "x_r": -0.81,
         "y_r": 0.51,
-        "n": 751,
+        "n": 753,
         "x_shift": 0.0,
         "y_shift": 10.0,
         "loo_acc": 0.133,
