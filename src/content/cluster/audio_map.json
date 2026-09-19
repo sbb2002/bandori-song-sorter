@@ -6846,6 +6846,14 @@
             "x": -53.98,
             "y": 36.59,
             "bpm": 92.3
+        },
+        {
+            "band": "ikka_dumb_rock",
+            "song": "Mela! (Cover)",
+            "url": "https://youtu.be/rmi0j52kraA",
+            "x": -41.24,
+            "y": 58.26,
+            "bpm": 136.0
         }
     ],
     "centroids": [
@@ -6869,9 +6877,9 @@
         },
         {
             "band": "ikka_dumb_rock",
-            "n": 6,
-            "x": 4.04,
-            "y": 12.89
+            "n": 7,
+            "x": -2.43,
+            "y": 19.37
         },
         {
             "band": "millsage",
@@ -6933,7 +6941,7 @@
         "y_feature": "mode",
         "x_r": -0.81,
         "y_r": 0.51,
-        "n": 754,
+        "n": 755,
         "x_shift": 0.0,
         "y_shift": 10.0,
         "loo_acc": 0.133,
