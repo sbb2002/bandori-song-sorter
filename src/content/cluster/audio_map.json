@@ -6854,6 +6854,22 @@
             "x": -41.24,
             "y": 58.26,
             "bpm": 136.0
+        },
+        {
+            "band": "ikka_dumb_rock",
+            "song": "微笑みの爆弾 (Cover)",
+            "url": "https://youtu.be/glYNdiILfYA",
+            "x": -18.66,
+            "y": 4.73,
+            "bpm": 129.2
+        },
+        {
+            "band": "ikka_dumb_rock",
+            "song": "「微笑みの爆弾」 Covered by 一家Dumb Rock! (Cover)",
+            "url": "https://youtu.be/5t1L-lA1cxM",
+            "x": -19.97,
+            "y": 5.06,
+            "bpm": 129.2
         }
     ],
     "centroids": [
@@ -6877,9 +6893,9 @@
         },
         {
             "band": "ikka_dumb_rock",
-            "n": 7,
-            "x": -2.43,
-            "y": 19.37
+            "n": 9,
+            "x": -6.18,
+            "y": 16.15
         },
         {
             "band": "millsage",
@@ -6941,7 +6957,7 @@
         "y_feature": "mode",
         "x_r": -0.81,
         "y_r": 0.51,
-        "n": 755,
+        "n": 757,
         "x_shift": 0.0,
         "y_shift": 10.0,
         "loo_acc": 0.133,
