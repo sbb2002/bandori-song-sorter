@@ -6918,6 +6918,14 @@
             "x": 12.15,
             "y": 2.43,
             "bpm": 89.1
+        },
+        {
+            "band": "millsage",
+            "song": "「ロウワー」Covered by millsage【期間限定】 (Cover)",
+            "url": "https://youtu.be/jOopfZgVxek",
+            "x": 4.6,
+            "y": -1.62,
+            "bpm": 136.0
         }
     ],
     "centroids": [
@@ -6947,9 +6955,9 @@
         },
         {
             "band": "millsage",
-            "n": 8,
-            "x": -26.59,
-            "y": 25.84
+            "n": 9,
+            "x": -23.12,
+            "y": 22.79
         },
         {
             "band": "morfonica",
@@ -7005,7 +7013,7 @@
         "y_feature": "mode",
         "x_r": -0.81,
         "y_r": 0.51,
-        "n": 763,
+        "n": 764,
         "x_shift": 0.0,
         "y_shift": 10.0,
         "loo_acc": 0.133,
