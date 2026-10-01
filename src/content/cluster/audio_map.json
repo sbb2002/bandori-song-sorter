@@ -6926,6 +6926,30 @@
             "x": 4.6,
             "y": -1.62,
             "bpm": 136.0
+        },
+        {
+            "band": "mugendai_mutype",
+            "song": "夢我夢中",
+            "url": "https://youtu.be/Fp2a-MhCFVw",
+            "x": 24.79,
+            "y": -35.14,
+            "bpm": 152.0
+        },
+        {
+            "band": "ikka_dumb_rock",
+            "song": "ピースフル・ピーシーズ！",
+            "url": "https://youtu.be/LRUm-9JhwZM",
+            "x": 11.45,
+            "y": 44.54,
+            "bpm": 129.2
+        },
+        {
+            "band": "millsage",
+            "song": "鳴らす",
+            "url": "https://youtu.be/6pGDUmNmggY",
+            "x": -16.22,
+            "y": 43.88,
+            "bpm": 123.0
         }
     ],
     "centroids": [
@@ -6949,15 +6973,15 @@
         },
         {
             "band": "ikka_dumb_rock",
-            "n": 9,
-            "x": -6.18,
-            "y": 16.15
+            "n": 10,
+            "x": -4.42,
+            "y": 18.99
         },
         {
             "band": "millsage",
-            "n": 9,
-            "x": -23.12,
-            "y": 22.79
+            "n": 10,
+            "x": -22.43,
+            "y": 24.9
         },
         {
             "band": "morfonica",
@@ -6967,9 +6991,9 @@
         },
         {
             "band": "mugendai_mutype",
-            "n": 79,
-            "x": 4.75,
-            "y": 7.17
+            "n": 80,
+            "x": 5.0,
+            "y": 6.64
         },
         {
             "band": "mygo",
@@ -7013,7 +7037,7 @@
         "y_feature": "mode",
         "x_r": -0.81,
         "y_r": 0.51,
-        "n": 764,
+        "n": 767,
         "x_shift": 0.0,
         "y_shift": 10.0,
         "loo_acc": 0.133,
