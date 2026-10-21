@@ -102,6 +102,15 @@
     - track_number: '2026-09-14'
       name: 'A Song Of Romance (from EP "神の名を")'
       url: https://youtu.be/4VpXO2CggJU
+    - track_number: '2026-10-20'
+      name: 'A Song Of Romance Pt.2'
+      url: https://youtu.be/G5PTiZBcQEs
+    - track_number: '2026-10-20'
+      name: 'BADDY BADDY'
+      url: https://youtu.be/Mq_BtL47_9o
+    - track_number: '2026-10-20'
+      name: '神の名を'
+      url: https://youtu.be/bqHY2CEppko
 
 - band: 'ave_mujica'
   numbering: 'Cover'
