@@ -42,6 +42,11 @@ Modes
 404를 반환하는 외부 장애 확인(레포 내부 원인 아님 — 무관 채널로도 재현). "무료·키 불필요"
 원칙은 유지하되(RSS가 1순위), RSS가 실패하면 YOUTUBE_API_KEY가 있을 때만 youtube_api.fetch_uploads()로
 폴백한다(fetch_feed_with_fallback). 키 없으면 기존과 동일하게 동작(ok=False로 anomaly 처리).
+
+2026-11 폴백(YT Music): 2026-11-14 무렵부터 Topic 채널 RSS가 HTTP 200에 <entry>가 0개로 온다
+(업로드 재생목록 소실, Data API도 404). 이 경우 RSS 결과가 비면 youtube_music(music.youtube.com
+내부 웹 API, 쿼터 무관)으로 아티스트 릴리스 + 'Various Artists' 커버 컴필레이션을 가져온다
+(collect_candidates, Topic 루프만). 비공식 API라 깨질 수 있고, 그때는 기존 anomaly 알람이 울린다.
 """
 
 import sys
@@ -59,6 +64,7 @@ from collections import Counter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))   # 같은 디렉터리(src/tools/collect) 보장
 from youtube_api import load_env_key, fetch_uploads, APIError   # 핫픽스: RSS 실패 시 API 폴백용
+from youtube_music import fetch_artist_entries, fetch_compilation_entries   # 2026-11: RSS 0건 시 YT Music 폴백
 
 try:
     import yaml
@@ -180,8 +186,7 @@ def norm_name(title: str) -> str:
     'A Sunset So Bright (TV Size)' compare equal.
     """
     s = unicodedata.normalize("NFKC", title or "")
-    s = re.sub(r"[\(\[【（].*?[\)\]】）]", "", s)   # remove (…) […] 【…】 （…）
-    s = s.casefold()
+    s = re.sub(r"[\(\[【（].*?[\)\]】）]", "", s)   # remove (…) […] 【…】 （…）    s = s.casefold()
     s = re.sub(r"\s+", "", s)
     s = re.sub(r"[^\w]", "", s, flags=re.UNICODE)  # keep letters/digits (incl. CJK)
     return s
@@ -261,14 +266,21 @@ def fetch_feed_with_fallback(channel_id: str, api_key: str | None):
         return [], False
 
 
-def fetch_length_seconds(vid: str):
-    """Scrape the watch page for lengthSeconds. None on any failure (fail open)."""
+def fetch_watch_meta(vid: str):
+    """watch 페이지 1회 스크랩 → (lengthSeconds 또는 None, 공개일 'YYYY-MM-DD' 또는 '').
+    실패는 전부 (None, '')로 fail open."""
     try:
         html = http_get(WATCH_PAGE.format(vid))
-        m = re.search(r'"lengthSeconds":"(\d+)"', html)
-        return int(m.group(1)) if m else None
     except Exception:
-        return None
+        return None, ""
+    m = re.search(r'"lengthSeconds":"(\d+)"', html)
+    d = re.search(r'"publishDate":"(\d{4}-\d{2}-\d{2})', html)
+    return (int(m.group(1)) if m else None), (d.group(1) if d else "")
+
+
+def fetch_length_seconds(vid: str):
+    """Scrape the watch page for lengthSeconds. None on any failure (fail open)."""
+    return fetch_watch_meta(vid)[0]
 
 
 # ──────────────────────────────────────────────
@@ -480,10 +492,28 @@ def collect_candidates(existing_pr_ids, scrape_length=True, api_key=None):
     names_by_band, ids_by_band, band_file = load_existing()
     candidates, drops, health = [], [], {}
 
+    yt_comp = None   # YT Music 컴필레이션 목록: 호출당 1회 지연 로드(실패해도 []로 캐시)
     for band, channel_id in BAND_CHANNELS.items():
         entries, ok = fetch_feed_with_fallback(channel_id, api_key)
+        source = "rss"
+        if not entries:   # 2026-11 이후: RSS 200 + entry 0개 → YT Music 내부 API 폴백(쿼터 무관)
+            min_year = datetime.date.today().year - 1
+            try:
+                if yt_comp is None:
+                    try:
+                        yt_comp = fetch_compilation_entries(min_year)
+                    except Exception as exc:
+                        print(f"  [ytmusic fallback] 컴필레이션 조회 실패: {exc!r}")
+                        yt_comp = []
+                name, entries = fetch_artist_entries(channel_id, min_year)
+                entries = entries + [e for e in yt_comp if e["artist"] == name]
+                ok, source = True, "ytmusic"
+                print(f"  [ytmusic fallback] {band}: RSS 0건 → YT Music {len(entries)}건")
+            except Exception as exc:
+                print(f"  [ytmusic fallback] {band}: 실패 {exc!r}")
+                entries, ok = [], False
         valid = [e for e in entries if e["video_id"] and e["title"]]
-        health[band] = {"ok": ok, "entries": len(entries), "valid": len(valid)}
+        health[band] = {"ok": ok, "entries": len(entries), "valid": len(valid), "source": source}
         if not ok:
             continue
 
@@ -514,7 +544,9 @@ def collect_candidates(existing_pr_ids, scrape_length=True, api_key=None):
                 best[key] = (rank, e, variant)
 
         for rank, e, variant in best.values():
-            length_s = fetch_length_seconds(e["video_id"]) if scrape_length else None
+            length_s, pub = fetch_watch_meta(e["video_id"]) if scrape_length else (None, "")
+            if not e["published"] and pub:   # YT Music 항목은 날짜가 없어 워치 페이지 날짜로 채움(트랙 번호용)
+                e["published"] = pub
             if length_s is not None and length_s < MIN_LENGTH_S:
                 drops.append(_drop(band, e, "length_short", variant=variant, length_s=length_s))
                 continue
