@@ -186,7 +186,8 @@ def norm_name(title: str) -> str:
     'A Sunset So Bright (TV Size)' compare equal.
     """
     s = unicodedata.normalize("NFKC", title or "")
-    s = re.sub(r"[\(\[【（].*?[\)\]】）]", "", s)   # remove (…) […] 【…】 （…）    s = s.casefold()
+    s = re.sub(r"[\(\[【（].*?[\)\]】）]", "", s)   # remove (…) […] 【…】 （…）
+    s = s.casefold()
     s = re.sub(r"\s+", "", s)
     s = re.sub(r"[^\w]", "", s, flags=re.UNICODE)  # keep letters/digits (incl. CJK)
     return s
